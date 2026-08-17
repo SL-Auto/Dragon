@@ -1,0 +1,19 @@
+rule impacket_terminal_services_control {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects unusual Terminal Services session connect, disconnect or logoff activity."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "MEDIUM"
+  severity_rationale = "Remote session manipulation may disrupt or hijack user activity."
+  procedure_ids = "IMP-18"
+  log_source_prerequisites = "Terminal Services Operational and Security session events with actor and session."
+  false_positives = "Helpdesk and session administration."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+ events:
+  $e.metadata.product_event_type = /(4778|4779|23|24|25)/
+ condition: $e
+}

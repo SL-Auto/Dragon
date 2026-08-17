@@ -1,0 +1,17 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_directory_discovery.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: cobalt_strike_directory_discovery
+// severity: medium
+// procedure_ids: CSB-022
+// description: Detects broad directory/RPC enumeration by one endpoint process across multiple object classes or operations.
+// log_source_prerequisites: Normalize LDAP_QUERY or RPC_CALL with client process/host/account and query object class/filter or interface operation.
+// false_positives: Identity governance, endpoint inventory, directory health, administration and vulnerability assessment.
+// references: reports/cobalt-strike-beacon/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("LDAP_QUERY", "RPC_CALL") or EventType in ("LDAP_QUERY", "RPC_CALL")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="cobalt_strike_directory_discovery"

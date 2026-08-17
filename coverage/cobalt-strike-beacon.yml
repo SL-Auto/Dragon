@@ -1,0 +1,46 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+analyzed_revision: "4.13-docs-202606220941"
+inventory_method: complete reconciliation of official Fortra 4.13 Beacon command table, command-behavior appendix, listener documentation, REST API, release notes, and MITRE S0154 cross-check
+inventory_complete: true
+inventory_evidence: [reports/cobalt-strike-beacon/source-analysis.md]
+excluded_paths:
+  - { path: proprietary Beacon source code, reason: unavailable; implementation internals explicitly blocked_source in report }
+  - { path: arbitrary third-party BOFs, BOF-PE, assemblies, DLLs, shellcode, Interpreter scripts, Aggressor extensions, and user-defined C2, reason: unbounded operator-supplied content; core dispatch surfaces inventoried }
+  - { path: client-only GUI and payload-generation surfaces, reason: not deployed Beacon procedures unless they change Beacon runtime }
+procedures:
+  - { id: CSB-001, name: initialization identity and guardrails, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_process_network_context] }
+  - { id: CSB-002, name: asynchronous tasking sleep jitter retries and exit, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_process_network_context] }
+  - { id: CSB-003, name: runtime C2 BeaconGate syscall and host configuration, telemetry_status: assessed, detection_status: not_observable, detection_rules: [] }
+  - { id: CSB-004, name: sleep masking argument parent and spawn shaping, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_suspicious_process_lineage_or_memory] }
+  - { id: CSB-005, name: HTTP and HTTPS C2, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_process_network_context] }
+  - { id: CSB-006, name: DNS family C2, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_dns_process_context] }
+  - { id: CSB-007, name: SMB named pipe peer C2, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_named_pipe_peer_activity] }
+  - { id: CSB-008, name: TCP bind External C2 and UDC2, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_socket_listen_or_rare_egress] }
+  - { id: CSB-009, name: SOCKS reverse forwarding spunnel and VPN pivoting, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_socket_fanout_or_forwarding] }
+  - { id: CSB-010, name: in-memory data imports payload store and variables, telemetry_status: assessed, detection_status: not_observable, detection_rules: [] }
+  - { id: CSB-011, name: identity privilege discovery and token enablement, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_privileged_context_change] }
+  - { id: CSB-012, name: token creation theft storage impersonation and credentialed execution, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_alternate_identity_process] }
+  - { id: CSB-013, name: Kerberos ticket cache purge and pass the hash, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_unusual_authentication_material_use] }
+  - { id: CSB-014, name: native child execution and command shell, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_suspicious_process_lineage_or_memory] }
+  - { id: CSB-015, name: PowerShell and unmanaged PowerShell, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_powershell_or_clr_in_unusual_host] }
+  - { id: CSB-016, name: BOF BOF-PE and Beacon Interpreter execution, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_suspicious_process_lineage_or_memory] }
+  - { id: CSB-017, name: dotnet assembly execution, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_powershell_or_clr_in_unusual_host] }
+  - { id: CSB-018, name: DLL reflective load shellcode and execute DLL, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_cross_process_injection] }
+  - { id: CSB-019, name: spawn and inject session creation and termination, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_cross_process_injection] }
+  - { id: CSB-020, name: privilege elevation and SYSTEM acquisition, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_service_or_integrity_transition] }
+  - { id: CSB-021, name: process identity drive time network and port discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_discovery_fanout] }
+  - { id: CSB-022, name: AD account group trust session share and host discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_directory_discovery] }
+  - { id: CSB-023, name: registry discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_sensitive_registry_read] }
+  - { id: CSB-024, name: file and directory discovery and collection, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_sensitive_file_activity] }
+  - { id: CSB-025, name: file ingress copy move and directory creation, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_sensitive_file_activity] }
+  - { id: CSB-026, name: file deletion and timestamp replacement, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_file_cleanup_or_timestomp] }
+  - { id: CSB-027, name: screen desktop clipboard browser and input collection, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_user_data_collection] }
+  - { id: CSB-028, name: credential dumping and directory replication, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_credential_access_effect] }
+  - { id: CSB-029, name: operator housekeeping queue history and task cancellation, telemetry_status: assessed, detection_status: not_observable, detection_rules: [] }
+  - { id: CSB-030, name: service remote execution and admin share staging, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_remote_service_sequence] }
+  - { id: CSB-031, name: WinRM remote execution, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_remote_management_execution] }
+  - { id: CSB-032, name: WMI remote execution, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_remote_management_execution] }
+  - { id: CSB-033, name: SSH remote execution, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_remote_management_execution] }
+  - { id: CSB-034, name: teardown cleanup termination and residual memory, telemetry_status: assessed, detection_status: detected, detection_rules: [cobalt_strike_file_cleanup_or_timestomp] }
+completion: { total_procedures: 34, detected: 31, not_observable: 3, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

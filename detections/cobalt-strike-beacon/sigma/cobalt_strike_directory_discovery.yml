@@ -1,0 +1,22 @@
+title: "Detects broad directory/RPC enumeration by one endpoint process across multiple object classes or operations."
+name: cobalt_strike_directory_discovery
+status: experimental
+description: "Detects broad directory/RPC enumeration by one endpoint process across multiple object classes or operations."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_directory_discovery.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-022"
+log_source_prerequisites: "Normalize LDAP_QUERY or RPC_CALL with client process/host/account and query object class/filter or interface operation."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["LDAP_QUERY", "RPC_CALL"]
+  condition: selection_event_type
+falsepositives:
+  - "Identity governance, endpoint inventory, directory health, administration and vulnerability assessment."
+level: medium

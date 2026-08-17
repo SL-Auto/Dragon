@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: havoc
+rule_name: havoc_kerberos_ticket_effect
+canonical_path: detections/havoc/yaral/havoc_kerberos_ticket_effect.yaral
+canonical_sha256: 826d045ddb932ed01ff5697772c836db88dcaaeff8f6fd9a0f87d16bca63eeab
+description: "A process performs LSA Kerberos cache mutation followed by resource authentication"
+severity: high
+procedure_ids: ["HV-P17"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Tenant-verified EDR or ETW LSA Kerberos operation plus 4769 or resource authentication joined by account and host"
+atomic_event_types: ["4769", "KERBEROS_RESOURCE_AUTHENTICATION", "KERBEROS_TICKET_SUBMIT", "LSA_KERBEROS_OPERATION"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.user.userid"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Authorized ticket administration, SSO troubleshooting and security tooling"
+references: "reports/havoc/source-analysis.md"
+translations:
+  spl: { path: "detections/havoc/spl/havoc_kerberos_ticket_effect.spl", sha256: 2a72ba940e04072bf5219966d23abaee15170b49dbc46b6bf4e6e2b67f3ec10b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_kerberos_ticket_effect.kql", sha256: 6e69a9df7c83f12a6d5553af49eaf4f0714f64d4df2e7df019064b5da31df1d1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_kerberos_ticket_effect.sql", sha256: a3e1addb9bf36631dfda8067744d596a819277f069e8d11fdbbc605bf2ee1625, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_kerberos_ticket_effect.eql", sha256: 4c2d2843c17846216408d5dec7e51469d658092290d6a28bb280b575c354b400, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_kerberos_ticket_effect.yml", sha256: 7a2cd00dd92b0ecdac1f0a3844dcda92ccf4958cc858c60d33129c22a78d368c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_file_activity_from_network_process
+canonical_path: detections/sliver/yaral/sliver_file_activity_from_network_process.yaral
+canonical_sha256: 7bc97d7f36f98463ce7c984c4203a230eefa7b45e0b835c336042b7e2797ff9c
+description: "File read or mutation by an outbound-network process"
+severity: medium
+procedure_ids: ["PROC-007", "PROC-008", "PROC-009"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR file and network telemetry sharing stable PID"
+atomic_event_types: ["FILE_CREATION", "FILE_DELETION", "FILE_MODIFICATION", "FILE_READ", "NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Sync, backup, browsers, package managers"
+references: "reports/sliver/source-analysis.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_file_activity_from_network_process.spl", sha256: 6cc48fa3d11f1201700ac1b9db974d34d8464b357f3118130159ab3918f649bf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_file_activity_from_network_process.kql", sha256: 0c6c0feaa7adb7970301f4405d529e88374b5beabdbb71f01b3bb1289827bade, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_file_activity_from_network_process.sql", sha256: 0d4616a48452eb2b61665f5d2c82d0363385dc0311d3f53f93d306a3803e2fcb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_file_activity_from_network_process.eql", sha256: 731c785189c8ef45a823220929f8719d972a404a5f7096abccabf2706e8f7fa9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_file_activity_from_network_process.yml", sha256: 56c990f7084cb53f7919a84327221eeff5b4eed62621e53f359531b1f6eeacbf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,28 @@
+rule bloodhound_samr_local_group_enumeration {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects SAMR or LSA policy read operations against multiple remote hosts."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Broad local-group and user-rights discovery identifies privileged access paths."
+    procedure_ids = "BH-009,BH-010"
+    log_source_prerequisites = "NDR or EDR RPC telemetry exposing SAMR/LSA interface or operation and source/target identity."
+    false_positives = "Asset inventory, compliance scanners and endpoint-management systems."
+    references = "reports/bloodhound/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized SAMR/LSA call fixtures and approved inventory negatives."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "RPC_CALL"
+    $e.principal.hostname = $source
+    $e.target.hostname = $target
+    re.regex($e.target.resource.attribute.labels["rpc_interface_or_operation"], `(?i)(samr|lsa.*policy|alias.*member|enumerate.*account.right)`) 
+  match:
+    $source over 15m
+  outcome:
+    $targets = count_distinct($target)
+  condition:
+    $e and $targets >= 5
+}

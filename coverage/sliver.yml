@@ -1,0 +1,37 @@
+schema_version: 1
+tool_id: sliver
+analyzed_revision: 13c2d3344927429cf55f6f7212499087e804bf47
+inventory_method: complete handler-command-server-platform reconciliation
+inventory_complete: true
+inventory_evidence: [reports/sliver/source-analysis.md]
+excluded_paths:
+  - { path: vendor, reason: dependencies accounted at callers }
+  - { path: protobuf, reason: generated schemas without independent behavior }
+  - { path: tests-ci-docs-assets-packaging, reason: non-deployed material }
+  - { path: external-modules-and-operator-content, reason: unbounded external content; core dispatch inventoried }
+  - { path: server-listener-staging-build-loot-credentials-operator-ui, reason: server/operator-side behavior excluded by victim-host eligibility scope; server code may support implant protocol interpretation only }
+procedures:
+  - { id: PROC-001, name: initialization identity limits, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_process_behavior_cluster, sliver_unsigned_process_novel_egress] }
+  - { id: PROC-002, name: session beacon reconnect kill, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_recurrent_process_egress, sliver_cleanup_after_egress, sliver_self_delete_after_egress] }
+  - { id: PROC-003, name: mtls http c2, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_recurrent_process_egress] }
+  - { id: PROC-004, name: dns wireguard c2, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_dns_or_udp_process_egress, sliver_low_and_slow_udp_beacon] }
+  - { id: PROC-005, name: pivot c2, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_listener_with_egress, sliver_relay_to_novel_destination] }
+  - { id: PROC-006, name: discovery, telemetry_status: assessed, detection_status: not_observable, detection_rules: [], compensating_signal: c2 and subsequent actions }
+  - { id: PROC-007, name: file reads collection, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_file_activity_from_network_process, sliver_credential_file_access_from_network_process] }
+  - { id: PROC-008, name: file mutation transfer deletion, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_file_activity_from_network_process, sliver_credential_file_access_from_network_process] }
+  - { id: PROC-009, name: metadata memfiles, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_file_activity_from_network_process] }
+  - { id: PROC-010, name: child and shell execution, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_parent_egress_with_spawned_interpreter] }
+  - { id: PROC-011, name: task shellcode migration, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_process_access_from_network_process, sliver_lsass_access_from_network_process] }
+  - { id: PROC-012, name: assembly library native extension, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_process_access_from_network_process, sliver_lsass_access_from_network_process] }
+  - { id: PROC-013, name: wasm execution, telemetry_status: assessed, detection_status: not_observable, detection_rules: [], compensating_signal: resulting process file network behavior }
+  - { id: PROC-014, name: screen capture, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_screen_capture_process_egress] }
+  - { id: PROC-015, name: process dump, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_process_access_from_network_process, sliver_lsass_access_from_network_process] }
+  - { id: PROC-016, name: tokens alternate credentials, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_identity_or_service_from_network_process, sliver_explicit_credential_service_creation] }
+  - { id: PROC-017, name: system acquisition, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_identity_or_service_from_network_process, sliver_explicit_credential_service_creation] }
+  - { id: PROC-018, name: registry operations, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_registry_from_network_process, sliver_registry_persistence_key_from_network_process] }
+  - { id: PROC-019, name: service operations, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_identity_or_service_from_network_process, sliver_explicit_credential_service_creation] }
+  - { id: PROC-020, name: remote service ssh execution, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_remote_admin_sequence] }
+  - { id: PROC-021, name: tunnels forwards socks, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_listener_with_egress, sliver_relay_to_novel_destination] }
+  - { id: PROC-022, name: browser instrumentation modules, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_browser_debugging_from_network_process] }
+  - { id: PROC-026, name: cleanup teardown, telemetry_status: assessed, detection_status: detected, detection_rules: [sliver_cleanup_after_egress] }
+completion: { total_procedures: 23, detected: 21, not_observable: 2, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

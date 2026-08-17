@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_remote_rpc_discovery
+canonical_path: detections/impacket/yaral/impacket_remote_rpc_discovery.yaral
+canonical_sha256: 3f6688c38d2dd7d3c07dd16845558a34f05d79359250809501868d36eb14f123
+description: "Detects unusual remote RPC interface enumeration and discovery volume."
+severity: medium
+procedure_ids: ["IMP-08", "IMP-16"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "RPC-aware network or ETW telemetry with source, target and interface UUID."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "principal.ip", "target.ip", "target.port"]
+correlation_window: "5m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Inventory, vulnerability scanning and management systems."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_remote_rpc_discovery.spl", sha256: b8e0633e4e1695aeea2777e073409586552f3460994175529e9478614274a5b9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_remote_rpc_discovery.kql", sha256: 51898464951fd864013b8b741ef1badffb10e4f56378bb7bddd2ebc2c1f70cee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_remote_rpc_discovery.sql", sha256: 7e05b9e695ee3aca0f145ffcf953ca3b3abf65acf19db3d66cf6fe671584fab0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_remote_rpc_discovery.eql", sha256: 199d639440fd69986b90315ed72ffb7951730fbfab3c084d0a5e3ef418eab6ad, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_remote_rpc_discovery.yml", sha256: 9024e13e0befc4c6d771bb2d4e9fab7eb653ee0ff904ac21dba58393de7949b2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

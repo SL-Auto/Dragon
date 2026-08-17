@@ -1,0 +1,23 @@
+rule sliver_dns_or_udp_process_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "High-volume DNS or UDP from one process"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Covers DNS and tunnel transports without mutable indicators"
+    procedure_ids = "PROC-004"
+    log_source_prerequisites = "Process-attributed DNS or UDP network telemetry"
+    false_positives = "Resolvers, browsers, VPN clients"
+    references = "reports/sliver/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+  events:
+    $e.principal.hostname = $host
+    $e.principal.process.file.full_path = $proc ($e.metadata.event_type = "NETWORK_DNS" or
+    $e.network.ip_protocol = "UDP")
+  match: $host, $proc over 10m
+  outcome: $count = count($e.metadata.id)
+  condition: $e and $count >= 20
+}

@@ -1,0 +1,28 @@
+rule bloodhound_remote_security_configuration_reads {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects remote reads of CA, Netlogon, LDAP or NTLM security configuration across hosts."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "The targeted settings expose authentication and certificate-service weaknesses."
+    procedure_ids = "BH-012"
+    log_source_prerequisites = "EDR REGISTRY_READ or scoped 4656/4663 with full key path, source identity and target host."
+    false_positives = "Security posture assessment, PKI administration and domain-controller compliance tools."
+    references = "reports/bloodhound/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized sensitive-key reads and approved posture-scanner negatives."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $e.metadata.product_event_type = /(REGISTRY_READ|4656|4663)/
+    re.regex($e.target.registry.registry_key, `(?i)(CertSvc|Netlogon|Lsa\\MSV1_0|LDAP|NTDS)`) 
+    $e.principal.hostname = $source
+    $e.target.hostname = $target
+  match:
+    $source over 20m
+  outcome:
+    $targets = count_distinct($target)
+  condition:
+    $e and $targets >= 2
+}

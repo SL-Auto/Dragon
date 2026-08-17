@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_discovery_fanout
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_discovery_fanout.yaral
+canonical_sha256: 7868c485d52f83087d38e03a214bd53cd71c5dea728ff92e8d0f485418d51882
+description: "Detects port/network discovery fan-out from one process without relying on Beacon command names."
+severity: medium
+procedure_ids: ["CSB-021"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize process-attributed NETWORK_CONNECTION attempts including failures with destination IP/port and stable process entity."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.entity_id", "target.ip"]
+correlation_window: "5m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Vulnerability scanners, monitoring, software distribution, service discovery and network management."
+references: "reports/cobalt-strike-beacon/source-analysis.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_discovery_fanout.spl", sha256: 0133a1d6aef0ccffb75c09f7ab03b4ff0a44da97213f18193cc8e6a403df4434, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_discovery_fanout.kql", sha256: d2022b203e779d2d8ba381bb434e05cb44af19667bdf0f3baf39458974778054, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_discovery_fanout.sql", sha256: be57440e50bf7ad8b88d38247c3066df3988f2bb139aac472a77ea50b5ec3edc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_discovery_fanout.eql", sha256: 3994a2f1d24eb1182ecf7349820f5f42389ce9397c4f99d2a630d8c241b7f871, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_discovery_fanout.yml", sha256: 5221d0e8bdc643dc5079adc2030a191d4f2996c6e6d03405c1f4adf4b942304d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

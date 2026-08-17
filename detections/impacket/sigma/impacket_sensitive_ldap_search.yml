@@ -1,0 +1,22 @@
+title: "Detects LDAP searches for sensitive credential or delegation attributes."
+name: impacket_sensitive_ldap_search
+status: experimental
+description: "Detects LDAP searches for sensitive credential or delegation attributes."
+source_yaral: "detections/impacket/yaral/impacket_sensitive_ldap_search.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-09"
+log_source_prerequisites: "LDAP diagnostic 1644 or directory audit preserving filter and requested attributes."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["1644"]
+  condition: selection_event_type
+falsepositives:
+  - "Identity governance, AD health and security assessment."
+level: medium

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_service_or_integrity_transition_compensating_signal
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_service_or_integrity_transition_compensating_signal.yaral
+canonical_sha256: 129a0233edf6bd7ea462f3b7ceebdbbefde01f7afe6c0854d6f39f0c1e0f058b
+description: "Detects a process launch reaching SYSTEM integrity whose parent process is unsigned or rare and is not an approved elevation broker, providing the causal parent/child relationship that the base rule's standalone 4697/7045/integrity-transition signal does not require."
+severity: high
+procedure_ids: ["CSB-020"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize PROCESS_LAUNCH with target integrity level, parent process signer and prevalence, and an approved-elevation-broker enrichment."
+atomic_event_types: ["PROCESS_LAUNCH"]
+required_udm_fields: ["additional.fields", "metadata.event_type", "principal.process.file.is_signed", "principal.process.file.prevalence", "target.process.integrity_level"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Installers, driver-installation flows, and approved elevation-broker components not reflected in the enrichment allowlist."
+references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_service_or_integrity_transition.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_service_or_integrity_transition_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_service_or_integrity_transition_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_service_or_integrity_transition_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_service_or_integrity_transition_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_service_or_integrity_transition_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }

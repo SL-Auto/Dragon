@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: chisel
+rule_name: chisel_proxy_destination_fanout
+canonical_path: detections/chisel/yaral/chisel_proxy_destination_fanout.yaral
+canonical_sha256: 90d6b84ac1a5892ef54fc864fad915163065f870306c2ae14da5d1edf28bfe30
+description: "Detects one uncommon process connecting to many destinations after listener activity consistent with a dynamic proxy"
+severity: high
+procedure_ids: ["CH-P05", "CH-P07"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR socket listen and outbound connection telemetry with process prevalence enrichment"
+atomic_event_types: ["NETWORK_CONNECTION", "NETWORK_LISTEN"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id", "target.ip"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Browsers update agents security scanners service meshes and approved proxies"
+references: "reports/chisel/source-analysis.md"
+translations:
+  spl: { path: "detections/chisel/spl/chisel_proxy_destination_fanout.spl", sha256: ad40179e9f8c9279ef77a05b777e4774879366f71ecb0d936335c42842d0b432, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/chisel/kql/chisel_proxy_destination_fanout.kql", sha256: f2ae5fdf47bb1ba9015656c2fd0c13ac2bb150ef2bcd6a99faa23f5af752fb47, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/chisel/sql/chisel_proxy_destination_fanout.sql", sha256: 1da906a787f4145185e2df81e8f51824620817b73501f9b609c6b8479865d4db, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/chisel/eql/chisel_proxy_destination_fanout.eql", sha256: a7d7cc9f6cdccd568edf77b232033177a77a05100c24fecf55cfa4625a48f96e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/chisel/sigma/chisel_proxy_destination_fanout.yml", sha256: 267708b79b067f18d229d31cc332ebee2db8f088c7995cb00cf80066f3191bda, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

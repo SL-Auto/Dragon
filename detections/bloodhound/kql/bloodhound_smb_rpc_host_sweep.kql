@@ -1,0 +1,17 @@
+// source_yaral: detections/bloodhound/yaral/bloodhound_smb_rpc_host_sweep.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: bloodhound_smb_rpc_host_sweep
+// severity: high
+// procedure_ids: BH-006
+// description: Detects one process attempting SMB or RPC connections to many internal hosts.
+// log_source_prerequisites: EDR/firewall network events with source process, destination host/IP and port.
+// false_positives: Vulnerability scanners, deployment systems, backup discovery and approved inventory.
+// references: reports/bloodhound/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION") or EventType in ("NETWORK_CONNECTION")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="bloodhound_smb_rpc_host_sweep"

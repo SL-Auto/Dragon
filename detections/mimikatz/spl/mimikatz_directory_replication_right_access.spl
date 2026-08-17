@@ -1,0 +1,17 @@
+# source_yaral: detections/mimikatz/yaral/mimikatz_directory_replication_right_access.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: mimikatz_directory_replication_right_access
+# severity: high
+# procedure_ids: P14
+# description: Detects directory replication extended-right access for contextual triage; approved DC and sync context must be applied as narrow downstream enrichment.
+# log_source_prerequisites: Normalize domain-controller Security Event ID 4662 with subject, source host, object, access mask, and replication-right GUIDs.
+# false_positives: Approved identity synchronization, migration, backup, recovery, and directory-health products.
+# references: reports/mimikatz/source-analysis.md; https://learn.microsoft.com/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4662
+# assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "4662")
+| eval canonical_rule="mimikatz_directory_replication_right_access"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

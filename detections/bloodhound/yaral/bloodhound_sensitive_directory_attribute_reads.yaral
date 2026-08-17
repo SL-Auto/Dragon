@@ -1,0 +1,22 @@
+rule bloodhound_sensitive_directory_attribute_reads {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects LDAP searches requesting security descriptors (by named attribute or SD_FLAGS control) or AD CS relationship attributes."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Security descriptor and PKI relationship reads are high-value attack-path discovery signals."
+    procedure_ids = "BH-003,BH-005"
+    log_source_prerequisites = "LDAP query telemetry containing requested attributes or controls (including SD_FLAGS control usage), source identity/process and naming context."
+    false_positives = "Directory permissions auditing, PKI administration and identity governance."
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_sensitive_directory_attribute_reads.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized LDAP query records with and without sensitive attributes or SD_FLAGS control usage."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $e.metadata.product_event_type = /(LDAP_SEARCH|1644|4662)/
+    ($e.target.resource.attribute.labels["sd_flags_control"] = "true" or re.regex($e.target.resource.attribute.labels["requested_attributes"], `(?i)(ntsecuritydescriptor|pkienrollmentservice|pkicertificatetemplate|msPKI-|certificateTemplates)`))
+  condition:
+    $e
+}

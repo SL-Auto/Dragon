@@ -1,0 +1,22 @@
+title: "Detects one source requesting no-preauthentication AS responses for multiple accounts."
+name: rubeus_asrep_roast_sequence
+status: experimental
+description: "Detects one source requesting no-preauthentication AS responses for multiple accounts."
+source_yaral: "detections/rubeus/yaral/rubeus_asrep_roast_sequence.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+procedure_ids: "PROC-003"
+log_source_prerequisites: "Normalize 4768 with source IP, account, and PreAuthType in the configured additional field."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4768"]
+  condition: selection_event_type
+falsepositives:
+  - "Authorized account configuration audits and identity assessment."
+level: high

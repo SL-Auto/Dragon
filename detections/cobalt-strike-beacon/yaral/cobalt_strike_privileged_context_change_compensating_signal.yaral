@@ -1,0 +1,31 @@
+rule cobalt_strike_privileged_context_change_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates SeDebugPrivilege enablement on a process with that same process subsequently opening a protected process (lsass.exe or winlogon.exe), closing the causal gap left by the base rule's standalone 4672/token-change signal."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Enabling SeDebugPrivilege and then opening a protected process is a specific, dangerous, ordered sequence, though EDR, backup and diagnostic tools legitimately do the same."
+    procedure_ids = "CSB-011"
+    log_source_prerequisites = "Normalize TOKEN_PRIVILEGE_CHANGE with the enabled privilege name, and PROCESS_OPEN with target image path, joined on host and PID within 10 minutes."
+    false_positives = "EDR, debuggers, backup/VSS tooling, and administrative diagnostic utilities that enable SeDebugPrivilege before inspecting system processes."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_privileged_context_change.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized privilege-enablement events from legitimate EDR/backup tooling paired with protected-process opens to confirm expected benign matches are understood before enabling."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_privileged_context_change"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_privileged_context_change.md"
+  events:
+    $priv.metadata.event_type = "TOKEN_PRIVILEGE_CHANGE"
+    $priv.principal.hostname = $host
+    $priv.additional.fields["privilege_name"].value.string_value = "SeDebugPrivilege"
+    $priv.principal.process.pid = $pid
+    $open.metadata.event_type = "PROCESS_OPEN"
+    $open.principal.process.pid = $pid
+    re.regex($open.target.process.file.full_path, `(?i)\\(lsass|winlogon)\.exe$`)
+  match:
+    $host, $pid over 10m
+  condition:
+    $priv and $open
+}

@@ -1,0 +1,22 @@
+rule cobalt_strike_file_cleanup_or_timestomp {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects deletion or timestamp modification by a rare/unsigned process and covers observable teardown artifacts."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Artifact removal and timestamp changes can indicate cleanup but are common operational behaviors."
+    procedure_ids = "CSB-026,CSB-034"
+    log_source_prerequisites = "Normalize Sysmon 2/23/26 or EDR FILE_DELETE/FILE_TIMESTAMP_CHANGE with process, path, old/new timestamps, signer/prevalence and user."
+    false_positives = "Installers, updaters, cleanup utilities, browsers, temporary-file frameworks and backup restore."
+    references = "reports/cobalt-strike-beacon/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use benign temporary-file deletion and metadata-change fixtures."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    ($e.metadata.event_type = "FILE_DELETE" or $e.metadata.event_type = "FILE_TIMESTAMP_CHANGE" or $e.metadata.product_event_type = "2" or $e.metadata.product_event_type = "23" or $e.metadata.product_event_type = "26")
+    ($e.principal.process.file.is_signed = false or $e.principal.process.file.prevalence = "RARE")
+  condition:
+    $e
+}

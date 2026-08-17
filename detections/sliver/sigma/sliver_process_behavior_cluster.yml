@@ -1,0 +1,22 @@
+title: "New process followed by outbound activity"
+name: sliver_process_behavior_cluster
+status: experimental
+description: "New process followed by outbound activity"
+source_yaral: "detections/sliver/yaral/sliver_process_behavior_cluster.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-001"
+log_source_prerequisites: "Process launch and process network UDM with stable PID"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "PROCESS_LAUNCH"]
+  condition: selection_event_type
+falsepositives:
+  - "New legitimate network software"
+level: medium

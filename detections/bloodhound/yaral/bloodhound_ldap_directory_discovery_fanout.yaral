@@ -1,0 +1,28 @@
+rule bloodhound_ldap_directory_discovery_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects broad process-attributed LDAP enumeration across multiple directory object categories."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Broad multi-category directory enumeration can rapidly expose attack paths but overlaps governance tooling."
+    procedure_ids = "BH-002,BH-004"
+    log_source_prerequisites = "Directory-side or EDR LDAP_SEARCH events with source process/account, base DN, filter, attributes and result category."
+    false_positives = "Identity governance, directory inventory, migration and authorized security assessment."
+    references = "reports/bloodhound/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Test single-purpose LDAP activity against sanitized multi-category enumeration fixtures."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $e.metadata.product_event_type = /(LDAP_SEARCH|1644)/
+    $e.principal.hostname = $host
+    $e.principal.user.userid = $user
+    $e.target.resource.attribute.labels["object_category"] = $category
+  match:
+    $host, $user over 15m
+  outcome:
+    $categories = count_distinct($category)
+  condition:
+    $e and $categories >= 5
+}

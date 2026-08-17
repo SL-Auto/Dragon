@@ -1,0 +1,17 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_privileged_context_change.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_privileged_context_change
+# severity: medium
+# procedure_ids: CSB-011
+# description: Surfaces special-privilege assignment or endpoint token-privilege modification by an uncommon process.
+# log_source_prerequisites: Normalize Windows 4672 or EDR TOKEN_PRIVILEGE_CHANGE with process, user, logon ID, privilege list and signer/prevalence.
+# false_positives: Services, installers, EDR, backup, forensic and administrative tools.
+# references: reports/cobalt-strike-beacon/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "4672", "TOKEN_PRIVILEGE_CHANGE")
+| eval canonical_rule="cobalt_strike_privileged_context_change"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

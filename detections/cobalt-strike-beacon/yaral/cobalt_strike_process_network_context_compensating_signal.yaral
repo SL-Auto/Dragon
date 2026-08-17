@@ -1,0 +1,31 @@
+rule cobalt_strike_process_network_context_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects low-variance periodic outbound connections from a rare-prevalence process to a rare destination, adding the classic beacon-interval and destination-novelty dimensions that the base rarity-only fan-in rule does not measure."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Low-variance periodic egress from a rare process to a rare destination is one of the most iconic Beacon behaviors, though software updaters and telemetry agents also exhibit periodic egress."
+    procedure_ids = "CSB-001,CSB-002,CSB-005"
+    log_source_prerequisites = "Normalize NETWORK_CONNECTION with process hash and prevalence, destination hostname and a destination-prevalence enrichment, and an interval-variance-bucket enrichment derived from inter-connection timing."
+    false_positives = "Software updaters, telemetry/monitoring agents, and any low-jitter scheduled task that also happens to run from a rare process against a rare destination."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_process_network_context.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized process-network fixtures with jitter and host rotation, plus known-benign low-jitter updater timing, to tune the interval-variance-bucket enrichment before enabling."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_process_network_context"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_process_network_context.md"
+    modification_note = "Proposal accepted with a required change: replaced the invented additional.fields['process_prevalence'] with the native principal.process.file.prevalence field already used by the base rule and every other prevalence check in this rule family, keeping the genuinely novel interval-variance and destination-prevalence enrichments."
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.principal.process.file.sha256 = $hash
+    $e.principal.process.file.prevalence = "RARE"
+    $e.target.hostname = $domain
+    $e.additional.fields["interval_variance_bucket"].value.string_value = "LOW"
+    $e.additional.fields["destination_prevalence"].value.string_value = "RARE"
+  match:
+    $hash, $domain over 2h
+  condition:
+    $e and #e >= 8
+}

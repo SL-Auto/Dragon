@@ -1,0 +1,30 @@
+rule bloodhound_collector_process_network_context {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a low-prevalence process establishing sustained directory or cloud management network context."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Useful collector context but not attributable without downstream enumeration effects."
+    procedure_ids = "BH-001"
+    log_source_prerequisites = "EDR process creation and process-attributed network telemetry with signer/prevalence and destination service classification."
+    false_positives = "Identity inventory, endpoint management, directory administration and cloud governance tooling."
+    references = "reports/bloodhound/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized process/network fixtures for approved identity inventory software."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    $p.target.process.file.full_path = $process
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.principal.hostname = $host
+    $n.principal.process.file.full_path = $process
+    $n.target.resource.attribute.labels["service_family"] = /(?i)(ldap|microsoft_graph|azure_resource_manager)/
+    $n.principal.process.file.labels["prevalence"] = "rare"
+  match:
+    $host, $process over 30m
+  condition:
+    $p and #n >= 5
+}

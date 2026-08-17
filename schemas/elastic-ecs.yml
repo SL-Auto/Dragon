@@ -1,0 +1,9 @@
+schema_version: 1
+id: elastic-ecs
+language: Elastic EQL
+role: secondary
+default_dataset: ECS-normalized event indices
+required_mapping: [event.code, event.action, event.category, host.name, user.id, process.entity_id, source, destination]
+correlation: sequence by entity with maxspan; aggregations may require ES|QL or a threshold rule
+absence_logic: missing-event sequences are version/backend dependent and require complete source
+shared_limitations: [ECS integration mappings vary, EQL aggregation is limited, rule scheduling affects semantics]

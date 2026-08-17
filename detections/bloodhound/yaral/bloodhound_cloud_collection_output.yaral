@@ -1,0 +1,32 @@
+rule bloodhound_cloud_collection_output {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates sustained, resource-family-diverse Graph or ARM reads with local JSON output or service lifecycle effects on the same host/user."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Collection output strengthens cloud enumeration context but overlaps legitimate exporters and services."
+    procedure_ids = "BH-020"
+    log_source_prerequisites = "Process-attributed cloud egress with resource-family enrichment, plus file creation or Windows service events joined by host/user."
+    false_positives = "Cloud inventory exporters, scheduled governance jobs and authorized AzureHound deployments."
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_cloud_collection_output.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized cloud-read and JSON/service effect fixtures without running collector software."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $n.metadata.product_event_type = /(MicrosoftGraphActivityLogs|AzureActivity|AZURE_RESOURCE_READ)/
+    $n.principal.hostname = $host
+    $n.principal.user.userid = $user
+    $n.target.resource.attribute.labels["resource_family"] = $family
+    $f.metadata.product_event_type = /(11|FILE_CREATION|4697|7045)/
+    $f.principal.hostname = $host
+    $f.principal.user.userid = $user
+    (re.regex($f.target.file.full_path, `(?i)\.json$`) or $f.metadata.product_event_type = /(4697|7045)/)
+  match:
+    $host, $user over 30m
+  outcome:
+    $families = count_distinct($family)
+  condition:
+    $families >= 5 and $f
+}

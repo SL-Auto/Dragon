@@ -1,0 +1,17 @@
+// source_yaral: detections/chisel/yaral/chisel_stdio_network_bridge.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: chisel_stdio_network_bridge
+// severity: medium
+// procedure_ids: CH-P06
+// description: Detects a process with redirected standard handles that also establishes sustained outbound connectivity
+// log_source_prerequisites: EDR process handle or redirected stdio semantic telemetry and outbound network connections
+// false_positives: Remote administration automation IDE terminals and container entrypoints
+// references: reports/chisel/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION", "PROCESS_STDIO_REDIRECT") or EventType in ("NETWORK_CONNECTION", "PROCESS_STDIO_REDIRECT")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="chisel_stdio_network_bridge"

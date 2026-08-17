@@ -1,0 +1,27 @@
+rule rubeus_as_request_anomaly {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one source making AS requests for multiple principals or atypical preauthentication patterns."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Multi-principal AS activity can indicate authentication probing, but scanners and identity systems overlap."
+    procedure_ids = "PROC-001"
+    log_source_prerequisites = "Normalize DC Security 4768 with source IP, target account, preauthentication type, result, and encryption type."
+    false_positives = "Identity monitoring, password audits, migration, and authorized assessment."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized 4768 fixtures with benign single-account and approved multi-account cases."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "4768"
+    $e.principal.ip = $source
+    $e.target.user.userid = $account
+  match:
+    $source over 10m
+  outcome:
+    $accounts = count_distinct($account)
+  condition:
+    $e and $accounts >= 3
+}

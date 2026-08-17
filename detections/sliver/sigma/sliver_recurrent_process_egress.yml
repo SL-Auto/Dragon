@@ -1,0 +1,22 @@
+title: "One process entity repeatedly communicates outbound to the same destination, spread across multiple minutes"
+name: sliver_recurrent_process_egress
+status: experimental
+description: "One process entity repeatedly communicates outbound to the same destination, spread across multiple minutes"
+source_yaral: "detections/sliver/yaral/sliver_recurrent_process_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-002,PROC-003"
+log_source_prerequisites: "Process-attributed network events with stable process entity and destination"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Agents, updaters, browsers, monitoring"
+level: medium

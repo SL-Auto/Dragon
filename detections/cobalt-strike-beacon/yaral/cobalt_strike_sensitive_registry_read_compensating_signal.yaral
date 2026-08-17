@@ -1,0 +1,30 @@
+rule cobalt_strike_sensitive_registry_read_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a single process reading several distinct sensitive-registry-family keys within a short window, surfacing multi-family enumeration bursts that the base single-event sensitivity check does not aggregate."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "A burst of reads across several distinct sensitive registry families by one process is a moderate discovery signal, but inventory and compliance scanners legitimately read these keys in bulk."
+    procedure_ids = "CSB-023"
+    log_source_prerequisites = "Normalize REGISTRY_READ with process hash, hostname, a registry-security-family classification field, and an approved-inventory-process enrichment, joined on host and process hash within 15 minutes."
+    false_positives = "Inventory, compliance, EDR, backup, and forensics tooling that legitimately reads across many sensitive registry families; the approved-inventory-process enrichment is required to keep this usable."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read.md"
+    validation_status = "needs_validation"
+    validation_method = "Use benign reads of non-secret test keys spanning several classification families from both approved and unapproved inventory tooling."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_sensitive_registry_read"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read.md"
+    modification_note = "Proposal accepted with a required change: added principal.hostname to the joined/matched fields. The original proposal aggregated only by process file hash across the entire fleet with no host in the event or match clause, so a matching alert could not be attributed to a specific host for triage."
+  events:
+    $e.metadata.event_type = "REGISTRY_READ"
+    $e.principal.hostname = $host
+    $e.principal.process.file.sha256 = $hash
+    $e.additional.fields["registry_security_family"].value.string_value = $family
+    $e.additional.fields["approved_inventory_process"].value.bool_value = false
+  match:
+    $host, $hash over 15m
+  condition:
+    $e and #family >= 3
+}

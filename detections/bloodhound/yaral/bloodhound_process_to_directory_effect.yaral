@@ -1,0 +1,31 @@
+rule bloodhound_process_to_directory_effect {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a process launch followed by confirmed multi-object LDAP, Graph or ARM enumeration from the same process entity, independent of process prevalence, signer status or executable path, compensating for bloodhound_collector_process_network_context's dependence on rarity and connection count."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Confirmed object-level enumeration from a launched process is a stronger effect signal than connection count alone but still overlaps legitimate identity tooling."
+    procedure_ids = "BH-001"
+    log_source_prerequisites = "EDR process launch with stable process entity ID plus process-attributed LDAP_SEARCH, MicrosoftGraphActivityLogs or AZURE_RESOURCE_READ events carrying resolved object/resource identity."
+    false_positives = "Identity inventory, endpoint management, directory administration and cloud governance tooling, including signed and prevalent software."
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_collector_process_network_context.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized process/query fixtures for approved identity inventory software including signed and newly seen executables."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    $p.target.process.product_specific_process_id = $pid
+    $q.metadata.product_event_type = /(LDAP_SEARCH|MicrosoftGraphActivityLogs|AZURE_RESOURCE_READ)/
+    $q.principal.hostname = $host
+    $q.principal.process.product_specific_process_id = $pid
+    $q.target.resource.name = $object
+  match:
+    $host, $pid over 20m
+  outcome:
+    $objects = count_distinct($object)
+  condition:
+    $p and $objects >= 25
+}

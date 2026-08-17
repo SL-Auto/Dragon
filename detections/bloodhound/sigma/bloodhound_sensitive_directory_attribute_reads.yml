@@ -1,0 +1,22 @@
+title: "Detects LDAP searches requesting security descriptors or AD CS relationship attributes."
+name: bloodhound_sensitive_directory_attribute_reads
+status: experimental
+description: "Detects LDAP searches requesting security descriptors or AD CS relationship attributes."
+source_yaral: "detections/bloodhound/yaral/bloodhound_sensitive_directory_attribute_reads.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-003,BH-005"
+log_source_prerequisites: "LDAP query telemetry containing requested attributes or controls, source identity/process and naming context."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["1644", "4662", "LDAP_SEARCH"]
+  condition: selection_event_type
+falsepositives:
+  - "Directory permissions auditing, PKI administration and identity governance."
+level: high

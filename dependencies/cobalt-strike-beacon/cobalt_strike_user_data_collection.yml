@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_user_data_collection
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_user_data_collection.yaral
+canonical_sha256: 0db696c12dab3a143bceee934714761c005927813579e66b0856d84a195ae36a
+description: "Surfaces vendor collection telemetry for screen, clipboard, input or browser-secret access by an uncommon process."
+severity: high
+procedure_ids: ["CSB-027"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize EDR SCREEN_CAPTURE, CLIPBOARD_READ, INPUT_CAPTURE or BROWSER_SECRET_READ with process, user/session, collection type and signer/prevalence."
+atomic_event_types: ["BROWSER_SECRET_READ", "CLIPBOARD_READ", "INPUT_CAPTURE", "SCREEN_CAPTURE"]
+required_udm_fields: ["metadata.event_type", "principal.process.file.is_signed", "principal.process.file.prevalence"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Accessibility, conferencing, remote support, password managers, browsers and approved monitoring."
+references: "reports/cobalt-strike-beacon/source-analysis.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_user_data_collection.spl", sha256: b0cd53e6540ddeef6d7113435d301d0a5f3c9c606ad15b292687442105304c70, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_user_data_collection.kql", sha256: 1c68f4b99c5f331c5085fd698b845a3f2433e36f3282e9e9fdbfd6f6483fcf99, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_user_data_collection.sql", sha256: 1391b93173eb08f7844524ee43b914042b286c0dd3fe99b01af052512129570e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_user_data_collection.eql", sha256: a8daa900edeef475f23ccabb7ba876d34bae962b5a51220a9e1e1b5edc67e87e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_user_data_collection.yml", sha256: d1445f6b5c2282d97ab905c6eb2c998f1f80ae4ebc1dcbf506774923d6c72c50, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

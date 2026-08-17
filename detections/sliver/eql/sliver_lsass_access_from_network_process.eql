@@ -1,0 +1,14 @@
+// source_yaral: detections/sliver/yaral/sliver_lsass_access_from_network_process.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_lsass_access_from_network_process
+// severity: high
+// procedure_ids: PROC-011,PROC-012,PROC-015
+// description: A network-active process obtains a memory-read-capable handle to a protected credential process such as lsass
+// log_source_prerequisites: Tenant-verified EDR process-access event (for example Sysmon Event ID 10) with target process identity and access mask, plus process-attributed network telemetry sharing a stable process entity
+// false_positives: EDR/AV agents, debuggers, and credential-backup tools that legitimately open lsass with read access
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("10", "NETWORK_CONNECTION") or event.action in ("10", "NETWORK_CONNECTION")

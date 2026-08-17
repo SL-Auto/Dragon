@@ -1,0 +1,30 @@
+rule havoc_spawned_command_execution {
+  meta:
+    author = "Detection Research Agent"
+    description = "A recurrently networked process spawns a command or script interpreter"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Links command execution to the network-active parent effect without relying on tool names"
+    procedure_ids = "HV-P05"
+    log_source_prerequisites = "Process creation and process-attributed network telemetry with stable parent identity"
+    false_positives = "Management agents, CI workers and automation platforms"
+    references = "reports/havoc/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/havoc/detection-review.md"
+  events:
+    $c.metadata.event_type = "PROCESS_LAUNCH"
+    re.regex($c.target.process.file.full_path, `(?i)\\(cmd|powershell|pwsh|wscript|cscript)\.exe$`)
+    $c.principal.hostname = $host
+    $c.principal.process.parent_process.product_specific_process_id = $parent_pid
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $parent_pid
+  match:
+    $host, $parent_pid over 10m
+  condition:
+    $c and $n
+}

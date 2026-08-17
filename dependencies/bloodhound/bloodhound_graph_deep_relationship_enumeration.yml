@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_graph_deep_relationship_enumeration
+canonical_path: detections/bloodhound/yaral/bloodhound_graph_deep_relationship_enumeration.yaral
+canonical_sha256: d0236d7b77df0419675f0aa9d4971678515d42751b4856c1cfcd45c9bc30f1ec
+description: "Detects one Graph principal or application enumerating a high volume of relationship-bearing objects (memberOf, owners, appRoleAssignments, transitiveMembers) within a single resource family, compensating for attackers who avoid multi-family fanout captured by bloodhound_azure_graph_enumeration_fanout."
+severity: high
+procedure_ids: ["BH-017"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "MicrosoftGraphActivityLogs with principal user ID, application/service-principal ID, HTTP method, request URL and resolved target object identity."
+atomic_event_types: ["MicrosoftGraphActivityLogs"]
+required_udm_fields: ["metadata.product_event_type", "network.http.method", "principal.application", "principal.user.userid", "target.resource.name", "target.url"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Identity governance, synchronization, compliance and cloud security posture tools performing legitimate relationship enumeration."
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_azure_graph_enumeration_fanout.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_graph_deep_relationship_enumeration.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_graph_deep_relationship_enumeration.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_graph_deep_relationship_enumeration.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_graph_deep_relationship_enumeration.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_graph_deep_relationship_enumeration.yml", sha256: missing, status: "", fidelity: "" }

@@ -1,0 +1,25 @@
+rule impacket_wmi_activity_operational_class_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a remote WMI method invocation against the Win32_Process class observed directly in the WMI-Activity Operational log, independent of whether a WmiPrvSE child process was collected."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "The operational-log signal captures processless or failed-child-collection WMI process-creation attempts that the process-lineage rule can miss, but by itself it is not proximate enough to the effect to warrant HIGH without tenant baselining."
+    procedure_ids = "IMP-05"
+    log_source_prerequisites = "WMI-Activity Operational 5857/5858/5860/5861 preserving namespace, class and caller source per reports/impacket/source-analysis.md IMP-05 telemetry note (\"namespace/query/class/parent/source\")."
+    false_positives = "Endpoint management, inventory, remediation, monitoring agents and any authorized WMI administration that creates or queries Win32_Process; this event family is high-volume and requires tenant baselining before enforcement."
+    references = "reports/impacket/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/impacket/detection-review.md"
+    source_comparison = "public-rules/comparisons/impacket/impacket_remote_wmi_activity.md"
+    comparison_decision = "modify"
+  events:
+    $e.metadata.product_event_type = /(5857|5858|5860|5861)/
+    $e.principal.hostname = $host
+    $e.principal.ip = $source
+    re.regex($e.target.resource.attribute.labels["class"], `(?i)Win32_Process`)
+  condition:
+    $e
+}

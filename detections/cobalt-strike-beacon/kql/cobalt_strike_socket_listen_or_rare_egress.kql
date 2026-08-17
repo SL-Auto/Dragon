@@ -1,0 +1,17 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_listen_or_rare_egress.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: cobalt_strike_socket_listen_or_rare_egress
+// severity: medium
+// procedure_ids: CSB-008
+// description: Detects socket listen or egress from a rare unsigned process as coverage for bind TCP, External C2 and user-defined transports.
+// log_source_prerequisites: Normalize endpoint SOCKET_LISTEN and NETWORK_CONNECTION with process signer/prevalence, host, direction and local/remote endpoints.
+// false_positives: Developer tools, local service hosts, peer-to-peer clients, remote support and ephemeral test servers.
+// references: reports/cobalt-strike-beacon/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION", "SOCKET_LISTEN") or EventType in ("NETWORK_CONNECTION", "SOCKET_LISTEN")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="cobalt_strike_socket_listen_or_rare_egress"

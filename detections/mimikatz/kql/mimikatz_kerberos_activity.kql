@@ -1,0 +1,17 @@
+// source_yaral: detections/mimikatz/yaral/mimikatz_kerberos_activity.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: mimikatz_kerberos_activity
+// severity: low
+// procedure_ids: P10
+// description: Surfaces Kerberos ticket issuance or endpoint LSA ticket-cache operations for contextual analytics.
+// log_source_prerequisites: DC 4768-4771 and vendor LSA ticket-operation telemetry.
+// false_positives: Normal domain authentication and administrative ticket management.
+// references: reports/mimikatz/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("4768", "4769", "4770", "4771") or EventType in ("4768", "4769", "4770", "4771")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="mimikatz_kerberos_activity"

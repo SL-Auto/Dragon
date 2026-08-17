@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_lsa_ticket_cache_operations
+canonical_path: detections/rubeus/yaral/rubeus_lsa_ticket_cache_operations.yaral
+canonical_sha256: 7b6e427b7db0f4ff7265b7144192760e7b1476c4c61d4f88ac4a3936083f24d2
+description: "Detects Kerberos ticket-cache query/enumeration operations from EDR API telemetry. Split from encoded-ticket retrieval, which is a stronger, separately severity-scored signal covered by rubeus_lsa_encoded_ticket_retrieval."
+severity: medium
+procedure_ids: ["PROC-006"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR must expose LsaCallAuthenticationPackage and Kerberos message type with process and target LUID."
+atomic_event_types: ["EDR_API_CALL"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Klist, SSO, EDR, incident response, and authentication components routinely enumerate the ticket cache."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_cache_operations.md"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_lsa_ticket_cache_operations.spl", sha256: 831bfbca1c5f0a37312571d07dd63dda7d89826e4ee8465cc661797a4b42ec34, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_lsa_ticket_cache_operations.kql", sha256: 770ee111e7c1fd120a4668a93547bb8ac85be405ef8ed7c46c334a0a93fd3633, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_lsa_ticket_cache_operations.sql", sha256: 0e0ea197d09b075d7b16ca9ed3a0866fddd0047a29b585ff6436d0acebb02ddd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_lsa_ticket_cache_operations.eql", sha256: b0402555cbd833a6d55a7b43b801346e06e1078b6d75b89cef1d63d7fe002370, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_lsa_ticket_cache_operations.yml", sha256: 6be7db24ed9a5fe4dda30ed3762608f889bfa2fbd51fdcfc8cdbddda2b873aba, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

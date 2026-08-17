@@ -1,0 +1,17 @@
+# source_yaral: detections/havoc/yaral/havoc_cleanup_after_network_activity.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: havoc_cleanup_after_network_activity
+# severity: medium
+# procedure_ids: HV-P20
+# description: A process deletes a file or terminates shortly after outbound network activity
+# log_source_prerequisites: EDR file deletion or process termination and process-attributed network telemetry with stable identity
+# false_positives: Installers, updaters, temporary helpers and self-cleaning applications
+# references: reports/havoc/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "FILE_DELETION", "NETWORK_CONNECTION", "PROCESS_TERMINATION")
+| eval canonical_rule="havoc_cleanup_after_network_activity"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

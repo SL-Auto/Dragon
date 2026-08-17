@@ -1,0 +1,17 @@
+# source_yaral: detections/impacket/yaral/impacket_privilege_path_effects.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: impacket_privilege_path_effects
+# severity: high
+# procedure_ids: IMP-22
+# description: Detects correlated directory privilege changes and anomalous Kerberos ticket use.
+# log_source_prerequisites: DC directory-change and Kerberos events with actor, target and source.
+# false_positives: Approved domain migrations and delegation changes.
+# references: reports/impacket/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "4741", "4742", "4768", "4769", "5136", "5137")
+| eval canonical_rule="impacket_privilege_path_effects"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

@@ -1,0 +1,22 @@
+title: "A network-active process performs file collection, staging, mutation or deletion"
+name: havoc_file_activity_from_network_process
+status: experimental
+description: "A network-active process performs file collection, staging, mutation or deletion"
+source_yaral: "detections/havoc/yaral/havoc_file_activity_from_network_process.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/havoc/source-analysis.md"
+procedure_ids: "HV-P06,HV-P07,HV-P08"
+log_source_prerequisites: "EDR file lifecycle and process-attributed network events sharing a stable process entity"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["FILE_CREATION", "FILE_DELETION", "FILE_MODIFICATION", "FILE_READ", "NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Browsers, synchronization, backup, deployment and endpoint-management software"
+level: medium

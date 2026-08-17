@@ -1,0 +1,28 @@
+rule chisel_listener_with_tunnel_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one process listening locally while maintaining outbound connectivity consistent with bidirectional forwarding"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Same-process listener and egress correlation is a direct forwarding effect"
+    procedure_ids = "CH-P02,CH-P04,CH-P08"
+    log_source_prerequisites = "EDR socket listen and outbound connect telemetry with stable process entity"
+    false_positives = "Approved proxies VPNs developer tunnels service meshes and remote support"
+    references = "reports/chisel/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/chisel/detection-review.md"
+  events:
+    $l.metadata.product_event_type = "NETWORK_LISTEN"
+    $l.principal.hostname = $host
+    $l.principal.process.product_specific_process_id = $pid
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match:
+    $host, $pid over 10m
+  condition:
+    $l and $n
+}

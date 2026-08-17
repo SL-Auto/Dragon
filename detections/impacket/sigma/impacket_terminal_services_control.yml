@@ -1,0 +1,22 @@
+title: "Detects unusual Terminal Services session connect, disconnect or logoff activity."
+name: impacket_terminal_services_control
+status: experimental
+description: "Detects unusual Terminal Services session connect, disconnect or logoff activity."
+source_yaral: "detections/impacket/yaral/impacket_terminal_services_control.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-18"
+log_source_prerequisites: "Terminal Services Operational and Security session events with actor and session."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["23", "24", "25", "4778", "4779"]
+  condition: selection_event_type
+falsepositives:
+  - "Helpdesk and session administration."
+level: medium

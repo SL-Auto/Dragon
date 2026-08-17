@@ -1,0 +1,22 @@
+title: "Surfaces named-pipe create/connect activity from an unsigned or rare process, including SMB peer-channel hypotheses without relying on mutable pipe names."
+name: cobalt_strike_named_pipe_peer_activity
+status: experimental
+description: "Surfaces named-pipe create/connect activity from an unsigned or rare process, including SMB peer-channel hypotheses without relying on mutable pipe names."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_named_pipe_peer_activity.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-007"
+log_source_prerequisites: "Normalize Sysmon 17/18 or EDR PIPE_CREATE/PIPE_CONNECT with process path, signer/prevalence, host, pipe and peer when networked."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["17", "18", "PIPE_CONNECT", "PIPE_CREATE"]
+  condition: selection_event_type
+falsepositives:
+  - "Browsers, management agents, database clients, service frameworks and endpoint security."
+level: medium

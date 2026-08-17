@@ -1,0 +1,19 @@
+-- source_yaral: detections/havoc/yaral/havoc_spawned_command_execution.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: partial
+-- rule_name: havoc_spawned_command_execution
+-- severity: high
+-- procedure_ids: HV-P05
+-- description: A recurrently networked process spawns a command or script interpreter
+-- log_source_prerequisites: Process creation and process-attributed network telemetry with stable parent identity
+-- false_positives: Management agents, CI workers and automation platforms
+-- references: reports/havoc/source-analysis.md
+-- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+-- schema_profile: schemas/normalized-sql.yml
+-- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).
+SELECT hostname, user_id, COUNT(*) AS event_count,
+       'havoc_spawned_command_execution' AS canonical_rule
+FROM normalized_events
+WHERE product_event_type IN ('NETWORK_CONNECTION', 'PROCESS_LAUNCH') OR event_type IN ('NETWORK_CONNECTION', 'PROCESS_LAUNCH')
+GROUP BY hostname, user_id
+HAVING COUNT(*) > 0;

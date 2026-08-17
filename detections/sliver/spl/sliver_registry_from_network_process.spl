@@ -1,0 +1,17 @@
+# source_yaral: detections/sliver/yaral/sliver_registry_from_network_process.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: sliver_registry_from_network_process
+# severity: medium
+# procedure_ids: PROC-018
+# description: Registry mutation by a process with outbound network activity
+# log_source_prerequisites: Registry mutation and network UDM with stable PID
+# false_positives: Installers, management, security software
+# references: reports/sliver/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "NETWORK_CONNECTION", "REGISTRY_MODIFICATION")
+| eval canonical_rule="sliver_registry_from_network_process"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

@@ -1,0 +1,22 @@
+title: "Detects a new service or unusual medium-to-high/SYSTEM integrity transition correlated to process execution."
+name: cobalt_strike_service_or_integrity_transition
+status: experimental
+description: "Detects a new service or unusual medium-to-high/SYSTEM integrity transition correlated to process execution."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_service_or_integrity_transition.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-020"
+log_source_prerequisites: "Normalize Windows 4697/System 7045 and EDR INTEGRITY_TRANSITION with subject, service, image, source/child process, old/new integrity and host."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4697", "7045", "INTEGRITY_TRANSITION"]
+  condition: selection_event_type
+falsepositives:
+  - "Software deployment, driver installation, endpoint management and approved elevation tools."
+level: high

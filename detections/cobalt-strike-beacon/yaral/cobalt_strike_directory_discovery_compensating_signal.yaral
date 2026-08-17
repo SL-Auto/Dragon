@@ -1,0 +1,29 @@
+rule cobalt_strike_directory_discovery_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Aggregates multi-class LDAP directory queries by user and host, independent of any single process, to surface discovery distributed across multiple short-lived processes in the same session."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Session-scoped multi-class directory enumeration is useful reconnaissance context but directory-management and inventory agents legitimately enumerate many classes."
+    procedure_ids = "CSB-022"
+    log_source_prerequisites = "Normalize LDAP_QUERY with client account, hostname, and object-class field, plus an allowlist enrichment identifying approved directory-scanning software."
+    false_positives = "Identity governance, endpoint inventory, directory health, administration and vulnerability-assessment tooling that legitimately queries many object classes."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_directory_discovery.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized domain-inventory logs spanning several object classes from approved scanners; confirm the allowlist enrichment suppresses them."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_directory_discovery"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_directory_discovery.md"
+  events:
+    $e.metadata.event_type = "LDAP_QUERY"
+    $e.principal.user.userid = $user
+    $e.principal.hostname = $host
+    $e.additional.fields["object_class"].value.string_value = $class
+    $e.additional.fields["approved_directory_scanner"].value.bool_value = false
+  match:
+    $user, $host over 30m
+  condition:
+    $e and #class >= 4
+}

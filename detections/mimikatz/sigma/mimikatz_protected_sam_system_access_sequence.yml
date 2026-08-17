@@ -1,0 +1,22 @@
+title: "Correlates one process accessing protected SYSTEM/LSA and SAM account data."
+name: mimikatz_protected_sam_system_access_sequence
+status: experimental
+description: "Correlates one process accessing protected SYSTEM/LSA and SAM account data."
+source_yaral: "detections/mimikatz/yaral/mimikatz_protected_sam_system_access_sequence.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/mimikatz/source-analysis.md"
+procedure_ids: "P12"
+log_source_prerequisites: "Normalize Windows 4656/4663 or EDR sensitive-registry read events; preserve process ID, host, registry path, and access operation."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["REGISTRY_READ"]
+  condition: selection_event_type
+falsepositives:
+  - "Backup, disaster recovery, endpoint protection, forensic acquisition, and authorized registry inventory."
+level: high

@@ -1,0 +1,24 @@
+rule mimikatz_module_load_into_lsass_or_spooler {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects an image/DLL load event where the loading process is lsass.exe or the print spooler service, a narrower compensating signal for mimilib/mimispool-style authentication-package or print-monitor module loading."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "A DLL load into LSASS or the spooler service process is a narrow, security-sensitive event; legitimate authentication packages and print monitors are also loaded this way, so downstream signer/trust enrichment is required before action."
+    procedure_ids = "P06,P36,P44,P45"
+    log_source_prerequisites = "Sysmon Event ID 7 (image/DLL load) or equivalent EDR module-load telemetry, normalized with the loading process image path."
+    false_positives = "Legitimate LSA authentication packages/security support providers, antivirus and EDR self-injection into LSASS, and normal print-monitor or driver DLLs loaded into the spooler service."
+    references = "reports/mimikatz/source-analysis.md; https://learn.microsoft.com/windows/security/operating-system-security/sysmon/sysmon-events; public-rules/comparisons/mimikatz/mimikatz_service_driver_module_change.md"
+    validation_status = "needs_validation"
+    validation_method = "Baseline legitimate LSA SSPs and print-monitor DLLs on representative hosts using sanitized fixtures; confirm Sysmon/EDR Event ID 7 is enabled and correctly maps the loading process before use."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/mimikatz/detection-review.md"
+
+  events:
+    $e.metadata.product_event_type = "7"
+    re.regex($e.principal.process.file.full_path, `(?i)\\(lsass|spoolsv)\.exe$`)
+
+  condition:
+    $e
+}

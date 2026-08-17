@@ -1,0 +1,20 @@
+rule impacket_ad_authorization_change {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects changes to AD authorization, ownership, delegation or dMSA attributes."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "HIGH"
+  severity_rationale = "These changes can grant durable privilege."
+  procedure_ids = "IMP-10"
+  log_source_prerequisites = "DC 5136/5137 with DN, attribute, actor and old/new values."
+  false_positives = "Approved delegation and IAM workflows."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+ events:
+  $e.metadata.product_event_type = /(5136|5137)/
+  re.regex($e.target.resource.attribute.labels["attribute"], `(?i)(nTSecurityDescriptor|msDS-AllowedToActOnBehalfOfOtherIdentity|msDS-ManagedAccountPrecededByLink|msDS-DelegatedMSAState)`)
+ condition: $e
+}

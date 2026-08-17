@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Detection Research</title>
+  <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="/theme.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#/overview"><span class="brand-mark">DR</span><span>Detection<br>Research</span></a>
+    <nav>
+      <a href="#/overview" data-nav="overview">Overview</a>
+      <a href="#/tools" data-nav="tools">Tools</a>
+      <a href="#/explorer" data-nav="explorer">Signal explorer</a>
+      <a href="#/gaps" data-nav="gaps">Coverage gaps</a>
+      <a href="#/comparisons" data-nav="comparisons">Comparisons</a>
+      <a href="#/attack" data-nav="attack">ATT&amp;CK</a>
+      <a href="#/workspace" data-nav="workspace">My workspace</a>
+      <a href="#/runs" data-nav="runs">Run history</a>
+      <a href="#/sources" data-nav="sources">Source code</a>
+      <a href="#/library" data-nav="library">Artifact library</a>
+      <a href="#/telemetry" data-nav="telemetry">Telemetry</a>
+    </nav>
+    <div class="sidebar-foot"><span class="pulse"></span>Read-only repository view</div>
+  </aside>
+  <main>
+    <header class="topbar">
+      <button class="menu" aria-label="Toggle navigation">☰</button>
+      <form id="search-form"><span>⌕</span><input id="search" placeholder="Search procedures, rules, reports…" autocomplete="off"><kbd>/</kbd></form>
+      <button class="top-action" id="save-view">Save view</button><button class="top-action" id="command-button">Ctrl K</button><div class="top-meta" id="clock"></div>
+    </header>
+    <div id="app" class="page"><div class="loading">Building repository view…</div></div>
+  </main>
+  <div id="toast"></div>
+  <div id="command-palette" class="command-palette" aria-hidden="true"><div class="command-box"><input id="command-search" placeholder="Open a tool, rule, or workspace…"><div id="command-results"></div></div></div>
+  <script src="/app.js"></script>
+</body>
+</html>

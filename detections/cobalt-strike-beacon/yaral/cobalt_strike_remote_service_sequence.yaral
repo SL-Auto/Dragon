@@ -1,0 +1,28 @@
+rule cobalt_strike_remote_service_sequence {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates network share access with service installation on the target from the same account/source context."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Admin-share staging plus service creation is a high-value remote execution sequence, though deployment tools overlap."
+    procedure_ids = "CSB-030"
+    log_source_prerequisites = "Normalize target 5140/5145 and 4697/7045 with source IP/host, account/logon context, share/path, service/image and target host."
+    false_positives = "Software distribution, endpoint management, backup agents and authorized remote service administration."
+    references = "reports/cobalt-strike-beacon/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized software-deployment events and synthetic remote-service sequences."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    ($share.metadata.product_event_type = "5140" or $share.metadata.product_event_type = "5145")
+    $share.target.hostname = $host
+    $share.principal.user.userid = $user
+    ($service.metadata.product_event_type = "4697" or $service.metadata.product_event_type = "7045")
+    $service.principal.hostname = $host
+    $service.principal.user.userid = $user
+  match:
+    $host, $user over 10m
+  condition:
+    $share and $service
+}

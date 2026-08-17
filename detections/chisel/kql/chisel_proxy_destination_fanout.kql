@@ -1,0 +1,17 @@
+// source_yaral: detections/chisel/yaral/chisel_proxy_destination_fanout.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: chisel_proxy_destination_fanout
+// severity: high
+// procedure_ids: CH-P05,CH-P07
+// description: Detects one uncommon process connecting to many destinations after listener activity consistent with a dynamic proxy
+// log_source_prerequisites: EDR socket listen and outbound connection telemetry with process prevalence enrichment
+// false_positives: Browsers update agents security scanners service meshes and approved proxies
+// references: reports/chisel/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION", "NETWORK_LISTEN") or EventType in ("NETWORK_CONNECTION", "NETWORK_LISTEN")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="chisel_proxy_destination_fanout"

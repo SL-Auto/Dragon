@@ -1,0 +1,22 @@
+title: "A network-active process creates or connects to a named pipe"
+name: havoc_named_pipe_network_context
+status: experimental
+description: "A network-active process creates or connects to a named pipe"
+source_yaral: "detections/havoc/yaral/havoc_named_pipe_network_context.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/havoc/source-analysis.md"
+procedure_ids: "HV-P02,HV-P15"
+log_source_prerequisites: "EDR or Sysmon named-pipe create/connect normalized with process network telemetry"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["17", "18", "NAMED_PIPE_CONNECT", "NAMED_PIPE_CREATE", "NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Remote administration, software deployment, backup and clustered applications"
+level: high

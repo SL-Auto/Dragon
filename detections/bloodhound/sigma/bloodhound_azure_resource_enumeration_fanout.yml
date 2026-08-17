@@ -1,0 +1,22 @@
+title: "Detects one principal reading many Azure Resource Manager provider and scope families."
+name: bloodhound_azure_resource_enumeration_fanout
+status: experimental
+description: "Detects one principal reading many Azure Resource Manager provider and scope families."
+source_yaral: "detections/bloodhound/yaral/bloodhound_azure_resource_enumeration_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-018"
+log_source_prerequisites: "ARM read-plane, AzureActivity or gateway audit with principal, source, operation, provider and scope."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["AZURE_RESOURCE_READ", "AzureActivity"]
+  condition: selection_event_type
+falsepositives:
+  - "CSPM, cloud inventory, cost management and governance automation."
+level: high

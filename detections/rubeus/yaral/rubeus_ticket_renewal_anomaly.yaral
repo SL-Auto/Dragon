@@ -1,0 +1,27 @@
+rule rubeus_ticket_renewal_anomaly {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects unusual Kerberos ticket-renewal (4770) volume by one source and identity, separated from service-ticket (4769) acquisition volume."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Renewal fan-out is a weaker generic-volume lead than a ticket-property-specific acquisition signal; splitting it from 4769 acquisition avoids conflating two different Kerberos operations under one combined threshold."
+    procedure_ids = "PROC-002"
+    log_source_prerequisites = "Normalize DC Security 4770 with account, source IP, service, and result."
+    false_positives = "Long-running services, SSO session-renewal components, and scheduled tasks that legitimately renew tickets repeatedly."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_service_ticket_or_renewal_anomaly.md"
+    validation_status = "needs_validation"
+    validation_method = "Measure per-account/source renewal baselines and replay near-threshold fixtures before enabling; the 15-event/10-minute threshold is a starting point and requires tenant-specific tuning."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "4770"
+    $e.principal.ip = $source
+    $e.target.user.userid = $user
+  match:
+    $source, $user over 10m
+  outcome:
+    $event_count = count($e.metadata.id)
+  condition:
+    $e and $event_count >= 15
+}

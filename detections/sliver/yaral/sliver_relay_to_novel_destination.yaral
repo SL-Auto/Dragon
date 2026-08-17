@@ -1,0 +1,31 @@
+rule sliver_relay_to_novel_destination {
+  meta:
+    author = "Detection Research Agent"
+    description = "A process that accepted an inbound connection also makes an outbound connection to a distinct destination in the same window"
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Requiring an accepted inbound connection, not merely a bound listener, paired with a distinct outbound destination is closer to the observable relay/forwarding effect than listen-plus-any-egress; compensates for the broad listener rule where legitimate proxies share the bare listen+egress shape"
+    procedure_ids = "PROC-005,PROC-021"
+    log_source_prerequisites = "EDR/firewall inbound-accept and outbound-connect telemetry sharing a stable process entity, with source and destination IP"
+    false_positives = "Legitimate reverse proxies, load balancers, VPN concentrators, and remote-support/relay software"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_listener_with_egress.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "accepted_as_compensating_rule_from_unvalidated_proposal"
+  events:
+    $in.metadata.event_type = "NETWORK_CONNECTION"
+    $in.network.direction = "INBOUND"
+    $in.principal.hostname = $host
+    $in.principal.process.product_specific_process_id = $pid
+    $in.principal.ip = $inbound_source
+
+    $out.metadata.event_type = "NETWORK_CONNECTION"
+    $out.network.direction = "OUTBOUND"
+    $out.principal.hostname = $host
+    $out.principal.process.product_specific_process_id = $pid
+    $out.target.ip = $outbound_destination
+  match: $host, $pid over 10m
+  condition: $in and $out and $inbound_source != $outbound_destination
+}

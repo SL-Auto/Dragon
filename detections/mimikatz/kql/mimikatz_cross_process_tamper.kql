@@ -1,0 +1,17 @@
+// source_yaral: detections/mimikatz/yaral/mimikatz_cross_process_tamper.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: mimikatz_cross_process_tamper
+// severity: high
+// procedure_ids: P22,P27,P28,P32,P40
+// description: Detects endpoint-reported cross-process memory tampering affecting security-sensitive processes.
+// log_source_prerequisites: EDR process tamper telemetry normalized with source and target processes and operation.
+// false_positives: Approved security sensors, diagnostics, accessibility and support tooling.
+// references: reports/mimikatz/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("PROCESS_OPEN") or EventType in ("PROCESS_OPEN")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="mimikatz_cross_process_tamper"

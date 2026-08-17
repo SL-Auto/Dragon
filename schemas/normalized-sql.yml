@@ -1,0 +1,9 @@
+schema_version: 1
+id: normalized-sql
+language: ANSI-style SQL
+role: secondary
+default_dataset: normalized_events
+required_columns: [event_time, product_event_type, event_type, hostname, user_id, process_id, source, target, raw_event]
+correlation: CTEs, self-joins, grouped windows and dialect-specific timestamp arithmetic
+absence_logic: NOT EXISTS only with complete source and explicit time bounds
+shared_limitations: [window syntax differs by engine, arrays and regex are dialect-specific, schema is hypothetical until mapped]

@@ -1,0 +1,30 @@
+rule cobalt_strike_sensitive_file_activity {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects sensitive file read/write/rename activity followed by outbound network activity from the same process."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Sensitive file access plus egress can indicate collection or ingress effects, while backup/sync tools overlap."
+    procedure_ids = "CSB-024,CSB-025"
+    log_source_prerequisites = "Normalize FILE_READ/FILE_WRITE/FILE_RENAME and process-attributed NETWORK_CONNECTION with stable process entity, path sensitivity and direction."
+    false_positives = "Backup, synchronization, DLP, indexing, document management and approved transfer tools."
+    references = "reports/cobalt-strike-beacon/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use non-sensitive test documents labelled as sensitive and fabricated egress events."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    ($file.metadata.event_type = "FILE_READ" or $file.metadata.event_type = "FILE_WRITE" or $file.metadata.event_type = "FILE_RENAME")
+    $file.principal.hostname = $host
+    $file.principal.process.entity_id = $process
+    $file.target.file.sensitivity = "HIGH"
+    $net.metadata.event_type = "NETWORK_CONNECTION"
+    $net.network.direction = "OUTBOUND"
+    $net.principal.hostname = $host
+    $net.principal.process.entity_id = $process
+  match:
+    $host, $process over 15m
+  condition:
+    $file and $net
+}

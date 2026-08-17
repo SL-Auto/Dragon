@@ -1,0 +1,17 @@
+// source_yaral: detections/bloodhound/yaral/bloodhound_service_protocol_probe_fanout.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: bloodhound_service_protocol_probe_fanout
+// severity: medium
+// procedure_ids: BH-013
+// description: Detects one process probing WebDAV, SMB, LDAP and LDAPS capability across many hosts.
+// log_source_prerequisites: Process-attributed network events with target host, port, protocol and connection result.
+// false_positives: Vulnerability scanners, service inventory and network monitoring.
+// references: reports/bloodhound/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION") or EventType in ("NETWORK_CONNECTION")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="bloodhound_service_protocol_probe_fanout"

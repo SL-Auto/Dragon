@@ -1,0 +1,28 @@
+rule havoc_token_authentication_sequence {
+  meta:
+    author = "Detection Research Agent"
+    description = "Explicit-credential or token-manipulation activity is followed by execution under the same account"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Correlates credential or token effects with resulting execution"
+    procedure_ids = "HV-P12"
+    log_source_prerequisites = "Windows Security 4648 or tenant-verified EDR token manipulation and process creation with account logon ID enrichment"
+    false_positives = "RunAs, service accounts, deployment and approved administrative automation"
+    references = "reports/havoc/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/havoc/detection-review.md"
+  events:
+    re.regex($a.metadata.product_event_type, `(?i)^(4648|TOKEN_DUPLICATE|TOKEN_IMPERSONATION|TOKEN_CREATE)$`)
+    $a.target.hostname = $host
+    $a.target.user.userid = $account
+
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    $p.principal.user.userid = $account
+  match:
+    $host, $account over 10m
+  condition:
+    $a and $p
+}

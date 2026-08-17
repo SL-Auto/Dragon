@@ -1,0 +1,22 @@
+title: "Surfaces named-pipe or RPC activity associated with authentication coercion or remote control context."
+name: mimikatz_rpc_pipe_activity
+status: experimental
+description: "Surfaces named-pipe or RPC activity associated with authentication coercion or remote control context."
+source_yaral: "detections/mimikatz/yaral/mimikatz_rpc_pipe_activity.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md"
+procedure_ids: "P35,P38"
+log_source_prerequisites: "Sysmon 17/18 or EDR RPC and network telemetry with process, endpoint and peer."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["17", "18"]
+  condition: selection_event_type
+falsepositives:
+  - "Normal Windows RPC, print, EFS and management traffic."
+level: medium

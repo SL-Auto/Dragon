@@ -1,0 +1,32 @@
+rule impacket_rapid_scheduled_task_create_and_run {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates rapid scheduled-task registration and execution; deletion is not required because cleanup may fail or telemetry may be missing."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Rapid task creation and execution is a durable remote-execution signal, though orchestration tools can overlap."
+    procedure_ids = "IMP-04"
+    log_source_prerequisites = "Normalize Task Scheduler Operational or Security 4698/4699 events with task name, host, action, user, and timestamp."
+    false_positives = "Installers, enterprise schedulers, deployment systems, and ephemeral maintenance tasks."
+    references = "reports/impacket/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay approved task telemetry and synthetic lifecycle fixtures; never execute Impacket or create a production task."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/impacket/detection-review.md"
+
+  events:
+    $create.metadata.product_event_type = /(106|4698)/
+    $create.target.hostname = $host
+    $create.target.resource.name = $task
+
+    $run.metadata.product_event_type = /(100|200)/
+    $run.target.hostname = $host
+    $run.target.resource.name = $task
+
+  match:
+    $host, $task over 5m
+
+  condition:
+    $create and $run
+}

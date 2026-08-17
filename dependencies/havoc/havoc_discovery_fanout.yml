@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: havoc
+rule_name: havoc_discovery_fanout
+canonical_path: detections/havoc/yaral/havoc_discovery_fanout.yaral
+canonical_sha256: 599479a3cf1a171ace75e84b6eaf8e1b470b022586723a1bd5d1df55305b1d4b
+description: "One process performs rapid directory SMB or RPC discovery across multiple targets"
+severity: medium
+procedure_ids: ["HV-P04", "HV-P13"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed LDAP SMB RPC or discovery events with target identity"
+atomic_event_types: ["PROCESS_DISCOVERY", "RPC_CALL", "SMB_SESSION"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.process.product_specific_process_id", "target.resource.name"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Asset inventory, vulnerability scanners, identity governance and administrative scripts"
+references: "reports/havoc/source-analysis.md"
+translations:
+  spl: { path: "detections/havoc/spl/havoc_discovery_fanout.spl", sha256: 567c55ffc48d8af0d0600b8525fe0b08f94cc64c47fd0b479a1c104d03250301, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_discovery_fanout.kql", sha256: d8aacae2607b6240930ff09a322d8848e4bb83af676f9ba8f5043272ac30827e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_discovery_fanout.sql", sha256: af3c2829e0656658816b1b84be7a12898b280e61fb16869ef390005b850feeb1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_discovery_fanout.eql", sha256: 980e8e5436919c840d34f2dae6da167a3cea482d75d3499d16751eeb830ac67d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_discovery_fanout.yml", sha256: 10c7c13abd99b1d6c8ff3d3fd4d7c45a1542442c85aa397c7f670d18351a1eb2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

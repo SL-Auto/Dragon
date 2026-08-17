@@ -1,0 +1,14 @@
+// source_yaral: detections/havoc/yaral/havoc_discovery_fanout.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: havoc_discovery_fanout
+// severity: medium
+// procedure_ids: HV-P04,HV-P13
+// description: One process performs rapid directory SMB or RPC discovery across multiple targets
+// log_source_prerequisites: Process-attributed LDAP SMB RPC or discovery events with target identity
+// false_positives: Asset inventory, vulnerability scanners, identity governance and administrative scripts
+// references: reports/havoc/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("PROCESS_DISCOVERY", "RPC_CALL", "SMB_SESSION") or event.action in ("PROCESS_DISCOVERY", "RPC_CALL", "SMB_SESSION")

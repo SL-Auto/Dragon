@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_module_load_into_lsass_or_spooler
+canonical_path: detections/mimikatz/yaral/mimikatz_module_load_into_lsass_or_spooler.yaral
+canonical_sha256: 92c8c794ad8d9815c6ab0323bdb0371005e6bc89071cabe85b46ea0e2045f4bc
+description: "Detects an image/DLL load event where the loading process is lsass.exe or the print spooler service, a narrower compensating signal for mimilib/mimispool-style authentication-package or print-monitor module loading."
+severity: high
+procedure_ids: ["P06", "P36", "P44", "P45"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Sysmon Event ID 7 (image/DLL load) or equivalent EDR module-load telemetry, normalized with the loading process image path."
+atomic_event_types: ["7"]
+required_udm_fields: ["metadata.product_event_type", "principal.process.file.full_path"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Legitimate LSA authentication packages/security support providers, antivirus and EDR self-injection into LSASS, and normal print-monitor or driver DLLs loaded into the spooler service."
+references: "reports/mimikatz/source-analysis.md; https://learn.microsoft.com/windows/security/operating-system-security/sysmon/sysmon-events; public-rules/comparisons/mimikatz/mimikatz_service_driver_module_change.md"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_module_load_into_lsass_or_spooler.spl", sha256: 3b501b42f72a9f4c2a18c601ee1f52f680da7aba8395d574b6306a6cf187044d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_module_load_into_lsass_or_spooler.kql", sha256: d5186fbdd2c506f4b4efc66ebbb0925f64e490b9fbdba64637690ef4f0c4b54b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_module_load_into_lsass_or_spooler.sql", sha256: 7e69bbf97d2560e23a752b4d40de920a212a7947961d32340d242241c53c337b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_module_load_into_lsass_or_spooler.eql", sha256: 8f5f5af7d779cfd96af8874564dad5974bc75b4f7fde6b9397944afee24edf76, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_module_load_into_lsass_or_spooler.yml", sha256: bf74813f97e81a8c17fc28e34f92217fd47828bc186cfba173283f04f9cd2dcc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

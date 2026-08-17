@@ -1,0 +1,25 @@
+rule impacket_suspicious_service_control {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects service creation or configuration following a remote logon."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "HIGH"
+  severity_rationale = "Remote service changes are a powerful execution primitive."
+  procedure_ids = "IMP-03"
+  log_source_prerequisites = "Windows 4624 and 4697/7045 with host, account and source."
+  false_positives = "Software deployment and remote support."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+ events:
+  $a.metadata.product_event_type = "4624"
+  $a.target.hostname = $host
+  $a.target.user.userid = $user
+  $s.metadata.product_event_type = /(4697|7045)/
+  $s.target.hostname = $host
+  $s.principal.user.userid = $user
+ match: $host, $user over 10m
+ condition: $a and $s
+}

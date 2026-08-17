@@ -1,0 +1,29 @@
+rule rubeus_service_ticket_or_renewal_anomaly {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects unusual service-ticket (4769) acquisition volume by one source and identity. Split from ticket renewal, which is a separately scored signal covered by rubeus_ticket_renewal_anomaly, and complemented by the ticket-property-specific rubeus_rc4_service_ticket_fanout."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Generic 4769 fan-out is a useful lead but common in service and SSO workflows and does not use ticket-property specificity; kept as a broad compensating signal alongside the RC4-specific and LDAP-sequence rules."
+    procedure_ids = "PROC-002"
+    log_source_prerequisites = "Normalize DC Security 4769 with account, source IP, service, result, and encryption type."
+    false_positives = "SSO, service accounts, application servers, and scanners generating broad service-ticket fan-out."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_service_ticket_or_renewal_anomaly.md"
+    validation_status = "needs_validation"
+    validation_method = "Measure account/source baselines and replay near-threshold fixtures. Confirm this rule, rubeus_ticket_renewal_anomaly, and rubeus_rc4_service_ticket_fanout are all enabled together, since renewal (4770) and the RC4-specific branch were split out of this rule's scope on 2026-08-16."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "4769"
+    $e.principal.ip = $source
+    $e.target.user.userid = $user
+    $e.target.resource.name = $service
+  match:
+    $source, $user over 10m
+  outcome:
+    $event_count = count($e.metadata.id)
+    $service_count = count_distinct($service)
+  condition:
+    $e and ($event_count >= 20 or $service_count >= 10)
+}

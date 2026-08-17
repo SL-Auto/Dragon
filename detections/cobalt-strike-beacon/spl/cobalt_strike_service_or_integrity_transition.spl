@@ -1,0 +1,17 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_service_or_integrity_transition.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_service_or_integrity_transition
+# severity: high
+# procedure_ids: CSB-020
+# description: Detects a new service or unusual medium-to-high/SYSTEM integrity transition correlated to process execution.
+# log_source_prerequisites: Normalize Windows 4697/System 7045 and EDR INTEGRITY_TRANSITION with subject, service, image, source/child process, old/new integrity and host.
+# false_positives: Software deployment, driver installation, endpoint management and approved elevation tools.
+# references: reports/cobalt-strike-beacon/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "4697", "7045", "INTEGRITY_TRANSITION")
+| eval canonical_rule="cobalt_strike_service_or_integrity_transition"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

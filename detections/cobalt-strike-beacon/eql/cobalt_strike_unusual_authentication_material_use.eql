@@ -1,0 +1,14 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_unusual_authentication_material_use.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: cobalt_strike_unusual_authentication_material_use
+// severity: high
+// procedure_ids: CSB-013
+// description: Surfaces Kerberos or NTLM authentication whose endpoint/process context is rare or inconsistent with the account baseline.
+// log_source_prerequisites: Normalize DC 4768/4769/4776 and endpoint 4624 with account, source, service, authentication package and identity-baseline enrichment.
+// false_positives: New hosts, password rotation, service migration, disaster recovery, legacy NTLM and identity infrastructure.
+// references: reports/cobalt-strike-beacon/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("4624", "4768", "4769", "4776") or event.action in ("4624", "4768", "4769", "4776")

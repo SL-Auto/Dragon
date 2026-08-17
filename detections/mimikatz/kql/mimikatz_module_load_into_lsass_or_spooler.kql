@@ -1,0 +1,18 @@
+// source_yaral: detections/mimikatz/yaral/mimikatz_module_load_into_lsass_or_spooler.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: mimikatz_module_load_into_lsass_or_spooler
+// severity: high
+// procedure_ids: P06,P36,P44,P45
+// description: Detects an image/DLL load event where the loading process is lsass.exe or the print spooler service.
+// log_source_prerequisites: Sysmon Event ID 7 (image/DLL load) or equivalent EDR module-load telemetry, normalized with the loading process image path.
+// false_positives: Legitimate LSA authentication packages/security support providers, antivirus and EDR self-injection into LSASS, and normal print-monitor or driver DLLs loaded into the spooler service.
+// references: reports/mimikatz/source-analysis.md; public-rules/comparisons/mimikatz/mimikatz_service_driver_module_change.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling. Raw event ID "7" must be confirmed to mean Sysmon Image Load in the target sensor.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType == "7"
+| where ProcessFilePath matches regex @"(?i)\\(lsass|spoolsv)\.exe$"
+| summarize EventCount=count() by Hostname, ProcessFilePath
+| where EventCount > 0
+| extend CanonicalRule="mimikatz_module_load_into_lsass_or_spooler"

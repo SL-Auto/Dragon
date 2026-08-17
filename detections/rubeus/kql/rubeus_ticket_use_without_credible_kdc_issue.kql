@@ -1,0 +1,17 @@
+// source_yaral: detections/rubeus/yaral/rubeus_ticket_use_without_credible_kdc_issue.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: rubeus_ticket_use_without_credible_kdc_issue
+// severity: high
+// procedure_ids: PROC-008,PROC-009
+// description: Detects anomalous Kerberos-authenticated service use without a corresponding observed service-ticket issue, gated on an explicit domain-controller collection-health signal.
+// log_source_prerequisites: Centralize complete 4769 telemetry and resource-side Kerberos service-use/PAC anomaly data with normalized user, source, and service, plus a collection-health event proving all authoritative domain controllers reported for the window.
+// false_positives: Missing DC logs, cached tickets, referrals, cross-realm activity, and parser mismatches; the collection-health gate mitigates but does not eliminate these.
+// references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_use_without_credible_kdc_issue.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend. The absence check (zero matching 4769 events) and the required collection-health gate need `join kind=leftanti` plus a health-event existence check, not a plain filter.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("4769", "USER_LOGIN") or EventType in ("4769", "USER_LOGIN")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="rubeus_ticket_use_without_credible_kdc_issue"

@@ -1,0 +1,22 @@
+title: "Detects non-server processes listening on SMB or relay-associated service ports."
+name: impacket_unusual_protocol_listener
+status: experimental
+description: "Detects non-server processes listening on SMB or relay-associated service ports."
+source_yaral: "detections/impacket/yaral/impacket_unusual_protocol_listener.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-02"
+log_source_prerequisites: "EDR network-listen events with process, host, port and direction."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Approved file servers, development services and security tools."
+level: medium

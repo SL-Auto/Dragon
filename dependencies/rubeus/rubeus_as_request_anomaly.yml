@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_as_request_anomaly
+canonical_path: detections/rubeus/yaral/rubeus_as_request_anomaly.yaral
+canonical_sha256: 729c1bcd9139583935f6c96e78cc35b0ea7a8a52d8e2518bd02cf9bd4dafc3cf
+description: "Detects one source making AS requests for multiple principals or atypical preauthentication patterns."
+severity: high
+procedure_ids: ["PROC-001"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize DC Security 4768 with source IP, target account, preauthentication type, result, and encryption type."
+atomic_event_types: ["4768"]
+required_udm_fields: ["metadata.product_event_type", "principal.ip", "target.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Identity monitoring, password audits, migration, and authorized assessment."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_as_request_anomaly.spl", sha256: 89e3ea355dd1ceb8fce3b5939c3ed69ae125ba144a3827fc45235dfdd89a03b7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_as_request_anomaly.kql", sha256: 3dce91066eb1cac252a9fd14a95db2cf430ec29ece400ee0418c20e1ba9aed87, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_as_request_anomaly.sql", sha256: 408be64964c018936a7cb49ab410c63018ee3184f7041b8f2794994f4d20794b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_as_request_anomaly.eql", sha256: 8007b5252aea6ad4ce726a09d0d79ff6a0d450b96f5ace898cf7afdc91b1e0b2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_as_request_anomaly.yml", sha256: 00324c764d2ba5a97ddb5225938f6802ecc4c89c7dfb3ce6f2996d6e322d4522, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

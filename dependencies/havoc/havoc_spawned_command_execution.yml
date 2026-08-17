@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: havoc
+rule_name: havoc_spawned_command_execution
+canonical_path: detections/havoc/yaral/havoc_spawned_command_execution.yaral
+canonical_sha256: 4a237eff5ac3921ab218accbe7de529572d2b679713ca7df325bff547ba1763b
+description: "A recurrently networked process spawns a command or script interpreter"
+severity: high
+procedure_ids: ["HV-P05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process creation and process-attributed network telemetry with stable parent identity"
+atomic_event_types: ["NETWORK_CONNECTION", "PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.parent_process.product_specific_process_id", "principal.process.product_specific_process_id", "target.process.file.full_path"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Management agents, CI workers and automation platforms"
+references: "reports/havoc/source-analysis.md"
+translations:
+  spl: { path: "detections/havoc/spl/havoc_spawned_command_execution.spl", sha256: 268408530e913e19676b2d5c09bb379b6b86979f1750395ed3357e15df2a4ac7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_spawned_command_execution.kql", sha256: 339628651a29a15fe7b0b5f26554b18e6bae08702ad63f0d1e71a378e6a78dc1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_spawned_command_execution.sql", sha256: 80c20a634f793531f8c5899e4ea5542c3c7bd9caab090acc55eba4052fcda218, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_spawned_command_execution.eql", sha256: 8a0374e192e8bcd6a9cd4e66bdbf24c3822efb32b6336c9530d2a630a74f2d02, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_spawned_command_execution.yml", sha256: 9aac983580fdb8197fcb35a5660a78c2642acf98ec3b46ba6fe231771a5ad7f4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

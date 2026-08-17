@@ -1,0 +1,22 @@
+title: "Surfaces vendor collection telemetry for screen, clipboard, input or browser-secret access by an uncommon process."
+name: cobalt_strike_user_data_collection
+status: experimental
+description: "Surfaces vendor collection telemetry for screen, clipboard, input or browser-secret access by an uncommon process."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_user_data_collection.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-027"
+log_source_prerequisites: "Normalize EDR SCREEN_CAPTURE, CLIPBOARD_READ, INPUT_CAPTURE or BROWSER_SECRET_READ with process, user/session, collection type and signer/prevalence."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["BROWSER_SECRET_READ", "CLIPBOARD_READ", "INPUT_CAPTURE", "SCREEN_CAPTURE"]
+  condition: selection_event_type
+falsepositives:
+  - "Accessibility, conferencing, remote support, password managers, browsers and approved monitoring."
+level: high

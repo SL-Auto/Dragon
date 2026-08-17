@@ -1,0 +1,17 @@
+// source_yaral: detections/mimikatz/yaral/mimikatz_rpc_pipe_activity.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: mimikatz_rpc_pipe_activity
+// severity: medium
+// procedure_ids: P35,P38
+// description: Surfaces named-pipe or RPC activity associated with authentication coercion or remote control context.
+// log_source_prerequisites: Sysmon 17/18 or EDR RPC and network telemetry with process, endpoint and peer.
+// false_positives: Normal Windows RPC, print, EFS and management traffic.
+// references: reports/mimikatz/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("17", "18") or EventType in ("17", "18")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="mimikatz_rpc_pipe_activity"

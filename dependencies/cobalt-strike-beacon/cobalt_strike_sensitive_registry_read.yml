@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_sensitive_registry_read
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_registry_read.yaral
+canonical_sha256: a76d3807c31c0247e77123714f6ab09408f0ccfc7e149776f96951d5cb62b6ee
+description: "Surfaces registry read/enumeration of security-sensitive configuration by an uncommon process."
+severity: medium
+procedure_ids: ["CSB-023"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize EDR REGISTRY_READ or scoped 4656/4663 with process, user, hive/key/value, operation and sensitivity classification."
+atomic_event_types: ["REGISTRY_READ"]
+required_udm_fields: ["metadata.event_type", "principal.process.file.is_signed", "principal.process.file.prevalence", "target.resource.sensitivity"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Inventory, compliance, EDR, backup, forensics and operating-system components."
+references: "reports/cobalt-strike-beacon/source-analysis.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_sensitive_registry_read.spl", sha256: 7f932d6921ad86d58fc0d0a3dd4ebdd116e78d9813b2548efa8db836dc69639e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_sensitive_registry_read.kql", sha256: eaa436da183df69ca6d4dda20217a07796d6bdfc5c02035b7032680ef050306b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_sensitive_registry_read.sql", sha256: 577d85cf13c1f5f5792934b6c3e6fc5985102dc625b539698765a4acf7c2ba70, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_sensitive_registry_read.eql", sha256: e8e03f5fc71142d72899e4e0c154218dbfae79f97304b4b81ceb8c86fb5c1a78, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_sensitive_registry_read.yml", sha256: de841a3e103b56f942396a66b744c862c213e0976c0caf2abd42bd3186da770a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

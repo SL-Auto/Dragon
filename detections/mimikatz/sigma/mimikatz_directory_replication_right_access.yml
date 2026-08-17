@@ -1,0 +1,22 @@
+title: "Detects directory replication extended-right access for contextual triage; approved DC and sync context must be applied as narrow downstream enrichment."
+name: mimikatz_directory_replication_right_access
+status: experimental
+description: "Detects directory replication extended-right access for contextual triage; approved DC and sync context must be applied as narrow downstream enrichment."
+source_yaral: "detections/mimikatz/yaral/mimikatz_directory_replication_right_access.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md; https://learn.microsoft.com/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4662"
+procedure_ids: "P14"
+log_source_prerequisites: "Normalize domain-controller Security Event ID 4662 with subject, source host, object, access mask, and replication-right GUIDs."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4662"]
+  condition: selection_event_type
+falsepositives:
+  - "Approved identity synchronization, migration, backup, recovery, and directory-health products."
+level: high

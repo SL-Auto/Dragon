@@ -1,0 +1,22 @@
+title: "Detects a low-prevalence process establishing sustained directory or cloud management network context."
+name: bloodhound_collector_process_network_context
+status: experimental
+description: "Detects a low-prevalence process establishing sustained directory or cloud management network context."
+source_yaral: "detections/bloodhound/yaral/bloodhound_collector_process_network_context.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-001"
+log_source_prerequisites: "EDR process creation and process-attributed network telemetry with signer/prevalence and destination service classification."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "PROCESS_LAUNCH"]
+  condition: selection_event_type
+falsepositives:
+  - "Identity inventory, endpoint management, directory administration and cloud governance tooling."
+level: medium

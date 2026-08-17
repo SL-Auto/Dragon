@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "elastic-security",
+      "enabled": true,
+      "repository": "https://github.com/elastic/detection-rules.git",
+      "default_branch": "main",
+      "formats": ["elastic-eql"],
+      "include_paths": ["rules", "rules_building_block", "LICENSE.txt", "NOTICE.txt"],
+      "extensions": [".toml", ".txt"],
+      "license": "Elastic-2.0",
+      "license_url": "https://github.com/elastic/detection-rules/blob/main/LICENSE.txt",
+      "notes": "Filter indexed rule objects by declared EQL language; TOML metadata is part of rule semantics."
+    },
+    {
+      "id": "microsoft-sentinel",
+      "enabled": true,
+      "repository": "https://github.com/Azure/Azure-Sentinel.git",
+      "default_branch": "master",
+      "formats": ["kql"],
+      "include_paths": ["Solutions", "Detections", "LICENSE"],
+      "file_patterns": ["^Solutions/.*/Analytic Rules/.*\\.ya?ml$", "^Detections/.*\\.ya?ml$", "^LICENSE$"],
+      "extensions": [".yaml", ".yml", ".txt", ""],
+      "license": "MIT",
+      "license_url": "https://github.com/Azure/Azure-Sentinel/blob/master/LICENSE",
+      "notes": "Retain full analytic YAML because connector, entity, schedule, and query metadata affect fidelity."
+    },
+    {
+      "id": "splunk-security-content",
+      "enabled": true,
+      "repository": "https://github.com/splunk/security_content.git",
+      "default_branch": "develop",
+      "formats": ["spl"],
+      "include_paths": ["detections", "macros", "lookups", "data_sources", "baselines", "LICENSE"],
+      "extensions": [".yaml", ".yml", ".csv", ".txt", ""],
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/splunk/security_content/blob/develop/LICENSE",
+      "notes": "Macros, lookups, data sources, and baselines are retained dependencies, not independent detections."
+    },
+    {
+      "id": "chronicle-community",
+      "enabled": true,
+      "repository": "https://github.com/chronicle/detection-rules.git",
+      "default_branch": "main",
+      "use_wsl": true,
+      "formats": ["yara-l"],
+      "include_paths": ["rules/community", "LICENSE"],
+      "extensions": [".yaral", ".md", ".yaml", ".csv", ".txt", ""],
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/chronicle/detection-rules/blob/main/LICENSE",
+      "notes": "Public examples/community content only; excludes non-public Google SecOps Curated Detections. Retain referenced lists, tables, and metadata because some YARA-L rules depend on them."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+schema_version: 1
+tool_id: <tool>
+name: "<name>"
+lifecycle_status: <state>
+analyzed_revision: "<revision>"
+context_entry_points: {}
+counts: {}
+artifact_hashes: {}
+rules: []
+unresolved: {}

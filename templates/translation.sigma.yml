@@ -1,0 +1,20 @@
+title: <Rule title>
+id: <stable UUID>
+status: experimental
+description: <Detection intent>
+references:
+  - <source references>
+tags:
+  - source_yaral:detections/<tool>/yaral/<rule_name>.yaral
+  - translation_status:experimental_needs_validation
+  - fidelity:full|partial|unsupported
+  - assumptions_and_gaps:<Sigma/backend limitations>
+logsource:
+  category: <category>
+detection:
+  selection:
+    <field>: <value>
+  condition: selection
+falsepositives:
+  - <false positive>
+level: <critical|high|medium|low>

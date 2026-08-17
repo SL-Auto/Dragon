@@ -1,0 +1,22 @@
+rule impacket_suspicious_kerberos_requests {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects high-volume or uncommon Kerberos ticket-request patterns requiring investigation."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "MEDIUM"
+  severity_rationale = "Ticket enumeration and unusual options can indicate credential access."
+  procedure_ids = "IMP-11"
+  log_source_prerequisites = "DC 4768/4769/4771 with client, account, service, encryption and options."
+  false_positives = "Service discovery, application startup and authentication troubleshooting."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+ events:
+  $e.metadata.product_event_type = /(4768|4769|4771)/
+  $e.principal.ip = $src
+  $e.principal.user.userid = $user
+ match: $src, $user over 5m
+ condition: #e > 30
+}

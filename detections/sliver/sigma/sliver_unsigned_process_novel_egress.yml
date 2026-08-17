@@ -1,0 +1,22 @@
+title: "An unsigned, newly launched process establishes outbound network activity to the same destination more than once"
+name: sliver_unsigned_process_novel_egress
+status: experimental
+description: "An unsigned, newly launched process establishes outbound network activity to the same destination more than once"
+source_yaral: "detections/sliver/yaral/sliver_unsigned_process_novel_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-001"
+log_source_prerequisites: "Process launch telemetry with code-signature verification status, plus process-attributed outbound network telemetry with destination"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["PROCESS_LAUNCH", "NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Unsigned internal tooling, scripts, and freshly built or unpackaged software making outbound connections"
+level: medium

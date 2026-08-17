@@ -1,0 +1,26 @@
+rule cobalt_strike_discovery_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects port/network discovery fan-out from one process without relying on Beacon command names."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Rapid multi-target connection attempts can reveal discovery but overlap scanners and orchestration."
+    procedure_ids = "CSB-021"
+    log_source_prerequisites = "Normalize process-attributed NETWORK_CONNECTION attempts including failures with destination IP/port and stable process entity."
+    false_positives = "Vulnerability scanners, monitoring, software distribution, service discovery and network management."
+    references = "reports/cobalt-strike-beacon/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use authorized scanner baselines and synthetic fan-out records."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.principal.hostname = $host
+    $e.principal.process.entity_id = $process
+    $e.target.ip = $target
+  match:
+    $host, $process over 5m
+  condition:
+    #target >= 20
+}

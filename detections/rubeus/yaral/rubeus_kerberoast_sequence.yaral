@@ -1,0 +1,32 @@
+rule rubeus_kerberoast_sequence {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates LDAP SPN discovery with service-ticket fan-out by the same host and user."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Discovery followed by broad service-ticket requests is stronger than encryption type or volume alone."
+    procedure_ids = "PROC-004"
+    log_source_prerequisites = "Normalize directory-side LDAP filters and 4769 with host, user, and service."
+    false_positives = "Service inventory, monitoring, identity governance, and authorized assessment."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+    validation_status = "needs_validation"
+    validation_method = "Test missing LDAP visibility and approved inventory sequences separately."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $ldap.metadata.product_event_type = "LDAP_SEARCH"
+    re.regex($ldap.additional.fields["ldap_filter"].value.string_value, `servicePrincipalName`) nocase
+    $ldap.principal.hostname = $host
+    $ldap.principal.user.userid = $user
+    $tgs.metadata.product_event_type = "4769"
+    $tgs.principal.hostname = $host
+    $tgs.target.user.userid = $user
+    $tgs.target.resource.name = $service
+  match:
+    $host, $user over 15m
+  outcome:
+    $services = count_distinct($service)
+  condition:
+    $ldap and $tgs and $services >= 5
+}

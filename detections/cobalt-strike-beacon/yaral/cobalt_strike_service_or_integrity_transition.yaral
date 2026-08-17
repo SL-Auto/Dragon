@@ -1,0 +1,21 @@
+rule cobalt_strike_service_or_integrity_transition {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a new service or unusual medium-to-high/SYSTEM integrity transition correlated to process execution."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Service creation and unexpected integrity transitions are important elevation effects but legitimate management overlaps."
+    procedure_ids = "CSB-020"
+    log_source_prerequisites = "Normalize Windows 4697/System 7045 and EDR INTEGRITY_TRANSITION with subject, service, image, source/child process, old/new integrity and host."
+    false_positives = "Software deployment, driver installation, endpoint management and approved elevation tools."
+    references = "reports/cobalt-strike-beacon/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized service-deployment and synthetic integrity-transition events."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    ($e.metadata.product_event_type = "4697" or $e.metadata.product_event_type = "7045" or $e.metadata.event_type = "INTEGRITY_TRANSITION")
+  condition:
+    $e
+}

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: havoc
+rule_name: havoc_token_authentication_sequence
+canonical_path: detections/havoc/yaral/havoc_token_authentication_sequence.yaral
+canonical_sha256: fd1f4115a1db451e52e8dbb0ff638e335ed82c1c054bc03a1fd1e9302e3b260a
+description: "Explicit-credential or token-manipulation activity is followed by execution under the same account"
+severity: high
+procedure_ids: ["HV-P12"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Windows Security 4648 or tenant-verified EDR token manipulation and process creation with account logon ID enrichment"
+atomic_event_types: ["PROCESS_LAUNCH", "TOKEN_CREATE", "TOKEN_DUPLICATE", "TOKEN_IMPERSONATION"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "principal.hostname", "principal.user.userid", "target.hostname", "target.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "RunAs, service accounts, deployment and approved administrative automation"
+references: "reports/havoc/source-analysis.md"
+translations:
+  spl: { path: "detections/havoc/spl/havoc_token_authentication_sequence.spl", sha256: c448da4b50821efc0951b55f23a30c1261103351edea2a89de3dad67033a27ae, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_token_authentication_sequence.kql", sha256: 82fad506dd451a41fcc9ca354e65ec1399506cb314ef2cffb60cda7e7cf276a6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_token_authentication_sequence.sql", sha256: 9f5084d9ce2bd9e352e6e2bd1c25040ac03317a9222871ea76b4c9f05596b244, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_token_authentication_sequence.eql", sha256: 0bf1ad91319c66e88c515205347ea04b795a51e3ae4cde057aaa73c335111309, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_token_authentication_sequence.yml", sha256: d08006919394725de32fa20c6c0cd183db3207dc00816f78f32fb6f3b64518dc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

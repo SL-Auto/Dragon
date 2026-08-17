@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_cross_process_injection
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_cross_process_injection.yaral
+canonical_sha256: 2bcdf7155871ed5de50630725254560998b72cd42c68c34730311dfc791cc79c
+description: "Detects cross-process access followed by remote thread or executable-memory activity in the same target process."
+severity: high
+procedure_ids: ["CSB-018", "CSB-019"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize Sysmon 8/10 or EDR PROCESS_OPEN, REMOTE_THREAD and EXECUTABLE_MEMORY with stable source and target process entities."
+atomic_event_types: ["EXECUTABLE_MEMORY", "PROCESS_OPEN", "REMOTE_THREAD"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.entity_id", "target.process.entity_id"]
+correlation_window: "2m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "EDR, debuggers, accessibility tools, application instrumentation and authorized diagnostics."
+references: "reports/cobalt-strike-beacon/source-analysis.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_cross_process_injection.spl", sha256: a018ca7464cbae2eb43778f5b82c33589d1195a8b419f9bdc39202c658905ac2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_cross_process_injection.kql", sha256: f2fb38807e4e55d3963d8a315df5684ecb3d151b34f5e43cd06f073197643359, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_cross_process_injection.sql", sha256: 77d6961a9ec65040ef2b9d052189350e9f60f91b4b9c3e05604ab729a2d8ed3b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_cross_process_injection.eql", sha256: 9f35db22575843f5c5b47f94c36e383498d1b803bd1e8dfca4553bf7d0ddb2ce, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_cross_process_injection.yml", sha256: 2801229b9953d3f4a835787bc3a87125818d0a95041c5679c375baa3cb1cce43, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

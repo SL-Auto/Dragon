@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_powershell_or_clr_in_unusual_host
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_powershell_or_clr_in_unusual_host.yaral
+canonical_sha256: f71d27760edbdf9e66752e21ce05e9640727f28252cec917b8d57249b6ac1962
+description: "Detects PowerShell/CLR runtime initialization or script telemetry in a process not normally hosting that runtime."
+severity: high
+procedure_ids: ["CSB-015", "CSB-017"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize PowerShell 400/403/4103/4104, CLR load or EDR runtime initialization with host process and parser-provided expected-host enrichment."
+atomic_event_types: ["CLR_RUNTIME_LOAD", "POWERSHELL_SCRIPT"]
+required_udm_fields: ["metadata.event_type", "principal.process.runtime_expected"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Custom .NET hosts, management agents, IDEs, installers and legitimate PowerShell embedding."
+references: "reports/cobalt-strike-beacon/source-analysis.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_powershell_or_clr_in_unusual_host.spl", sha256: 7d34fccfe1d1d553d93e57eb8a290ff220ce6c817199083570b3905cd751834f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_powershell_or_clr_in_unusual_host.kql", sha256: f1b24e2cecb19bf3b2aca75d20ee90d9644ffbf12a64181f5e466dde48797ec4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_powershell_or_clr_in_unusual_host.sql", sha256: 42254b28b54ca9088e4a0046a04d359aec7aa9717a4bbf2808b18c9a0af11063, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_powershell_or_clr_in_unusual_host.eql", sha256: 119bde370efbddd4be6d797d58793815b1a2ab13c7ec521395189ede7b395124, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_powershell_or_clr_in_unusual_host.yml", sha256: aa00db59a3ac1d2656898e5ce2ad8d310949807c49b75563c0fe3989d93c397e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

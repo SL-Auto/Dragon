@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_clipboard_device_access
+canonical_path: detections/mimikatz/yaral/mimikatz_clipboard_device_access.yaral
+canonical_sha256: ad4933fcfd4caf8b8714edf38d3469a4651e1f9b221d13c7f65e210513375683
+description: "Surfaces vendor-reported clipboard or smartcard HID RF device access."
+severity: low
+procedure_ids: ["P34", "P42"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR clipboard or device-control telemetry with process and device or operation."
+atomic_event_types: []
+required_udm_fields: ["security_result.description"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Normal clipboard, smartcard, HID and reader software."
+references: "reports/mimikatz/source-analysis.md"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_clipboard_device_access.spl", sha256: dad8a2babf7fcd243bd011d22a08d72d760b8aaadf172bd0cfce84671e1a7e1f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_clipboard_device_access.kql", sha256: b4a6ec72bd7bbdaa5b24e9a859ebd973f6ff09925fb0d3cc960005bd0df954f3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_clipboard_device_access.sql", sha256: 4755a79a922d99a9cf9375a3067431a22fba32fbd201289a556374a724dc90e3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_clipboard_device_access.eql", sha256: ea900d8c78f195007985975cbac080f2305a42cfc941529d112d40a5bf0961a4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_clipboard_device_access.yml", sha256: a59cd32f848f712566a3535edba6151885537a6c9559bd4d2720e75e1074dbbf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

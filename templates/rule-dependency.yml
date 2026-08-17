@@ -1,0 +1,17 @@
+schema_version: 1
+tool_id: <tool>
+rule_name: <rule>
+canonical_path: detections/<tool>/yaral/<rule>.yaral
+canonical_sha256: <sha256>
+description: "<description>"
+severity: <critical|high|medium|low>
+procedure_ids: []
+validation_status: needs_validation
+telemetry_prerequisites: "<requirements>"
+atomic_event_types: []
+required_udm_fields: []
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+translations: {}

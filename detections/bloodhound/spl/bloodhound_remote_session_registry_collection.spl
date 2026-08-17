@@ -1,0 +1,17 @@
+# source_yaral: detections/bloodhound/yaral/bloodhound_remote_session_registry_collection.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: bloodhound_remote_session_registry_collection
+# severity: high
+# procedure_ids: BH-007,BH-008
+# description: Correlates SRVSVC session enumeration or remote registry reads with multi-host SMB/RPC activity.
+# log_source_prerequisites: NDR/EDR RPC interface or REGISTRY_READ telemetry plus source identity and target host.
+# false_positives: Endpoint inventory, helpdesk, EDR and authorized administration.
+# references: reports/bloodhound/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "REGISTRY_READ", "RPC_CALL")
+| eval canonical_rule="bloodhound_remote_session_registry_collection"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

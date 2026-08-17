@@ -1,0 +1,22 @@
+title: "Surfaces registry read/enumeration of security-sensitive configuration by an uncommon process."
+name: cobalt_strike_sensitive_registry_read
+status: experimental
+description: "Surfaces registry read/enumeration of security-sensitive configuration by an uncommon process."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_registry_read.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-023"
+log_source_prerequisites: "Normalize EDR REGISTRY_READ or scoped 4656/4663 with process, user, hive/key/value, operation and sensitivity classification."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["REGISTRY_READ"]
+  condition: selection_event_type
+falsepositives:
+  - "Inventory, compliance, EDR, backup, forensics and operating-system components."
+level: medium

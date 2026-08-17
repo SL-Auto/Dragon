@@ -1,0 +1,29 @@
+rule chisel_proxy_destination_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one uncommon process connecting to many destinations after listener activity consistent with a dynamic proxy"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Listener-to-destination fanout is closer to dynamic proxy effect than a product or command-line indicator"
+    procedure_ids = "CH-P05,CH-P07"
+    log_source_prerequisites = "EDR socket listen and outbound connection telemetry with process prevalence enrichment"
+    false_positives = "Browsers update agents security scanners service meshes and approved proxies"
+    references = "reports/chisel/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/chisel/detection-review.md"
+  events:
+    $l.metadata.product_event_type = "NETWORK_LISTEN"
+    $l.principal.hostname = $host
+    $l.principal.process.product_specific_process_id = $pid
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+    $n.target.ip = $destination
+  match:
+    $host, $pid over 15m
+  condition:
+    $l and #n >= 5 and count_distinct($destination) >= 4
+}

@@ -1,0 +1,17 @@
+// source_yaral: detections/mimikatz/yaral/mimikatz_firmware_driver_operation.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: mimikatz_firmware_driver_operation
+// severity: high
+// procedure_ids: P39,P43
+// description: Detects firmware-variable or kernel-driver activity reported by endpoint controls.
+// log_source_prerequisites: EDR firmware or driver telemetry and Code Integrity events with process and module identity.
+// false_positives: Firmware management, OEM tools and approved drivers.
+// references: reports/mimikatz/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("6") or EventType in ("6")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="mimikatz_firmware_driver_operation"

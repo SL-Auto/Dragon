@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_azure_resource_enumeration_fanout
+canonical_path: detections/bloodhound/yaral/bloodhound_azure_resource_enumeration_fanout.yaral
+canonical_sha256: 814078b86947bc3d4f045a333b6eca8a540ffec4465137f17b7871aef4542590
+description: "Detects one principal/application reading many Azure Resource Manager provider families, independent of source IP, with subscription breadth recorded as compensating context."
+severity: high
+procedure_ids: ["BH-018"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "ARM read-plane, AzureActivity or gateway audit with principal, source, operation, provider and scope."
+atomic_event_types: ["AZURE_RESOURCE_READ", "AzureActivity"]
+required_udm_fields: ["metadata.product_event_type", "principal.application", "principal.user.userid", "target.resource.attribute.labels"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "CSPM, cloud inventory, cost management and governance automation."
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_azure_resource_enumeration_fanout.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_azure_resource_enumeration_fanout.spl", sha256: bf80f1f9d978cfddff1512910b83caac1f83cacf30d58d33aff207721f7def53, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_azure_resource_enumeration_fanout.kql", sha256: aa137f4b4f5a4bb1c09fca8c94fc8c594a62f298ba9fb200cc75a1513ce2cefe, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_azure_resource_enumeration_fanout.sql", sha256: c671bbcbce2290a684153e98938e84337b2209889f6b7b80f8b23f9bb7e13e85, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_azure_resource_enumeration_fanout.eql", sha256: 6c2eefb7cd8c318ba0977f9a0f6def48c9e144c6174e472734cdd6f94b0f7cea, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_azure_resource_enumeration_fanout.yml", sha256: 62bf61c95deac5760f97629a7a36e94a0aa16477a3407d8b351a8dffd3771379, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

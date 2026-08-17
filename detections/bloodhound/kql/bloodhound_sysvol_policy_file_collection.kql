@@ -1,0 +1,17 @@
+// source_yaral: detections/bloodhound/yaral/bloodhound_sysvol_policy_file_collection.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: bloodhound_sysvol_policy_file_collection
+// severity: medium
+// procedure_ids: BH-011
+// description: Detects one source reading multiple policy artifacts from SYSVOL.
+// log_source_prerequisites: Windows 5145 or EDR FILE_READ with source, account, share/path and target DC.
+// false_positives: Group Policy processing, configuration management, backup and policy auditing.
+// references: reports/bloodhound/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("5145", "FILE_READ") or EventType in ("5145", "FILE_READ")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="bloodhound_sysvol_policy_file_collection"

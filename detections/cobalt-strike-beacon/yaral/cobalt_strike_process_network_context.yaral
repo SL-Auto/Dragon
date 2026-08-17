@@ -1,0 +1,28 @@
+rule cobalt_strike_process_network_context {
+  meta:
+    author = "Detection Research Agent"
+    description = "Surfaces process-attributed repeated outbound network activity from an unsigned or uncommon executable; intended as Beacon-compatible C2 context, not attribution."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Repeated egress from an uncommon process is useful C2 context but overlaps legitimate updaters and agents."
+    procedure_ids = "CSB-001,CSB-002,CSB-005"
+    log_source_prerequisites = "Normalize EDR process-attributed NETWORK_CONNECTION events with stable process entity, host, destination, direction, signer and executable prevalence enrichment."
+    false_positives = "Software updaters, monitoring agents, remote support, browsers, synchronization and backup clients."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/content/topics/post-exploitation_asynch-interactive.htm"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized process-network fixtures with jitter and host rotation; never deploy Beacon."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.principal.hostname = $host
+    $e.principal.process.file.full_path = $process
+    $e.principal.process.product_specific_process_id = $pid
+    $e.network.direction = "OUTBOUND"
+    ($e.principal.process.file.is_signed = false or $e.principal.process.file.prevalence = "RARE")
+  match:
+    $host, $process, $pid over 30m
+  condition:
+    #e >= 4
+}

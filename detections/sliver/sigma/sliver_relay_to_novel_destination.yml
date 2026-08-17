@@ -1,0 +1,22 @@
+title: "A process that accepted an inbound connection also makes an outbound connection to a distinct destination in the same window"
+name: sliver_relay_to_novel_destination
+status: experimental
+description: "A process that accepted an inbound connection also makes an outbound connection to a distinct destination in the same window"
+source_yaral: "detections/sliver/yaral/sliver_relay_to_novel_destination.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-005,PROC-021"
+log_source_prerequisites: "EDR/firewall inbound-accept and outbound-connect telemetry sharing a stable process entity, with source and destination IP"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Legitimate reverse proxies, load balancers, VPN concentrators, and remote-support/relay software"
+level: high

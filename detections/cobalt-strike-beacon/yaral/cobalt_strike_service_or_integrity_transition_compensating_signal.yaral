@@ -1,0 +1,27 @@
+rule cobalt_strike_service_or_integrity_transition_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a process launch reaching SYSTEM integrity whose parent process is unsigned or rare and is not an approved elevation broker, providing the causal parent/child relationship that the base rule's standalone 4697/7045/integrity-transition signal does not require."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "An unsigned or rare parent causing a child process at SYSTEM integrity is a specific, dangerous elevation pattern, though installers and approved elevation brokers can legitimately do the same absent the enrichment gate."
+    procedure_ids = "CSB-020"
+    log_source_prerequisites = "Normalize PROCESS_LAUNCH with target integrity level, parent process signer and prevalence, and an approved-elevation-broker enrichment."
+    false_positives = "Installers, driver-installation flows, and approved elevation-broker components not reflected in the enrichment allowlist."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_service_or_integrity_transition.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized UAC/elevation-broker and installer fixtures to confirm the allowlist enrichment suppresses expected benign elevation paths."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_service_or_integrity_transition"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_service_or_integrity_transition.md"
+    modification_note = "Proposal accepted with required changes: replaced the invented additional.fields['parent_prevalence']/['parent_signed'] with the native principal.process.file.prevalence/is_signed fields already used elsewhere in this rule family, and removed an unused parent_hash match window — the proposal declared a match clause with no aggregation function referencing it in the condition, which is dead configuration."
+  events:
+    $e.metadata.event_type = "PROCESS_LAUNCH"
+    $e.target.process.integrity_level = "SYSTEM"
+    ($e.principal.process.file.is_signed = false or $e.principal.process.file.prevalence = "RARE")
+    $e.additional.fields["approved_elevation_broker"].value.bool_value = false
+  condition:
+    $e
+}

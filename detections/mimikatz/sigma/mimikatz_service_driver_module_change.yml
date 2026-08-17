@@ -1,0 +1,22 @@
+title: "Detects service, driver, authentication extension or print-monitor installation events."
+name: mimikatz_service_driver_module_change
+status: experimental
+description: "Detects service, driver, authentication extension or print-monitor installation events."
+source_yaral: "detections/mimikatz/yaral/mimikatz_service_driver_module_change.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md"
+procedure_ids: "P06,P36,P44,P45"
+log_source_prerequisites: "Security 4697, System 7045, Sysmon driver/image load and registry change telemetry."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4697", "6", "7", "7045"]
+  condition: selection_event_type
+falsepositives:
+  - "Approved software, driver, print-monitor and authentication-package deployment."
+level: high

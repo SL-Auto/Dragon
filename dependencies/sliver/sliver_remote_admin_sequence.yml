@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_remote_admin_sequence
+canonical_path: detections/sliver/yaral/sliver_remote_admin_sequence.yaral
+canonical_sha256: d228dc4145a391b34f7420df46ab122b0bddae3db970a4ffad2453bcbf228fff
+description: "Remote authentication followed by service or SSH execution on target, joined by logon/session identity"
+severity: high
+procedure_ids: ["PROC-020"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Authentication and service/SSH process events with target host, account, and logon/session identifier"
+atomic_event_types: ["4624", "4697", "7045", "sshd_auth_success", "sshd_command"]
+required_udm_fields: ["metadata.product_event_type", "network.session_id", "principal.user.userid", "target.hostname", "target.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Deployment, backup, authorized remote administration"
+references: "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_remote_admin_sequence.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_remote_admin_sequence.spl", sha256: d6eb9f7862c24d971258af050433ef6c28915ac3b2b2d72590b46c7bce12d3a8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_remote_admin_sequence.kql", sha256: 6e471f77d91ba4e753182af3805745271faa93105da319d0eadac6e465171d4c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_remote_admin_sequence.sql", sha256: c268192c18b9fe1bb6df61e6bb61287fb958e0e55e1ec72d7d6af2635f771616, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_remote_admin_sequence.eql", sha256: f5498cc41ef3b198fe619d472cf33492286e8c6ba91fa3a088840ff349dc4db9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_remote_admin_sequence.yml", sha256: 60304bfc31ce2b8b5aad636e6d591116b4b3f4ea6768753bd2bbbec8feb1c1e2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

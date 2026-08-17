@@ -1,0 +1,17 @@
+// source_yaral: detections/bloodhound/yaral/bloodhound_collector_process_network_context.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: bloodhound_collector_process_network_context
+// severity: medium
+// procedure_ids: BH-001
+// description: Detects a low-prevalence process establishing sustained directory or cloud management network context.
+// log_source_prerequisites: EDR process creation and process-attributed network telemetry with signer/prevalence and destination service classification.
+// false_positives: Identity inventory, endpoint management, directory administration and cloud governance tooling.
+// references: reports/bloodhound/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION", "PROCESS_LAUNCH") or EventType in ("NETWORK_CONNECTION", "PROCESS_LAUNCH")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="bloodhound_collector_process_network_context"

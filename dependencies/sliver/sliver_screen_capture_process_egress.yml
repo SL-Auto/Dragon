@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_screen_capture_process_egress
+canonical_path: detections/sliver/yaral/sliver_screen_capture_process_egress.yaral
+canonical_sha256: c3dd246e5bb8d3ed2b32e7f2e5f1c14ad3f84872439ce86c011fd4962f2b3b00
+description: "Tenant-normalized screen capture followed by same-process egress"
+severity: high
+procedure_ids: ["PROC-014"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Verified EDR screen capture mapping and stable PID network telemetry"
+atomic_event_types: ["NETWORK_CONNECTION", "USER_RESOURCE_ACCESS"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id", "security_result.rule_name"]
+correlation_window: "5m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Conferencing, remote support, screenshot tools"
+references: "reports/sliver/source-analysis.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_screen_capture_process_egress.spl", sha256: 748c8ff7e1033fd9ca77ed0345deee58622eb4172ddfc3b6d8b0a6987f5923e3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_screen_capture_process_egress.kql", sha256: 334d5a8dec234f64c50e6713039309dae3e593183985d6eee32dedffbe106589, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_screen_capture_process_egress.sql", sha256: f10ff2b4c75602ada2bd4f976731716276c6a5db52cbaa24a8a1b7e0fec772bd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_screen_capture_process_egress.eql", sha256: 765d4dfa968e395df463be371abf5a6da0e5cb34e73d6d7d100467f156306662, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_screen_capture_process_egress.yml", sha256: 0e951ff0e85ec0bb2cdd7bc1514c705e855583193f364efaf45059a701d09266, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

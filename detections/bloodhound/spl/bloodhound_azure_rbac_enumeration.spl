@@ -1,0 +1,17 @@
+# source_yaral: detections/bloodhound/yaral/bloodhound_azure_rbac_enumeration.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: bloodhound_azure_rbac_enumeration
+# severity: high
+# procedure_ids: BH-019
+# description: Detects high-cardinality Azure RBAC, owner, access-policy or role-eligibility reads.
+# log_source_prerequisites: Graph/ARM audit with principal, operation name, target scope/object and source.
+# false_positives: Access reviews, IAM governance, CSPM and authorized audits.
+# references: reports/bloodhound/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "AZURE_RESOURCE_READ", "AzureActivity", "MicrosoftGraphActivityLogs")
+| eval canonical_rule="bloodhound_azure_rbac_enumeration"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

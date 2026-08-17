@@ -1,0 +1,22 @@
+title: "Detects repeated directory or remote-host collection bursts from the same process entity."
+name: bloodhound_recurrent_collection_activity
+status: experimental
+description: "Detects repeated directory or remote-host collection bursts from the same process entity."
+source_yaral: "detections/bloodhound/yaral/bloodhound_recurrent_collection_activity.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-014"
+log_source_prerequisites: "Stable process entity and normalized LDAP_SEARCH, RPC_CALL or REGISTRY_READ events retained for several hours."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["LDAP_SEARCH", "REGISTRY_READ", "RPC_CALL"]
+  condition: selection_event_type
+falsepositives:
+  - "Scheduled identity inventory, monitoring and compliance collection."
+level: medium

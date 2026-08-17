@@ -1,0 +1,20 @@
+rule impacket_smb_sensitive_file_activity {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects remote SMB access to credential-bearing or administrative paths."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "HIGH"
+  severity_rationale = "Remote access to credential stores can indicate collection."
+  procedure_ids = "IMP-01,IMP-13"
+  log_source_prerequisites = "Windows 5145/4663 or EDR SMB file events with source, account, share, path and access."
+  false_positives = "Backup, migration, domain administration and security scanning."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+ events:
+  $e.metadata.product_event_type = /(5145|4663)/
+  re.regex($e.target.resource.name, `(?i)(SYSVOL.*Groups\.xml|\\SECURITY$|\\SAM$|\\SYSTEM$|NTDS\.dit|Microsoft\\Protect|CCM\\)`)
+ condition: $e
+}

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_service_protocol_probe_fanout
+canonical_path: detections/bloodhound/yaral/bloodhound_service_protocol_probe_fanout.yaral
+canonical_sha256: b3ef253ebbcf21e8a80fa147415e3c4e89c21305dc08a410a8f77ba01b14ed4b
+description: "Detects one process probing at least three distinct service families among WebDAV, SMB, LDAP and LDAPS capability across many hosts, requiring protocol-family diversity rather than raw target/port count."
+severity: medium
+procedure_ids: ["BH-013"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed network events with target host, port and resolved service-family classification."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.file.full_path", "target.ip", "target.resource.attribute.labels"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Vulnerability scanners, service inventory and network monitoring."
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_service_protocol_probe_fanout.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_service_protocol_probe_fanout.spl", sha256: 014c2b2f6e33cb7b53dc6899f6064c8cd2a1e0a7435774fac2f514c9a1e4be41, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_service_protocol_probe_fanout.kql", sha256: 2085bae43db6c9a7e8f85edb86b8ad2a49d144aa54e68cebd88bd177c5171e7a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_service_protocol_probe_fanout.sql", sha256: 01ccdc590ce3006358e4dfa9483a1cfa81f4a808818fa695c8e5f7a9eb63fd0d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_service_protocol_probe_fanout.eql", sha256: 76fe33bf33bd9c709803b6aac58b087b87de536b133f1f3579e8d0d961ff1eae, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_service_protocol_probe_fanout.yml", sha256: 47d0c216dc401f483fc6ece491b1141c3c9b99fb0c08284d773a21396ef018d9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

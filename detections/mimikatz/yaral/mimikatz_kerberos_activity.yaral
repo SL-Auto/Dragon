@@ -1,0 +1,19 @@
+rule mimikatz_kerberos_activity {
+ meta:
+  author = "Detection Research Agent"
+  description = "Surfaces Kerberos ticket issuance or endpoint LSA ticket-cache operations for contextual analytics."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "LOW"
+  severity_rationale = "Ticket events are common and require account, host and service baselines."
+  procedure_ids = "P10"
+  log_source_prerequisites = "DC 4768-4771 and vendor LSA ticket-operation telemetry."
+  false_positives = "Normal domain authentication and administrative ticket management."
+  references = "reports/mimikatz/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/mimikatz/detection-review.md"
+ events:
+  re.regex($e.metadata.product_event_type, `^(4768|4769|4770|4771)$`)
+ condition: $e
+}

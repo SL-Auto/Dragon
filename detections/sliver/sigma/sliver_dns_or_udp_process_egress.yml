@@ -1,0 +1,22 @@
+title: "High-volume DNS or UDP from one process"
+name: sliver_dns_or_udp_process_egress
+status: experimental
+description: "High-volume DNS or UDP from one process"
+source_yaral: "detections/sliver/yaral/sliver_dns_or_udp_process_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-004"
+log_source_prerequisites: "Process-attributed DNS or UDP network telemetry"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_DNS"]
+  condition: selection_event_type
+falsepositives:
+  - "Resolvers, browsers, VPN clients"
+level: medium

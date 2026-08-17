@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_low_and_slow_udp_beacon
+canonical_path: detections/sliver/yaral/sliver_low_and_slow_udp_beacon.yaral
+canonical_sha256: 0117609892f654acecc9fb7e1213a296431778d224d7a593c472433b10b7f0e7
+description: "One process makes low-volume, time-spread, repeated DNS or UDP connections to the same destination and port"
+severity: medium
+procedure_ids: ["PROC-004"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed DNS or UDP network telemetry with stable destination and port"
+atomic_event_types: ["NETWORK_DNS"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "metadata.id", "network.ip_protocol", "principal.hostname", "principal.process.product_specific_process_id", "target.ip", "target.port"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "DNS resolvers, VPN/WireGuard clients, monitoring agents, chat/voice UDP applications"
+references: "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_dns_or_udp_process_egress.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_low_and_slow_udp_beacon.spl", sha256: dd42aeb047bd25d07d7a407058b8e20f79f3f573c12d9877f4bad3b3fb6bce5d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_low_and_slow_udp_beacon.kql", sha256: 9d17425f526dfbf4b9594f8b6c75237a26bc789dfc29149b4982fbc3aaee7bc5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_low_and_slow_udp_beacon.sql", sha256: 86eadae12e5f4f1970ced6d07b6da3846c2c14b5701531271e9b8bcc13ee2509, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_low_and_slow_udp_beacon.eql", sha256: 1f008421a661c49f2716b15853a51400c1815dad9a9a12588ebc4b16abed3aa8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_low_and_slow_udp_beacon.yml", sha256: 30ea60c18f8392b5c8e29c66870dafb498869a89cd8a00d9424282c1963ab84e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,14 @@
+// source_yaral: detections/sliver/yaral/sliver_file_activity_from_network_process.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_file_activity_from_network_process
+// severity: medium
+// procedure_ids: PROC-007,PROC-008,PROC-009
+// description: File read or mutation by an outbound-network process
+// log_source_prerequisites: EDR file and network telemetry sharing stable PID
+// false_positives: Sync, backup, browsers, package managers
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("FILE_CREATION", "FILE_DELETION", "FILE_MODIFICATION", "FILE_READ", "NETWORK_CONNECTION") or event.action in ("FILE_CREATION", "FILE_DELETION", "FILE_MODIFICATION", "FILE_READ", "NETWORK_CONNECTION")

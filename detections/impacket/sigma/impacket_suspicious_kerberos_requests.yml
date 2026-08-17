@@ -1,0 +1,22 @@
+title: "Detects high-volume or uncommon Kerberos ticket-request patterns requiring investigation."
+name: impacket_suspicious_kerberos_requests
+status: experimental
+description: "Detects high-volume or uncommon Kerberos ticket-request patterns requiring investigation."
+source_yaral: "detections/impacket/yaral/impacket_suspicious_kerberos_requests.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-11"
+log_source_prerequisites: "DC 4768/4769/4771 with client, account, service, encryption and options."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4768", "4769", "4771"]
+  condition: selection_event_type
+falsepositives:
+  - "Service discovery, application startup and authentication troubleshooting."
+level: medium

@@ -1,0 +1,24 @@
+rule tool_procedure_detection {
+  meta:
+    author = "Detection Research Agent"
+    description = "Defensive hypothesis for <procedure>; not production validated."
+    date = "YYYY-MM-DD"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Explain the security consequence and signal strength."
+    procedure_ids = "PROC-001"
+    log_source_prerequisites = "List required UDM event types, fields, sensors, and audit settings."
+    false_positives = "Describe expected legitimate causes."
+    references = "https://example.invalid/source"
+    validation_status = "needs_validation"
+    validation_method = "Use benign simulations or authorized historical telemetry only; never run malware."
+    review_status = "review_required"
+    review_reference = "reviews/<tool>/detection-review.md"
+
+  events:
+    $event.metadata.event_type = "<UDM_EVENT_TYPE>"
+    $event.<udm_field> = "<value>"
+
+  condition:
+    $event
+}

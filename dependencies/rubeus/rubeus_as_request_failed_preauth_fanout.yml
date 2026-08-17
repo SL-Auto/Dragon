@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_as_request_failed_preauth_fanout
+canonical_path: detections/rubeus/yaral/rubeus_as_request_failed_preauth_fanout.yaral
+canonical_sha256: f1075120ba5416e6499f5092ad421d4edad44eff86c0271845b9839f878e1815
+description: "Detects one source generating failed or atypical-result AS requests against multiple accounts, distinct from the existing successful multi-principal fan-out rule."
+severity: high
+procedure_ids: ["PROC-001"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize DC Security 4768 with source IP, target account, and a normalized security_result.action or result-code field distinguishing non-success outcomes."
+atomic_event_types: ["4768"]
+required_udm_fields: ["metadata.product_event_type", "principal.ip", "security_result.action", "target.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Password audits, account-lockout/health monitoring tooling, and misconfigured legacy clients retrying stale credentials."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_as_request_anomaly.md"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_as_request_failed_preauth_fanout.spl", sha256: b3d574c8c361cc18fe34f7b5d03f1fea01eeb253492e8e385fb4d5e390933526, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_as_request_failed_preauth_fanout.kql", sha256: 252f9c75d70f7f14ef76281b4b442d0c8faa3570abc61817fb446d7c79cad4e6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_as_request_failed_preauth_fanout.sql", sha256: ae9fe462f2082252a1edccdeb8ff8115ab144eed6b69f7d5059e8a6e6e3d70f7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_as_request_failed_preauth_fanout.eql", sha256: 81ab759ca11e36713b5e896eb45a84427f37c54400ba882ffd881f27a47ca161, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_as_request_failed_preauth_fanout.yml", sha256: 776f96dc948893f6f65563fdc3060ea658bdea0524e74831604d3fb7d5e4ec5c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,22 @@
+rule impacket_sensitive_file_or_replication_access {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects sensitive remote credential-store file or registry reads (SAM/SECURITY hive access, NTDS.dit) via SMB or object events. Split from directory-replication-rights use on 2026-08-16 because the two signals are materially different security effects with different actors, prerequisites and false-positive profiles; see reviews/impacket/detection-review.md and public-rules/comparisons/impacket/impacket_sensitive_file_or_replication_access.md."
+  date = "2026-08-16"
+  status = "experimental"
+  severity = "CRITICAL"
+  severity_rationale = "Credential-store file/registry access can directly expose domain credentials."
+  procedure_ids = "IMP-13"
+  log_source_prerequisites = "SMB/object events 5145/4663 with access description and path."
+  false_positives = "Backup, migration, domain administration and security scanning that legitimately reads hive-adjacent paths."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+  source_comparison = "public-rules/comparisons/impacket/impacket_sensitive_file_or_replication_access.md"
+  comparison_decision = "modify"
+ events:
+  $e.metadata.product_event_type = /(5145|4663)/
+  re.regex($e.security_result.description, `(?i)(NTDS\.dit|\\SAM$|\\SECURITY$)`)
+ condition: $e
+}

@@ -1,0 +1,22 @@
+title: "Detects PowerShell/CLR runtime initialization or script telemetry in a process not normally hosting that runtime."
+name: cobalt_strike_powershell_or_clr_in_unusual_host
+status: experimental
+description: "Detects PowerShell/CLR runtime initialization or script telemetry in a process not normally hosting that runtime."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_powershell_or_clr_in_unusual_host.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-015,CSB-017"
+log_source_prerequisites: "Normalize PowerShell 400/403/4103/4104, CLR load or EDR runtime initialization with host process and parser-provided expected-host enrichment."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["CLR_RUNTIME_LOAD", "POWERSHELL_SCRIPT"]
+  condition: selection_event_type
+falsepositives:
+  - "Custom .NET hosts, management agents, IDEs, installers and legitimate PowerShell embedding."
+level: high

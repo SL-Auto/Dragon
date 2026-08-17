@@ -1,0 +1,28 @@
+rule cobalt_strike_socket_fanout_or_forwarding {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a single uncommon process connecting to many distinct destinations as a SOCKS/forwarding/pivot hypothesis."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Proxy and pivot processes often fan out, but legitimate network and management software can match."
+    procedure_ids = "CSB-009"
+    log_source_prerequisites = "Normalize process-attributed outbound NETWORK_CONNECTION with stable process entity and distinct target IP/port values plus signer/prevalence."
+    false_positives = "Browsers, scanners, proxies, EDR, backup, software distribution and orchestration agents."
+    references = "reports/cobalt-strike-beacon/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Test on synthetic fan-out and representative authorized proxy baselines."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.network.direction = "OUTBOUND"
+    $e.principal.hostname = $host
+    $e.principal.process.file.full_path = $process
+    $e.target.ip = $target
+    ($e.principal.process.file.is_signed = false or $e.principal.process.file.prevalence = "RARE")
+  match:
+    $host, $process over 10m
+  condition:
+    #target >= 12
+}

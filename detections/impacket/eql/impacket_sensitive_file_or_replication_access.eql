@@ -1,0 +1,14 @@
+// source_yaral: detections/impacket/yaral/impacket_sensitive_file_or_replication_access.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: impacket_sensitive_file_or_replication_access
+// severity: critical
+// procedure_ids: IMP-13
+// description: Detects directory replication access or sensitive remote credential-store reads.
+// log_source_prerequisites: DC 4662 and SMB/object events with access GUID, actor, source and path.
+// false_positives: Domain controllers, approved replication, backup and recovery.
+// references: reports/impacket/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("4662", "4663", "5145") or event.action in ("4662", "4663", "5145")

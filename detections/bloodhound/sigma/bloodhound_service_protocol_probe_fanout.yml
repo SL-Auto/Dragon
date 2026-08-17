@@ -1,0 +1,22 @@
+title: "Detects one process probing WebDAV, SMB, LDAP and LDAPS capability across many hosts."
+name: bloodhound_service_protocol_probe_fanout
+status: experimental
+description: "Detects one process probing WebDAV, SMB, LDAP and LDAPS capability across many hosts."
+source_yaral: "detections/bloodhound/yaral/bloodhound_service_protocol_probe_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-013"
+log_source_prerequisites: "Process-attributed network events with target host, port, protocol and connection result."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Vulnerability scanners, service inventory and network monitoring."
+level: medium

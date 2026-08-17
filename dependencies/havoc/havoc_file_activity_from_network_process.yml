@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: havoc
+rule_name: havoc_file_activity_from_network_process
+canonical_path: detections/havoc/yaral/havoc_file_activity_from_network_process.yaral
+canonical_sha256: ad641045eb768c3981522af3392a313c1e526c3119e42901ca1df99b77e84c9d
+description: "A network-active process performs file collection, staging, mutation or deletion"
+severity: medium
+procedure_ids: ["HV-P06", "HV-P07", "HV-P08"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR file lifecycle and process-attributed network events sharing a stable process entity"
+atomic_event_types: ["FILE_CREATION", "FILE_DELETION", "FILE_MODIFICATION", "FILE_READ", "NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Browsers, synchronization, backup, deployment and endpoint-management software"
+references: "reports/havoc/source-analysis.md"
+translations:
+  spl: { path: "detections/havoc/spl/havoc_file_activity_from_network_process.spl", sha256: 871be69acc6d928d6c69a785b474b8f019eed2e918fa7febb0a5c1b375882f45, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_file_activity_from_network_process.kql", sha256: 2d10dea0ad556c9186d119dbe29018e31a2171185a7393a897f1801d81617540, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_file_activity_from_network_process.sql", sha256: 2788b5b89a81dfb52ff1432200c7ca92b57331577e7af1a6fe66c13d4624177d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_file_activity_from_network_process.eql", sha256: bed31362f2bd25244e986116ebcf3d97c19aabf96eaf52da501167dbc6e14bbf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_file_activity_from_network_process.yml", sha256: 63482a73f963e753254705a630f2a9ef7c81d325280436d1ad97aa3dc70f1025, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

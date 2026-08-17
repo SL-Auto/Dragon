@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_cloud_collection_output
+canonical_path: detections/bloodhound/yaral/bloodhound_cloud_collection_output.yaral
+canonical_sha256: 0cb59244538c72fea05ba5cd52f53fee7073ac76449e5db6c6cd0f356febced0
+description: "Correlates sustained, resource-family-diverse Graph or ARM reads with local JSON output or service lifecycle effects on the same host/user."
+severity: medium
+procedure_ids: ["BH-020"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed cloud egress with resource-family enrichment, plus file creation or Windows service events joined by host/user."
+atomic_event_types: ["11", "4697", "7045", "AZURE_RESOURCE_READ", "AzureActivity", "FILE_CREATION", "MicrosoftGraphActivityLogs"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.user.userid", "target.file.full_path", "target.resource.attribute.labels"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Cloud inventory exporters, scheduled governance jobs and authorized AzureHound deployments."
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_cloud_collection_output.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_cloud_collection_output.spl", sha256: b6f1b78e7ccbed49f0a0a7c63ee14687c85cc485b1e504c2d9ff58977eacdfd9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_cloud_collection_output.kql", sha256: c1e352e2ecbaf19cf6ae57eb8128895432cb328cb40b0b154b984a09a74a5b79, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_cloud_collection_output.sql", sha256: 95b4ad0997749ffd250ddde4115bb5e3fc2ed5c126233254381ab20536b16e1f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_cloud_collection_output.eql", sha256: 41b4e5d6e38dde274b27cfe70196b7f42f4ce9636de32f014015e283e3f6e6f3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_cloud_collection_output.yml", sha256: dd828686c7bdc637c71dcd7dfb9fb95440b67d1848d523872e43defd418f59cf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

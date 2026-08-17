@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_file_cleanup_or_timestomp_compensating_signal
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.yaral
+canonical_sha256: 4c826f873446a3d563ace83e1bbf1482822f5fb21e3d884dd683a201cabf447e
+description: "Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution."
+severity: medium
+procedure_ids: ["CSB-026", "CSB-034"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize PROCESS_LAUNCH and FILE_DELETE with matching full path, host, and process signer/prevalence on the deleting process, joined within 15 minutes."
+atomic_event_types: ["FILE_DELETE", "PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.file.is_signed", "principal.process.file.prevalence", "target.file.full_path", "target.process.file.full_path"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Installers, updaters, and self-extracting archives remain a false-positive source when they are unsigned or rare; the signer/prevalence gate narrows but does not eliminate this overlap."
+references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }

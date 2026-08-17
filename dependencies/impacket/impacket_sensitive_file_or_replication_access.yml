@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_sensitive_file_or_replication_access
+canonical_path: detections/impacket/yaral/impacket_sensitive_file_or_replication_access.yaral
+canonical_sha256: a3fc4b235440d6416cb25958d0d474ab341c4fdccfd8dd9568a8b40ac0e68e14
+description: "Detects directory replication access or sensitive remote credential-store reads."
+severity: critical
+procedure_ids: ["IMP-13"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "DC 4662 and SMB/object events with access GUID, actor, source and path."
+atomic_event_types: ["4662", "4663", "5145"]
+required_udm_fields: ["metadata.product_event_type", "security_result.description"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Domain controllers, approved replication, backup and recovery."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_sensitive_file_or_replication_access.spl", sha256: da2914c0db9e8e876f63e4e56a193822d86fd95a26223881364e5809cf3d926b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_sensitive_file_or_replication_access.kql", sha256: 571de26ba32a908873916dfcecd58ab8233fe2b6672d258535a01ebf6f53ef9b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_sensitive_file_or_replication_access.sql", sha256: a49e737da3022f3e3a8044160fdd779f7e5e94aa83d1c8d73febbb51e88d49ee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_sensitive_file_or_replication_access.eql", sha256: d7cb191568c0d6a6c902220de7227223834b6cf38e1cbd2f850d2cc9da41186a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_sensitive_file_or_replication_access.yml", sha256: b8151cc31fc3563be8338a8def548a80ff6214f4cad626c7d060b3cd744614ca, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,17 @@
+// source_yaral: detections/sliver/yaral/sliver_parent_egress_with_spawned_interpreter.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_parent_egress_with_spawned_interpreter
+// severity: high
+// procedure_ids: PROC-010
+// description: Network process spawns a command interpreter
+// log_source_prerequisites: Process and network events with parent PID
+// false_positives: Automation, management, installers
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION", "PROCESS_LAUNCH") or EventType in ("NETWORK_CONNECTION", "PROCESS_LAUNCH")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="sliver_parent_egress_with_spawned_interpreter"

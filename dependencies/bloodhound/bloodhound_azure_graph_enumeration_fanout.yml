@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_azure_graph_enumeration_fanout
+canonical_path: detections/bloodhound/yaral/bloodhound_azure_graph_enumeration_fanout.yaral
+canonical_sha256: 3382a22914d15905b3e0b72a9913d7cce1a2836f4d08f631b8043e75e552269b
+description: "Detects one cloud principal reading many Microsoft Graph directory resource families."
+severity: high
+procedure_ids: ["BH-017"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "MicrosoftGraphActivityLogs with principal/app, source, request URI/resource family, method and result."
+atomic_event_types: ["MicrosoftGraphActivityLogs"]
+required_udm_fields: ["metadata.product_event_type", "network.http.method", "principal.ip", "principal.user.userid", "target.resource.attribute.labels"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Identity governance, synchronization, compliance and cloud security posture tools."
+references: "reports/bloodhound/source-analysis.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_azure_graph_enumeration_fanout.spl", sha256: ea01d7b5646f21bf9b7700e83aa08dbfec1a028099e6b13428f9b63cdbc1efdf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_azure_graph_enumeration_fanout.kql", sha256: 36da68f2f9c2ee53212354c503c8e0b24219f01e113f790a03aa0ba79949824a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_azure_graph_enumeration_fanout.sql", sha256: b6e42f59acc5ccc1a33203696a8994fb7955a6baa8fd8643c4e4a1f226b044fe, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_azure_graph_enumeration_fanout.eql", sha256: 323f0244c24708ded4e2dd4188dbd437ae60ba3048cdb30be21420fb7e094e07, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_azure_graph_enumeration_fanout.yml", sha256: 8ad9326727396b111e8979185b9d5517277162b85aa4cea710575db5b79488cf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

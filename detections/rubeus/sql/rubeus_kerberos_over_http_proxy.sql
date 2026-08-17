@@ -1,0 +1,19 @@
+-- source_yaral: detections/rubeus/yaral/rubeus_kerberos_over_http_proxy.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: partial
+-- rule_name: rubeus_kerberos_over_http_proxy
+-- severity: high
+-- procedure_ids: PROC-013
+-- description: Detects Kerberos messages transported over HTTP where either the initiating process or the destination is not on the approved KDC-proxy allowlist.
+-- log_source_prerequisites: Normalize process-attributed HTTP request Content-Type and proxy destination, plus an approved-KDC-proxy-client and approved-KDC-proxy-destination allowlist enrichment.
+-- false_positives: Approved KDC proxy, remote-access, and identity clients where the allowlist enrichment is stale or incomplete.
+-- references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_kerberos_over_http_proxy.md
+-- assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling. The approved-client/approved-destination allowlist join and the OR relationship between the two flags (fire when EITHER is unapproved) must be implemented, not only a single-flag check.
+-- schema_profile: schemas/normalized-sql.yml
+-- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).
+SELECT hostname, user_id, COUNT(*) AS event_count,
+       'rubeus_kerberos_over_http_proxy' AS canonical_rule
+FROM normalized_events
+WHERE product_event_type IN ('NETWORK_HTTP') OR event_type IN ('NETWORK_HTTP')
+GROUP BY hostname, user_id
+HAVING COUNT(*) > 0;

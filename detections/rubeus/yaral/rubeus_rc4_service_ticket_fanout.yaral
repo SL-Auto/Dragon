@@ -1,0 +1,30 @@
+rule rubeus_rc4_service_ticket_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a single requester obtaining RC4-encrypted service tickets for three or more distinct unapproved-legacy services within a 15-minute window, independent of LDAP SPN-discovery visibility."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "RC4 service-ticket fan-out against services not on the approved-legacy allowlist closely matches offline-crackable ticket collection (Kerberoasting) and low-and-slow renewal-adjacent acquisition, and is more specific than generic 4769 volume."
+    procedure_ids = "PROC-002,PROC-004"
+    log_source_prerequisites = "Normalize DC Security 4769 with source IP, requesting user, target service, and TicketEncryptionType, plus an approved-legacy-RC4-service enrichment keyed by target service."
+    false_positives = "Approved legacy RC4 services and application servers that have not yet been migrated to AES; environments where the legacy-RC4-service enrichment is stale, incomplete, or absent (an unpopulated enrichment field defaults to unapproved and will over-alert until the allowlist is built)."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_kerberoast_sequence.md; public-rules/comparisons/rubeus/rubeus_service_ticket_or_renewal_anomaly.md"
+    validation_status = "needs_validation"
+    validation_method = "Verify the TicketEncryptionType parser mapping for 0x17 (RC4-HMAC) with sanitized fixtures. Build and validate the approved-legacy-RC4-service allowlist before enabling, and confirm services correctly marked approved do not fire. This rule intentionally consolidates two independently proposed comparison improvements (rubeus_kerberoast_sequence.md and rubeus_service_ticket_or_renewal_anomaly.md both proposed a near-identical RC4 service-ticket fan-out compensating rule under different names and thresholds); adopting both separately would have duplicated the same detection logic, so a single shared rule is canonical for both procedures."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "4769"
+    $e.additional.fields["TicketEncryptionType"].value.string_value = "0x17"
+    $e.additional.fields["approved_legacy_rc4_service"].value.bool_value = false
+    $e.principal.ip = $source
+    $e.target.user.userid = $user
+    $e.target.resource.name = $service
+  match:
+    $source, $user over 15m
+  outcome:
+    $services = count_distinct($service)
+  condition:
+    $e and $services >= 3
+}

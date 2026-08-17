@@ -1,0 +1,20 @@
+rule mimikatz_firmware_driver_operation {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects firmware-variable or kernel-driver activity reported by endpoint controls."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "HIGH"
+  severity_rationale = "Firmware and kernel modification can undermine host trust."
+  procedure_ids = "P39,P43"
+  log_source_prerequisites = "EDR firmware or driver telemetry and Code Integrity events with process and module identity."
+  false_positives = "Firmware management, OEM tools and approved drivers."
+  references = "reports/mimikatz/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/mimikatz/detection-review.md"
+ events:
+  (re.regex($e.security_result.description, `(?i)(firmware.variable|kernel.*tamper|driver.*load)`) or $e.metadata.product_event_type = "6")
+ condition:
+  $e
+}

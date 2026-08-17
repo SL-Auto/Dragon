@@ -1,0 +1,22 @@
+title: "Detects broad process-attributed LDAP enumeration across multiple directory object categories."
+name: bloodhound_ldap_directory_discovery_fanout
+status: experimental
+description: "Detects broad process-attributed LDAP enumeration across multiple directory object categories."
+source_yaral: "detections/bloodhound/yaral/bloodhound_ldap_directory_discovery_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-002,BH-004"
+log_source_prerequisites: "Directory-side or EDR LDAP_SEARCH events with source process/account, base DN, filter, attributes and result category."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["1644", "LDAP_SEARCH"]
+  condition: selection_event_type
+falsepositives:
+  - "Identity governance, directory inventory, migration and authorized security assessment."
+level: high

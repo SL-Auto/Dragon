@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_netonly_ticket_sequence
+canonical_path: detections/rubeus/yaral/rubeus_netonly_ticket_sequence.yaral
+canonical_sha256: f11263a04941a655998465f56374367b5336e64b02adf129bf2a7d26665f6a19
+description: "Correlates a Type 9 logon session with ticket submission into the same LUID."
+severity: high
+procedure_ids: ["PROC-007"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize 4624 LogonType and TargetLogonId plus EDR KerbSubmitTicketMessage target LUID."
+atomic_event_types: ["4624", "EDR_API_CALL"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.hostname", "target.hostname"]
+correlation_window: "5m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Runas netonly, administrative workflows, SSO testing, and authorized assessments."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_netonly_ticket_sequence.spl", sha256: 8d340002333bd543344e0ca861c6a1a4f95f3f46c34ee08d3baa49c966154bed, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_netonly_ticket_sequence.kql", sha256: 16c0a3c179da5ca8d8dc7932b2a5bd40a61be9f1a8641c17dbf5b3fb53bec0f7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_netonly_ticket_sequence.sql", sha256: 09f40110b091885dec0736278212e8df3e1cd3c1c3f2a998e22393354078adb7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_netonly_ticket_sequence.eql", sha256: 1528c903c64a17d532c8892459bfc20e6e905d91cb07f407f5680122c9d2360f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_netonly_ticket_sequence.yml", sha256: 249aa851774b5f0372474b0957fc258f1b33fca3e7f90374aaf17fc832c17c5c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

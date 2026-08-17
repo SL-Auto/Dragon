@@ -1,0 +1,40 @@
+schema_version: 1
+tool_id: chisel
+name: "Chisel"
+lifecycle_status: analyzed
+analyzed_revision: "6d283495b5e3eff76841038d679fcc53a57ba7dd"
+context_entry_points:
+  registry: registry/tools.yml
+  summary: summaries/chisel.md
+  coverage: coverage/chisel.yml
+  report: reports/chisel/source-analysis.md
+  telemetry: telemetry/chisel.md
+counts:
+  procedures: 10
+  canonical_rules: 5
+  spl_translations: 5
+  kql_translations: 5
+  sql_translations: 5
+  eql_translations: 5
+  sigma_translations: 5
+completion_states:
+  source_analysis: complete
+  canonical_detection: complete
+  telemetry_reconciliation: complete_for_experimental_rules
+  secondary_translation: draft_complete
+  rule_validation_labels: "5 needs_validation"
+artifact_hashes:
+  registry: 4375b961f994082e15626a22cba5c97c6c846fa8c46f21494dbf15dd735e8d73
+  coverage: e5084e5634d917b4bbaff66514f8267d2ea00099816d395df2a26453338804e8
+  report: 95d5a1deb31c5b67bdfc56a6f0b2e638b7ee76c63b2e8bf05b0c67729a20a16a
+  telemetry: ca96572ae2948558365fbb526ae2a1fbc2d403361da3ff0dce7d875fa22b213b
+  detection_review: 53db8f13be58691d4078a24f5113b4e9bc164dd2d3d0f65f7e9bc177ba64d690
+  translation_review: 4255b7d689d3cba548bfdd0e67fa611b1ba16e235f9988be4ef66034418f3332
+rules:
+  - { name: chisel_listener_with_tunnel_egress, severity: high, procedures: "CH-P02,CH-P04,CH-P08", dependency: dependencies/chisel/chisel_listener_with_tunnel_egress.yml, canonical_sha256: f1b10d5e64891c1631a4efa168a7f6eea85af368aae988fe61b8a0bc0e551810 }
+  - { name: chisel_proxy_destination_fanout, severity: high, procedures: "CH-P05,CH-P07", dependency: dependencies/chisel/chisel_proxy_destination_fanout.yml, canonical_sha256: 90d6b84ac1a5892ef54fc864fad915163065f870306c2ae14da5d1edf28bfe30 }
+  - { name: chisel_recurrent_encrypted_process_egress, severity: medium, procedures: "CH-P01,CH-P10", dependency: dependencies/chisel/chisel_recurrent_encrypted_process_egress.yml, canonical_sha256: 1abcc69f313196efbd69096ebe0e2bafaf92ef7a330207e212ee044af1802dea }
+  - { name: chisel_stdio_network_bridge, severity: medium, procedures: "CH-P06", dependency: dependencies/chisel/chisel_stdio_network_bridge.yml, canonical_sha256: 96c4cea2b69a31c5c94a7c5d61dba6ba2fe270d2f75f1e96ddc073c05fcf97f0 }
+  - { name: chisel_udp_bind_with_tunnel_egress, severity: high, procedures: "CH-P03,CH-P04", dependency: dependencies/chisel/chisel_udp_bind_with_tunnel_egress.yml, canonical_sha256: f9d8e509e62582b27e063da49633ea80bfa4430f460949e672d0e12c8be5736c }
+unresolved:
+  source_blockers: 0

@@ -1,0 +1,22 @@
+title: "Detects firmware-variable or kernel-driver activity reported by endpoint controls."
+name: mimikatz_firmware_driver_operation
+status: experimental
+description: "Detects firmware-variable or kernel-driver activity reported by endpoint controls."
+source_yaral: "detections/mimikatz/yaral/mimikatz_firmware_driver_operation.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md"
+procedure_ids: "P39,P43"
+log_source_prerequisites: "EDR firmware or driver telemetry and Code Integrity events with process and module identity."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["6"]
+  condition: selection_event_type
+falsepositives:
+  - "Firmware management, OEM tools and approved drivers."
+level: high

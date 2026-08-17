@@ -1,0 +1,22 @@
+title: "Detects WinRM, WMI or SSH remote-management session activity followed by a child process on the target."
+name: cobalt_strike_remote_management_execution
+status: experimental
+description: "Detects WinRM, WMI or SSH remote-management session activity followed by a child process on the target."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_management_execution.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-031,CSB-032,CSB-033"
+log_source_prerequisites: "Normalize WinRM Operational, WMI-Activity 5857-5861, SSH_AUTH/session and EDR PROCESS_LAUNCH with account, source, target/session and child process."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["PROCESS_LAUNCH", "SSH_AUTH", "WINRM_SESSION", "WMI_REMOTE_OPERATION"]
+  condition: selection_event_type
+falsepositives:
+  - "Configuration management, helpdesk, orchestration, monitoring and approved remote administration."
+level: medium

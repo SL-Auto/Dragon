@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_sysvol_policy_file_collection
+canonical_path: detections/bloodhound/yaral/bloodhound_sysvol_policy_file_collection.yaral
+canonical_sha256: 9b983d3ae579e392ad2316a1db8389430daf41c6d1a907150bc909917fc36bb6
+description: "Detects one source reading multiple policy artifacts from SYSVOL."
+severity: medium
+procedure_ids: ["BH-011"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Windows 5145 or EDR FILE_READ with source, account, share/path and target DC."
+atomic_event_types: ["5145", "FILE_READ"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "target.file.full_path"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Group Policy processing, configuration management, backup and policy auditing."
+references: "reports/bloodhound/source-analysis.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_sysvol_policy_file_collection.spl", sha256: 9b25dcaf5d036015a0cfe996ad7672939c32cf31d42ffd387c88edd0e6903ae2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_sysvol_policy_file_collection.kql", sha256: 8a09569b25397a444d86b0cb8860694eb6c402bafe43232fe84ac13b15ab59f2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_sysvol_policy_file_collection.sql", sha256: 2c1c5c14b7feae812ab2b5908c55516019f07c1ac8737cb12d735e2ae5097e23, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_sysvol_policy_file_collection.eql", sha256: bfefd1b3422393d62eb8b123678de131feb1ce0e55745cbb36bbf397cf9495f2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_sysvol_policy_file_collection.yml", sha256: 78f0ce8a8ef22f47992a6b225487b708ac852ba3d19fc551b907c69590c782b9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

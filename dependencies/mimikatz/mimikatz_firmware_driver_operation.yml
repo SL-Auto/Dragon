@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_firmware_driver_operation
+canonical_path: detections/mimikatz/yaral/mimikatz_firmware_driver_operation.yaral
+canonical_sha256: eacd18f37c91db14c05b428c5a956aa946a7759faccbffa2638a310d02317677
+description: "Detects firmware-variable or kernel-driver activity reported by endpoint controls."
+severity: high
+procedure_ids: ["P39", "P43"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR firmware or driver telemetry and Code Integrity events with process and module identity."
+atomic_event_types: ["6"]
+required_udm_fields: ["metadata.product_event_type", "security_result.description"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Firmware management, OEM tools and approved drivers."
+references: "reports/mimikatz/source-analysis.md"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_firmware_driver_operation.spl", sha256: 8149073a6b0c5e77e3917f8ee4cac42c702ee29d9ed51f68fe9f409cf1dada8f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_firmware_driver_operation.kql", sha256: aaa5c76f6b4f794b628ba3b7125bad23a74330449d71c0973ffda20f2b8f9c67, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_firmware_driver_operation.sql", sha256: bcf648b835af2d8648c29671c4083de705d96e4f7a200062b3d2dd423db2b4e8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_firmware_driver_operation.eql", sha256: 49159ad41d5b923de6e61a5672c8b4179fc43694787f7153d9143fc214f596c4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_firmware_driver_operation.yml", sha256: 58e3565070202de7f6f9a52019671b35a28800475e8341f46fcfb616421e0326, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

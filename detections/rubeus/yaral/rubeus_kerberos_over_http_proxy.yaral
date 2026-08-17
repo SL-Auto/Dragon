@@ -1,0 +1,24 @@
+rule rubeus_kerberos_over_http_proxy {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects Kerberos messages transported over HTTP where either the initiating process or the destination is not on the approved KDC-proxy allowlist."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Kerberos HTTP proxy use is uncommon outside approved KDC proxy clients and provides strong process context."
+    procedure_ids = "PROC-013"
+    log_source_prerequisites = "Normalize process-attributed HTTP request Content-Type and proxy destination, plus an approved-KDC-proxy-client and approved-KDC-proxy-destination allowlist enrichment."
+    false_positives = "Approved KDC proxy, remote-access, and identity clients where the allowlist enrichment is stale or incomplete."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_kerberos_over_http_proxy.md"
+    validation_status = "needs_validation"
+    validation_method = "Verify Content-Type parser mapping with authorized KDC proxy fixtures. Verify the allowlist enrichment source is authoritative and current; confirm the OR relationship between the two approved-* flags fires when EITHER the client or the destination is unapproved (not only when both are), since requiring both would miss an unapproved client relayed through an approved destination or an approved client abused against an unapproved destination."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_HTTP"
+    $e.additional.fields["http_request_content_type"].value.string_value = "application/kerberos" nocase
+    ($e.additional.fields["approved_kdc_proxy_client"].value.bool_value = false or $e.additional.fields["approved_kdc_proxy_destination"].value.bool_value = false)
+    $e.principal.process.file.full_path != ""
+  condition:
+    $e
+}

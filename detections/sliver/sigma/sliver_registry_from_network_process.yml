@@ -1,0 +1,22 @@
+title: "Registry mutation by a process with outbound network activity"
+name: sliver_registry_from_network_process
+status: experimental
+description: "Registry mutation by a process with outbound network activity"
+source_yaral: "detections/sliver/yaral/sliver_registry_from_network_process.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-018"
+log_source_prerequisites: "Registry mutation and network UDM with stable PID"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "REGISTRY_MODIFICATION"]
+  condition: selection_event_type
+falsepositives:
+  - "Installers, management, security software"
+level: medium

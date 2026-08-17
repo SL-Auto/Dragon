@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_ad_authorization_change
+canonical_path: detections/impacket/yaral/impacket_ad_authorization_change.yaral
+canonical_sha256: b055926dc484d138e9025e1386bf7e210ff2c418424721e4e7a692874c094d98
+description: "Detects changes to AD authorization, ownership, delegation or dMSA attributes."
+severity: high
+procedure_ids: ["IMP-10"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "DC 5136/5137 with DN, attribute, actor and old/new values."
+atomic_event_types: ["5136", "5137"]
+required_udm_fields: ["metadata.product_event_type", "target.resource.attribute.labels"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Approved delegation and IAM workflows."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_ad_authorization_change.spl", sha256: 3bac91f6d868fcc09c6c69f40c12b76673e90ef80996f0faf0f3744f5efa7861, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_ad_authorization_change.kql", sha256: cb2f19830ad04e68f8e6bfb85348c045413c8270dd1a631c65a6b4090fc63a71, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_ad_authorization_change.sql", sha256: 44e2c4abde74735ea52114c3fb5ffcf8c53586f7b282671ed3a5030db3932099, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_ad_authorization_change.eql", sha256: 1092bd2571fc15d91f0872b0add08a61d43a18c70354d6c619e7298da8a30431, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_ad_authorization_change.yml", sha256: 041abc9ad3e215bb7e724d3ac6c229b97b58b29daffb19a2434daf7427331d09, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

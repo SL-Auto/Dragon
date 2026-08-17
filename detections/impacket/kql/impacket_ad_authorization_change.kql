@@ -1,0 +1,17 @@
+// source_yaral: detections/impacket/yaral/impacket_ad_authorization_change.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: impacket_ad_authorization_change
+// severity: high
+// procedure_ids: IMP-10
+// description: Detects changes to AD authorization, ownership, delegation or dMSA attributes.
+// log_source_prerequisites: DC 5136/5137 with DN, attribute, actor and old/new values.
+// false_positives: Approved delegation and IAM workflows.
+// references: reports/impacket/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("5136", "5137") or EventType in ("5136", "5137")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="impacket_ad_authorization_change"

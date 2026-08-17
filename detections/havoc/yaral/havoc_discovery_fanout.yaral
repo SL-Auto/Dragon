@@ -1,0 +1,27 @@
+rule havoc_discovery_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "One process performs rapid directory SMB or RPC discovery across multiple targets"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Discovery fanout is behaviorally relevant but common in inventory and security products"
+    procedure_ids = "HV-P04,HV-P13"
+    log_source_prerequisites = "Process-attributed LDAP SMB RPC or discovery events with target identity"
+    false_positives = "Asset inventory, vulnerability scanners, identity governance and administrative scripts"
+    references = "reports/havoc/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/havoc/detection-review.md"
+  events:
+    re.regex($d.metadata.product_event_type, `(?i)^(LDAP_SEARCH|SMB_SESSION|RPC_CALL|PROCESS_DISCOVERY)$`)
+    $d.principal.hostname = $host
+    $d.principal.process.product_specific_process_id = $pid
+    $d.target.resource.name = $target
+  match:
+    $host, $pid over 10m
+  outcome:
+    $target_count = count_distinct($target)
+  condition:
+    $d and $target_count >= 5
+}

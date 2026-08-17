@@ -1,0 +1,30 @@
+rule rubeus_netonly_ticket_sequence {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates a Type 9 logon session with ticket submission into the same LUID."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "The sequence is consistent with isolated pass-the-ticket workflows but overlaps with runas netonly."
+    procedure_ids = "PROC-007"
+    log_source_prerequisites = "Normalize 4624 LogonType and TargetLogonId plus EDR KerbSubmitTicketMessage target LUID."
+    false_positives = "Runas netonly, administrative workflows, SSO testing, and authorized assessments."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay approved Type 9 and ticket-submission correlation fixtures."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $logon.metadata.product_event_type = "4624"
+    $logon.additional.fields["LogonType"].value.string_value = "9"
+    $logon.target.hostname = $host
+    $logon.additional.fields["TargetLogonId"].value.string_value = $luid
+    $submit.metadata.product_event_type = "EDR_API_CALL"
+    $submit.additional.fields["kerberos_message_type"].value.string_value = "KerbSubmitTicketMessage"
+    $submit.principal.hostname = $host
+    $submit.additional.fields["target_luid"].value.string_value = $luid
+  match:
+    $host, $luid over 5m
+  condition:
+    $logon and $submit
+}

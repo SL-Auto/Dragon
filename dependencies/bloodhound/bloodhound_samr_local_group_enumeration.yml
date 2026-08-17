@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_samr_local_group_enumeration
+canonical_path: detections/bloodhound/yaral/bloodhound_samr_local_group_enumeration.yaral
+canonical_sha256: 23fe74320f471f57f09c0d8d7aca968e6e55ae7e1fdbf718c0fed04aa96defed
+description: "Detects SAMR or LSA policy read operations against multiple remote hosts."
+severity: high
+procedure_ids: ["BH-009", "BH-010"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "NDR or EDR RPC telemetry exposing SAMR/LSA interface or operation and source/target identity."
+atomic_event_types: ["RPC_CALL"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "target.hostname", "target.resource.attribute.labels"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Asset inventory, compliance scanners and endpoint-management systems."
+references: "reports/bloodhound/source-analysis.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_samr_local_group_enumeration.spl", sha256: b00f45c5dbb847562757855f1678e8053dd5c58f1cbde3114f519e8fb133ee84, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_samr_local_group_enumeration.kql", sha256: 2c52868cb3c9da58f6184fedb70755a2f06b7838c132cb4b64eded7b4ee2fa0c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_samr_local_group_enumeration.sql", sha256: 8a6b20c9cb01eeb3970c04dfcea5b5b943efd47efde90a3434957aa86a626e99, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_samr_local_group_enumeration.eql", sha256: 7f31549d55866dc8cc549a674e352bb607ca27426769caad863d9375fc34f0b4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_samr_local_group_enumeration.yml", sha256: d84fdcfc4606302e8c792c4219216b3f1cf7c2b94941f10720787c65cb359649, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

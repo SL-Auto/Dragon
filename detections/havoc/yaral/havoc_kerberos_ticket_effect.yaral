@@ -1,0 +1,27 @@
+rule havoc_kerberos_ticket_effect {
+  meta:
+    author = "Detection Research Agent"
+    description = "A process performs LSA Kerberos cache mutation followed by resource authentication"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Ticket mutation and subsequent use are direct credential-use effects"
+    procedure_ids = "HV-P17"
+    log_source_prerequisites = "Tenant-verified EDR or ETW LSA Kerberos operation plus 4769 or resource authentication joined by account and host"
+    false_positives = "Authorized ticket administration, SSO troubleshooting and security tooling"
+    references = "reports/havoc/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/havoc/detection-review.md"
+  events:
+    re.regex($k.metadata.product_event_type, `(?i)^(KERBEROS_TICKET_PURGE|KERBEROS_TICKET_SUBMIT|LSA_KERBEROS_OPERATION)$`)
+    $k.principal.hostname = $host
+    $k.principal.user.userid = $account
+
+    re.regex($a.metadata.product_event_type, `^(4769|KERBEROS_RESOURCE_AUTHENTICATION)$`)
+    $a.principal.user.userid = $account
+  match:
+    $host, $account over 15m
+  condition:
+    $k and $a
+}

@@ -1,0 +1,17 @@
+# source_yaral: detections/mimikatz/yaral/mimikatz_clipboard_device_access.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: mimikatz_clipboard_device_access
+# severity: low
+# procedure_ids: P34,P42
+# description: Surfaces vendor-reported clipboard or smartcard HID RF device access.
+# log_source_prerequisites: EDR clipboard or device-control telemetry with process and device or operation.
+# false_positives: Normal clipboard, smartcard, HID and reader software.
+# references: reports/mimikatz/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "*")
+| eval canonical_rule="mimikatz_clipboard_device_access"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

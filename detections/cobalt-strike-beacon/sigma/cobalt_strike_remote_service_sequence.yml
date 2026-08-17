@@ -1,0 +1,22 @@
+title: "Correlates network share access with service installation on the target from the same account/source context."
+name: cobalt_strike_remote_service_sequence
+status: experimental
+description: "Correlates network share access with service installation on the target from the same account/source context."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_service_sequence.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-030"
+log_source_prerequisites: "Normalize target 5140/5145 and 4697/7045 with source IP/host, account/logon context, share/path, service/image and target host."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4697", "5140", "5145", "7045"]
+  condition: selection_event_type
+falsepositives:
+  - "Software distribution, endpoint management, backup agents and authorized remote service administration."
+level: high

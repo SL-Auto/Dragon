@@ -1,0 +1,17 @@
+// source_yaral: detections/sliver/yaral/sliver_screen_capture_process_egress.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_screen_capture_process_egress
+// severity: high
+// procedure_ids: PROC-014
+// description: Tenant-normalized screen capture followed by same-process egress
+// log_source_prerequisites: Verified EDR screen capture mapping and stable PID network telemetry
+// false_positives: Conferencing, remote support, screenshot tools
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION", "USER_RESOURCE_ACCESS") or EventType in ("NETWORK_CONNECTION", "USER_RESOURCE_ACCESS")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="sliver_screen_capture_process_egress"

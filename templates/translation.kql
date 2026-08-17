@@ -1,0 +1,6 @@
+// source_yaral: detections/<tool>/yaral/<rule_name>.yaral
+// translation_status: experimental_needs_validation
+// fidelity: full|partial|unsupported
+// assumptions_and_gaps: <Microsoft Sentinel tables, field mapping, and unsupported semantics>
+
+<native KQL detection>

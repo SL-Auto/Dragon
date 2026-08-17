@@ -1,0 +1,14 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_service_sequence.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: cobalt_strike_remote_service_sequence
+// severity: high
+// procedure_ids: CSB-030
+// description: Correlates network share access with service installation on the target from the same account/source context.
+// log_source_prerequisites: Normalize target 5140/5145 and 4697/7045 with source IP/host, account/logon context, share/path, service/image and target host.
+// false_positives: Software distribution, endpoint management, backup agents and authorized remote service administration.
+// references: reports/cobalt-strike-beacon/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("4697", "5140", "5145", "7045") or event.action in ("4697", "5140", "5145", "7045")

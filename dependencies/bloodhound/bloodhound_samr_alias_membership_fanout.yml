@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_samr_alias_membership_fanout
+canonical_path: detections/bloodhound/yaral/bloodhound_samr_alias_membership_fanout.yaral
+canonical_sha256: f0a036a55e12454d5a4b3fdc6983bbbb3f49b26ced4f18a39a30f198ee79d9ca
+description: "Detects SAMR alias-membership or account enumeration operations resolved to the SAMR interface against multiple remote hosts, compensating for parser/vendor differences that separate SAMR from LSA policy telemetry inside the combined bloodhound_samr_local_group_enumeration regex."
+severity: high
+procedure_ids: ["BH-009"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "NDR or EDR RPC telemetry that separately resolves the SAMR interface and operation name (for example GetMembersInAlias or EnumerateAliases), plus source and target host identity."
+atomic_event_types: ["RPC_CALL"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "target.hostname", "target.resource.attribute.labels"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Asset inventory, compliance scanners and endpoint-management systems that enumerate local group membership."
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_samr_local_group_enumeration.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_samr_alias_membership_fanout.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_samr_alias_membership_fanout.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_samr_alias_membership_fanout.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_samr_alias_membership_fanout.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_samr_alias_membership_fanout.yml", sha256: missing, status: "", fidelity: "" }

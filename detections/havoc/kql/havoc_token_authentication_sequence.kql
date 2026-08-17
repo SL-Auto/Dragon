@@ -1,0 +1,17 @@
+// source_yaral: detections/havoc/yaral/havoc_token_authentication_sequence.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: havoc_token_authentication_sequence
+// severity: high
+// procedure_ids: HV-P12
+// description: Explicit-credential or token-manipulation activity is followed by execution under the same account
+// log_source_prerequisites: Windows Security 4648 or tenant-verified EDR token manipulation and process creation with account logon ID enrichment
+// false_positives: RunAs, service accounts, deployment and approved administrative automation
+// references: reports/havoc/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("PROCESS_LAUNCH", "TOKEN_CREATE", "TOKEN_DUPLICATE", "TOKEN_IMPERSONATION") or EventType in ("PROCESS_LAUNCH", "TOKEN_CREATE", "TOKEN_DUPLICATE", "TOKEN_IMPERSONATION")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="havoc_token_authentication_sequence"

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_directory_discovery_compensating_signal
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_directory_discovery_compensating_signal.yaral
+canonical_sha256: 73d3698033a79910cda25a7c5677d6a923ddf99dae0e7df1650658f8f345d848
+description: "Aggregates multi-class LDAP directory queries by user and host, independent of any single process, to surface discovery distributed across multiple short-lived processes in the same session."
+severity: medium
+procedure_ids: ["CSB-022"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize LDAP_QUERY with client account, hostname, and object-class field, plus an allowlist enrichment identifying approved directory-scanning software."
+atomic_event_types: ["LDAP_QUERY"]
+required_udm_fields: ["additional.fields", "metadata.event_type", "principal.hostname", "principal.user.userid"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Identity governance, endpoint inventory, directory health, administration and vulnerability-assessment tooling that legitimately queries many object classes."
+references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_directory_discovery.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_directory_discovery_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_directory_discovery_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_directory_discovery_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_directory_discovery_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_directory_discovery_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }

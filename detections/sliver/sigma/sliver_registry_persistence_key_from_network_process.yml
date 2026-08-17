@@ -1,0 +1,22 @@
+title: "A network-active process writes a registry key commonly used for persistence or security-control tampering"
+name: sliver_registry_persistence_key_from_network_process
+status: experimental
+description: "A network-active process writes a registry key commonly used for persistence or security-control tampering"
+source_yaral: "detections/sliver/yaral/sliver_registry_persistence_key_from_network_process.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-018"
+log_source_prerequisites: "Registry mutation telemetry with full key path, plus process-attributed network telemetry sharing a stable process entity"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["REGISTRY_MODIFICATION", "NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Installers, endpoint management, and security software that legitimately write persistence-adjacent keys"
+level: high

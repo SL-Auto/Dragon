@@ -1,0 +1,17 @@
+# source_yaral: detections/impacket/yaral/impacket_unusual_protocol_listener.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: impacket_unusual_protocol_listener
+# severity: medium
+# procedure_ids: IMP-02
+# description: Detects non-server processes listening on SMB or relay-associated service ports.
+# log_source_prerequisites: EDR network-listen events with process, host, port and direction.
+# false_positives: Approved file servers, development services and security tools.
+# references: reports/impacket/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "NETWORK_CONNECTION")
+| eval canonical_rule="impacket_unusual_protocol_listener"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

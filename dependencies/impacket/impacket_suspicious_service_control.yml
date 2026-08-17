@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_suspicious_service_control
+canonical_path: detections/impacket/yaral/impacket_suspicious_service_control.yaral
+canonical_sha256: 2de5824c92741e143d3a7cbff5a7d25200095146a4c1a431a6e1beed70d4440e
+description: "Detects service creation or configuration following a remote logon."
+severity: high
+procedure_ids: ["IMP-03"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Windows 4624 and 4697/7045 with host, account and source."
+atomic_event_types: ["4624", "4697", "7045"]
+required_udm_fields: ["metadata.product_event_type", "principal.user.userid", "target.hostname", "target.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Software deployment and remote support."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_suspicious_service_control.spl", sha256: 7a031471d40aba31b0cdc2608be7a6f2f7757bffdc7acb02523f34b1513bceff, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_suspicious_service_control.kql", sha256: 4b711e003e4b671216add069bb9370dad06355e1e793d4ca1f3480edf50cd2ed, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_suspicious_service_control.sql", sha256: f234d5c215d1aee21aed508103eb720c9e5f23386cab2835ecda64e3c2578d2a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_suspicious_service_control.eql", sha256: 4fe389d282dae5ecfb778a4dd6d6b3ed507664928d0ecb65eb18f47942cea59e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_suspicious_service_control.yml", sha256: 87973df8de95d868b161354b8611d7eecb61e78c950ffc8c38a41f0e29151674, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

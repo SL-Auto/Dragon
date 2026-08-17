@@ -1,0 +1,24 @@
+rule impacket_short_lived_command_service {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects service installation paths that invoke a command shell with output redirection."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Command-shell service paths with redirection are unusual and consistent with transient remote execution."
+    procedure_ids = "IMP-03"
+    log_source_prerequisites = "Normalize Windows 7045 or 4697 service-install events and preserve the full service image path."
+    false_positives = "Scripted break-glass administration and management products that wrap commands in temporary services."
+    references = "reports/impacket/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use synthetic service-event fixtures and approved administrative telemetry; never execute Impacket."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/impacket/detection-review.md"
+
+  events:
+    $e.metadata.product_event_type = /(7045|4697)/
+    re.regex($e.target.process.command_line, `(?i)(cmd(\.exe)?\s+/[cq].*(2?>|&gt;)|%COMSPEC%.*(2?>|&gt;))`)
+
+  condition:
+    $e
+}

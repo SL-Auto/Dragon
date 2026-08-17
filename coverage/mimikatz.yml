@@ -1,0 +1,58 @@
+schema_version: 1
+tool_id: mimikatz
+analyzed_revision: 306bc6b43099c7b698f2898401fddbded6a630c8
+inventory_method: complete source registration tables, dispatcher, companion projects, and platform branches
+inventory_complete: true
+inventory_evidence: [reports/mimikatz/source-analysis.md]
+excluded_paths:
+  - { path: build metadata and resources, reason: non-procedure material }
+  - { path: generated RPC stubs and compatibility headers, reason: caller effects inventoried }
+  - { path: shared helper libraries, reason: folded into observably equivalent callers }
+procedures:
+  - { id: P01, name: local utility and output, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_process_file_context] }
+  - { id: P02, name: privilege adjustment, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_token_process_control] }
+  - { id: P03, name: process discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_token_process_control] }
+  - { id: P04, name: process control, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_token_process_control] }
+  - { id: P05, name: token manipulation, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_token_process_control] }
+  - { id: P06, name: service control, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_service_driver_module_change, mimikatz_module_load_into_lsass_or_spooler] }
+  - { id: P07, name: LSASS acquisition, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_lsass_memory_access] }
+  - { id: P08, name: LSASS offline parsing, telemetry_status: assessed, detection_status: not_observable, detection_rules: [] }
+  - { id: P09, name: pass the hash memory modification, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_lsass_memory_access] }
+  - { id: P10, name: Kerberos cache operations, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_kerberos_activity] }
+  - { id: P11, name: offline Kerberos construction, telemetry_status: assessed, detection_status: not_observable, detection_rules: [] }
+  - { id: P12, name: local hive secret recovery, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_protected_sam_system_access_sequence] }
+  - { id: P13, name: LSA query or patch, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_lsass_memory_access] }
+  - { id: P14, name: DCSync, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_directory_replication_right_access] }
+  - { id: P15, name: DCShadow, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_directory_mutation] }
+  - { id: P16, name: SAMR Netlogon secret change, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_account_secret_change] }
+  - { id: P17, name: offline DPAPI core, telemetry_status: assessed, detection_status: not_observable, detection_rules: [] }
+  - { id: P18, name: DPAPI application stores, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_sensitive_store_access, mimikatz_sensitive_store_multi_family_access] }
+  - { id: P19, name: protected key stores, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_sensitive_store_access, mimikatz_sensitive_store_multi_family_access] }
+  - { id: P20, name: crypto enumeration export, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_sensitive_store_access, mimikatz_sensitive_store_multi_family_access] }
+  - { id: P21, name: certificate enrollment key movement, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_certificate_key_operation] }
+  - { id: P22, name: crypto patch extraction, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_cross_process_tamper] }
+  - { id: P23, name: Vault CredMan, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_sensitive_store_access, mimikatz_sensitive_store_multi_family_access] }
+  - { id: P24, name: Hello NGC key access, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_certificate_key_operation] }
+  - { id: P25, name: IIS configuration credentials, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_sensitive_store_access, mimikatz_sensitive_store_multi_family_access] }
+  - { id: P26, name: event log impairment, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_event_log_impairment] }
+  - { id: P27, name: terminal service control, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_cross_process_tamper] }
+  - { id: P28, name: RDP credential memory, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_cross_process_tamper] }
+  - { id: P29, name: SID directory mutation, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_directory_mutation] }
+  - { id: P30, name: network domain discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_directory_network_discovery] }
+  - { id: P31, name: utility spawn session lock, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_process_file_context] }
+  - { id: P32, name: user mode patch injection, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_cross_process_tamper] }
+  - { id: P33, name: file transform staging, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_process_file_context] }
+  - { id: P34, name: clipboard collection, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_clipboard_device_access] }
+  - { id: P35, name: authentication coercion, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_rpc_pipe_activity] }
+  - { id: P36, name: print modification, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_service_driver_module_change, mimikatz_module_load_into_lsass_or_spooler] }
+  - { id: P37, name: SCCM VSS Citrix discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_sensitive_store_access, mimikatz_sensitive_store_multi_family_access] }
+  - { id: P38, name: RPC pipe control, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_rpc_pipe_activity] }
+  - { id: P39, name: firmware variables, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_firmware_driver_operation] }
+  - { id: P40, name: Minesweeper memory, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_cross_process_tamper] }
+  - { id: P41, name: RDM artifact access, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_sensitive_store_access, mimikatz_sensitive_store_multi_family_access] }
+  - { id: P42, name: hardware access, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_clipboard_device_access] }
+  - { id: P43, name: mimidrv kernel operations, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_firmware_driver_operation] }
+  - { id: P44, name: mimilib extensions, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_service_driver_module_change, mimikatz_module_load_into_lsass_or_spooler] }
+  - { id: P45, name: mimispool monitor, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_service_driver_module_change, mimikatz_module_load_into_lsass_or_spooler] }
+  - { id: P46, name: mimilove DPAPI, telemetry_status: assessed, detection_status: detected, detection_rules: [mimikatz_sensitive_store_access, mimikatz_sensitive_store_multi_family_access] }
+completion: { total_procedures: 46, detected: 43, not_observable: 3, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

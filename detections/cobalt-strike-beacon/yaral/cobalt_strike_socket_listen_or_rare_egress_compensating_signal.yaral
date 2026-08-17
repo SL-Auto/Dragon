@@ -1,0 +1,34 @@
+rule cobalt_strike_socket_listen_or_rare_egress_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates a rare-process socket listen with an accepted inbound connection on the same port and process, closing the gap between merely listening and actually receiving a connection that the base standalone-listen rule leaves open."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "A rare/unsigned process that opens a listener and then receives an inbound connection is a much stronger bind-C2 signal than a listener alone, though development tools and local services can still match."
+    procedure_ids = "CSB-008"
+    log_source_prerequisites = "Normalize SOCKET_LISTEN and inbound NETWORK_CONNECTION with a stable process entity identifier, process signer/prevalence, and port, joined on host, process entity and port within 30 minutes."
+    false_positives = "Development tools and local services that legitimately listen from rare binaries and receive local or authorized connections."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_socket_listen_or_rare_egress.md"
+    validation_status = "needs_validation"
+    validation_method = "Use benign listener-plus-client fixtures representative of development and local-service tooling; do not start Beacon listeners."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_socket_listen_or_rare_egress"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_socket_listen_or_rare_egress.md"
+    modification_note = "Proposal accepted with a required change: replaced the invented additional.fields['process_prevalence'] with the native principal.process.file.is_signed/prevalence fields already used by the base rule, and used the stable process entity_id rather than PID for the join."
+  events:
+    $listen.metadata.event_type = "SOCKET_LISTEN"
+    $listen.principal.hostname = $host
+    $listen.principal.process.entity_id = $proc
+    $listen.target.port = $port
+    ($listen.principal.process.file.is_signed = false or $listen.principal.process.file.prevalence = "RARE")
+    $accept.metadata.event_type = "NETWORK_CONNECTION"
+    $accept.network.direction = "INBOUND"
+    $accept.target.process.entity_id = $proc
+    $accept.target.port = $port
+  match:
+    $host, $proc, $port over 30m
+  condition:
+    $listen and $accept
+}

@@ -1,0 +1,22 @@
+title: "Correlates rapid scheduled-task registration and execution; deletion is not required because cleanup may fail or telemetry may be missing."
+name: impacket_rapid_scheduled_task_create_and_run
+status: experimental
+description: "Correlates rapid scheduled-task registration and execution; deletion is not required because cleanup may fail or telemetry may be missing."
+source_yaral: "detections/impacket/yaral/impacket_rapid_scheduled_task_create_and_run.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-04"
+log_source_prerequisites: "Normalize Task Scheduler Operational or Security 4698/4699 events with task name, host, action, user, and timestamp."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["100", "106", "200", "4698"]
+  condition: selection_event_type
+falsepositives:
+  - "Installers, enterprise schedulers, deployment systems, and ephemeral maintenance tasks."
+level: high

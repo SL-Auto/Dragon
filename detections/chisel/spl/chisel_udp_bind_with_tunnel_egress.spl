@@ -1,0 +1,17 @@
+# source_yaral: detections/chisel/yaral/chisel_udp_bind_with_tunnel_egress.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: chisel_udp_bind_with_tunnel_egress
+# severity: high
+# procedure_ids: CH-P03,CH-P04
+# description: Detects process-owned UDP bind or receive activity combined with outbound tunnel-like connectivity
+# log_source_prerequisites: EDR UDP bind or receive and outbound connection telemetry with stable process entity
+# false_positives: DNS relays media services VPNs and approved UDP proxies
+# references: reports/chisel/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "NETWORK_CONNECTION", "UDP_BIND", "UDP_RECEIVE")
+| eval canonical_rule="chisel_udp_bind_with_tunnel_egress"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

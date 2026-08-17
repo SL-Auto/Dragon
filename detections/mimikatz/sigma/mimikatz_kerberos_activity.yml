@@ -1,0 +1,22 @@
+title: "Surfaces Kerberos ticket issuance or endpoint LSA ticket-cache operations for contextual analytics."
+name: mimikatz_kerberos_activity
+status: experimental
+description: "Surfaces Kerberos ticket issuance or endpoint LSA ticket-cache operations for contextual analytics."
+source_yaral: "detections/mimikatz/yaral/mimikatz_kerberos_activity.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md"
+procedure_ids: "P10"
+log_source_prerequisites: "DC 4768-4771 and vendor LSA ticket-operation telemetry."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4768", "4769", "4770", "4771"]
+  condition: selection_event_type
+falsepositives:
+  - "Normal domain authentication and administrative ticket management."
+level: low

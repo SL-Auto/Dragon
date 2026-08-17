@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_lsass_memory_access
+canonical_path: detections/mimikatz/yaral/mimikatz_lsass_memory_access.yaral
+canonical_sha256: 377dd7ac7c08e3bf0e66bb0b28149eab7f36f4cc5141035c98321396f048ab67
+description: "Detects process access to LSASS with memory-read-capable rights; tuning is applied downstream rather than with broad process-name exclusions."
+severity: high
+procedure_ids: ["P07", "P09", "P13"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize Sysmon Event ID 10 or equivalent EDR process-open telemetry to UDM with source and target process paths and access-mask text."
+atomic_event_types: ["10", "PROCESS_OPEN"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "security_result.description", "target.process.file.full_path"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "EDR and antivirus sensors, approved diagnostics, authentication extensions, and accessibility tooling."
+references: "reports/mimikatz/source-analysis.md; https://learn.microsoft.com/windows/security/operating-system-security/sysmon/sysmon-events"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_lsass_memory_access.spl", sha256: 482333c807444cc23bbc661743f4730d702d43a01a39c548003d8ed62b4934e9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_lsass_memory_access.kql", sha256: 948df688eea2fcee720af307aa930a3d39e8fa7d15f5412ee6245029bbcda9a6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_lsass_memory_access.sql", sha256: 44b75a567b4404a83a023764b0e7f69fe81c25a5da39ce1d48b78e56395542fd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_lsass_memory_access.eql", sha256: 7114cb8bc139ceaa68c827cbf84383cf25cec8df7964e0922fb10e8c164ef9c1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_lsass_memory_access.yml", sha256: 7ae7b4ef199e50c1da4bc903b2aff7cdbcfeddfdbdc7b7a5a8afd4f31709ebc5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

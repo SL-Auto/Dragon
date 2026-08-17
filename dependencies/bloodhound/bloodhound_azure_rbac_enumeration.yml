@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_azure_rbac_enumeration
+canonical_path: detections/bloodhound/yaral/bloodhound_azure_rbac_enumeration.yaral
+canonical_sha256: 877d622705c870548b10e8145bde9e49da542413e9258cb73b674e92c5118189
+description: "Detects high-cardinality Azure RBAC, owner, access-policy or role-eligibility reads."
+severity: high
+procedure_ids: ["BH-019"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Graph/ARM audit with principal, operation name, target scope/object and source."
+atomic_event_types: ["AZURE_RESOURCE_READ", "AzureActivity", "MicrosoftGraphActivityLogs"]
+required_udm_fields: ["metadata.product_event_type", "principal.user.userid", "target.resource.attribute.labels", "target.resource.name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Access reviews, IAM governance, CSPM and authorized audits."
+references: "reports/bloodhound/source-analysis.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_azure_rbac_enumeration.spl", sha256: 2aeb512c499e373e01645db4ad8e67409832ffca317da4177560da1c7dd6f4e7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_azure_rbac_enumeration.kql", sha256: 816be6616aae92da7f5bd5b36a9d45af61575462793ceec16ae92240a22ecf5a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_azure_rbac_enumeration.sql", sha256: e985720f1be01a55fae32c64a433623f59064752a5164d6b82b7ac59eaf1a719, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_azure_rbac_enumeration.eql", sha256: b9e6a5b17dd2a7130754145f2d9b7586214abea5e140acd33b722c0442aba40a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_azure_rbac_enumeration.yml", sha256: e793adbf33a5ac7ba4481e17dcb9c7a187e853a1a31492bc55227bef1dabf907, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

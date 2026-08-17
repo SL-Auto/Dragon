@@ -1,0 +1,22 @@
+title: "Detects unexpected packet capture driver or raw socket use."
+name: impacket_packet_capture_or_raw_socket
+status: experimental
+description: "Detects unexpected packet capture driver or raw socket use."
+source_yaral: "detections/impacket/yaral/impacket_packet_capture_or_raw_socket.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-19"
+log_source_prerequisites: "EDR process, driver and raw-socket telemetry."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["DRIVER_LOAD", "NETWORK_CONNECTION", "PROCESS_LAUNCH"]
+  condition: selection_event_type
+falsepositives:
+  - "Network troubleshooting, monitoring and security sensors."
+level: medium

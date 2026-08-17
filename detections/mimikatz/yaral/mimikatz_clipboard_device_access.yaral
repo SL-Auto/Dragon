@@ -1,0 +1,19 @@
+rule mimikatz_clipboard_device_access {
+ meta:
+  author = "Detection Research Agent"
+  description = "Surfaces vendor-reported clipboard or smartcard HID RF device access."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "LOW"
+  severity_rationale = "Device and clipboard operations are contextual and highly environment dependent."
+  procedure_ids = "P34,P42"
+  log_source_prerequisites = "EDR clipboard or device-control telemetry with process and device or operation."
+  false_positives = "Normal clipboard, smartcard, HID and reader software."
+  references = "reports/mimikatz/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/mimikatz/detection-review.md"
+ events:
+  re.regex($e.security_result.description, `(?i)(clipboard|smartcard|HID|RFID|NFC)`)
+ condition: $e
+}

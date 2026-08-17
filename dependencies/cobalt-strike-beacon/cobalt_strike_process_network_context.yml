@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_process_network_context
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_process_network_context.yaral
+canonical_sha256: b255f3a0bfc3a3b322da2599c59439e3665f56ee7e027d5d3d57638296eefd6d
+description: "Surfaces process-attributed repeated outbound network activity from an unsigned or uncommon executable; intended as Beacon-compatible C2 context, not attribution."
+severity: medium
+procedure_ids: ["CSB-001", "CSB-002", "CSB-005"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize EDR process-attributed NETWORK_CONNECTION events with stable process entity, host, destination, direction, signer and executable prevalence enrichment."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.file.full_path", "principal.process.file.is_signed", "principal.process.file.prevalence", "principal.process.product_specific_process_id"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Software updaters, monitoring agents, remote support, browsers, synchronization and backup clients."
+references: "reports/cobalt-strike-beacon/source-analysis.md; https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/content/topics/post-exploitation_asynch-interactive.htm"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_process_network_context.spl", sha256: e053f9836273a8115b9c6a14d0e5462b26a850b100b73576ebf1e9919d6de921, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_process_network_context.kql", sha256: 911b16fe67ad765756d52026228eb69e4252bba155917b0fa7c519aa625ccc90, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_process_network_context.sql", sha256: ac5a18ab604334c52907711b82ff857311b5b8239beec4f59e1b6680d454fa39, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_process_network_context.eql", sha256: fc04361f7acb3b5215990e0fbe1a7af053e20cb696e97341ca6946736417a3dc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_process_network_context.yml", sha256: 6ca9460e6844da0dffab898b2ecb1d31c1e384446d0911a6189c23f79f581502, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

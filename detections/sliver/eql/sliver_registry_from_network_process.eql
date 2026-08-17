@@ -1,0 +1,14 @@
+// source_yaral: detections/sliver/yaral/sliver_registry_from_network_process.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_registry_from_network_process
+// severity: medium
+// procedure_ids: PROC-018
+// description: Registry mutation by a process with outbound network activity
+// log_source_prerequisites: Registry mutation and network UDM with stable PID
+// false_positives: Installers, management, security software
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("NETWORK_CONNECTION", "REGISTRY_MODIFICATION") or event.action in ("NETWORK_CONNECTION", "REGISTRY_MODIFICATION")

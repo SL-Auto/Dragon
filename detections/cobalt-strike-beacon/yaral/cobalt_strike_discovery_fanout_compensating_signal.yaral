@@ -1,0 +1,30 @@
+rule cobalt_strike_discovery_fanout_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Aggregates attempted network connections by user and host over a wider window at a lower per-process threshold to surface slow or distributed port/network discovery that falls under the single-process fan-out rule's threshold."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Session-scoped low-and-slow discovery is useful reconnaissance context, but vulnerability scanners and management agents produce identical fan-out."
+    procedure_ids = "CSB-021"
+    log_source_prerequisites = "Normalize process-attributed NETWORK_CONNECTION attempts with destination IP/port, account, hostname, and an allowlist enrichment identifying approved scanners."
+    false_positives = "Vulnerability scanners, monitoring, software distribution, service discovery and network management tools not present in the approved-scanner enrichment."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_discovery_fanout.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay authorized scanner baselines spread across many hosts and processes; confirm the allowlist enrichment suppresses them."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_discovery_fanout"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_discovery_fanout.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.principal.user.userid = $user
+    $e.principal.hostname = $host
+    $e.target.ip = $ip
+    $e.target.port = $port
+    $e.additional.fields["approved_scanner"].value.bool_value = false
+  match:
+    $user, $host over 60m
+  condition:
+    $e and #ip >= 10 and #port >= 4
+}

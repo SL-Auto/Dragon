@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_sensitive_registry_read_compensating_signal
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_registry_read_compensating_signal.yaral
+canonical_sha256: 291d845da0f1e309ebc1b5d2ea24d59fb115101647d1bc8ea7594b8d18ff1cca
+description: "Detects a single process reading several distinct sensitive-registry-family keys within a short window, surfacing multi-family enumeration bursts that the base single-event sensitivity check does not aggregate."
+severity: medium
+procedure_ids: ["CSB-023"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize REGISTRY_READ with process hash, hostname, a registry-security-family classification field, and an approved-inventory-process enrichment, joined on host and process hash within 15 minutes."
+atomic_event_types: ["REGISTRY_READ"]
+required_udm_fields: ["additional.fields", "metadata.event_type", "principal.hostname", "principal.process.file.sha256"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Inventory, compliance, EDR, backup, and forensics tooling that legitimately reads across many sensitive registry families; the approved-inventory-process enrichment is required to keep this usable."
+references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_sensitive_registry_read_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_sensitive_registry_read_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_sensitive_registry_read_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_sensitive_registry_read_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_sensitive_registry_read_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }

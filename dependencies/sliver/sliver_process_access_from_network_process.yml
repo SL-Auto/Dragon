@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_process_access_from_network_process
+canonical_path: detections/sliver/yaral/sliver_process_access_from_network_process.yaral
+canonical_sha256: c05041c234b395b7a9ea6bbf7775a876ae726e1cac8821c7c1a1bf6f79109aaa
+description: "Outbound-network process performs sensitive process access, injection, dump, or memory load"
+severity: high
+procedure_ids: ["PROC-011", "PROC-012", "PROC-015"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Tenant-verified EDR process access/injection/memory event plus stable PID network telemetry"
+atomic_event_types: ["NETWORK_CONNECTION", "PROCESS_MODULE_LOAD"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "EDR, debuggers, profilers, accessibility"
+references: "reports/sliver/source-analysis.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_process_access_from_network_process.spl", sha256: e575ea3b28a282612e177920533586aaee083affa4ba778074c953db33e5c1c8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_process_access_from_network_process.kql", sha256: a7595b631aa37cfebf358401e5d12504ea12cfc32eca2a2974babc87d10d74c2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_process_access_from_network_process.sql", sha256: 7e450166967a1100cfb518d87f5873699f3215c4024992abdfc2ead168d0c24e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_process_access_from_network_process.eql", sha256: 57110dcdce026a865f72e591d9390994751848e2121a3604988930e8ab5a18e1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_process_access_from_network_process.yml", sha256: 317aef2821a455acc1cf1ef5be5c684688cf1f745e6d5cefcfb85d9e9a817082, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,17 @@
+// source_yaral: detections/impacket/yaral/impacket_remote_registry_activity.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: impacket_remote_registry_activity
+// severity: high
+// procedure_ids: IMP-14
+// description: Detects remote registry service activation or sensitive key changes.
+// log_source_prerequisites: Service, registry and RPC telemetry with key, actor and source.
+// false_positives: Inventory, backup and remote support.
+// references: reports/impacket/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("12", "13", "14", "4657", "7036") or EventType in ("12", "13", "14", "4657", "7036")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="impacket_remote_registry_activity"

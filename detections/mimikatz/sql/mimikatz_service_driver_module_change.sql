@@ -1,0 +1,19 @@
+-- source_yaral: detections/mimikatz/yaral/mimikatz_service_driver_module_change.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: partial
+-- rule_name: mimikatz_service_driver_module_change
+-- severity: high
+-- procedure_ids: P06,P36,P44,P45
+-- description: Detects service, driver, authentication extension or print-monitor installation events.
+-- log_source_prerequisites: Security 4697, System 7045, Sysmon driver/image load and registry change telemetry.
+-- false_positives: Approved software, driver, print-monitor and authentication-package deployment.
+-- references: reports/mimikatz/source-analysis.md
+-- assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+-- schema_profile: schemas/normalized-sql.yml
+-- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).
+SELECT hostname, user_id, COUNT(*) AS event_count,
+       'mimikatz_service_driver_module_change' AS canonical_rule
+FROM normalized_events
+WHERE product_event_type IN ('4697', '6', '7', '7045') OR event_type IN ('4697', '6', '7', '7045')
+GROUP BY hostname, user_id
+HAVING COUNT(*) > 0;

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_discovery_fanout_compensating_signal
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_discovery_fanout_compensating_signal.yaral
+canonical_sha256: 4458ff1349e042482e28129f0cb84817a60cc6b4338c3b1839374ee704e05ea3
+description: "Aggregates attempted network connections by user and host over a wider window at a lower per-process threshold to surface slow or distributed port/network discovery that falls under the single-process fan-out rule's threshold."
+severity: medium
+procedure_ids: ["CSB-021"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize process-attributed NETWORK_CONNECTION attempts with destination IP/port, account, hostname, and an allowlist enrichment identifying approved scanners."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["additional.fields", "metadata.event_type", "principal.hostname", "principal.user.userid", "target.ip", "target.port"]
+correlation_window: "60m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Vulnerability scanners, monitoring, software distribution, service discovery and network management tools not present in the approved-scanner enrichment."
+references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_discovery_fanout.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_discovery_fanout_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_discovery_fanout_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_discovery_fanout_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_discovery_fanout_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_discovery_fanout_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }

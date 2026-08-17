@@ -1,0 +1,17 @@
+# source_yaral: detections/sliver/yaral/sliver_parent_egress_with_spawned_interpreter.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: sliver_parent_egress_with_spawned_interpreter
+# severity: high
+# procedure_ids: PROC-010
+# description: Network process spawns a command interpreter
+# log_source_prerequisites: Process and network events with parent PID
+# false_positives: Automation, management, installers
+# references: reports/sliver/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "NETWORK_CONNECTION", "PROCESS_LAUNCH")
+| eval canonical_rule="sliver_parent_egress_with_spawned_interpreter"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

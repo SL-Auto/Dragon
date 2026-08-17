@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_kerberoast_sequence
+canonical_path: detections/rubeus/yaral/rubeus_kerberoast_sequence.yaral
+canonical_sha256: f70f549433ef69b82d59788dab687605fb3903ada30efd3490751bfea5d593b7
+description: "Correlates LDAP SPN discovery with service-ticket fan-out by the same host and user."
+severity: high
+procedure_ids: ["PROC-004"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize directory-side LDAP filters and 4769 with host, user, and service."
+atomic_event_types: ["4769", "LDAP_SEARCH"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.hostname", "principal.user.userid", "target.resource.name", "target.user.userid"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Service inventory, monitoring, identity governance, and authorized assessment."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_kerberoast_sequence.spl", sha256: 276a2c9ff31ac47b5178c895cf40a2f43ec940203d5123f5cb6f9c0f2f4d85a6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_kerberoast_sequence.kql", sha256: af055aa1c53f7f0eb24408f4f378bef77178c8b1c9252ef80c91ce9ecf5d4d74, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_kerberoast_sequence.sql", sha256: 5d8cda5bab0b799268356ffaaf4ddce9396baa291a8a0adc248f56b95fab4d08, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_kerberoast_sequence.eql", sha256: 547c7b132498c348d303ba902ef3d959b514e85e5bc5c0a3da383bec7d6b4930, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_kerberoast_sequence.yml", sha256: 8dc7326407e40a58e6618caaf8b4d6a36d2f8df168ae10c715b22c38484a2c1e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

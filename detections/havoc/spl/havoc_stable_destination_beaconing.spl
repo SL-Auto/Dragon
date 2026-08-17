@@ -1,0 +1,17 @@
+# source_yaral: detections/havoc/yaral/havoc_stable_destination_beaconing.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: havoc_stable_destination_beaconing
+# severity: high
+# procedure_ids: HV-P01,HV-P03
+# description: A process repeatedly connects to the same destination across multiple active minutes
+# log_source_prerequisites: Process-attributed outbound network telemetry with stable process and destination identity
+# false_positives: Monitoring, update, VPN, messaging and management agents with stable services
+# references: reports/havoc/source-analysis.md; public-rules/comparisons/havoc/havoc_recurrent_process_egress.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "NETWORK_CONNECTION")
+| eval canonical_rule="havoc_stable_destination_beaconing"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

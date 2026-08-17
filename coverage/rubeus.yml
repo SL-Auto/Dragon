@@ -1,0 +1,31 @@
+schema_version: 1
+tool_id: rubeus
+analyzed_revision: 74215f68ea70bd6a66c008da91bf5fe21d20b154
+inventory_method: full-command-dispatcher-and-source-tree
+inventory_complete: true
+inventory_evidence:
+  - RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md#comprehensive-command-to-procedure-reconciliation
+  - https://github.com/GhostPack/Rubeus/blob/74215f68ea70bd6a66c008da91bf5fe21d20b154/Rubeus/Domain/CommandCollection.cs#L18-L49
+excluded_paths: []
+procedures:
+  - { id: PROC-001, name: AS/TGT acquisition and authentication probing, source_locations: [Commands/Asktgt.cs, Commands/Brute.cs, Commands/Preauthscan.cs], telemetry_status: assessed, detection_status: detected, detection_rules: [rubeus_as_request_anomaly, rubeus_as_request_failed_preauth_fanout] }
+  - { id: PROC-002, name: TGS acquisition and renewal, source_locations: [Commands/Asktgs.cs, Commands/RenewCommand.cs], telemetry_status: assessed, detection_status: detected, detection_rules: [rubeus_service_ticket_or_renewal_anomaly] }
+  - { id: PROC-003, name: AS-REP roasting, source_locations: [Commands/Asreproast.cs], telemetry_status: assessed, detection_status: detected, detection_rules: [rubeus_asrep_roast_sequence] }
+  - { id: PROC-004, name: Kerberoasting, source_locations: [Commands/Kerberoast.cs], telemetry_status: assessed, detection_status: detected, detection_rules: [rubeus_kerberoast_sequence] }
+  - { id: PROC-005, name: S4U and delegation workflows, source_locations: [Commands/S4u.cs, Commands/Tgtdeleg.cs], telemetry_status: assessed, detection_status: detected, detection_rules: [rubeus_s4u_ticket_sequence] }
+  - { id: PROC-006, name: Ticket cache and session discovery or extraction, source_locations: [Commands/Currentluid.cs, Commands/Logonsession.cs, Commands/Klist.cs, Commands/Triage.cs, Commands/Dump.cs, Commands/Monitor.cs, Commands/HarvestCommand.cs], telemetry_status: assessed, detection_status: detected, detection_rules: [rubeus_lsa_ticket_cache_operations] }
+  - { id: PROC-007, name: Ticket submission purge and net-only session, source_locations: [Commands/Ptt.cs, Commands/Purge.cs, Commands/Createnetonly.cs], telemetry_status: assessed, detection_status: detected, detection_rules: [rubeus_lsa_ticket_mutation, rubeus_netonly_ticket_sequence] }
+  - { id: PROC-008, name: Ticket forging, source_locations: [Commands/Golden.cs, Commands/Silver.cs, Commands/Diamond.cs], telemetry_status: assessed, detection_status: detected, detection_rules: [rubeus_ticket_use_without_credible_kdc_issue] }
+  - { id: PROC-009, name: Ticket mutation, source_locations: [Commands/Tgssub.cs], telemetry_status: assessed, detection_status: detected, detection_rules: [rubeus_ticket_use_without_credible_kdc_issue] }
+  - { id: PROC-010, name: Ticket parsing and conversion, source_locations: [Commands/Describe.cs, Commands/Kirbi.cs, Commands/ASREP2Kirbi.cs], telemetry_status: assessed, detection_status: detected, detection_rules: [rubeus_ticket_artifact_access_or_creation] }
+  - { id: PROC-011, name: Key derivation, source_locations: [Commands/Hash.cs], telemetry_status: not_observable, detection_status: not_observable, detection_rules: [], notes: local cryptographic computation has no unique standard-log behavior; EDR content/process context compensates }
+  - { id: PROC-012, name: Password change, source_locations: [Commands/Changepw.cs], telemetry_status: not_observable, detection_status: not_observable, detection_rules: [rubeus_unusual_kerberos_password_change], notes: standard account-change events do not attribute a normal single password change to Rubeus; multi-target anomaly is compensating coverage only }
+  - { id: PROC-013, name: Alternate KDC transport and output artifacts, source_locations: [lib/Networking.cs, Program.cs], telemetry_status: assessed, detection_status: detected, detection_rules: [rubeus_kerberos_over_http_proxy, rubeus_ticket_artifact_access_or_creation] }
+completion:
+  total_procedures: 13
+  detected: 11
+  not_observable: 2
+  blocked_source: 0
+  unassessed: 0
+  comprehensive_for_revision: true
+  note_2026-08-16: "Added rubeus_as_request_failed_preauth_fanout (PROC-001 second branch) and rewrote rubeus_kerberos_over_http_proxy, rubeus_s4u_ticket_sequence, rubeus_ticket_artifact_access_or_creation, and rubeus_ticket_use_without_credible_kdc_issue during backend_validation backlog processing; no procedure count or detection_status changed, only rule-level logic."

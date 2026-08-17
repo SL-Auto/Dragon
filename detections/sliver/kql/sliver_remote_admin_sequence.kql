@@ -1,0 +1,17 @@
+// source_yaral: detections/sliver/yaral/sliver_remote_admin_sequence.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_remote_admin_sequence
+// severity: high
+// procedure_ids: PROC-020
+// description: Remote authentication followed by service or SSH execution on target, joined by logon/session identity
+// log_source_prerequisites: Authentication and service/SSH process events with target host, account, and logon/session identifier
+// false_positives: Deployment, backup, authorized remote administration
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("4624", "sshd_auth_success", "4697", "7045", "sshd_command") or EventType in ("4624", "sshd_auth_success", "4697", "7045", "sshd_command")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="sliver_remote_admin_sequence"

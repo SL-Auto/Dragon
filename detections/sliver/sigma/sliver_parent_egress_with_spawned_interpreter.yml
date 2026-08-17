@@ -1,0 +1,22 @@
+title: "Network process spawns a command interpreter"
+name: sliver_parent_egress_with_spawned_interpreter
+status: experimental
+description: "Network process spawns a command interpreter"
+source_yaral: "detections/sliver/yaral/sliver_parent_egress_with_spawned_interpreter.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-010"
+log_source_prerequisites: "Process and network events with parent PID"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "PROCESS_LAUNCH"]
+  condition: selection_event_type
+falsepositives:
+  - "Automation, management, installers"
+level: high

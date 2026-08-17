@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_registry_persistence_key_from_network_process
+canonical_path: detections/sliver/yaral/sliver_registry_persistence_key_from_network_process.yaral
+canonical_sha256: 7365308b58f9e51cc829c11e85081945ff9019f2e4007339f68dcc030f180092
+description: "A network-active process writes a registry key commonly used for persistence or security-control tampering"
+severity: high
+procedure_ids: ["PROC-018"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Registry mutation telemetry with full key path, plus process-attributed network telemetry sharing a stable process entity"
+atomic_event_types: ["NETWORK_CONNECTION", "REGISTRY_MODIFICATION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id", "target.registry.registry_key"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Installers, endpoint management, and security software that legitimately write persistence-adjacent keys"
+references: "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_registry_from_network_process.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_registry_persistence_key_from_network_process.spl", sha256: a1b35af66a9654f8ffeb61019195a497c990cf5de468eda471c366570388f0d6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_registry_persistence_key_from_network_process.kql", sha256: 57403d516c373d5e5f673e1b3c8f66ed9bac82fa27ee0c2bfdaca1a2fba7a681, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_registry_persistence_key_from_network_process.sql", sha256: f6446df8c4678d97572cfdc72271c97ec3ed46511b32bb1a95a03b904cd07145, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_registry_persistence_key_from_network_process.eql", sha256: e9c559c95914e29be1cd63b04d6d699e2ad8931cf6a133c2112e5cf6105cec21, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_registry_persistence_key_from_network_process.yml", sha256: 27f1819edbbd404aa61061b5a052009dadbec219726d4c5b2009f2e341544d49, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,22 @@
+title: "Correlates explicit-credential or alternate-logon use with a new process under the resulting account."
+name: cobalt_strike_alternate_identity_process
+status: experimental
+description: "Correlates explicit-credential or alternate-logon use with a new process under the resulting account."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_alternate_identity_process.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-012"
+log_source_prerequisites: "Normalize Windows 4648 and 4688/EDR process events with host, subject, target account, logon ID and process identity."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4648", "PROCESS_LAUNCH"]
+  condition: selection_event_type
+falsepositives:
+  - "RunAs, scheduled administration, service management, deployment and helpdesk workflows."
+level: medium

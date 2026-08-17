@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_remote_service_binary_sequence
+canonical_path: detections/impacket/yaral/impacket_remote_service_binary_sequence.yaral
+canonical_sha256: 903ae551969bcd2ee61ca6e77f15b40544fde3ebeb6f24bb93204f6563d0b3b9
+description: "Correlates an administrative-share file write with remote service installation on the same host."
+severity: high
+procedure_ids: ["IMP-03"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize Windows 5145 plus 7045/4697 or EDR file/service events with target host, account, source IP, service path, and timestamps."
+atomic_event_types: ["4697", "5145", "7045"]
+required_udm_fields: ["metadata.product_event_type", "principal.user.userid", "security_result.description", "target.hostname", "target.resource.name"]
+correlation_window: "5m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Software deployment, endpoint management, backup, and approved remote support."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_remote_service_binary_sequence.spl", sha256: c3e5a38803643a2d4605c85fd4cb42b102624e657cdf4fb19d6a198fe8999d18, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_remote_service_binary_sequence.kql", sha256: e9e932002ac3f6dc7a7334a476f54af3cfb6639f5c9d301d8cccce0d58540ebd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_remote_service_binary_sequence.sql", sha256: f8a73ca67ccf6cabfffc021e8143fee9088796547b50274de2c4b1e6dcf9ff38, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_remote_service_binary_sequence.eql", sha256: f799f85c6a3c41cd9316f2aed5e13051ed8e491e7f3542762e64047d8c9323ae, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_remote_service_binary_sequence.yml", sha256: 9fd83e65df6ef6038d0e48c9300496d5fd8887e09444ec103841549bdfa508fe, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

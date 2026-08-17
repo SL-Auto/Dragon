@@ -1,0 +1,17 @@
+# source_yaral: detections/bloodhound/yaral/bloodhound_remote_security_configuration_reads.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: bloodhound_remote_security_configuration_reads
+# severity: high
+# procedure_ids: BH-012
+# description: Detects remote reads of CA, Netlogon, LDAP or NTLM security configuration across hosts.
+# log_source_prerequisites: EDR REGISTRY_READ or scoped 4656/4663 with full key path, source identity and target host.
+# false_positives: Security posture assessment, PKI administration and domain-controller compliance tools.
+# references: reports/bloodhound/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "4656", "4663", "REGISTRY_READ")
+| eval canonical_rule="bloodhound_remote_security_configuration_reads"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

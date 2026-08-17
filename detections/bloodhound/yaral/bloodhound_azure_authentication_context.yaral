@@ -1,0 +1,31 @@
+rule bloodhound_azure_authentication_context {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a sign-in followed by broad Graph or ARM read activity from the same principal and application, independent of source IP."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Authentication context improves correlation but is not suspicious without enumeration breadth."
+    procedure_ids = "BH-016"
+    log_source_prerequisites = "Entra interactive/service-principal sign-ins and Graph/ARM audit with principal user ID, application/service-principal ID and resource-family enrichment."
+    false_positives = "Cloud inventory, governance, CSPM and authorized assessment."
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_azure_authentication_context.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized sign-in plus normal and high-breadth cloud-read fixtures across matching and mismatched source IPs."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $s.metadata.product_event_type = /(SigninLogs|AADServicePrincipalSignInLogs)/
+    $s.principal.user.userid = $principal
+    $s.principal.application = $app
+    $r.metadata.product_event_type = /(MicrosoftGraphActivityLogs|AZURE_RESOURCE_READ)/
+    $r.principal.user.userid = $principal
+    $r.principal.application = $app
+    $r.target.resource.attribute.labels["resource_family"] = $family
+  match:
+    $principal, $app over 30m
+  outcome:
+    $families = count_distinct($family)
+  condition:
+    $s and $families >= 5
+}

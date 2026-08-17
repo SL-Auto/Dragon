@@ -1,0 +1,14 @@
+// source_yaral: detections/sliver/yaral/sliver_identity_or_service_from_network_process.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_identity_or_service_from_network_process
+// severity: high
+// procedure_ids: PROC-016,PROC-017,PROC-019
+// description: Explicit credentials privileged logon or service operation associated with a network process/account
+// log_source_prerequisites: Windows identity/service and process network telemetry normalized by host and account
+// false_positives: Deployment, backup, authorized administration
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("4648", "4672", "4697", "7045", "NETWORK_CONNECTION") or event.action in ("4648", "4672", "4697", "7045", "NETWORK_CONNECTION")

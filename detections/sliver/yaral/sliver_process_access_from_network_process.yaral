@@ -1,0 +1,27 @@
+rule sliver_process_access_from_network_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "Outbound-network process performs sensitive process access, injection, dump, or memory load"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Covers code execution migration and dumping"
+    procedure_ids = "PROC-011,PROC-012,PROC-015"
+    log_source_prerequisites = "Tenant-verified EDR process access/injection/memory event plus stable PID network telemetry"
+    false_positives = "EDR, debuggers, profilers, accessibility"
+    references = "reports/sliver/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+  events:
+    $a.metadata.event_type = "PROCESS_MODULE_LOAD"
+    $a.principal.hostname = $host
+    $a.principal.process.product_specific_process_id = $pid
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match: $host, $pid over 10m
+  condition: $a and $n
+}

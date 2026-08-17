@@ -1,0 +1,17 @@
+// source_yaral: detections/havoc/yaral/havoc_named_pipe_network_context.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: havoc_named_pipe_network_context
+// severity: high
+// procedure_ids: HV-P02,HV-P15
+// description: A network-active process creates or connects to a named pipe
+// log_source_prerequisites: EDR or Sysmon named-pipe create/connect normalized with process network telemetry
+// false_positives: Remote administration, software deployment, backup and clustered applications
+// references: reports/havoc/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("17", "18", "NAMED_PIPE_CONNECT", "NAMED_PIPE_CREATE", "NETWORK_CONNECTION") or EventType in ("17", "18", "NAMED_PIPE_CONNECT", "NAMED_PIPE_CREATE", "NETWORK_CONNECTION")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="havoc_named_pipe_network_context"

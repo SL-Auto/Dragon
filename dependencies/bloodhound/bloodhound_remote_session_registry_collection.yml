@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_remote_session_registry_collection
+canonical_path: detections/bloodhound/yaral/bloodhound_remote_session_registry_collection.yaral
+canonical_sha256: 2085ac5b4368e2e1bed2d13748f36758581ced37cda770cc632968b13450c2d1
+description: "Correlates SRVSVC session enumeration or remote registry reads, bound to a stable source process entity, with multi-host SMB/RPC activity."
+severity: high
+procedure_ids: ["BH-007", "BH-008"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "NDR/EDR RPC interface or REGISTRY_READ telemetry plus source process entity, source identity and target host."
+atomic_event_types: ["REGISTRY_READ", "RPC_CALL"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.process.product_specific_process_id", "target.hostname", "target.resource.attribute.labels"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Endpoint inventory, helpdesk, EDR and authorized administration."
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_remote_session_registry_collection.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_remote_session_registry_collection.spl", sha256: fd2cb59854e1b7887177a5aa97c2dd51bb46b868183ea2c256bc68cecf6dea3e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_remote_session_registry_collection.kql", sha256: df45f2ab53b1e0af5a37b8ed29539c5eb20f9367763e4c14834fc15595da9d57, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_remote_session_registry_collection.sql", sha256: cf9886f892af467b0bcce62b618bcece2b4bf5cf515fb4425c5cde21d9316fae, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_remote_session_registry_collection.eql", sha256: 17b41f3e57f6ef5705dfa3060823565e1f3b8d02dd57ed4ac696eee8515679df, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_remote_session_registry_collection.yml", sha256: ef56692e8cf7db15f5671a8383eca2e87fb5d94983bb0fa1e13a9368d2e35332, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

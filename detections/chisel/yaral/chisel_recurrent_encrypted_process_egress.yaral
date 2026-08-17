@@ -1,0 +1,26 @@
+rule chisel_recurrent_encrypted_process_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects recurrent encrypted egress by one process to a stable destination consistent with maintained tunnelling"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Recurrence is durable but shared with legitimate agents and long-lived applications"
+    procedure_ids = "CH-P01,CH-P10"
+    log_source_prerequisites = "EDR network connections with stable process identity plus TLS or HTTP metadata"
+    false_positives = "Approved VPNs proxies remote support agents and application reconnect loops"
+    references = "reports/chisel/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/chisel/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.network.direction = "OUTBOUND"
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $pid
+    $e.target.ip = $destination
+  match:
+    $host, $pid, $destination over 30m
+  condition:
+    #e >= 4
+}

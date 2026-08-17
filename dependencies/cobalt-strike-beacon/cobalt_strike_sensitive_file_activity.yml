@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_sensitive_file_activity
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_file_activity.yaral
+canonical_sha256: f4fc5aecd904a818e6d0107e9da6b165c46b394cc741876c1531a44e4cbefc28
+description: "Detects sensitive file read/write/rename activity followed by outbound network activity from the same process."
+severity: high
+procedure_ids: ["CSB-024", "CSB-025"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize FILE_READ/FILE_WRITE/FILE_RENAME and process-attributed NETWORK_CONNECTION with stable process entity, path sensitivity and direction."
+atomic_event_types: ["FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.entity_id", "target.file.sensitivity"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Backup, synchronization, DLP, indexing, document management and approved transfer tools."
+references: "reports/cobalt-strike-beacon/source-analysis.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_sensitive_file_activity.spl", sha256: 1d3edf45a38f1bd0395562c3ba31a1c5d8e1e17d14256bc0378606d4530b19a5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_sensitive_file_activity.kql", sha256: a56eab2c2f7e7378520235fd69591b21d70c1815136ca73caefe24273f7bebcd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_sensitive_file_activity.sql", sha256: d39f7a6913fb52d4467090c6bc3df72c3f8cd52d977a2f549fddb834bc51d221, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_sensitive_file_activity.eql", sha256: 642d8e474a9c57f25c7a7ef3eac284dae3919c51094f4fe8acf9f88dae4ceb17, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_sensitive_file_activity.yml", sha256: e5caaaa858040b70ae4e92bb6388eaeff346b608fee7d7d35736ac54aad822d2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

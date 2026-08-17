@@ -1,0 +1,22 @@
+title: "Surfaces vendor-reported clipboard or smartcard HID RF device access."
+name: mimikatz_clipboard_device_access
+status: experimental
+description: "Surfaces vendor-reported clipboard or smartcard HID RF device access."
+source_yaral: "detections/mimikatz/yaral/mimikatz_clipboard_device_access.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md"
+procedure_ids: "P34,P42"
+log_source_prerequisites: "EDR clipboard or device-control telemetry with process and device or operation."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["*"]
+  condition: selection_event_type
+falsepositives:
+  - "Normal clipboard, smartcard, HID and reader software."
+level: low

@@ -1,0 +1,22 @@
+title: "Surfaces high-volume LDAP or RPC discovery reported by network or endpoint sensors."
+name: mimikatz_directory_network_discovery
+status: experimental
+description: "Surfaces high-volume LDAP or RPC discovery reported by network or endpoint sensors."
+source_yaral: "detections/mimikatz/yaral/mimikatz_directory_network_discovery.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md"
+procedure_ids: "P30"
+log_source_prerequisites: "LDAP, RPC or EDR discovery telemetry with process, account, destination and operation."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["*"]
+  condition: selection_event_type
+falsepositives:
+  - "Inventory, identity, monitoring and administration tools."
+level: low

@@ -1,0 +1,29 @@
+rule havoc_screen_capture_then_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "A process with screen-capture telemetry also performs outbound network activity"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Capture plus egress is close to the collection and transfer effects"
+    procedure_ids = "HV-P14"
+    log_source_prerequisites = "Tenant-verified EDR screen capture semantic event and process-attributed network telemetry"
+    false_positives = "Conferencing, support, accessibility and approved screen-recording software"
+    references = "reports/havoc/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/havoc/detection-review.md"
+  events:
+    $s.metadata.product_event_type = "SCREEN_CAPTURE"
+    $s.principal.hostname = $host
+    $s.principal.process.product_specific_process_id = $pid
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match:
+    $host, $pid over 10m
+  condition:
+    $s and $n
+}

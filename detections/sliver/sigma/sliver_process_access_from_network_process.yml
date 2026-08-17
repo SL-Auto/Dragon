@@ -1,0 +1,22 @@
+title: "Outbound-network process performs sensitive process access, injection, dump, or memory load"
+name: sliver_process_access_from_network_process
+status: experimental
+description: "Outbound-network process performs sensitive process access, injection, dump, or memory load"
+source_yaral: "detections/sliver/yaral/sliver_process_access_from_network_process.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-011,PROC-012,PROC-015"
+log_source_prerequisites: "Tenant-verified EDR process access/injection/memory event plus stable PID network telemetry"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "PROCESS_MODULE_LOAD"]
+  condition: selection_event_type
+falsepositives:
+  - "EDR, debuggers, profilers, accessibility"
+level: high

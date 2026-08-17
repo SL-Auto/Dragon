@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_token_process_control
+canonical_path: detections/mimikatz/yaral/mimikatz_token_process_control.yaral
+canonical_sha256: 1f2f3c41afee357bd18c39bbc527887fed47a0d148b4264aaf5057ad52938086
+description: "Detects endpoint-reported token manipulation, parent override or sensitive process control."
+severity: medium
+procedure_ids: ["P02", "P03", "P04", "P05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR token and process-control telemetry with source, target, user and operation."
+atomic_event_types: []
+required_udm_fields: ["security_result.description"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Security, support, accessibility and process-broker software."
+references: "reports/mimikatz/source-analysis.md"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_token_process_control.spl", sha256: 3552218d00a1de71228d7d4d579a91e980776b33ceafc31b079108911c15b0ee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_token_process_control.kql", sha256: d87a95dcce50782a582bd7430a045c35e65ba00791cdf9fceba6c4f0bc059eae, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_token_process_control.sql", sha256: 4ae91abb1c7a3eeeb927474189a935d49656c427ef13becbf3d1d5fca621e157, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_token_process_control.eql", sha256: e04f14bf88d16a12caf3123be192717a17f6244c7a1a03bd3c4ddca9698fc2cd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_token_process_control.yml", sha256: a8be49f47d61556f36d4190a76b78aaa02a498bd87c64e19d432af3e31405c8d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

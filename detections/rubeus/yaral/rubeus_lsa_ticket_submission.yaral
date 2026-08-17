@@ -1,0 +1,25 @@
+rule rubeus_lsa_ticket_submission {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a successful Kerberos ticket submission into an LSA logon session through LsaCallAuthenticationPackage, separated from lower-confidence cache-purge activity."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "A successful KerbSubmitTicketMessage call is the direct mechanism for pass-the-ticket; it is a stronger and more specific signal than purge activity and is kept as its own high-confidence rule."
+    procedure_ids = "PROC-007"
+    log_source_prerequisites = "EDR must expose LsaCallAuthenticationPackage API calls with Kerberos message type, a success/failure result, and the target LUID; caller process, user, and host are required for triage."
+    false_positives = "SSO and identity middleware, credential-isolation software, and authorized red-team/IR tooling that submits tickets into a logon session."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_mutation.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized submit API fixtures from approved administration and SSO components before enabling at high severity."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "EDR_API_CALL"
+    $e.additional.fields["api_name"].value.string_value = "LsaCallAuthenticationPackage"
+    $e.additional.fields["kerberos_message_type"].value.string_value = "KerbSubmitTicketMessage"
+    $e.security_result.action = "ALLOW"
+    $e.additional.fields["target_luid"].value.string_value = $luid
+  condition:
+    $e
+}

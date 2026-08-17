@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: chisel
+rule_name: chisel_listener_with_tunnel_egress
+canonical_path: detections/chisel/yaral/chisel_listener_with_tunnel_egress.yaral
+canonical_sha256: f1b10d5e64891c1631a4efa168a7f6eea85af368aae988fe61b8a0bc0e551810
+description: "Detects one process listening locally while maintaining outbound connectivity consistent with bidirectional forwarding"
+severity: high
+procedure_ids: ["CH-P02", "CH-P04", "CH-P08"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR socket listen and outbound connect telemetry with stable process entity"
+atomic_event_types: ["NETWORK_CONNECTION", "NETWORK_LISTEN"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Approved proxies VPNs developer tunnels service meshes and remote support"
+references: "reports/chisel/source-analysis.md"
+translations:
+  spl: { path: "detections/chisel/spl/chisel_listener_with_tunnel_egress.spl", sha256: 4425a83e1ec213da1e5976461b84e6afbd2351ca271d345a5dee072a9c183074, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/chisel/kql/chisel_listener_with_tunnel_egress.kql", sha256: 456fa57721fc65e76753230cf528b21a152145d01733182f774a2ac20301570a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/chisel/sql/chisel_listener_with_tunnel_egress.sql", sha256: 7556457c3d933607109311c561ebfba3b718fef511be7b9345cc799a5380dcf2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/chisel/eql/chisel_listener_with_tunnel_egress.eql", sha256: 06bc4938f20b5b1577e278920ee4e19beef5d30a20074e3fac7e74e9ec1195ba, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/chisel/sigma/chisel_listener_with_tunnel_egress.yml", sha256: 2a1f903bd711c181d15bb80415ca7f5c708b09f2fc89aae1bc0a10c356d543e6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

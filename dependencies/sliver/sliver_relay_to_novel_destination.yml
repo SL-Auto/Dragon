@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_relay_to_novel_destination
+canonical_path: detections/sliver/yaral/sliver_relay_to_novel_destination.yaral
+canonical_sha256: f378abb462abc509793b71bdbcc3c283c5ffd00ddcde1550b9b2b5224b926372
+description: "A process that accepted an inbound connection also makes an outbound connection to a distinct destination in the same window"
+severity: high
+procedure_ids: ["PROC-005", "PROC-021"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR/firewall inbound-accept and outbound-connect telemetry sharing a stable process entity, with source and destination IP"
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.ip", "principal.process.product_specific_process_id", "target.ip"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Legitimate reverse proxies, load balancers, VPN concentrators, and remote-support/relay software"
+references: "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_listener_with_egress.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_relay_to_novel_destination.spl", sha256: 637da23c1a290eb81ade205800f9f2582af992196e0e8b557010d41a10b2776c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_relay_to_novel_destination.kql", sha256: 4c0a7b067b04c7fa290c306d4e59a1983eaf1d1510e6b6fc8479f07861552659, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_relay_to_novel_destination.sql", sha256: 6f036751dbac251865018ff949302d7a52f8ab73ba256f70b16cdefbfb834466, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_relay_to_novel_destination.eql", sha256: 4698901bd6cc8f2fbf07a9aba41cfc53f76804dd5452c837f7e1929253dae6d3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_relay_to_novel_destination.yml", sha256: b427cff617b1c63f39f3b8916dc79d0798d396f3e78712923d4d55945566f6b3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

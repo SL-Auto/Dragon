@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_sensitive_file_activity_compensating_signal
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_file_activity_compensating_signal.yaral
+canonical_sha256: d7a9a29eebdc8b36abca17f3b6c74b757dae7a5dc32a086c8f7fef3600ec0680
+description: "Aggregates sensitive-file reads by user and host across processes and correlates them with archive creation by the same user/host, covering multi-process collection where one process stages files and another compresses or transmits them."
+severity: high
+procedure_ids: ["CSB-024", "CSB-025"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize FILE_READ with sensitivity classification, and FILE_WRITE for archive-extension targets, joined on host and user within 30 minutes."
+atomic_event_types: ["FILE_READ", "FILE_WRITE"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.user.userid", "target.file.full_path", "target.file.sensitivity"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Backup, synchronization, DLP, indexing, and document-management tools that read multiple sensitive files and then write compressed archives."
+references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_file_activity.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_sensitive_file_activity_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_sensitive_file_activity_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_sensitive_file_activity_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_sensitive_file_activity_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_sensitive_file_activity_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }

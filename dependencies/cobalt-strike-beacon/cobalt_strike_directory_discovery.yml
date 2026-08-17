@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_directory_discovery
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_directory_discovery.yaral
+canonical_sha256: 86081ee86a59ca118c4f803db16cdb3c34224d7030ab29448b8681ca4b7a9a28
+description: "Detects broad directory/RPC enumeration by one endpoint process across multiple object classes or operations."
+severity: medium
+procedure_ids: ["CSB-022"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize LDAP_QUERY or RPC_CALL with client process/host/account and query object class/filter or interface operation."
+atomic_event_types: ["LDAP_QUERY", "RPC_CALL"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.entity_id", "target.resource.type"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Identity governance, endpoint inventory, directory health, administration and vulnerability assessment."
+references: "reports/cobalt-strike-beacon/source-analysis.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_directory_discovery.spl", sha256: 26b70df5c8acad1a6ac9ca9589acc4f4c4c20e0b8e6f53044ee868ea49f8e092, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_directory_discovery.kql", sha256: 1db30e2803942401181b211a1fbfad01fc5e370c9776c6fcb894a47c397ead57, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_directory_discovery.sql", sha256: 67f3cd0a8811b72c7133215b26f75cd02bbbe01a70b58cdc5f232955882d1042, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_directory_discovery.eql", sha256: 928dd2002523c5c979cc86db08dd9ce1b204e6b90971f91913aff51268874490, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_directory_discovery.yml", sha256: 3131228d632b9b17c613b26d99c8e5507a9c3e7573dd8a31a4b1b5426f078bfc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

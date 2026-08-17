@@ -1,0 +1,32 @@
+rule cobalt_strike_file_cleanup_or_timestomp_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Execution followed by self-deletion from an unsigned/rare process is a meaningful cleanup signal, but installers and updaters routinely delete their own temporary files; the rarity/signer gate is required to keep benign volume down."
+    procedure_ids = "CSB-026,CSB-034"
+    log_source_prerequisites = "Normalize PROCESS_LAUNCH and FILE_DELETE with matching full path, host, and process signer/prevalence on the deleting process, joined within 15 minutes."
+    false_positives = "Installers, updaters, and self-extracting archives remain a false-positive source when they are unsigned or rare; the signer/prevalence gate narrows but does not eliminate this overlap."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay benign execute-then-self-delete fixtures from both signed and unsigned installers to confirm the gate suppresses the signed case."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_file_cleanup_or_timestomp"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp.md"
+    modification_note = "Proposal accepted with a required change: added an unsigned/rare-process gate on the deleting process, matching the base rule's convention, because the original proposal had no gating at all and would match nearly every self-deleting installer or updater."
+  events:
+    $exec.metadata.event_type = "PROCESS_LAUNCH"
+    $exec.principal.hostname = $host
+    $exec.target.process.file.full_path = $path
+    $del.metadata.event_type = "FILE_DELETE"
+    $del.principal.hostname = $host
+    $del.target.file.full_path = $path
+    ($del.principal.process.file.is_signed = false or $del.principal.process.file.prevalence = "RARE")
+  match:
+    $host, $path over 15m
+  condition:
+    $exec and $del
+}

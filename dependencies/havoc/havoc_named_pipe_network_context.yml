@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: havoc
+rule_name: havoc_named_pipe_network_context
+canonical_path: detections/havoc/yaral/havoc_named_pipe_network_context.yaral
+canonical_sha256: dc178ad4a086091edcc460ce421b7387a0f42ffd22068da6a6c815d8dd8151d4
+description: "A network-active process creates or connects to a named pipe"
+severity: high
+procedure_ids: ["HV-P02", "HV-P15"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR or Sysmon named-pipe create/connect normalized with process network telemetry"
+atomic_event_types: ["17", "18", "NAMED_PIPE_CONNECT", "NAMED_PIPE_CREATE", "NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Remote administration, software deployment, backup and clustered applications"
+references: "reports/havoc/source-analysis.md"
+translations:
+  spl: { path: "detections/havoc/spl/havoc_named_pipe_network_context.spl", sha256: 0c6fcbbbc736707c9c404688e2e8a90d5cfa3fe3c16ab7b0ed6382b241cdf173, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_named_pipe_network_context.kql", sha256: edc1dd708d676f09873985369e121e236be94f79ac04e07d65d03b20b1b477bb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_named_pipe_network_context.sql", sha256: 81b3d097d7701889227e8d7ed6269f6404df51c93ab04d2c7e24b51da18945a9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_named_pipe_network_context.eql", sha256: dfbff6aa334ceb9708ed11ace2e2e50124fb3df510dd8c1e1479e631e537ea5e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_named_pipe_network_context.yml", sha256: 34d6b0227ca241f3a60922f48649d1ec505cbd5b955d6e3d10c9e30302283e14, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

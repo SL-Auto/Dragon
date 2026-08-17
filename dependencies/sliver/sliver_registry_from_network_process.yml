@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_registry_from_network_process
+canonical_path: detections/sliver/yaral/sliver_registry_from_network_process.yaral
+canonical_sha256: 9985462cab2ae7c6771504d3ad3a03b219c47e96dca66a7a1a17cf0d17458210
+description: "Registry mutation by a process with outbound network activity"
+severity: medium
+procedure_ids: ["PROC-018"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Registry mutation and network UDM with stable PID"
+atomic_event_types: ["NETWORK_CONNECTION", "REGISTRY_MODIFICATION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Installers, management, security software"
+references: "reports/sliver/source-analysis.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_registry_from_network_process.spl", sha256: ca513008a2874e92187383a6093a5fa4075637806d1f9db88046f35f0df8756c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_registry_from_network_process.kql", sha256: ec3f414df15a9215d40f76835f68270140cfcb138a839102afd7a15199140ec0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_registry_from_network_process.sql", sha256: 01d0332bc1f4644c71172a7443341c081a9e1ccd481d68ad294b10ae2eaeca63, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_registry_from_network_process.eql", sha256: f557d5688683fe7d5404cb2adf24e7d7d9392ccdf599cf9d70b5b2676890f637, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_registry_from_network_process.yml", sha256: 37346b60bdaddeaa9b942916bd9e500956d94ead1749979f104daef988e1d42b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

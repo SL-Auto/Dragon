@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_packet_capture_or_raw_socket
+canonical_path: detections/impacket/yaral/impacket_packet_capture_or_raw_socket.yaral
+canonical_sha256: c2d9e461b861cbaecbcb721cf3b9944d7428797aace64c37fc0f2dcdeac44cfc
+description: "Detects unexpected packet capture driver or raw socket use."
+severity: medium
+procedure_ids: ["IMP-19"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR process, driver and raw-socket telemetry."
+atomic_event_types: ["DRIVER_LOAD", "NETWORK_CONNECTION", "PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "security_result.description"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Network troubleshooting, monitoring and security sensors."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_packet_capture_or_raw_socket.spl", sha256: 76ed8e81238121378cfe55b0eb84497accaa0abcf6a1a0bef19513d3fc2a8b6e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_packet_capture_or_raw_socket.kql", sha256: 69242ec8eb633ed57b2b03bbd918cf806f065820ea77de38792a1e1caaf8a6e8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_packet_capture_or_raw_socket.sql", sha256: efbc3a8cd23f52b40b5bec9429b91eee12001541e5547bb05ac421326ded6c3a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_packet_capture_or_raw_socket.eql", sha256: 857c3351ad63e26e6a00bb9dc6018a79c8ba929d18f9d23051a1fbfe1e8cda9a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_packet_capture_or_raw_socket.yml", sha256: 69ba7498ce631667d93dc7a061074175e69e82f61f03801a86695d785496d7c8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

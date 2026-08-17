@@ -1,0 +1,17 @@
+// source_yaral: detections/sliver/yaral/sliver_relay_to_novel_destination.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_relay_to_novel_destination
+// severity: high
+// procedure_ids: PROC-005,PROC-021
+// description: A process that accepted an inbound connection also makes an outbound connection to a distinct destination in the same window
+// log_source_prerequisites: EDR/firewall inbound-accept and outbound-connect telemetry sharing a stable process entity, with source and destination IP
+// false_positives: Legitimate reverse proxies, load balancers, VPN concentrators, and remote-support/relay software
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION") or EventType in ("NETWORK_CONNECTION")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="sliver_relay_to_novel_destination"

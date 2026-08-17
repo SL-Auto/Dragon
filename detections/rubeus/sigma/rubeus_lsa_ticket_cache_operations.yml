@@ -1,0 +1,27 @@
+title: "Detects Kerberos ticket-cache query/enumeration operations from EDR API telemetry."
+name: rubeus_lsa_ticket_cache_operations
+status: experimental
+description: "Detects Kerberos ticket-cache query/enumeration operations from EDR API telemetry. Split from encoded-ticket retrieval, which is a stronger, separately severity-scored signal covered by rubeus_lsa_encoded_ticket_retrieval."
+source_yaral: "detections/rubeus/yaral/rubeus_lsa_ticket_cache_operations.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling. Query enumeration was split from encoded-ticket retrieval on 2026-08-16; deploy this rule together with rubeus_lsa_encoded_ticket_retrieval rather than as a substitute for it."
+references:
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+  - "public-rules/comparisons/rubeus/rubeus_lsa_ticket_cache_operations.md"
+procedure_ids: "PROC-006"
+log_source_prerequisites: "EDR must expose LsaCallAuthenticationPackage and Kerberos message type with process and target LUID."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["EDR_API_CALL"]
+  filter_api:
+    api_name: "LsaCallAuthenticationPackage"
+  filter_query_message:
+    kerberos_message_type|contains: "KerbQueryTicketCacheMessage"
+  condition: selection_event_type and filter_api and filter_query_message
+falsepositives:
+  - "Klist, SSO, EDR, incident response, and authentication components routinely enumerate the ticket cache."
+level: medium

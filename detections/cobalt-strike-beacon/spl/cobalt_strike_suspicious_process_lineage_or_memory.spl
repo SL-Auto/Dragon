@@ -1,0 +1,17 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_suspicious_process_lineage_or_memory.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_suspicious_process_lineage_or_memory
+# severity: high
+# procedure_ids: CSB-004,CSB-014,CSB-016
+# description: Detects parent/creator mismatch, private executable memory, or unusual in-process execution telemetry without requiring default Beacon spawn targets.
+# log_source_prerequisites: Normalize EDR PROCESS_LAUNCH, EXECUTABLE_MEMORY or PARENT_MISMATCH with creator/effective parent, process entity, user, signer and memory attributes.
+# false_positives: EDR, debuggers, JIT runtimes, application virtualization, compatibility tools and approved injection frameworks.
+# references: reports/cobalt-strike-beacon/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "EXECUTABLE_MEMORY", "PARENT_MISMATCH", "PROCESS_LAUNCH")
+| eval canonical_rule="cobalt_strike_suspicious_process_lineage_or_memory"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

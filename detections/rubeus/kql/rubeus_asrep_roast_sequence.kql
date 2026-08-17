@@ -1,0 +1,17 @@
+// source_yaral: detections/rubeus/yaral/rubeus_asrep_roast_sequence.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: rubeus_asrep_roast_sequence
+// severity: high
+// procedure_ids: PROC-003
+// description: Detects one source requesting no-preauthentication AS responses for multiple accounts.
+// log_source_prerequisites: Normalize 4768 with source IP, account, and PreAuthType in the configured additional field.
+// false_positives: Authorized account configuration audits and identity assessment.
+// references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("4768") or EventType in ("4768")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="rubeus_asrep_roast_sequence"

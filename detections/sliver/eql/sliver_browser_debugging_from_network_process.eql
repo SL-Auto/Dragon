@@ -1,0 +1,14 @@
+// source_yaral: detections/sliver/yaral/sliver_browser_debugging_from_network_process.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_browser_debugging_from_network_process
+// severity: high
+// procedure_ids: PROC-022
+// description: Network process launches a browser child with remote debugging enabled and a debug listener is established
+// log_source_prerequisites: Process command line plus parent network telemetry and child listen-socket telemetry
+// false_positives: Developers, browser automation and testing frameworks that launch browsers with remote debugging
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("PROCESS_LAUNCH", "NETWORK_CONNECTION") or event.action in ("PROCESS_LAUNCH", "NETWORK_CONNECTION")

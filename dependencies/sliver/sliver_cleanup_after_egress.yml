@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_cleanup_after_egress
+canonical_path: detections/sliver/yaral/sliver_cleanup_after_egress.yaral
+canonical_sha256: 73961295c1f69271085280dba6de169c93896daa5ff71388b501216c0f502f79
+description: "Network process deletes its own image or related artifacts"
+severity: high
+procedure_ids: ["PROC-002", "PROC-026"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "File deletion and network telemetry with stable PID"
+atomic_event_types: ["FILE_DELETION", "NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Installers, updaters, temporary utilities"
+references: "reports/sliver/source-analysis.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_cleanup_after_egress.spl", sha256: 2c4a320ce3fe787132e700e44fa63a04e4270c2728b74300a71c896bf7968bdc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_cleanup_after_egress.kql", sha256: c3fc7fa50732542c3fa3832ce4c87f2d0f376dc6fcb9cc66a27488ca7403f3dd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_cleanup_after_egress.sql", sha256: bdba907a704652859fd2704a2561abe315cf526711f638789492c810e0b8931c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_cleanup_after_egress.eql", sha256: df956f07ff5b051173f5243ef3d9ab0ef404b0214c8762ca7cd87954585dd2ab, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_cleanup_after_egress.yml", sha256: eb010cd0b01f2645b1c0ec3f6c7eb0d20da6989f5469eee7f1cae8870e47a48d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

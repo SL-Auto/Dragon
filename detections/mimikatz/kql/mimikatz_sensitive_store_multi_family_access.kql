@@ -1,0 +1,17 @@
+// source_yaral: detections/mimikatz/yaral/mimikatz_sensitive_store_multi_family_access.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: mimikatz_sensitive_store_multi_family_access
+// severity: high
+// procedure_ids: P18,P19,P20,P23,P25,P37,P41,P46
+// description: Correlates one process reading two independent sensitive-store families (credential manager/Vault versus crypto/certificate/Hello, IIS, SCCM/Citrix or RDM stores) as a stronger compensating signal for broad single-path store access.
+// log_source_prerequisites: EDR sensitive file or registry read telemetry with process, host and user identity, sufficient to distinguish at least two of: Credential Manager/Vault; DPAPI/crypto/certificate/Hello key stores; IIS configuration; SCCM/VSS/Citrix; Remote Desktop Manager.
+// false_positives: Backup, migration, credential-manager, endpoint-security and IT-provisioning tools that legitimately enumerate more than one store family in a session.
+// references: reports/mimikatz/source-analysis.md; public-rules/comparisons/mimikatz/mimikatz_sensitive_store_access.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality (the family-A vs family-B path split) must be implemented and tested in the target backend. KQL does not natively express the two-family join here; this is a single-family retrieval placeholder only.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where EventType in ("FILE_READ", "REGISTRY_READ") or ProductEventType in ("FILE_READ", "REGISTRY_READ")
+| summarize EventCount=count(), ObservedEventTypes=make_set(EventType) by Hostname, ProcessId, UserId
+| where EventCount > 0
+| extend CanonicalRule="mimikatz_sensitive_store_multi_family_access"

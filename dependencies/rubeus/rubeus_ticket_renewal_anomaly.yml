@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_ticket_renewal_anomaly
+canonical_path: detections/rubeus/yaral/rubeus_ticket_renewal_anomaly.yaral
+canonical_sha256: 6db55da987fd9e66a7b25311504c2dfc88d7c9b4b553c992286634db2d033508
+description: "Detects unusual Kerberos ticket-renewal (4770) volume by one source and identity, separated from service-ticket (4769) acquisition volume."
+severity: medium
+procedure_ids: ["PROC-002"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize DC Security 4770 with account, source IP, service, and result."
+atomic_event_types: ["4770"]
+required_udm_fields: ["metadata.id", "metadata.product_event_type", "principal.ip", "target.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Long-running services, SSO session-renewal components, and scheduled tasks that legitimately renew tickets repeatedly."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_service_ticket_or_renewal_anomaly.md"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_ticket_renewal_anomaly.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/rubeus/kql/rubeus_ticket_renewal_anomaly.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/rubeus/sql/rubeus_ticket_renewal_anomaly.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/rubeus/eql/rubeus_ticket_renewal_anomaly.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_ticket_renewal_anomaly.yml", sha256: missing, status: "", fidelity: "" }

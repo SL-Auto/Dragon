@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_sensitive_directory_attribute_reads
+canonical_path: detections/bloodhound/yaral/bloodhound_sensitive_directory_attribute_reads.yaral
+canonical_sha256: 360c4cc902c4251d92038c4fb53a080a4b29a5ed166eef32fbf7657df83834d9
+description: "Detects LDAP searches requesting security descriptors (by named attribute or SD_FLAGS control) or AD CS relationship attributes."
+severity: high
+procedure_ids: ["BH-003", "BH-005"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "LDAP query telemetry containing requested attributes or controls (including SD_FLAGS control usage), source identity/process and naming context."
+atomic_event_types: ["1644", "4662", "LDAP_SEARCH"]
+required_udm_fields: ["metadata.product_event_type", "target.resource.attribute.labels"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Directory permissions auditing, PKI administration and identity governance."
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_sensitive_directory_attribute_reads.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_sensitive_directory_attribute_reads.spl", sha256: 1d69ee90f292a9bfc013b19ac3140af96234b36456df05f9b6d165ab5bd5f96c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_sensitive_directory_attribute_reads.kql", sha256: 185dceb2925ff61a7df3440e4b978006c27d5a0ac71ffcd9b1d63ef18c24ff72, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_sensitive_directory_attribute_reads.sql", sha256: 46316390e04200abdf3b087644841a6749e34976546961e4cc074d9f1754551f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_sensitive_directory_attribute_reads.eql", sha256: b30403992c39d818942f6823909d5d498aecf7675ba345eff519f9e68c37a0fe, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_sensitive_directory_attribute_reads.yml", sha256: ff3bcccfd18c1c91beb7aa0e4ad4c112b139d7ebec4b86719fc9983789fa0c86, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

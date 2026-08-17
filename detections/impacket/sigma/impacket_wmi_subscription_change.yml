@@ -1,0 +1,22 @@
+title: "Detects WMI filter, consumer or binding creation."
+name: impacket_wmi_subscription_change
+status: experimental
+description: "Detects WMI filter, consumer or binding creation."
+source_yaral: "detections/impacket/yaral/impacket_wmi_subscription_change.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-06"
+log_source_prerequisites: "Sysmon 19-21 or equivalent WMI repository events."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["19", "20", "21", "5861"]
+  condition: selection_event_type
+falsepositives:
+  - "Approved monitoring and management products."
+level: high

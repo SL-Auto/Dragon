@@ -1,0 +1,14 @@
+// source_yaral: detections/mimikatz/yaral/mimikatz_firmware_driver_operation.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: mimikatz_firmware_driver_operation
+// severity: high
+// procedure_ids: P39,P43
+// description: Detects firmware-variable or kernel-driver activity reported by endpoint controls.
+// log_source_prerequisites: EDR firmware or driver telemetry and Code Integrity events with process and module identity.
+// false_positives: Firmware management, OEM tools and approved drivers.
+// references: reports/mimikatz/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("6") or event.action in ("6")

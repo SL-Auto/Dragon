@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_unusual_protocol_listener
+canonical_path: detections/impacket/yaral/impacket_unusual_protocol_listener.yaral
+canonical_sha256: 8a1f1fc24a55ac90dff442de06a550516902798cbafb8b72b6bcd527da762f5e
+description: "Detects non-server processes listening on SMB or relay-associated service ports."
+severity: medium
+procedure_ids: ["IMP-02"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR network-listen events with process, host, port and direction."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "target.port"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Approved file servers, development services and security tools."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_unusual_protocol_listener.spl", sha256: ff46045954640a08a81bb4c990a6a5137bdd4c2e1d50013ca364ffeed517a15f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_unusual_protocol_listener.kql", sha256: d74038b2b901a471bcb66ad71f0fbc348b08ac23bfe4669d66e89bcb866a18cd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_unusual_protocol_listener.sql", sha256: 619adc20d7045df2d13c74a11dea2d36a5350a66294b470a857bcb132370b179, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_unusual_protocol_listener.eql", sha256: 60666762e6a4b48f0c801cd630e7cb79a388018d227e118951cbf727ea92b950, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_unusual_protocol_listener.yml", sha256: 50adead675347c0e98ee497b61fe9d7698aedcce3e35430d90b0651099080a92, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

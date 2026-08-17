@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_cross_process_tamper
+canonical_path: detections/mimikatz/yaral/mimikatz_cross_process_tamper.yaral
+canonical_sha256: 0b01786c2b755dcad09c4fcf1cc279a888f708b492f022af28af0bce78c1742a
+description: "Detects endpoint-reported cross-process memory tampering affecting security-sensitive processes."
+severity: high
+procedure_ids: ["P22", "P27", "P28", "P32", "P40"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR process tamper telemetry normalized with source and target processes and operation."
+atomic_event_types: ["PROCESS_OPEN"]
+required_udm_fields: ["metadata.event_type", "security_result.description"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Approved security sensors, diagnostics, accessibility and support tooling."
+references: "reports/mimikatz/source-analysis.md"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_cross_process_tamper.spl", sha256: 4d09dbeabf2c048e56e626856e60cada1795c1fe241cdb6249c1f09763e30b2e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_cross_process_tamper.kql", sha256: d4e3d50975f6bf49b2c3a48a3b4d2adeaf1b6a5c4ad27e6de665726cd7f487a4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_cross_process_tamper.sql", sha256: 311b340935afa85d362b519d352b6dd703aa796e8990f5a094adfa3da9bcd6d7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_cross_process_tamper.eql", sha256: 756d0bbcab7d36e0a08023766bc6e66e9061bbc0fc2368de44d0b26314d5c3c3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_cross_process_tamper.yml", sha256: a8acfb9eb2e2c0567e254a842e43d6a4be26ab213b50f0649ecebf80193acb01, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

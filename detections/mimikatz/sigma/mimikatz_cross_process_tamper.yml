@@ -1,0 +1,22 @@
+title: "Detects endpoint-reported cross-process memory tampering affecting security-sensitive processes."
+name: mimikatz_cross_process_tamper
+status: experimental
+description: "Detects endpoint-reported cross-process memory tampering affecting security-sensitive processes."
+source_yaral: "detections/mimikatz/yaral/mimikatz_cross_process_tamper.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md"
+procedure_ids: "P22,P27,P28,P32,P40"
+log_source_prerequisites: "EDR process tamper telemetry normalized with source and target processes and operation."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["PROCESS_OPEN"]
+  condition: selection_event_type
+falsepositives:
+  - "Approved security sensors, diagnostics, accessibility and support tooling."
+level: high

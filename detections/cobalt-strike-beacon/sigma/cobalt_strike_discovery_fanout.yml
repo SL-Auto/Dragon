@@ -1,0 +1,22 @@
+title: "Detects port/network discovery fan-out from one process without relying on Beacon command names."
+name: cobalt_strike_discovery_fanout
+status: experimental
+description: "Detects port/network discovery fan-out from one process without relying on Beacon command names."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_discovery_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-021"
+log_source_prerequisites: "Normalize process-attributed NETWORK_CONNECTION attempts including failures with destination IP/port and stable process entity."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Vulnerability scanners, monitoring, software distribution, service discovery and network management."
+level: medium

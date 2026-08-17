@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_wmi_activity_operational_class_signal
+canonical_path: detections/impacket/yaral/impacket_wmi_activity_operational_class_signal.yaral
+canonical_sha256: b7a4c8ec02d809686a432b0785be7852265b27dad64896598bbba63eec9bee79
+description: "Detects a remote WMI method invocation against the Win32_Process class observed directly in the WMI-Activity Operational log, independent of whether a WmiPrvSE child process was collected."
+severity: medium
+procedure_ids: ["IMP-05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "WMI-Activity Operational 5857/5858/5860/5861 preserving namespace, class and caller source per reports/impacket/source-analysis.md IMP-05 telemetry note (\\"
+atomic_event_types: ["5857", "5858", "5860", "5861"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.ip", "target.resource.attribute.labels"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Endpoint management, inventory, remediation, monitoring agents and any authorized WMI administration that creates or queries Win32_Process; this event family is high-volume and requires tenant baselining before enforcement."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_wmi_activity_operational_class_signal.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/impacket/kql/impacket_wmi_activity_operational_class_signal.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/impacket/sql/impacket_wmi_activity_operational_class_signal.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/impacket/eql/impacket_wmi_activity_operational_class_signal.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/impacket/sigma/impacket_wmi_activity_operational_class_signal.yml", sha256: missing, status: "", fidelity: "" }

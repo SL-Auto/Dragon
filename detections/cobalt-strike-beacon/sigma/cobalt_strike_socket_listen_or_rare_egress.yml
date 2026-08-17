@@ -1,0 +1,22 @@
+title: "Detects socket listen or egress from a rare unsigned process as coverage for bind TCP, External C2 and user-defined transports."
+name: cobalt_strike_socket_listen_or_rare_egress
+status: experimental
+description: "Detects socket listen or egress from a rare unsigned process as coverage for bind TCP, External C2 and user-defined transports."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_listen_or_rare_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-008"
+log_source_prerequisites: "Normalize endpoint SOCKET_LISTEN and NETWORK_CONNECTION with process signer/prevalence, host, direction and local/remote endpoints."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "SOCKET_LISTEN"]
+  condition: selection_event_type
+falsepositives:
+  - "Developer tools, local service hosts, peer-to-peer clients, remote support and ephemeral test servers."
+level: medium

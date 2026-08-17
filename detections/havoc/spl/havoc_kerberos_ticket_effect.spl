@@ -1,0 +1,17 @@
+# source_yaral: detections/havoc/yaral/havoc_kerberos_ticket_effect.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: havoc_kerberos_ticket_effect
+# severity: high
+# procedure_ids: HV-P17
+# description: A process performs LSA Kerberos cache mutation followed by resource authentication
+# log_source_prerequisites: Tenant-verified EDR or ETW LSA Kerberos operation plus 4769 or resource authentication joined by account and host
+# false_positives: Authorized ticket administration, SSO troubleshooting and security tooling
+# references: reports/havoc/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "4769", "KERBEROS_RESOURCE_AUTHENTICATION", "KERBEROS_TICKET_SUBMIT", "LSA_KERBEROS_OPERATION")
+| eval canonical_rule="havoc_kerberos_ticket_effect"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

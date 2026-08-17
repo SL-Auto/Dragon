@@ -1,0 +1,17 @@
+// source_yaral: detections/mimikatz/yaral/mimikatz_lsass_memory_access.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: mimikatz_lsass_memory_access
+// severity: high
+// procedure_ids: P07,P09,P13
+// description: Detects process access to LSASS with memory-read-capable rights; tuning is applied downstream rather than with broad process-name exclusions.
+// log_source_prerequisites: Normalize Sysmon Event ID 10 or equivalent EDR process-open telemetry to UDM with source and target process paths and access-mask text.
+// false_positives: EDR and antivirus sensors, approved diagnostics, authentication extensions, and accessibility tooling.
+// references: reports/mimikatz/source-analysis.md; https://learn.microsoft.com/windows/security/operating-system-security/sysmon/sysmon-events
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("10", "PROCESS_OPEN") or EventType in ("10", "PROCESS_OPEN")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="mimikatz_lsass_memory_access"

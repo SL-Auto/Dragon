@@ -1,0 +1,28 @@
+rule sliver_recurrent_process_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "One process entity repeatedly communicates outbound to the same destination, spread across multiple minutes"
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Adding per-destination grouping and a minute-spread requirement fixes the review-acknowledged weakness that a bare five-connections-per-image threshold with no destination dimension is satisfied by ordinary multi-site browsing and misses whether recurrence is against one stable destination"
+    procedure_ids = "PROC-002,PROC-003"
+    log_source_prerequisites = "Process-attributed network events with stable process entity and destination"
+    false_positives = "Agents, updaters, browsers, monitoring"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_recurrent_process_egress.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "modified_from_unvalidated_proposal"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.network.direction = "OUTBOUND"
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $pid
+    $e.target.ip = $destination
+  match: $host, $pid, $destination over 1h
+  outcome:
+    $connections = count($e.metadata.id)
+    $active_minutes = count_distinct(timestamp.get_minute($e.metadata.event_timestamp.seconds))
+  condition: $e and $connections >= 5 and $active_minutes >= 4
+}

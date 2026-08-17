@@ -1,0 +1,22 @@
+rule impacket_unusual_service_authentication {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects failed or unusual authentication to SQL, MQTT, RDP or SMB services."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "MEDIUM"
+  severity_rationale = "Cross-service authentication checks can expose reachable credentials."
+  procedure_ids = "IMP-15"
+  log_source_prerequisites = "Application authentication and network logs with service, source, account and result."
+  false_positives = "Monitoring, inventory and user configuration errors."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+ events:
+  $e.metadata.event_type = "USER_LOGIN"
+  $e.security_result.action = "BLOCK"
+  $e.principal.ip = $src
+ match: $src over 10m
+ condition: #e > 10
+}

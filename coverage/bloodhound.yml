@@ -1,0 +1,40 @@
+schema_version: 1
+tool_id: bloodhound
+analyzed_revision: bloodhound-v9.5.1_sharphound-a2f8435_common-fcb6cb9_azurehound-23735c8
+inventory_method: full-collector-command-and-collection-method-registration
+inventory_complete: true
+inventory_evidence:
+  - sources/bloodhound-manifest.md
+  - https://github.com/SpecterOps/SharpHound/blob/a2f843593a5b55ea645ab466f5c91effeda52dda/src/Client/Enums.cs#L6-L38
+  - https://github.com/SpecterOps/AzureHound/tree/23735c8af6b03a677a3c40e8d274316504ea07ab/cmd
+excluded_paths:
+  - { path: BloodHound CE server/UI, reason: registry item is the SharpHound/AzureHound collector family; server ingestion is contextual rather than collector execution }
+  - { path: tests/build/packaging/assets, reason: non-procedure implementation classes }
+procedures:
+  - { id: BH-001, name: collector initialization configuration and targeting, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_collector_process_network_context] }
+  - { id: BH-002, name: LDAP directory object and property enumeration, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_ldap_directory_discovery_fanout] }
+  - { id: BH-003, name: directory ACL and security descriptor collection, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_sensitive_directory_attribute_reads] }
+  - { id: BH-004, name: group trust container GPO and SPN topology collection, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_ldap_directory_discovery_fanout] }
+  - { id: BH-005, name: AD certificate services object collection, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_sensitive_directory_attribute_reads] }
+  - { id: BH-006, name: DNS resolution and SMB reachability discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_smb_rpc_host_sweep] }
+  - { id: BH-007, name: remote session enumeration, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_remote_session_registry_collection] }
+  - { id: BH-008, name: remote logged-on user registry collection, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_remote_session_registry_collection] }
+  - { id: BH-009, name: SAMR local group and remote access rights enumeration, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_samr_local_group_enumeration] }
+  - { id: BH-010, name: local user-rights assignment collection, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_samr_local_group_enumeration] }
+  - { id: BH-011, name: SYSVOL GPO local-group policy collection, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_sysvol_policy_file_collection] }
+  - { id: BH-012, name: CA DC and NTLM remote-registry security configuration collection, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_remote_security_configuration_reads] }
+  - { id: BH-013, name: WebClient LDAP and SMB service capability probing, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_service_protocol_probe_fanout] }
+  - { id: BH-014, name: looped and throttled host collection, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_recurrent_collection_activity] }
+  - { id: BH-015, name: cache JSON CSV metrics and ZIP artifact output, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_collection_archive_creation] }
+  - { id: BH-016, name: AzureHound configuration authentication and token acquisition, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_azure_authentication_context] }
+  - { id: BH-017, name: Microsoft Graph Entra directory enumeration, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_azure_graph_enumeration_fanout] }
+  - { id: BH-018, name: Azure Resource Manager hierarchy and resource enumeration, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_azure_resource_enumeration_fanout] }
+  - { id: BH-019, name: Azure RBAC ownership access policy and eligibility enumeration, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_azure_rbac_enumeration] }
+  - { id: BH-020, name: AzureHound output service lifecycle and local configuration artifacts, telemetry_status: assessed, detection_status: detected, detection_rules: [bloodhound_cloud_collection_output] }
+completion:
+  total_procedures: 20
+  detected: 20
+  not_observable: 0
+  blocked_source: 0
+  unassessed: 0
+  comprehensive_for_revision: true

@@ -1,0 +1,27 @@
+rule sliver_file_activity_from_network_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "File read or mutation by an outbound-network process"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Covers collection transfer metadata and cleanup surfaces"
+    procedure_ids = "PROC-007,PROC-008,PROC-009"
+    log_source_prerequisites = "EDR file and network telemetry sharing stable PID"
+    false_positives = "Sync, backup, browsers, package managers"
+    references = "reports/sliver/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+  events:
+    $f.metadata.event_type = /(FILE_READ|FILE_CREATION|FILE_MODIFICATION|FILE_DELETION)/
+    $f.principal.hostname = $host
+    $f.principal.process.product_specific_process_id = $pid
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match: $host, $pid over 10m
+  condition: $f and $n
+}

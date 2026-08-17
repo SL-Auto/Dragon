@@ -1,0 +1,20 @@
+rule impacket_packet_capture_or_raw_socket {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects unexpected packet capture driver or raw socket use."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "MEDIUM"
+  severity_rationale = "Packet capture can expose credentials and network data."
+  procedure_ids = "IMP-19"
+  log_source_prerequisites = "EDR process, driver and raw-socket telemetry."
+  false_positives = "Network troubleshooting, monitoring and security sensors."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+ events:
+  $e.metadata.event_type = /(PROCESS_LAUNCH|DRIVER_LOAD|NETWORK_CONNECTION)/
+  re.regex($e.security_result.description, `(?i)(packet capture|raw socket|Npcap|WinPcap)`)
+ condition: $e
+}

@@ -1,0 +1,17 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_discovery_fanout.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_discovery_fanout
+# severity: medium
+# procedure_ids: CSB-021
+# description: Detects port/network discovery fan-out from one process without relying on Beacon command names.
+# log_source_prerequisites: Normalize process-attributed NETWORK_CONNECTION attempts including failures with destination IP/port and stable process entity.
+# false_positives: Vulnerability scanners, monitoring, software distribution, service discovery and network management.
+# references: reports/cobalt-strike-beacon/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "NETWORK_CONNECTION")
+| eval canonical_rule="cobalt_strike_discovery_fanout"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

@@ -1,0 +1,25 @@
+rule mimikatz_lsass_memory_access {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects process access to LSASS with memory-read-capable rights; tuning is applied downstream rather than with broad process-name exclusions."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Unexpected memory access to LSASS can expose reusable credentials; access alone is not proof of theft."
+    procedure_ids = "P07,P09,P13"
+    log_source_prerequisites = "Normalize Sysmon Event ID 10 or equivalent EDR process-open telemetry to UDM with source and target process paths and access-mask text."
+    false_positives = "EDR and antivirus sensors, approved diagnostics, authentication extensions, and accessibility tooling."
+    references = "reports/mimikatz/source-analysis.md; https://learn.microsoft.com/windows/security/operating-system-security/sysmon/sysmon-events"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized authorized Sysmon/EDR fixtures; never run Mimikatz or read LSASS contents."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/mimikatz/detection-review.md"
+
+  events:
+    ($e.metadata.event_type = "PROCESS_OPEN" or $e.metadata.product_event_type = "10")
+    re.regex($e.target.process.file.full_path, `\\lsass\.exe$`) nocase
+    re.regex($e.security_result.description, `(0x0*10|PROCESS_VM_READ|VM_READ)`) nocase
+
+  condition:
+    $e
+}

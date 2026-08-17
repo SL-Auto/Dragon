@@ -1,0 +1,22 @@
+title: "Surfaces certificate enrollment, private-key export or Hello key operations."
+name: mimikatz_certificate_key_operation
+status: experimental
+description: "Surfaces certificate enrollment, private-key export or Hello key operations."
+source_yaral: "detections/mimikatz/yaral/mimikatz_certificate_key_operation.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md"
+procedure_ids: "P21,P24"
+log_source_prerequisites: "AD CS, CAPI2, Hello, TPM or EDR key-operation telemetry."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4886", "4887"]
+  condition: selection_event_type
+falsepositives:
+  - "Normal enrollment, renewal, signing and device provisioning."
+level: medium

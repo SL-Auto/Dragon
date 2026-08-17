@@ -1,0 +1,22 @@
+title: "Detects recurrent encrypted egress by one process to a stable destination consistent with maintained tunnelling"
+name: chisel_recurrent_encrypted_process_egress
+status: experimental
+description: "Detects recurrent encrypted egress by one process to a stable destination consistent with maintained tunnelling"
+source_yaral: "detections/chisel/yaral/chisel_recurrent_encrypted_process_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/chisel/source-analysis.md"
+procedure_ids: "CH-P01,CH-P10"
+log_source_prerequisites: "EDR network connections with stable process identity plus TLS or HTTP metadata"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Approved VPNs proxies remote support agents and application reconnect loops"
+level: medium

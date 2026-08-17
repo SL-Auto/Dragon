@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_remote_account_or_group_change
+canonical_path: detections/impacket/yaral/impacket_remote_account_or_group_change.yaral
+canonical_sha256: 1269cf9dbdd73d9e5041e8ffd220a0403a8d664a534516a721d076e3805dd86e
+description: "Detects account, computer and group membership changes associated with a network-originating logon."
+severity: high
+procedure_ids: ["IMP-07"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "DC Security identity-change and 4624 events with actor and source."
+atomic_event_types: ["4720", "4722", "4723", "4724", "4725", "4726", "4728", "4729", "4732", "4733", "4738", "4741", "4742", "4743", "4756", "4757"]
+required_udm_fields: ["metadata.product_event_type"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Identity lifecycle and delegated administration."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_remote_account_or_group_change.spl", sha256: a91a826b9e87a7e0ddd006e4fec3de48d7f20d7d42b2a0ff8d214266f2f7846d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_remote_account_or_group_change.kql", sha256: df07c7f6a4f5321837c4d443f6fe66d285da631abbd33e9b4673d1bfa092ee20, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_remote_account_or_group_change.sql", sha256: 2061a89260d916552301240deee5178777889249a310c010e1bca87855a543bd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_remote_account_or_group_change.eql", sha256: 9d3c8859337c4bbb0b69c1c8287d888daecfc62844858f0be52d331d0603d98f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_remote_account_or_group_change.yml", sha256: 53f770290ca81399ca8e5bb9b9016fdd1600452ac8574780fb8c4e9379763bcc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

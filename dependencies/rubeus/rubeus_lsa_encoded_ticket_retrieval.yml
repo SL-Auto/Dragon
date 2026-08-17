@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_lsa_encoded_ticket_retrieval
+canonical_path: detections/rubeus/yaral/rubeus_lsa_encoded_ticket_retrieval.yaral
+canonical_sha256: b2aab2d41c31eb5cc692e8c7dc75b4f691a3e4ccc2e1af809d34b1a176c218b8
+description: "Detects a successful Kerberos encoded-ticket retrieval call through LsaCallAuthenticationPackage, separated from lower-confidence cache enumeration/query activity."
+severity: high
+procedure_ids: ["PROC-006"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR must expose LsaCallAuthenticationPackage API calls with Kerberos message type and a success/failure result; process, user, host, and target LUID are required for triage."
+atomic_event_types: ["EDR_API_CALL"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "security_result.action"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Klist, SSO components, credential-isolation and IR tooling that legitimately retrieve encoded tickets."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_cache_operations.md"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_lsa_encoded_ticket_retrieval.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/rubeus/kql/rubeus_lsa_encoded_ticket_retrieval.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/rubeus/sql/rubeus_lsa_encoded_ticket_retrieval.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/rubeus/eql/rubeus_lsa_encoded_ticket_retrieval.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_lsa_encoded_ticket_retrieval.yml", sha256: missing, status: "", fidelity: "" }

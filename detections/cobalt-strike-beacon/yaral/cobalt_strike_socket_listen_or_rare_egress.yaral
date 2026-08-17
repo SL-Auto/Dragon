@@ -1,0 +1,22 @@
+rule cobalt_strike_socket_listen_or_rare_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects socket listen or egress from a rare unsigned process as coverage for bind TCP, External C2 and user-defined transports."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Unexpected network service behavior can expose custom transports but is not tool-specific."
+    procedure_ids = "CSB-008"
+    log_source_prerequisites = "Normalize endpoint SOCKET_LISTEN and NETWORK_CONNECTION with process signer/prevalence, host, direction and local/remote endpoints."
+    false_positives = "Developer tools, local service hosts, peer-to-peer clients, remote support and ephemeral test servers."
+    references = "reports/cobalt-strike-beacon/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use benign listener and client fixtures; do not start Beacon listeners."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    ($e.metadata.event_type = "SOCKET_LISTEN" or $e.metadata.event_type = "NETWORK_CONNECTION")
+    ($e.principal.process.file.is_signed = false or $e.principal.process.file.prevalence = "RARE")
+  condition:
+    $e
+}

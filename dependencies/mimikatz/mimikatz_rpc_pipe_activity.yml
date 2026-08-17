@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_rpc_pipe_activity
+canonical_path: detections/mimikatz/yaral/mimikatz_rpc_pipe_activity.yaral
+canonical_sha256: e4cebbd18de3614394a0b9f48df377f4a36dde4b5cf070297ad091e384956887
+description: "Surfaces named-pipe or RPC activity associated with authentication coercion or remote control context."
+severity: medium
+procedure_ids: ["P35", "P38"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Sysmon 17/18 or EDR RPC and network telemetry with process, endpoint and peer."
+atomic_event_types: ["17", "18"]
+required_udm_fields: ["metadata.product_event_type", "security_result.description"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Normal Windows RPC, print, EFS and management traffic."
+references: "reports/mimikatz/source-analysis.md"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_rpc_pipe_activity.spl", sha256: da0f98eafb5538fa2675dc657e3d71da0a14306e67c0c832bbe8fb76fbf00d67, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_rpc_pipe_activity.kql", sha256: 1b16216ef2647cb3e61fb75805010b686e6ef2f89a2314ef4d8f1278521f4fc7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_rpc_pipe_activity.sql", sha256: f13a1006ea84bece9ff9c66e0ab741ee9d223acf5b9ea3ead17af18d696950df, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_rpc_pipe_activity.eql", sha256: 8d62aac6bddeacb7bcea460715569391257fcc7d1df2f1267417cb71cdfbc71d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_rpc_pipe_activity.yml", sha256: 3c25fe2193f92ca8d885fa5afbc2dbce04dc82e34a9ffaa26db287893d35ed2c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,17 @@
+// source_yaral: detections/havoc/yaral/havoc_listener_and_forwarding.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: havoc_listener_and_forwarding
+// severity: high
+// procedure_ids: HV-P16
+// description: A process listens locally and also establishes outbound connections consistent with forwarding
+// log_source_prerequisites: EDR socket listen and connect telemetry with stable process identity and direction
+// false_positives: Approved proxies, VPNs, developer tunnels and network services
+// references: reports/havoc/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION", "NETWORK_LISTEN") or EventType in ("NETWORK_CONNECTION", "NETWORK_LISTEN")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="havoc_listener_and_forwarding"

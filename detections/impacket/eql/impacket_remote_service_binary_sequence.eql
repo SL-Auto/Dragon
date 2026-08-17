@@ -1,0 +1,14 @@
+// source_yaral: detections/impacket/yaral/impacket_remote_service_binary_sequence.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: impacket_remote_service_binary_sequence
+// severity: high
+// procedure_ids: IMP-03
+// description: Correlates an administrative-share file write with remote service installation on the same host.
+// log_source_prerequisites: Normalize Windows 5145 plus 7045/4697 or EDR file/service events with target host, account, source IP, service path, and timestamps.
+// false_positives: Software deployment, endpoint management, backup, and approved remote support.
+// references: reports/impacket/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("4697", "5145", "7045") or event.action in ("4697", "5145", "7045")

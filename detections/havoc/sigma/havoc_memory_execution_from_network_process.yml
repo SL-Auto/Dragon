@@ -1,0 +1,22 @@
+title: "A network-active process performs cross-process access, injection or memory-backed execution"
+name: havoc_memory_execution_from_network_process
+status: experimental
+description: "A network-active process performs cross-process access, injection or memory-backed execution"
+source_yaral: "detections/havoc/yaral/havoc_memory_execution_from_network_process.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/havoc/source-analysis.md"
+procedure_ids: "HV-P09,HV-P10,HV-P11"
+log_source_prerequisites: "Tenant-verified EDR process access injection memory execution or CLR load events plus process network telemetry"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["CLR_ASSEMBLY_LOAD", "MEMORY_EXECUTION", "NETWORK_CONNECTION", "PROCESS_INJECTION", "REMOTE_THREAD"]
+  condition: selection_event_type
+falsepositives:
+  - "EDR, debuggers, profilers, accessibility and managed-runtime hosts"
+level: high

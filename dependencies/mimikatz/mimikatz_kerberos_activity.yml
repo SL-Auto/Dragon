@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_kerberos_activity
+canonical_path: detections/mimikatz/yaral/mimikatz_kerberos_activity.yaral
+canonical_sha256: b9713ec360f243b84beccaff1303475e73258cdf600d3ca0ea6b56a133201886
+description: "Surfaces Kerberos ticket issuance or endpoint LSA ticket-cache operations for contextual analytics."
+severity: low
+procedure_ids: ["P10"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "DC 4768-4771 and vendor LSA ticket-operation telemetry."
+atomic_event_types: ["4768", "4769", "4770", "4771"]
+required_udm_fields: ["metadata.product_event_type"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Normal domain authentication and administrative ticket management."
+references: "reports/mimikatz/source-analysis.md"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_kerberos_activity.spl", sha256: 1b1ea6fb139925f99eb193bc908152805e7e8d3dc2ed5eb05fe8ecd15214876e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_kerberos_activity.kql", sha256: 07c59b16f3ef122fd622abc3ef232f408ef596776490e675cad98a0a9e427832, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_kerberos_activity.sql", sha256: bb045a3c27c8608d8d3d06ca33dbce9beeda649591aa7e6934543de3d3c0c0fc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_kerberos_activity.eql", sha256: 2412989c5a6bcb587e74da260858b0f4af098a02fec84482e4c961edf0f82236, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_kerberos_activity.yml", sha256: 5c771deb2bb97e5055b6a86f34b28dc64195093918a9ea6dcda3e02badb5b9e5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_azure_authentication_context
+canonical_path: detections/bloodhound/yaral/bloodhound_azure_authentication_context.yaral
+canonical_sha256: 1ac130cf67d6e9fdf1f6b3fe0a3c91848c3e091437a166fef314916463615713
+description: "Detects a sign-in followed by broad Graph or ARM read activity from the same principal and application, independent of source IP."
+severity: medium
+procedure_ids: ["BH-016"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Entra interactive/service-principal sign-ins and Graph/ARM audit with principal user ID, application/service-principal ID and resource-family enrichment."
+atomic_event_types: ["AADServicePrincipalSignInLogs", "AZURE_RESOURCE_READ", "MicrosoftGraphActivityLogs", "SigninLogs"]
+required_udm_fields: ["metadata.product_event_type", "principal.application", "principal.user.userid", "target.resource.attribute.labels"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Cloud inventory, governance, CSPM and authorized assessment."
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_azure_authentication_context.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_azure_authentication_context.spl", sha256: 6fbbabac743357ba951b8f7b223ce8789ad79b52c4d162e3bedf78061cb1c2cc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_azure_authentication_context.kql", sha256: 020b05c6d93276b7107023b673873608f005379f81cf77e5f8c36c2bdd4c2aea, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_azure_authentication_context.sql", sha256: f16ad588df3dc5b1d979d5b47c11659a562b878761da6e793ec75a7a7280dcb2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_azure_authentication_context.eql", sha256: 5d007420e7d1d237d7a94c3bcdc2a0723199ebce856d324df4fe074b0a4adc0e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_azure_authentication_context.yml", sha256: 74928c92104e809920172279810d48edd78a2eeefce0487f5d0899b84c62be39, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

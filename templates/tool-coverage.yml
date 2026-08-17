@@ -1,0 +1,25 @@
+schema_version: 1
+tool_id: <tool-id>
+analyzed_revision: <commit-tag-hash-or-unknown>
+inventory_method: <source-tree-and-official-docs>
+inventory_complete: false
+inventory_evidence:
+  - <source tree, command registry, module index, or official capability index>
+excluded_paths: []
+procedures:
+  - id: PROC-001
+    name: <procedure>
+    source_locations: []
+    platforms: []
+    telemetry_status: unassessed
+    detection_status: unassessed
+    detection_rules: []
+    report_anchor: <report heading>
+    notes: null
+completion:
+  total_procedures: 1
+  detected: 0
+  not_observable: 0
+  blocked_source: 0
+  unassessed: 1
+  comprehensive_for_revision: false

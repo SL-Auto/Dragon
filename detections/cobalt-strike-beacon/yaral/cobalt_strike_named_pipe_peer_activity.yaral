@@ -1,0 +1,22 @@
+rule cobalt_strike_named_pipe_peer_activity {
+  meta:
+    author = "Detection Research Agent"
+    description = "Surfaces named-pipe create/connect activity from an unsigned or rare process, including SMB peer-channel hypotheses without relying on mutable pipe names."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Peer C2 uses named pipes, but pipe activity alone is common and not Cobalt Strike-specific."
+    procedure_ids = "CSB-007"
+    log_source_prerequisites = "Normalize Sysmon 17/18 or EDR PIPE_CREATE/PIPE_CONNECT with process path, signer/prevalence, host, pipe and peer when networked."
+    false_positives = "Browsers, management agents, database clients, service frameworks and endpoint security."
+    references = "reports/cobalt-strike-beacon/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay authorized benign pipe events and synthetic rare-process pipe fixtures."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    ($e.metadata.event_type = "PIPE_CREATE" or $e.metadata.event_type = "PIPE_CONNECT" or $e.metadata.product_event_type = "17" or $e.metadata.product_event_type = "18")
+    ($e.principal.process.file.is_signed = false or $e.principal.process.file.prevalence = "RARE")
+  condition:
+    $e
+}

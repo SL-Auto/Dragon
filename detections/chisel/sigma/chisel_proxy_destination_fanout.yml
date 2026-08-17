@@ -1,0 +1,22 @@
+title: "Detects one uncommon process connecting to many destinations after listener activity consistent with a dynamic proxy"
+name: chisel_proxy_destination_fanout
+status: experimental
+description: "Detects one uncommon process connecting to many destinations after listener activity consistent with a dynamic proxy"
+source_yaral: "detections/chisel/yaral/chisel_proxy_destination_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/chisel/source-analysis.md"
+procedure_ids: "CH-P05,CH-P07"
+log_source_prerequisites: "EDR socket listen and outbound connection telemetry with process prevalence enrichment"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "NETWORK_LISTEN"]
+  condition: selection_event_type
+falsepositives:
+  - "Browsers update agents security scanners service meshes and approved proxies"
+level: high

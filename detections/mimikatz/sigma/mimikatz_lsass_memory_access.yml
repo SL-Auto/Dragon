@@ -1,0 +1,22 @@
+title: "Detects process access to LSASS with memory-read-capable rights; tuning is applied downstream rather than with broad process-name exclusions."
+name: mimikatz_lsass_memory_access
+status: experimental
+description: "Detects process access to LSASS with memory-read-capable rights; tuning is applied downstream rather than with broad process-name exclusions."
+source_yaral: "detections/mimikatz/yaral/mimikatz_lsass_memory_access.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md; https://learn.microsoft.com/windows/security/operating-system-security/sysmon/sysmon-events"
+procedure_ids: "P07,P09,P13"
+log_source_prerequisites: "Normalize Sysmon Event ID 10 or equivalent EDR process-open telemetry to UDM with source and target process paths and access-mask text."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["10", "PROCESS_OPEN"]
+  condition: selection_event_type
+falsepositives:
+  - "EDR and antivirus sensors, approved diagnostics, authentication extensions, and accessibility tooling."
+level: high

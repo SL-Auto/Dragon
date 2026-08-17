@@ -1,0 +1,17 @@
+// source_yaral: detections/impacket/yaral/impacket_suspicious_service_control.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: impacket_suspicious_service_control
+// severity: high
+// procedure_ids: IMP-03
+// description: Detects service creation or configuration following a remote logon.
+// log_source_prerequisites: Windows 4624 and 4697/7045 with host, account and source.
+// false_positives: Software deployment and remote support.
+// references: reports/impacket/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("4624", "4697", "7045") or EventType in ("4624", "4697", "7045")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="impacket_suspicious_service_control"

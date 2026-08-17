@@ -1,0 +1,22 @@
+title: "Detects log clearing or endpoint telemetry reporting Event Log service tampering."
+name: mimikatz_event_log_impairment
+status: experimental
+description: "Detects log clearing or endpoint telemetry reporting Event Log service tampering."
+source_yaral: "detections/mimikatz/yaral/mimikatz_event_log_impairment.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md"
+procedure_ids: "P26"
+log_source_prerequisites: "Forwarded Security 1102, System 104 or EDR service-tamper telemetry."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["104", "1102"]
+  condition: selection_event_type
+falsepositives:
+  - "Authorized log maintenance and lab reset."
+level: high

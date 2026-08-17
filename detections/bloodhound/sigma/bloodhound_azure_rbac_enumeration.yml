@@ -1,0 +1,22 @@
+title: "Detects high-cardinality Azure RBAC, owner, access-policy or role-eligibility reads."
+name: bloodhound_azure_rbac_enumeration
+status: experimental
+description: "Detects high-cardinality Azure RBAC, owner, access-policy or role-eligibility reads."
+source_yaral: "detections/bloodhound/yaral/bloodhound_azure_rbac_enumeration.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-019"
+log_source_prerequisites: "Graph/ARM audit with principal, operation name, target scope/object and source."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["AZURE_RESOURCE_READ", "AzureActivity", "MicrosoftGraphActivityLogs"]
+  condition: selection_event_type
+falsepositives:
+  - "Access reviews, IAM governance, CSPM and authorized audits."
+level: high

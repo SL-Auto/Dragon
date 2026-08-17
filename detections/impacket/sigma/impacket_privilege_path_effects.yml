@@ -1,0 +1,22 @@
+title: "Detects correlated directory privilege changes and anomalous Kerberos ticket use."
+name: impacket_privilege_path_effects
+status: experimental
+description: "Detects correlated directory privilege changes and anomalous Kerberos ticket use."
+source_yaral: "detections/impacket/yaral/impacket_privilege_path_effects.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-22"
+log_source_prerequisites: "DC directory-change and Kerberos events with actor, target and source."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4741", "4742", "4768", "4769", "5136", "5137"]
+  condition: selection_event_type
+falsepositives:
+  - "Approved domain migrations and delegation changes."
+level: high

@@ -1,0 +1,28 @@
+rule cobalt_strike_alternate_identity_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates explicit-credential or alternate-logon use with a new process under the resulting account."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Alternate identity execution is important lateral-movement context but is routine in administration."
+    procedure_ids = "CSB-012"
+    log_source_prerequisites = "Normalize Windows 4648 and 4688/EDR process events with host, subject, target account, logon ID and process identity."
+    false_positives = "RunAs, scheduled administration, service management, deployment and helpdesk workflows."
+    references = "reports/cobalt-strike-beacon/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized legitimate RunAs and synthetic correlated process events."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    $auth.metadata.product_event_type = "4648"
+    $auth.principal.hostname = $host
+    $auth.target.user.userid = $account
+    $proc.metadata.event_type = "PROCESS_LAUNCH"
+    $proc.principal.hostname = $host
+    $proc.principal.user.userid = $account
+  match:
+    $host, $account over 5m
+  condition:
+    $auth and $proc
+}

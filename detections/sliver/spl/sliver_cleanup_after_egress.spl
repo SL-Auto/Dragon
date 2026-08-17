@@ -1,0 +1,17 @@
+# source_yaral: detections/sliver/yaral/sliver_cleanup_after_egress.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: sliver_cleanup_after_egress
+# severity: high
+# procedure_ids: PROC-002,PROC-026
+# description: Network process deletes its own image or related artifacts
+# log_source_prerequisites: File deletion and network telemetry with stable PID
+# false_positives: Installers, updaters, temporary utilities
+# references: reports/sliver/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "FILE_DELETION", "NETWORK_CONNECTION")
+| eval canonical_rule="sliver_cleanup_after_egress"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_recurrent_process_egress
+canonical_path: detections/sliver/yaral/sliver_recurrent_process_egress.yaral
+canonical_sha256: 8ceeda0c19ed5b6fd4a4c0463fa38d65bff3ee64aae738aebed1c1333ce7d605
+description: "One process entity repeatedly communicates outbound to the same destination, spread across multiple minutes"
+severity: medium
+procedure_ids: ["PROC-002", "PROC-003"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed network events with stable process entity and destination"
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "metadata.id", "network.direction", "principal.hostname", "principal.process.product_specific_process_id", "target.ip"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Agents, updaters, browsers, monitoring"
+references: "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_recurrent_process_egress.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_recurrent_process_egress.spl", sha256: 330e46fa55a2feceb39b5b1d23dceddc352389dc52f61da385269c3e7066eae0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_recurrent_process_egress.kql", sha256: af5b32d86d8d419db3b42e1f66c7751aede7f59c068d19077a11d1980c15bdb2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_recurrent_process_egress.sql", sha256: 9a7c761c9163218c53d205fdb38f88a126950e4f8b73b24aa227993520d526a9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_recurrent_process_egress.eql", sha256: cada246924ea2dcd2931a3dbcf8edfb5fccf17751ab10a9d1b0e2b9bde397f6d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_recurrent_process_egress.yml", sha256: b76aac3a16da68a454dc637f31577505c4077cee735dd0e3d6ad3620161ab8e6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

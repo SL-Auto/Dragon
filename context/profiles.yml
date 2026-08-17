@@ -1,0 +1,30 @@
+schema_version: 1
+profiles:
+  knowledge_retrieval:
+    first_action: python tools/knowledge/cli.py search <task-specific decision question> --top-k 5
+    before_retrieval_load: [injected AGENTS.md only]
+    after_retrieval_load: [sources cited by retrieved chunks, relevant manifests/<tool>.yml]
+    evidence: runs/YYYY-MM-DD.md section Knowledge retrieval evidence with receipt IDs, timestamps, purposes, result counts, and sources used
+    fallback: after two well-formed retrieval attempts, targeted rg against likely authoritative paths
+    forbid_by_default: [recursive documentation dumps, complete source trees, unrelated tools]
+  discovery:
+    load: [registry/tools.yml, state/last-successful-run.txt, recent runs/*-discovery.md]
+    forbid_by_default: [source trees, detections, translations, full historical run logs]
+  source_analysis:
+    load: [manifests/<tool>.yml, coverage/<tool>.yml, relevant source modules, relevant primary evidence]
+    forbid_by_default: [other tools, translations]
+  yaral_generation:
+    load: [manifests/<tool>.yml, summaries/<tool>.md, relevant procedures, telemetry/<tool>.md, templates/yara-l-2.0.yaral]
+    granularity: one procedure family or one rule
+  adversarial_review:
+    load: [changed canonical rule, prior version or hash, dependencies/<tool>/<rule>.yml, unresolved review findings]
+    review_mode: delta_first
+  translation:
+    load: [one canonical rule, dependencies/<tool>/<rule>.yml, one schemas/<backend>.yml, one translation template]
+    granularity: one rule and one backend
+  master_telemetry:
+    load: [dependencies/**/*.yml, manifests/*.yml, telemetry/MASTER.md]
+    forbid_by_default: [full reports, source trees, secondary translations]
+  validation:
+    load: [manifests, dependency metadata, hashes, filenames, state/work-items.yml]
+    forbid_by_default: [full source trees]

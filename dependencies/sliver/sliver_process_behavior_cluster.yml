@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_process_behavior_cluster
+canonical_path: detections/sliver/yaral/sliver_process_behavior_cluster.yaral
+canonical_sha256: 1b5565b05952d918e04a5edc3fc7772e9d7886daa12b88771fe79e574e62f7d8
+description: "New process followed by outbound activity"
+severity: medium
+procedure_ids: ["PROC-001"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process launch and process network UDM with stable PID"
+atomic_event_types: ["NETWORK_CONNECTION", "PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id", "target.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "New legitimate network software"
+references: "reports/sliver/source-analysis.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_process_behavior_cluster.spl", sha256: 375065ffaedde5c01b95bd3b2800ced3ead87e886212ced78ee5ca740f31693a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_process_behavior_cluster.kql", sha256: 225406ea8041fb2b1bb0ef4f98887fc06f49c4ab67414d698327d3ee98bb71ab, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_process_behavior_cluster.sql", sha256: 9686963d58fed2fa387ead1031b830c6a6490e236658cf097e71caea2748fc4c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_process_behavior_cluster.eql", sha256: 48745c3ab094845ca364bde09b0d9ce1a17c007dca613e4341b612af934a8d94, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_process_behavior_cluster.yml", sha256: 7b6ba9e3ae7c76ca6e8745022a11637950a8d9f182c6b968da1dae3db497eed6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

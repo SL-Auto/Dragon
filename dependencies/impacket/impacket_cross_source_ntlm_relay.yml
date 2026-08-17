@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_cross_source_ntlm_relay
+canonical_path: detections/impacket/yaral/impacket_cross_source_ntlm_relay.yaral
+canonical_sha256: 0018e80b82a43728146e9e8640dc1b86b2899b58b520564138f57884a88b76c7
+description: "Correlates NTLM authentication for one account across different sources and a target effect."
+severity: high
+procedure_ids: ["IMP-21"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalized NTLM authentication with account, source, destination and result."
+atomic_event_types: ["4624", "4776"]
+required_udm_fields: ["metadata.product_event_type", "principal.ip", "principal.user.userid"]
+correlation_window: "2m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "NAT, proxies, clustered services and multi-hop authentication."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_cross_source_ntlm_relay.spl", sha256: 42a7f858e50dcf0af7f57d873c0a6609edc9bb68aa15d65255ca156cfb795862, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_cross_source_ntlm_relay.kql", sha256: 6eca632f7bccd0d9c4b9f951b48aa76318296c1ae9f2319bdcbd959a750cae62, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_cross_source_ntlm_relay.sql", sha256: c2cbdec57fedf8cd7ba662bb9ec654e63d950b93c4a528eacc3e1dc55783b2a7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_cross_source_ntlm_relay.eql", sha256: 7f8bb889afb318c3df1c357cf83bf58f4a7112d73bee63482d5a25dabce6a0c8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_cross_source_ntlm_relay.yml", sha256: 80e3321faca56aaf3c3ccd588a6772f526cf59d2cb0da0498d1eee3a46a15857, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

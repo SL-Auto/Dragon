@@ -1,0 +1,22 @@
+title: "A process produces recurrent outbound network activity consistent with a long-lived task channel"
+name: havoc_recurrent_process_egress
+status: experimental
+description: "A process produces recurrent outbound network activity consistent with a long-lived task channel"
+source_yaral: "detections/havoc/yaral/havoc_recurrent_process_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/havoc/source-analysis.md"
+procedure_ids: "HV-P01,HV-P03"
+log_source_prerequisites: "Process-attributed network telemetry with stable process entity and event timestamps"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Monitoring, update, VPN, messaging and management agents"
+level: medium

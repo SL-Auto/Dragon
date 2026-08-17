@@ -1,0 +1,19 @@
+-- source_yaral: detections/rubeus/yaral/rubeus_netonly_ticket_sequence.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: partial
+-- rule_name: rubeus_netonly_ticket_sequence
+-- severity: high
+-- procedure_ids: PROC-007
+-- description: Correlates a Type 9 logon session with ticket submission into the same LUID.
+-- log_source_prerequisites: Normalize 4624 LogonType and TargetLogonId plus EDR KerbSubmitTicketMessage target LUID.
+-- false_positives: Runas netonly, administrative workflows, SSO testing, and authorized assessments.
+-- references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md
+-- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+-- schema_profile: schemas/normalized-sql.yml
+-- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).
+SELECT hostname, user_id, COUNT(*) AS event_count,
+       'rubeus_netonly_ticket_sequence' AS canonical_rule
+FROM normalized_events
+WHERE product_event_type IN ('4624', 'EDR_API_CALL') OR event_type IN ('4624', 'EDR_API_CALL')
+GROUP BY hostname, user_id
+HAVING COUNT(*) > 0;

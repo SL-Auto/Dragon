@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal.yaral
+canonical_sha256: cf6e17e7841ecae2506a85978ab3759c9c3e72a7720667bc4d517121f2d357da
+description: "Detects CLR/CoreCLR module load into an unsigned or rare process, providing an alternate detection path for in-memory .NET hosting when runtime-expected/CLR_RUNTIME_LOAD telemetry is unavailable."
+severity: high
+procedure_ids: ["CSB-015", "CSB-017"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize MODULE_LOAD for clr.dll/coreclr.dll with process signer and prevalence."
+atomic_event_types: ["MODULE_LOAD"]
+required_udm_fields: ["metadata.event_type", "principal.process.file.is_signed", "principal.process.file.prevalence", "target.file.full_path"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Custom .NET hosts, IDEs, installers, and management agents that legitimately embed the CLR in an uncommon or unsigned process."
+references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_powershell_or_clr_in_unusual_host.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }

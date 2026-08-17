@@ -1,0 +1,21 @@
+rule cobalt_strike_suspicious_process_lineage_or_memory {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects parent/creator mismatch, private executable memory, or unusual in-process execution telemetry without requiring default Beacon spawn targets."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Lineage manipulation or private execution memory can indicate injected or in-memory tasking, though some security and application runtimes overlap."
+    procedure_ids = "CSB-004,CSB-014,CSB-016"
+    log_source_prerequisites = "Normalize EDR PROCESS_LAUNCH, EXECUTABLE_MEMORY or PARENT_MISMATCH with creator/effective parent, process entity, user, signer and memory attributes."
+    false_positives = "EDR, debuggers, JIT runtimes, application virtualization, compatibility tools and approved injection frameworks."
+    references = "reports/cobalt-strike-beacon/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use vendor-provided benign lineage/memory events and synthetic fixtures."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    ($e.metadata.event_type = "PARENT_MISMATCH" or $e.metadata.event_type = "EXECUTABLE_MEMORY" or ($e.metadata.event_type = "PROCESS_LAUNCH" and $e.principal.process.parent_process.pid != $e.principal.process.creator_process.pid))
+  condition:
+    $e
+}

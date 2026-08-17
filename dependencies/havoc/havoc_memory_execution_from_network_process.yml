@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: havoc
+rule_name: havoc_memory_execution_from_network_process
+canonical_path: detections/havoc/yaral/havoc_memory_execution_from_network_process.yaral
+canonical_sha256: 52ba2d0487582d0fc9989406ca88816fab3a1d9bd56a06d1eb0795d6fce6798a
+description: "A network-active process performs cross-process access, injection or memory-backed execution"
+severity: high
+procedure_ids: ["HV-P09", "HV-P10", "HV-P11"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Tenant-verified EDR process access injection memory execution or CLR load events plus process network telemetry"
+atomic_event_types: ["CLR_ASSEMBLY_LOAD", "MEMORY_EXECUTION", "NETWORK_CONNECTION", "PROCESS_INJECTION", "REMOTE_THREAD"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "EDR, debuggers, profilers, accessibility and managed-runtime hosts"
+references: "reports/havoc/source-analysis.md"
+translations:
+  spl: { path: "detections/havoc/spl/havoc_memory_execution_from_network_process.spl", sha256: f2eade5d25aa4c8de5e718dd813e854f4f480938b78ecd33655adac23895e1e0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_memory_execution_from_network_process.kql", sha256: 3b714014a881a62380301e04203b62bd1fc47148621f6e07cbd99b9ee3fcf2ee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_memory_execution_from_network_process.sql", sha256: b8edc403d87c885e070326ec4f9be7dd128074169a880c482279f322dfe8fe3a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_memory_execution_from_network_process.eql", sha256: 468695612e9fe7c2b77a65d1eb527b3cd71768276a62d562eb99a429e19633c6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_memory_execution_from_network_process.yml", sha256: 817aeed942d145033bfb3fd2b1355ed1c8f790210bc6fb2117cf2f109b41220f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,22 @@
+title: "Detects SAMR or LSA policy read operations against multiple remote hosts."
+name: bloodhound_samr_local_group_enumeration
+status: experimental
+description: "Detects SAMR or LSA policy read operations against multiple remote hosts."
+source_yaral: "detections/bloodhound/yaral/bloodhound_samr_local_group_enumeration.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-009,BH-010"
+log_source_prerequisites: "NDR or EDR RPC telemetry exposing SAMR/LSA interface or operation and source/target identity."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["RPC_CALL"]
+  condition: selection_event_type
+falsepositives:
+  - "Asset inventory, compliance scanners and endpoint-management systems."
+level: high

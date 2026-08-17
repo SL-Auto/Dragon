@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_ntlm_relay_with_privileged_effect
+canonical_path: detections/impacket/yaral/impacket_ntlm_relay_with_privileged_effect.yaral
+canonical_sha256: 1380842d2c339489aa878832236339b19af50f5fd2cae343314627364193b2c5
+description: "Correlates NTLM authentication (4624/4776) with a privileged target-side effect (service install, account/group change, or AD authorization change) by the same account on the same host, requiring the target-side effect that the base cross-source relay rule does not."
+severity: critical
+procedure_ids: ["IMP-21"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalized NTLM authentication (4624/4776) with target host and target account, correlated with service (4697/7045), account/group (4720-4757 family), or AD-authorization change (5136/5137) events on the same host and acting account."
+atomic_event_types: ["4624", "4697", "4720", "4722", "4723", "4724", "4725", "4726", "4728", "4729", "4732", "4733", "4738", "4741", "4742", "4743", "4756", "4757", "4776", "5136", "5137", "7045"]
+required_udm_fields: ["metadata.product_event_type", "principal.user.userid", "target.hostname", "target.user.userid"]
+correlation_window: "5m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Administrators who authenticate and then immediately perform routine privileged administration on the same host within the correlation window."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_ntlm_relay_with_privileged_effect.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/impacket/kql/impacket_ntlm_relay_with_privileged_effect.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/impacket/sql/impacket_ntlm_relay_with_privileged_effect.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/impacket/eql/impacket_ntlm_relay_with_privileged_effect.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/impacket/sigma/impacket_ntlm_relay_with_privileged_effect.yml", sha256: missing, status: "", fidelity: "" }

@@ -1,0 +1,17 @@
+# source_yaral: detections/bloodhound/yaral/bloodhound_recurrent_collection_activity.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: bloodhound_recurrent_collection_activity
+# severity: medium
+# procedure_ids: BH-014
+# description: Detects repeated directory or remote-host collection bursts from the same process entity.
+# log_source_prerequisites: Stable process entity and normalized LDAP_SEARCH, RPC_CALL or REGISTRY_READ events retained for several hours.
+# false_positives: Scheduled identity inventory, monitoring and compliance collection.
+# references: reports/bloodhound/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "LDAP_SEARCH", "REGISTRY_READ", "RPC_CALL")
+| eval canonical_rule="bloodhound_recurrent_collection_activity"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

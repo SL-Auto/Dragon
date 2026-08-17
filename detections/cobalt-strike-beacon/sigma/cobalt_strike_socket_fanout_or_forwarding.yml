@@ -1,0 +1,22 @@
+title: "Detects a single uncommon process connecting to many distinct destinations as a SOCKS/forwarding/pivot hypothesis."
+name: cobalt_strike_socket_fanout_or_forwarding
+status: experimental
+description: "Detects a single uncommon process connecting to many distinct destinations as a SOCKS/forwarding/pivot hypothesis."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_fanout_or_forwarding.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-009"
+log_source_prerequisites: "Normalize process-attributed outbound NETWORK_CONNECTION with stable process entity and distinct target IP/port values plus signer/prevalence."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Browsers, scanners, proxies, EDR, backup, software distribution and orchestration agents."
+level: medium

@@ -1,0 +1,22 @@
+title: "Detects account, computer and group membership changes associated with a network-originating logon."
+name: impacket_remote_account_or_group_change
+status: experimental
+description: "Detects account, computer and group membership changes associated with a network-originating logon."
+source_yaral: "detections/impacket/yaral/impacket_remote_account_or_group_change.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-07"
+log_source_prerequisites: "DC Security identity-change and 4624 events with actor and source."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4720", "4722", "4723", "4724", "4725", "4726", "4728", "4729", "4732", "4733", "4738", "4741", "4742", "4743", "4756", "4757"]
+  condition: selection_event_type
+falsepositives:
+  - "Identity lifecycle and delegated administration."
+level: high

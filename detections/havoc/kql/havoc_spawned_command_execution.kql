@@ -1,0 +1,17 @@
+// source_yaral: detections/havoc/yaral/havoc_spawned_command_execution.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: havoc_spawned_command_execution
+// severity: high
+// procedure_ids: HV-P05
+// description: A recurrently networked process spawns a command or script interpreter
+// log_source_prerequisites: Process creation and process-attributed network telemetry with stable parent identity
+// false_positives: Management agents, CI workers and automation platforms
+// references: reports/havoc/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION", "PROCESS_LAUNCH") or EventType in ("NETWORK_CONNECTION", "PROCESS_LAUNCH")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="havoc_spawned_command_execution"

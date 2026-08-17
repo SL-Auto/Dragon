@@ -1,0 +1,14 @@
+// source_yaral: detections/impacket/yaral/impacket_packet_capture_or_raw_socket.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: impacket_packet_capture_or_raw_socket
+// severity: medium
+// procedure_ids: IMP-19
+// description: Detects unexpected packet capture driver or raw socket use.
+// log_source_prerequisites: EDR process, driver and raw-socket telemetry.
+// false_positives: Network troubleshooting, monitoring and security sensors.
+// references: reports/impacket/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("DRIVER_LOAD", "NETWORK_CONNECTION", "PROCESS_LAUNCH") or event.action in ("DRIVER_LOAD", "NETWORK_CONNECTION", "PROCESS_LAUNCH")

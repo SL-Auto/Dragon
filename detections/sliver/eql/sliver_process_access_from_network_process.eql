@@ -1,0 +1,14 @@
+// source_yaral: detections/sliver/yaral/sliver_process_access_from_network_process.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_process_access_from_network_process
+// severity: high
+// procedure_ids: PROC-011,PROC-012,PROC-015
+// description: Outbound-network process performs sensitive process access, injection, dump, or memory load
+// log_source_prerequisites: Tenant-verified EDR process access/injection/memory event plus stable PID network telemetry
+// false_positives: EDR, debuggers, profilers, accessibility
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("NETWORK_CONNECTION", "PROCESS_MODULE_LOAD") or event.action in ("NETWORK_CONNECTION", "PROCESS_MODULE_LOAD")

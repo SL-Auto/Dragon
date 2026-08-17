@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_listener_with_egress
+canonical_path: detections/sliver/yaral/sliver_listener_with_egress.yaral
+canonical_sha256: ec9389fe0c604f0f67a767c4038ab7bde6405c2d7f0cb42789fe17b31ceba101
+description: "One process both listens and makes outbound connections"
+severity: high
+procedure_ids: ["PROC-005", "PROC-021"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR socket listen and process network events with stable PID"
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Proxies, VPN, developer and server software"
+references: "reports/sliver/source-analysis.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_listener_with_egress.spl", sha256: 27859a98d8d18f92e6407f7a7eeb5757f0cea12049da4a18414e81142e7fbd52, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_listener_with_egress.kql", sha256: e8b5405897fa7947a5a08616db799e609bc929d1854da7852dbac3a4dc450f04, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_listener_with_egress.sql", sha256: 1435ffbf9063bcf1824992ee8339d485c3eb258132e91cd903b38b743c55fa4b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_listener_with_egress.eql", sha256: 70e4854d226b6e85ffe840dbd47add9c4c6a7eea9b997372821669017004807f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_listener_with_egress.yml", sha256: 5a24b0f0033deefee76c6d1babb7f81b349ba6e12d88d2628889d4248ee2dbe2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

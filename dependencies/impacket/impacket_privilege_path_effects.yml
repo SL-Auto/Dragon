@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_privilege_path_effects
+canonical_path: detections/impacket/yaral/impacket_privilege_path_effects.yaral
+canonical_sha256: aa2f8752c5d35ad62810ac6e41a89d1ff0dcff2e269d9ba447aa67e73afce627
+description: "Detects correlated directory privilege changes and anomalous Kerberos ticket use."
+severity: high
+procedure_ids: ["IMP-22"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "DC directory-change and Kerberos events with actor, target and source."
+atomic_event_types: ["4741", "4742", "4768", "4769", "5136", "5137"]
+required_udm_fields: ["metadata.product_event_type", "principal.user.userid"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Approved domain migrations and delegation changes."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_privilege_path_effects.spl", sha256: 31ddb9e038059f4257ad5c9ea29533ce0d93a3ceef22ba899d85ef90c9090ea3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_privilege_path_effects.kql", sha256: 9e4ad002a24fa059353dbb0a3952fbf572ed917fd72b6b8d51e834832ceed0c9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_privilege_path_effects.sql", sha256: 0847dc9b13a88e1da7ba9b62fd30b885f52ae65c03bc6cd4339ec23ebc557bee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_privilege_path_effects.eql", sha256: 5fd268eaf9dcff4e719c028eec8f798eab5029a6b447c7d94847bb82c8aad16d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_privilege_path_effects.yml", sha256: c1cb58c7ff2e8f832cd2f3c890357c701e886e7d5e627a81db56e607defb928e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

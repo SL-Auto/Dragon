@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_privileged_context_change_compensating_signal
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_privileged_context_change_compensating_signal.yaral
+canonical_sha256: 25d40c617116917bf026d397fdb38d7bb2bdcdd9a27877b155207a6ece1eb115
+description: "Correlates SeDebugPrivilege enablement on a process with that same process subsequently opening a protected process (lsass.exe or winlogon.exe), closing the causal gap left by the base rule's standalone 4672/token-change signal."
+severity: high
+procedure_ids: ["CSB-011"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize TOKEN_PRIVILEGE_CHANGE with the enabled privilege name, and PROCESS_OPEN with target image path, joined on host and PID within 10 minutes."
+atomic_event_types: ["PROCESS_OPEN", "TOKEN_PRIVILEGE_CHANGE"]
+required_udm_fields: ["additional.fields", "metadata.event_type", "principal.hostname", "principal.process.pid", "target.process.file.full_path"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "EDR, debuggers, backup/VSS tooling, and administrative diagnostic utilities that enable SeDebugPrivilege before inspecting system processes."
+references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_privileged_context_change.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_privileged_context_change_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_privileged_context_change_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_privileged_context_change_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_privileged_context_change_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_privileged_context_change_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }

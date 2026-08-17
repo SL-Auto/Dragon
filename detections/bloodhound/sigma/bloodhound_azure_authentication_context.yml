@@ -1,0 +1,22 @@
+title: "Detects a sign-in followed by broad Graph or ARM read activity from the same principal and source."
+name: bloodhound_azure_authentication_context
+status: experimental
+description: "Detects a sign-in followed by broad Graph or ARM read activity from the same principal and source."
+source_yaral: "detections/bloodhound/yaral/bloodhound_azure_authentication_context.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-016"
+log_source_prerequisites: "Entra interactive/service-principal sign-ins and Graph/ARM audit with principal/app, source IP and correlation identifiers."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["AADServicePrincipalSignInLogs", "AZURE_RESOURCE_READ", "MicrosoftGraphActivityLogs", "SigninLogs"]
+  condition: selection_event_type
+falsepositives:
+  - "Cloud inventory, governance, CSPM and authorized assessment."
+level: medium

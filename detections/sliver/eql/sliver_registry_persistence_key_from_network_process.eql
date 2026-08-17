@@ -1,0 +1,14 @@
+// source_yaral: detections/sliver/yaral/sliver_registry_persistence_key_from_network_process.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_registry_persistence_key_from_network_process
+// severity: high
+// procedure_ids: PROC-018
+// description: A network-active process writes a registry key commonly used for persistence or security-control tampering
+// log_source_prerequisites: Registry mutation telemetry with full key path, plus process-attributed network telemetry sharing a stable process entity
+// false_positives: Installers, endpoint management, and security software that legitimately write persistence-adjacent keys
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("REGISTRY_MODIFICATION", "NETWORK_CONNECTION") or event.action in ("REGISTRY_MODIFICATION", "NETWORK_CONNECTION")

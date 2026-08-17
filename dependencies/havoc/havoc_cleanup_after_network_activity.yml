@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: havoc
+rule_name: havoc_cleanup_after_network_activity
+canonical_path: detections/havoc/yaral/havoc_cleanup_after_network_activity.yaral
+canonical_sha256: 0dcdcc6357d0cf099621fefbf9d8e2f214b18ebcc88f0513d12dbabff25bbc50
+description: "A process deletes a file or terminates shortly after outbound network activity"
+severity: medium
+procedure_ids: ["HV-P20"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR file deletion or process termination and process-attributed network telemetry with stable identity"
+atomic_event_types: ["FILE_DELETION", "NETWORK_CONNECTION", "PROCESS_TERMINATION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Installers, updaters, temporary helpers and self-cleaning applications"
+references: "reports/havoc/source-analysis.md"
+translations:
+  spl: { path: "detections/havoc/spl/havoc_cleanup_after_network_activity.spl", sha256: 91e72504d262be263c000433ce094b0764d86063f4408c2861f1f425c3a0190f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_cleanup_after_network_activity.kql", sha256: b8957c217ac2f8c05cfd91091f5cd42db11631d9e53dd27db6788a7d877a8a91, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_cleanup_after_network_activity.sql", sha256: 566576379e8bae3c4c07640218de423bb1319c378600c2ab2d14543a32379a6f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_cleanup_after_network_activity.eql", sha256: d5079bc5e3a3fb7ae703a62718f11fa78096840837e1e3877e7cafeb71838d9a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_cleanup_after_network_activity.yml", sha256: 445636b5d5c8eeb087ff0d3a96c122a502a0f27bde4f035e57895a85304039e0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

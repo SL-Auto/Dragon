@@ -1,0 +1,19 @@
+rule impacket_remote_account_or_group_change {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects account, computer and group membership changes associated with a network-originating logon."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "HIGH"
+  severity_rationale = "Remote identity changes can establish access or privilege."
+  procedure_ids = "IMP-07"
+  log_source_prerequisites = "DC Security identity-change and 4624 events with actor and source."
+  false_positives = "Identity lifecycle and delegated administration."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+ events:
+  $e.metadata.product_event_type = /(4720|4722|4723|4724|4725|4726|4738|4741|4742|4743|4728|4729|4732|4733|4756|4757)/
+ condition: $e
+}

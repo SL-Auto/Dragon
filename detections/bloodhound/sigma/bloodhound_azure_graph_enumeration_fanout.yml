@@ -1,0 +1,22 @@
+title: "Detects one cloud principal reading many Microsoft Graph directory resource families."
+name: bloodhound_azure_graph_enumeration_fanout
+status: experimental
+description: "Detects one cloud principal reading many Microsoft Graph directory resource families."
+source_yaral: "detections/bloodhound/yaral/bloodhound_azure_graph_enumeration_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-017"
+log_source_prerequisites: "MicrosoftGraphActivityLogs with principal/app, source, request URI/resource family, method and result."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["MicrosoftGraphActivityLogs"]
+  condition: selection_event_type
+falsepositives:
+  - "Identity governance, synchronization, compliance and cloud security posture tools."
+level: high

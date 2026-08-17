@@ -1,0 +1,26 @@
+rule impacket_cross_source_ntlm_relay {
+ meta:
+  author = "Detection Research Agent"
+  description = "Correlates NTLM authentication for one account across different sources and a target effect."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "HIGH"
+  severity_rationale = "Cross-source authentication inconsistency can indicate relay."
+  procedure_ids = "IMP-21"
+  log_source_prerequisites = "Normalized NTLM authentication with account, source, destination and result."
+  false_positives = "NAT, proxies, clustered services and multi-hop authentication."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+ events:
+  $a.metadata.product_event_type = /(4624|4776)/
+  $a.principal.user.userid = $user
+  $a.principal.ip = $src1
+  $b.metadata.product_event_type = /(4624|4776)/
+  $b.principal.user.userid = $user
+  $b.principal.ip = $src2
+  $src1 != $src2
+ match: $user over 2m
+ condition: $a and $b
+}

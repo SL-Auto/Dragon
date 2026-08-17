@@ -1,0 +1,23 @@
+title: "Detects Kerberos messages transported over HTTP where either the process or destination is unapproved."
+name: rubeus_kerberos_over_http_proxy
+status: experimental
+description: "Detects Kerberos messages transported over HTTP where either the initiating process or the destination is not on the approved KDC-proxy allowlist."
+source_yaral: "detections/rubeus/yaral/rubeus_kerberos_over_http_proxy.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling. The approved-client/approved-destination allowlist join and the OR relationship between the two flags (fire when EITHER is unapproved) must be implemented, not only a single-flag check."
+references:
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+  - "public-rules/comparisons/rubeus/rubeus_kerberos_over_http_proxy.md"
+procedure_ids: "PROC-013"
+log_source_prerequisites: "Normalize process-attributed HTTP request Content-Type and proxy destination, plus an approved-KDC-proxy-client and approved-KDC-proxy-destination allowlist enrichment."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_HTTP"]
+  condition: selection_event_type
+falsepositives:
+  - "Approved KDC proxy, remote-access, and identity clients where the allowlist enrichment is stale or incomplete."
+level: high

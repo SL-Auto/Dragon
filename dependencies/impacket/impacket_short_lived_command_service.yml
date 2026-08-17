@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_short_lived_command_service
+canonical_path: detections/impacket/yaral/impacket_short_lived_command_service.yaral
+canonical_sha256: 1b461044e86f7eea13628e65cbd36456dac6b952bd96a4f0c03c62451ba750d7
+description: "Detects service installation paths that invoke a command shell with output redirection."
+severity: high
+procedure_ids: ["IMP-03"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize Windows 7045 or 4697 service-install events and preserve the full service image path."
+atomic_event_types: ["4697", "7045"]
+required_udm_fields: ["metadata.product_event_type", "target.process.command_line"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Scripted break-glass administration and management products that wrap commands in temporary services."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_short_lived_command_service.spl", sha256: 9e92848be72554fc2318b132a588d47f5a7dd52610ac1d2ef246edac7f4f6ade, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_short_lived_command_service.kql", sha256: 80a978bb2877001c4db94edfd1c66453ab04f5c93d9da4805ab2768045a098d4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_short_lived_command_service.sql", sha256: fb2f785d8567e0b0a1af5fdbd62a66ad9f6d57501fe85a50ad5635cc86049ac4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_short_lived_command_service.eql", sha256: ddde14343a430e65fc947668dc50013c39e24e995a76e436c5503f45629bca08, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_short_lived_command_service.yml", sha256: 8b487a58981dcddcfa5070ae932fe54ee205a8105f39526795330fa5269f04c2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

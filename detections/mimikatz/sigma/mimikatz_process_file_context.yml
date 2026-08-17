@@ -1,0 +1,22 @@
+title: "Provides low-specificity process and output-file context for utility and staging procedures."
+name: mimikatz_process_file_context
+status: experimental
+description: "Provides low-specificity process and output-file context for utility and staging procedures."
+source_yaral: "detections/mimikatz/yaral/mimikatz_process_file_context.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/mimikatz/source-analysis.md"
+procedure_ids: "P01,P31,P33"
+log_source_prerequisites: "Process creation and EDR file create telemetry with ancestry, signer and path."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["FILE_CREATION", "PROCESS_LAUNCH"]
+  condition: selection_event_type
+falsepositives:
+  - "Common administrative and user activity."
+level: low

@@ -1,0 +1,24 @@
+rule impacket_remote_wmi_activity {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a command interpreter created by the WMI provider; SMB output activity is optional enrichment rather than a required event."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Remote WMI command execution is powerful and merits review when outside approved management sources."
+    procedure_ids = "IMP-05"
+    log_source_prerequisites = "Normalize WMI Activity or EDR process creation with host, account, parent process, child process, and command line."
+    false_positives = "Endpoint management, inventory, remediation, and authorized WMI administration."
+    references = "reports/impacket/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay approved WMI administration and synthetic correlated file events; never execute Impacket."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/impacket/detection-review.md"
+
+  events:
+    $process.metadata.event_type = "PROCESS_LAUNCH"
+    re.regex($process.principal.process.file.full_path, `(?i)\\WmiPrvSE\.exe$`)
+
+  condition:
+    $process
+}

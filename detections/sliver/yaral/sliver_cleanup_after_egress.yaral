@@ -1,0 +1,27 @@
+rule sliver_cleanup_after_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "Network process deletes its own image or related artifacts"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Correlates teardown with prior remote channel"
+    procedure_ids = "PROC-002,PROC-026"
+    log_source_prerequisites = "File deletion and network telemetry with stable PID"
+    false_positives = "Installers, updaters, temporary utilities"
+    references = "reports/sliver/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+  events:
+    $d.metadata.event_type = "FILE_DELETION"
+    $d.principal.hostname = $host
+    $d.principal.process.product_specific_process_id = $pid
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match: $host, $pid over 15m
+  condition: $d and $n
+}

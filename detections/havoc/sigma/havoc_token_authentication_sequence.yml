@@ -1,0 +1,22 @@
+title: "Explicit-credential or token-manipulation activity is followed by execution under the same account"
+name: havoc_token_authentication_sequence
+status: experimental
+description: "Explicit-credential or token-manipulation activity is followed by execution under the same account"
+source_yaral: "detections/havoc/yaral/havoc_token_authentication_sequence.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/havoc/source-analysis.md"
+procedure_ids: "HV-P12"
+log_source_prerequisites: "Windows Security 4648 or tenant-verified EDR token manipulation and process creation with account logon ID enrichment"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["PROCESS_LAUNCH", "TOKEN_CREATE", "TOKEN_DUPLICATE", "TOKEN_IMPERSONATION"]
+  condition: selection_event_type
+falsepositives:
+  - "RunAs, service accounts, deployment and approved administrative automation"
+level: high

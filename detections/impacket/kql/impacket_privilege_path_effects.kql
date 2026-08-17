@@ -1,0 +1,17 @@
+// source_yaral: detections/impacket/yaral/impacket_privilege_path_effects.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: impacket_privilege_path_effects
+// severity: high
+// procedure_ids: IMP-22
+// description: Detects correlated directory privilege changes and anomalous Kerberos ticket use.
+// log_source_prerequisites: DC directory-change and Kerberos events with actor, target and source.
+// false_positives: Approved domain migrations and delegation changes.
+// references: reports/impacket/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("4741", "4742", "4768", "4769", "5136", "5137") or EventType in ("4741", "4742", "4768", "4769", "5136", "5137")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="impacket_privilege_path_effects"

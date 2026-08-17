@@ -1,0 +1,22 @@
+title: "A network-active process obtains a memory-read-capable handle to a protected credential process such as lsass"
+name: sliver_lsass_access_from_network_process
+status: experimental
+description: "A network-active process obtains a memory-read-capable handle to a protected credential process such as lsass"
+source_yaral: "detections/sliver/yaral/sliver_lsass_access_from_network_process.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-011,PROC-012,PROC-015"
+log_source_prerequisites: "Tenant-verified EDR process-access event (for example Sysmon Event ID 10) with target process identity and access mask, plus process-attributed network telemetry sharing a stable process entity"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["10", "NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "EDR/AV agents, debuggers, and credential-backup tools that legitimately open lsass with read access"
+level: high

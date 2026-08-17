@@ -1,0 +1,19 @@
+rule mimikatz_token_process_control {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects endpoint-reported token manipulation, parent override or sensitive process control."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "MEDIUM"
+  severity_rationale = "Unusual privilege, token and process control can precede credential access."
+  procedure_ids = "P02,P03,P04,P05"
+  log_source_prerequisites = "EDR token and process-control telemetry with source, target, user and operation."
+  false_positives = "Security, support, accessibility and process-broker software."
+  references = "reports/mimikatz/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/mimikatz/detection-review.md"
+ events:
+  re.regex($e.security_result.description, `(?i)(token.*(duplicate|impersonat)|parent.*override|process.*(suspend|terminate))`)
+ condition: $e
+}

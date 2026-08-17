@@ -1,0 +1,22 @@
+title: "Correlates NTLM authentication for one account across different sources and a target effect."
+name: impacket_cross_source_ntlm_relay
+status: experimental
+description: "Correlates NTLM authentication for one account across different sources and a target effect."
+source_yaral: "detections/impacket/yaral/impacket_cross_source_ntlm_relay.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-21"
+log_source_prerequisites: "Normalized NTLM authentication with account, source, destination and result."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4624", "4776"]
+  condition: selection_event_type
+falsepositives:
+  - "NAT, proxies, clustered services and multi-hop authentication."
+level: high

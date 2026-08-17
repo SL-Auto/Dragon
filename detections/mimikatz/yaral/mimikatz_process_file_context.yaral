@@ -1,0 +1,19 @@
+rule mimikatz_process_file_context {
+ meta:
+  author = "Detection Research Agent"
+  description = "Provides low-specificity process and output-file context for utility and staging procedures."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "LOW"
+  severity_rationale = "These generic actions are useful only when correlated with stronger signals."
+  procedure_ids = "P01,P31,P33"
+  log_source_prerequisites = "Process creation and EDR file create telemetry with ancestry, signer and path."
+  false_positives = "Common administrative and user activity."
+  references = "reports/mimikatz/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/mimikatz/detection-review.md"
+ events:
+  ($e.metadata.event_type = "PROCESS_LAUNCH" or $e.metadata.event_type = "FILE_CREATION")
+ condition: $e
+}

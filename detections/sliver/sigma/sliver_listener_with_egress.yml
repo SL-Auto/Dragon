@@ -1,0 +1,22 @@
+title: "One process both listens and makes outbound connections"
+name: sliver_listener_with_egress
+status: experimental
+description: "One process both listens and makes outbound connections"
+source_yaral: "detections/sliver/yaral/sliver_listener_with_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-005,PROC-021"
+log_source_prerequisites: "EDR socket listen and process network events with stable PID"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Proxies, VPN, developer and server software"
+level: high

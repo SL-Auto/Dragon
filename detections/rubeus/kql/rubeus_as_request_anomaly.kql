@@ -1,0 +1,17 @@
+// source_yaral: detections/rubeus/yaral/rubeus_as_request_anomaly.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: rubeus_as_request_anomaly
+// severity: high
+// procedure_ids: PROC-001
+// description: Detects one source making AS requests for multiple principals or atypical preauthentication patterns.
+// log_source_prerequisites: Normalize DC Security 4768 with source IP, target account, preauthentication type, result, and encryption type.
+// false_positives: Identity monitoring, password audits, migration, and authorized assessment.
+// references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("4768") or EventType in ("4768")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="rubeus_as_request_anomaly"

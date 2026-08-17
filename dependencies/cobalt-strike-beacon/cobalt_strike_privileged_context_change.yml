@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_privileged_context_change
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_privileged_context_change.yaral
+canonical_sha256: a805797e08e42cef32c9f860938ae7672c11ff12d2334d672e7baf1458aed353
+description: "Surfaces special-privilege assignment or endpoint token-privilege modification by an uncommon process."
+severity: medium
+procedure_ids: ["CSB-011"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize Windows 4672 or EDR TOKEN_PRIVILEGE_CHANGE with process, user, logon ID, privilege list and signer/prevalence."
+atomic_event_types: ["4672", "TOKEN_PRIVILEGE_CHANGE"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "principal.process.file.is_signed", "principal.process.file.prevalence"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Services, installers, EDR, backup, forensic and administrative tools."
+references: "reports/cobalt-strike-beacon/source-analysis.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_privileged_context_change.spl", sha256: f29ac4a33a262f658f328b8fbc147e60ab3493b71602ac132a16b1bc62ae067c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_privileged_context_change.kql", sha256: 50b2f76489e7e959d41046933c2cb78150d74fb70635d1dd4fdad61985ffae63, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_privileged_context_change.sql", sha256: 063e5c77ae84e3c0def12576eed89962bc14193bca9ed022ec846a804502c06d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_privileged_context_change.eql", sha256: 654373a24cd3372ca293260aaff90eff9e336a9b0a9f869ace1bfa1cc63a45dd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_privileged_context_change.yml", sha256: 1816cefab2b4e1ea3e93ac41539eab9f5c2a96fa3c6a6ad7d0614520742dc5fa, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

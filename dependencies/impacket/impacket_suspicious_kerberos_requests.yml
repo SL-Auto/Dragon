@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_suspicious_kerberos_requests
+canonical_path: detections/impacket/yaral/impacket_suspicious_kerberos_requests.yaral
+canonical_sha256: fd694c6c9ac3071d9dc5098bc06ded27202e96e15c97d6b458aba380672750e9
+description: "Detects high-volume or uncommon Kerberos ticket-request patterns requiring investigation."
+severity: medium
+procedure_ids: ["IMP-11"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "DC 4768/4769/4771 with client, account, service, encryption and options."
+atomic_event_types: ["4768", "4769", "4771"]
+required_udm_fields: ["metadata.product_event_type", "principal.ip", "principal.user.userid"]
+correlation_window: "5m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Service discovery, application startup and authentication troubleshooting."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_suspicious_kerberos_requests.spl", sha256: 0c21365a963704c8b4475b487a7a997e06e53ab022cffb13f2b40f9779253478, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_suspicious_kerberos_requests.kql", sha256: 261d1f5e9e1aeccbbdef498bf0fa621598b56c5ed6bc70bd36d9662a5972910e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_suspicious_kerberos_requests.sql", sha256: dc98ab96dba78c337daa35d7188ff12ff63daf7a5f38ed9d0c3e0760d8f097fa, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_suspicious_kerberos_requests.eql", sha256: af04bfbe3e7f3c3cbe43e25fccc3ae36734c078d5cf3e7669c82eb63cb9f4562, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_suspicious_kerberos_requests.yml", sha256: 93c4de5f414473c82d8e3a092765589a12ca480a9ff1e61a1e6983cf8b4083e2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

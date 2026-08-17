@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_directory_replication_right_access
+canonical_path: detections/mimikatz/yaral/mimikatz_directory_replication_right_access.yaral
+canonical_sha256: 77d4fc4adee33ff07a0756420f757b723ed24a1da630c2eead4c34743c8c077c
+description: "Detects directory replication extended-right access for contextual triage; approved DC and sync context must be applied as narrow downstream enrichment."
+severity: high
+procedure_ids: ["P14"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize domain-controller Security Event ID 4662 with subject, source host, object, access mask, and replication-right GUIDs."
+atomic_event_types: ["4662"]
+required_udm_fields: ["metadata.product_event_type", "security_result.description"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Approved identity synchronization, migration, backup, recovery, and directory-health products."
+references: "reports/mimikatz/source-analysis.md; https://learn.microsoft.com/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4662"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_directory_replication_right_access.spl", sha256: da257231066c4ab4bed7d0f75e66cea879cbc4884f35474e37d217ff1a6883a9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_directory_replication_right_access.kql", sha256: de12bab4f1a65f98be2f0771dce083978467a696ba38e53e60eef3f735091bd8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_directory_replication_right_access.sql", sha256: d5a88189b87f12cfaf6fc3c545e878a7ce166a6dabb9e62119e621368784015d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_directory_replication_right_access.eql", sha256: af90439c2f5b70c8d9f79069c2dfdee236383b25f74c1f8c5b55963f87f112a2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_directory_replication_right_access.yml", sha256: a724c6cad18b6ad90e12e2067f9fc43ff12e76eaa3c6401f8a84993fd9522fba, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

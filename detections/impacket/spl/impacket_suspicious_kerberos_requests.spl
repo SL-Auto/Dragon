@@ -1,0 +1,17 @@
+# source_yaral: detections/impacket/yaral/impacket_suspicious_kerberos_requests.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: impacket_suspicious_kerberos_requests
+# severity: medium
+# procedure_ids: IMP-11
+# description: Detects high-volume or uncommon Kerberos ticket-request patterns requiring investigation.
+# log_source_prerequisites: DC 4768/4769/4771 with client, account, service, encryption and options.
+# false_positives: Service discovery, application startup and authentication troubleshooting.
+# references: reports/impacket/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "4768", "4769", "4771")
+| eval canonical_rule="impacket_suspicious_kerberos_requests"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

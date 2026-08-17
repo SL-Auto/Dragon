@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_lsa_ticket_submission
+canonical_path: detections/rubeus/yaral/rubeus_lsa_ticket_submission.yaral
+canonical_sha256: 3a0e8ce32cd810cc64391a412f82c8d882203e2d109162c52228c355237bd2e3
+description: "Detects a successful Kerberos ticket submission into an LSA logon session through LsaCallAuthenticationPackage, separated from lower-confidence cache-purge activity."
+severity: high
+procedure_ids: ["PROC-007"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR must expose LsaCallAuthenticationPackage API calls with Kerberos message type, a success/failure result, and the target LUID; caller process, user, and host are required for triage."
+atomic_event_types: ["EDR_API_CALL"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "security_result.action"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "SSO and identity middleware, credential-isolation software, and authorized red-team/IR tooling that submits tickets into a logon session."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_mutation.md"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_lsa_ticket_submission.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/rubeus/kql/rubeus_lsa_ticket_submission.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/rubeus/sql/rubeus_lsa_ticket_submission.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/rubeus/eql/rubeus_lsa_ticket_submission.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_lsa_ticket_submission.yml", sha256: missing, status: "", fidelity: "" }

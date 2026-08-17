@@ -1,0 +1,17 @@
+// source_yaral: detections/sliver/yaral/sliver_self_delete_after_egress.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_self_delete_after_egress
+// severity: high
+// procedure_ids: PROC-002,PROC-026
+// description: A process with outbound network activity deletes a file matching its own executable hash
+// log_source_prerequisites: EDR file-deletion telemetry with file hash, and process-attributed network telemetry with file hash, sharing a stable process entity
+// false_positives: Self-updating software and installers that replace or remove their own binary after execution
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION", "FILE_DELETION") or EventType in ("NETWORK_CONNECTION", "FILE_DELETION")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="sliver_self_delete_after_egress"

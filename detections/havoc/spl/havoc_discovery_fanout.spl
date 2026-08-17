@@ -1,0 +1,17 @@
+# source_yaral: detections/havoc/yaral/havoc_discovery_fanout.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: havoc_discovery_fanout
+# severity: medium
+# procedure_ids: HV-P04,HV-P13
+# description: One process performs rapid directory SMB or RPC discovery across multiple targets
+# log_source_prerequisites: Process-attributed LDAP SMB RPC or discovery events with target identity
+# false_positives: Asset inventory, vulnerability scanners, identity governance and administrative scripts
+# references: reports/havoc/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "PROCESS_DISCOVERY", "RPC_CALL", "SMB_SESSION")
+| eval canonical_rule="havoc_discovery_fanout"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

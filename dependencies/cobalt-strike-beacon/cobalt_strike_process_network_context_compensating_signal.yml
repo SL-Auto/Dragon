@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_process_network_context_compensating_signal
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_process_network_context_compensating_signal.yaral
+canonical_sha256: 0a0da7f5c54a7f93c54aca8f55ef5818b8ba1544fa571e84a04c33845014cfa4
+description: "Detects low-variance periodic outbound connections from a rare-prevalence process to a rare destination, adding the classic beacon-interval and destination-novelty dimensions that the base rarity-only fan-in rule does not measure."
+severity: high
+procedure_ids: ["CSB-001", "CSB-002", "CSB-005"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize NETWORK_CONNECTION with process hash and prevalence, destination hostname and a destination-prevalence enrichment, and an interval-variance-bucket enrichment derived from inter-connection timing."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["additional.fields", "metadata.event_type", "principal.process.file.prevalence", "principal.process.file.sha256", "target.hostname"]
+correlation_window: "2h"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Software updaters, telemetry/monitoring agents, and any low-jitter scheduled task that also happens to run from a rare process against a rare destination."
+references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_process_network_context.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_process_network_context_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_process_network_context_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_process_network_context_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_process_network_context_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_process_network_context_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }

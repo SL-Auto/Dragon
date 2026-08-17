@@ -1,0 +1,14 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_cross_process_injection.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: cobalt_strike_cross_process_injection
+// severity: high
+// procedure_ids: CSB-018,CSB-019
+// description: Detects cross-process access followed by remote thread or executable-memory activity in the same target process.
+// log_source_prerequisites: Normalize Sysmon 8/10 or EDR PROCESS_OPEN, REMOTE_THREAD and EXECUTABLE_MEMORY with stable source and target process entities.
+// false_positives: EDR, debuggers, accessibility tools, application instrumentation and authorized diagnostics.
+// references: reports/cobalt-strike-beacon/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("EXECUTABLE_MEMORY", "PROCESS_OPEN", "REMOTE_THREAD") or event.action in ("EXECUTABLE_MEMORY", "PROCESS_OPEN", "REMOTE_THREAD")

@@ -1,0 +1,17 @@
+# source_yaral: detections/havoc/yaral/havoc_file_activity_from_network_process.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: havoc_file_activity_from_network_process
+# severity: medium
+# procedure_ids: HV-P06,HV-P07,HV-P08
+# description: A network-active process performs file collection, staging, mutation or deletion
+# log_source_prerequisites: EDR file lifecycle and process-attributed network events sharing a stable process entity
+# false_positives: Browsers, synchronization, backup, deployment and endpoint-management software
+# references: reports/havoc/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "FILE_CREATION", "FILE_DELETION", "FILE_MODIFICATION", "FILE_READ", "NETWORK_CONNECTION")
+| eval canonical_rule="havoc_file_activity_from_network_process"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

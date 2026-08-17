@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_socket_listen_or_rare_egress
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_listen_or_rare_egress.yaral
+canonical_sha256: 6b28f7860160c99d956c9dd303ab671d26940329b71f3ba18b33a8b391f843c8
+description: "Detects socket listen or egress from a rare unsigned process as coverage for bind TCP, External C2 and user-defined transports."
+severity: medium
+procedure_ids: ["CSB-008"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize endpoint SOCKET_LISTEN and NETWORK_CONNECTION with process signer/prevalence, host, direction and local/remote endpoints."
+atomic_event_types: ["NETWORK_CONNECTION", "SOCKET_LISTEN"]
+required_udm_fields: ["metadata.event_type", "principal.process.file.is_signed", "principal.process.file.prevalence"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Developer tools, local service hosts, peer-to-peer clients, remote support and ephemeral test servers."
+references: "reports/cobalt-strike-beacon/source-analysis.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_socket_listen_or_rare_egress.spl", sha256: 08b922d9f23a94531e18f30b5869967f4984c999143cbbf4b44edd2dcb9319c6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_socket_listen_or_rare_egress.kql", sha256: 3c9a84284700129dd0a8294d6fd07f967c499ea187f3d2bf46654767f1685d21, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_socket_listen_or_rare_egress.sql", sha256: 8d1a9fc15cec4a0beb865a7746bcf81a1e6536902d70104a624602a2453a5cb3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_socket_listen_or_rare_egress.eql", sha256: 1a2fb0389cd7a74d6e606ea6351bd4f67f1c183eeecead298419b0c45fb456bc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_socket_listen_or_rare_egress.yml", sha256: a87bb6900e26a78cdce17aaf6b0487cabe7ca617d101163b809e7d0728b4c1ca, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

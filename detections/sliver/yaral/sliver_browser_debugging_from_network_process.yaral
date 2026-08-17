@@ -1,0 +1,35 @@
+rule sliver_browser_debugging_from_network_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "Network process launches a browser child with remote debugging enabled and a debug listener is established"
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Requires the debug-switch launch, an established local debug listener on the launched child, and continuing egress by the launching process; closes the prior gap where the join required neither a listener nor a distinct browser-child identity, and fixes a malformed multi-predicate line in the prior version"
+    procedure_ids = "PROC-022"
+    log_source_prerequisites = "Process command line plus parent network telemetry and child listen-socket telemetry"
+    false_positives = "Developers, browser automation and testing frameworks that launch browsers with remote debugging"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_browser_debugging_from_network_process.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "modified_from_unvalidated_proposal"
+  events:
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    $p.principal.process.product_specific_process_id = $parent_pid
+    $p.target.process.product_specific_process_id = $browser_pid
+    re.regex($p.target.process.command_line, `(?i)--remote-debugging-(port|pipe)`)
+
+    $l.metadata.event_type = "NETWORK_CONNECTION"
+    $l.network.direction = "LISTEN"
+    $l.principal.hostname = $host
+    $l.principal.process.product_specific_process_id = $browser_pid
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $parent_pid
+  match: $host, $parent_pid, $browser_pid over 10m
+  condition: $p and $l and $n
+}

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_certificate_key_operation
+canonical_path: detections/mimikatz/yaral/mimikatz_certificate_key_operation.yaral
+canonical_sha256: 39296843f310966618927031ca6d63dee34b643600e1f101d4dc7f08ecfdc28c
+description: "Surfaces certificate enrollment, private-key export or Hello key operations."
+severity: medium
+procedure_ids: ["P21", "P24"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AD CS, CAPI2, Hello, TPM or EDR key-operation telemetry."
+atomic_event_types: ["4886", "4887"]
+required_udm_fields: ["metadata.product_event_type", "security_result.description"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Normal enrollment, renewal, signing and device provisioning."
+references: "reports/mimikatz/source-analysis.md"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_certificate_key_operation.spl", sha256: d7b3ea23a73f42a6d2a877f054aca7bf2674837ca6259d9124b4350bed259bf8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_certificate_key_operation.kql", sha256: ffb4322a11bde3647d0bc4a1d4e31083501c24eeb88cbcfae3ac391214e6ef76, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_certificate_key_operation.sql", sha256: 7a305c977aca49771e560b5168121b9ace4845cc75ae306788518b0c535ca9a6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_certificate_key_operation.eql", sha256: 527e9b56d86306f6151f8ed74a405bea9ed4a85460eece51efbb5fe3b8b0932b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_certificate_key_operation.yml", sha256: 3d2cee353ffc5e50581f14e91eb19942c53c43203eb944046a0f2da7c895a2b4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

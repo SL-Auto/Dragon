@@ -1,0 +1,22 @@
+title: "Detects sustained process-attributed DNS activity with long or high-entropy labels as a DNS C2 hypothesis."
+name: cobalt_strike_dns_process_context
+status: experimental
+description: "Detects sustained process-attributed DNS activity with long or high-entropy labels as a DNS C2 hypothesis."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_dns_process_context.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-006"
+log_source_prerequisites: "Normalize DNS_QUERY with process entity, query name/type, host and parser-provided query-label entropy or length."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["DNS_QUERY"]
+  condition: selection_event_type
+falsepositives:
+  - "CDNs, endpoint security, telemetry agents, anti-abuse services and DNS-based service discovery."
+level: medium

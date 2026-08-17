@@ -1,0 +1,17 @@
+# source_yaral: detections/impacket/yaral/impacket_unusual_service_authentication.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: impacket_unusual_service_authentication
+# severity: medium
+# procedure_ids: IMP-15
+# description: Detects failed or unusual authentication to SQL, MQTT, RDP or SMB services.
+# log_source_prerequisites: Application authentication and network logs with service, source, account and result.
+# false_positives: Monitoring, inventory and user configuration errors.
+# references: reports/impacket/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "USER_LOGIN")
+| eval canonical_rule="impacket_unusual_service_authentication"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

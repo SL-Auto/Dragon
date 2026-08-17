@@ -1,0 +1,28 @@
+rule chisel_udp_bind_with_tunnel_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects process-owned UDP bind or receive activity combined with outbound tunnel-like connectivity"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "UDP ingress plus same-process egress covers a commonly omitted forwarding branch"
+    procedure_ids = "CH-P03,CH-P04"
+    log_source_prerequisites = "EDR UDP bind or receive and outbound connection telemetry with stable process entity"
+    false_positives = "DNS relays media services VPNs and approved UDP proxies"
+    references = "reports/chisel/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/chisel/detection-review.md"
+  events:
+    $u.metadata.product_event_type = /UDP_BIND|UDP_RECEIVE/
+    $u.principal.hostname = $host
+    $u.principal.process.product_specific_process_id = $pid
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match:
+    $host, $pid over 10m
+  condition:
+    $u and $n
+}

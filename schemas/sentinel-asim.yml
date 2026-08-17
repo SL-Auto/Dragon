@@ -1,0 +1,9 @@
+schema_version: 1
+id: sentinel-asim
+language: Microsoft Sentinel KQL
+role: secondary
+default_dataset: NormalizedEvents placeholder replaced by ASIM parsers or explicit tables
+required_mapping: [table/parser, TimeGenerated, event code/type, host, account, process and network identifiers]
+correlation: join, summarize, make_set, dcount, bin, arg_min and bounded time predicates
+absence_logic: anti-join or leftanti only with complete source and explicit lookback
+shared_limitations: [table names are tenant-specific, cross-workspace joins vary, ingestion-time and event-time differ]

@@ -1,0 +1,17 @@
+# source_yaral: detections/sliver/yaral/sliver_process_behavior_cluster.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: sliver_process_behavior_cluster
+# severity: medium
+# procedure_ids: PROC-001
+# description: New process followed by outbound activity
+# log_source_prerequisites: Process launch and process network UDM with stable PID
+# false_positives: New legitimate network software
+# references: reports/sliver/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "NETWORK_CONNECTION", "PROCESS_LAUNCH")
+| eval canonical_rule="sliver_process_behavior_cluster"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

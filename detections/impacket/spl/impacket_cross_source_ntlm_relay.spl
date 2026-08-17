@@ -1,0 +1,17 @@
+# source_yaral: detections/impacket/yaral/impacket_cross_source_ntlm_relay.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: impacket_cross_source_ntlm_relay
+# severity: high
+# procedure_ids: IMP-21
+# description: Correlates NTLM authentication for one account across different sources and a target effect.
+# log_source_prerequisites: Normalized NTLM authentication with account, source, destination and result.
+# false_positives: NAT, proxies, clustered services and multi-hop authentication.
+# references: reports/impacket/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "4624", "4776")
+| eval canonical_rule="impacket_cross_source_ntlm_relay"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

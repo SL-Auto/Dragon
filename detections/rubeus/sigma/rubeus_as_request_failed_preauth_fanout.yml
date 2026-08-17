@@ -1,0 +1,25 @@
+title: "Detects one source generating failed or atypical-result AS requests against multiple accounts."
+name: rubeus_as_request_failed_preauth_fanout
+status: experimental
+description: "Detects one source generating failed or atypical-result AS requests against multiple accounts, distinct from the existing successful multi-principal fan-out rule."
+source_yaral: "detections/rubeus/yaral/rubeus_as_request_failed_preauth_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, cardinality, and the non-ALLOW result filter must be implemented and tested in the target backend. Plain Sigma cannot natively express the distinct-account-count threshold; a correlation rule or backend-specific aggregation is required."
+references:
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+  - "public-rules/comparisons/rubeus/rubeus_as_request_anomaly.md"
+procedure_ids: "PROC-001"
+log_source_prerequisites: "Normalize DC Security 4768 with source IP, target account, and a normalized security_result.action or result-code field distinguishing non-success outcomes."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4768"]
+  filter_non_success:
+    event.outcome: "failure"
+  condition: selection_event_type and filter_non_success
+falsepositives:
+  - "Password audits, account-lockout/health monitoring tooling, and misconfigured legacy clients retrying stale credentials."
+level: high

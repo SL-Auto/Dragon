@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_unusual_authentication_material_use
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_unusual_authentication_material_use.yaral
+canonical_sha256: e778f250cb52cd5c511a971d99ed1a7e9bb52ef6a4cd11836ffc1a109c873ceb
+description: "Surfaces Kerberos or NTLM authentication whose endpoint/process context is rare or inconsistent with the account baseline."
+severity: high
+procedure_ids: ["CSB-013"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize DC 4768/4769/4776 and endpoint 4624 with account, source, service, authentication package and identity-baseline enrichment."
+atomic_event_types: ["4624", "4768", "4769", "4776"]
+required_udm_fields: ["metadata.product_event_type", "principal.asset.first_seen_hours", "security_result.action"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "New hosts, password rotation, service migration, disaster recovery, legacy NTLM and identity infrastructure."
+references: "reports/cobalt-strike-beacon/source-analysis.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_unusual_authentication_material_use.spl", sha256: 735e9ae182578d978e0c96751986a53cc4d8445901220d820d30f16247e6f1a3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_unusual_authentication_material_use.kql", sha256: 7a1eeed405d08087060213d1fb0d821cf87d5086f72e67445a7c29f24cecaa08, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_unusual_authentication_material_use.sql", sha256: 7084b23a9a0d2c91c27b4f15cf7b0ee97ac3fceb11d8b07734d22ae60a7a1f12, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_unusual_authentication_material_use.eql", sha256: 8871f9de9b320d6eb3fe7255310ef409b7367e724b3b098a9e3dd28da10a3812, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_unusual_authentication_material_use.yml", sha256: d646cdce3bb9118987b78188489b932cc837f70d523c507ba9b3a6e4b3d82fdb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

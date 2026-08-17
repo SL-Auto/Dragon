@@ -1,0 +1,20 @@
+rule impacket_remote_registry_activity {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects remote registry service activation or sensitive key changes."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "HIGH"
+  severity_rationale = "Remote registry access can change security configuration or retrieve secrets."
+  procedure_ids = "IMP-14"
+  log_source_prerequisites = "Service, registry and RPC telemetry with key, actor and source."
+  false_positives = "Inventory, backup and remote support."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+ events:
+  $e.metadata.product_event_type = /(4657|12|13|14|7036)/
+  re.regex($e.target.resource.name, `(?i)(RemoteRegistry|\\SAM|\\SECURITY|\\SYSTEM|Lsa|Cache)`)
+ condition: $e
+}

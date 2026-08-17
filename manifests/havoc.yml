@@ -1,0 +1,47 @@
+schema_version: 1
+tool_id: havoc
+name: "Havoc"
+lifecycle_status: analyzed
+analyzed_revision: "c84f7755a8b1c0f737576bdd3a0e982a296012f1"
+context_entry_points:
+  registry: registry/tools.yml
+  summary: summaries/havoc.md
+  coverage: coverage/havoc.yml
+  report: reports/havoc/source-analysis.md
+  telemetry: telemetry/havoc.md
+counts:
+  procedures: 20
+  canonical_rules: 12
+  spl_translations: 12
+  kql_translations: 12
+  sql_translations: 12
+  eql_translations: 12
+  sigma_translations: 12
+completion_states:
+  source_analysis: complete
+  canonical_detection: complete
+  telemetry_reconciliation: complete_for_experimental_rules
+  secondary_translation: draft_complete
+  rule_validation_labels: "12 needs_validation"
+artifact_hashes:
+  registry: 4375b961f994082e15626a22cba5c97c6c846fa8c46f21494dbf15dd735e8d73
+  coverage: b22dbd12529b2b091df9203dea3608b1ad5925a181caad658d9940da5b07415f
+  report: a4cc8ff4ae8c8a24c07c1712da98988d3e1a0b09ed772b105973030d21f0217c
+  telemetry: c8b8ac76fe071ee0b6b7a495d667c9bd7f276ad11959ed322a55d43c1446f67f
+  detection_review: dffdab19dbc981792355321c964e6c46c889c32de3a16496e7dbda64b66674a9
+  translation_review: 2da2db627df14d3324bfe64b14e347fa654b3be90eaedbdea1b2c7f45dbe5497
+rules:
+  - { name: havoc_cleanup_after_network_activity, severity: medium, procedures: "HV-P20", dependency: dependencies/havoc/havoc_cleanup_after_network_activity.yml, canonical_sha256: 0dcdcc6357d0cf099621fefbf9d8e2f214b18ebcc88f0513d12dbabff25bbc50 }
+  - { name: havoc_discovery_fanout, severity: medium, procedures: "HV-P04,HV-P13", dependency: dependencies/havoc/havoc_discovery_fanout.yml, canonical_sha256: 599479a3cf1a171ace75e84b6eaf8e1b470b022586723a1bd5d1df55305b1d4b }
+  - { name: havoc_file_activity_from_network_process, severity: medium, procedures: "HV-P06,HV-P07,HV-P08", dependency: dependencies/havoc/havoc_file_activity_from_network_process.yml, canonical_sha256: ad641045eb768c3981522af3392a313c1e526c3119e42901ca1df99b77e84c9d }
+  - { name: havoc_kerberos_ticket_effect, severity: high, procedures: "HV-P17", dependency: dependencies/havoc/havoc_kerberos_ticket_effect.yml, canonical_sha256: 826d045ddb932ed01ff5697772c836db88dcaaeff8f6fd9a0f87d16bca63eeab }
+  - { name: havoc_listener_and_forwarding, severity: high, procedures: "HV-P16", dependency: dependencies/havoc/havoc_listener_and_forwarding.yml, canonical_sha256: 4473caf91fece20f52071a7ee5c408ee310c53a935be05f2c3f5f8377c604942 }
+  - { name: havoc_memory_execution_from_network_process, severity: high, procedures: "HV-P09,HV-P10,HV-P11", dependency: dependencies/havoc/havoc_memory_execution_from_network_process.yml, canonical_sha256: 52ba2d0487582d0fc9989406ca88816fab3a1d9bd56a06d1eb0795d6fce6798a }
+  - { name: havoc_named_pipe_network_context, severity: high, procedures: "HV-P02,HV-P15", dependency: dependencies/havoc/havoc_named_pipe_network_context.yml, canonical_sha256: dc178ad4a086091edcc460ce421b7387a0f42ffd22068da6a6c815d8dd8151d4 }
+  - { name: havoc_recurrent_process_egress, severity: medium, procedures: "HV-P01,HV-P03", dependency: dependencies/havoc/havoc_recurrent_process_egress.yml, canonical_sha256: 3940ecdc051be03fa38cd9143e8eebfa35d3a34b896a13b93e4925606a809fc0 }
+  - { name: havoc_screen_capture_then_egress, severity: high, procedures: "HV-P14", dependency: dependencies/havoc/havoc_screen_capture_then_egress.yml, canonical_sha256: 2ae8ab28ca63ff96912eda593c62c9e176bd0fab0ec6f5988a0c90ffd0500aef }
+  - { name: havoc_spawned_command_execution, severity: high, procedures: "HV-P05", dependency: dependencies/havoc/havoc_spawned_command_execution.yml, canonical_sha256: 4a237eff5ac3921ab218accbe7de529572d2b679713ca7df325bff547ba1763b }
+  - { name: havoc_stable_destination_beaconing, severity: high, procedures: "HV-P01,HV-P03", dependency: dependencies/havoc/havoc_stable_destination_beaconing.yml, canonical_sha256: 58a6ab176f8832e2d1bcb6399831881709e35d4f92ffc9cc896f3a9d5b27d22b }
+  - { name: havoc_token_authentication_sequence, severity: high, procedures: "HV-P12", dependency: dependencies/havoc/havoc_token_authentication_sequence.yml, canonical_sha256: fd1f4115a1db451e52e8dbb0ff638e335ed82c1c054bc03a1fd1e9302e3b260a }
+unresolved:
+  source_blockers: 0

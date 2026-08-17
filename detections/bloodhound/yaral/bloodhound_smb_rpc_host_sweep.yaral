@@ -1,0 +1,31 @@
+rule bloodhound_smb_rpc_host_sweep {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one process attempting SMB or RPC connections to many internal hosts, excluding destinations outside the internal address range and sources labeled as an approved scanner."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Process-attributed east-west fanout is a strong active host-discovery signal."
+    procedure_ids = "BH-006"
+    log_source_prerequisites = "EDR/firewall network events with source process, destination host/IP and port, internal-address-range enrichment and governed scanner-inventory labeling."
+    false_positives = "Vulnerability scanners, deployment systems, backup discovery and approved inventory not present in the scanner-inventory label; a stale or incomplete inventory can still allow false positives."
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_smb_rpc_host_sweep.md"
+    validation_status = "needs_validation"
+    validation_method = "Baseline approved scanners and test distinct-target boundaries with synthetic internal and external flows, including missing/stale scanner-inventory labels."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.principal.hostname = $host
+    $e.principal.process.file.full_path = $process
+    $e.target.ip = $target
+    $e.target.port = /(135|139|445)/
+    $e.target.ip_in_internal_range = true
+    $e.principal.process.file.labels["approved_scanner"] != "true"
+  match:
+    $host, $process over 10m
+  outcome:
+    $targets = count_distinct($target)
+  condition:
+    $e and $targets >= 15
+}

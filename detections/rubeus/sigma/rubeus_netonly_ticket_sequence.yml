@@ -1,0 +1,22 @@
+title: "Correlates a Type 9 logon session with ticket submission into the same LUID."
+name: rubeus_netonly_ticket_sequence
+status: experimental
+description: "Correlates a Type 9 logon session with ticket submission into the same LUID."
+source_yaral: "detections/rubeus/yaral/rubeus_netonly_ticket_sequence.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+procedure_ids: "PROC-007"
+log_source_prerequisites: "Normalize 4624 LogonType and TargetLogonId plus EDR KerbSubmitTicketMessage target LUID."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4624", "EDR_API_CALL"]
+  condition: selection_event_type
+falsepositives:
+  - "Runas netonly, administrative workflows, SSO testing, and authorized assessments."
+level: high

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_sensitive_ldap_search
+canonical_path: detections/impacket/yaral/impacket_sensitive_ldap_search.yaral
+canonical_sha256: 6cba4d140bd1bdae141eedd9f2d688d7e3e950bd63d820deefbb50075d145e5d
+description: "Detects LDAP searches for sensitive credential or delegation attributes."
+severity: medium
+procedure_ids: ["IMP-09"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "LDAP diagnostic 1644 or directory audit preserving filter and requested attributes."
+atomic_event_types: ["1644"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Identity governance, AD health and security assessment."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_sensitive_ldap_search.spl", sha256: df5f53eedcd204b8e75161e5da7ef547b0437ac56a4f947060e0f2638adfebdb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_sensitive_ldap_search.kql", sha256: 3f11c90fe47b4fadf6925367f4c4babad424cb76aef9ed82a2e2ad10a8294f74, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_sensitive_ldap_search.sql", sha256: 03d75f9bac76236e6e6afb3bbe9be28242032b26a4ca61534afa9f8b270e3fee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_sensitive_ldap_search.eql", sha256: 6da33f55b2403590e4f9bb7110df7f04b28d7fbbc3e7309f4f00ea93abd560f3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_sensitive_ldap_search.yml", sha256: b820de236ef174bda96113099d6b8c37a86b0e999bb00b41426e6a35718c2278, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

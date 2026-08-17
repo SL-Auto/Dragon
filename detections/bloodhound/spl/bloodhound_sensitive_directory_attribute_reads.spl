@@ -1,0 +1,17 @@
+# source_yaral: detections/bloodhound/yaral/bloodhound_sensitive_directory_attribute_reads.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: bloodhound_sensitive_directory_attribute_reads
+# severity: high
+# procedure_ids: BH-003,BH-005
+# description: Detects LDAP searches requesting security descriptors or AD CS relationship attributes.
+# log_source_prerequisites: LDAP query telemetry containing requested attributes or controls, source identity/process and naming context.
+# false_positives: Directory permissions auditing, PKI administration and identity governance.
+# references: reports/bloodhound/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "1644", "4662", "LDAP_SEARCH")
+| eval canonical_rule="bloodhound_sensitive_directory_attribute_reads"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

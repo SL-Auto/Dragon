@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_recurrent_collection_activity
+canonical_path: detections/bloodhound/yaral/bloodhound_recurrent_collection_activity.yaral
+canonical_sha256: 2bbaf30528c1bf35b6f43ee4463b29864f79f0dc0071e1656ffaf75d4d41185e
+description: "Detects repeated directory or remote-host collection bursts from the same process entity."
+severity: medium
+procedure_ids: ["BH-014"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Stable process entity and normalized LDAP_SEARCH, RPC_CALL or REGISTRY_READ events retained for several hours."
+atomic_event_types: ["LDAP_SEARCH", "REGISTRY_READ", "RPC_CALL"]
+required_udm_fields: ["metadata.id", "metadata.product_event_type", "principal.hostname", "principal.process.file.labels", "principal.process.product_specific_process_id", "target.hostname"]
+correlation_window: "4h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Scheduled identity inventory, monitoring and compliance collection."
+references: "reports/bloodhound/source-analysis.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_recurrent_collection_activity.spl", sha256: c8d0a6916ab013c6b3ae3667ed3a532d06a99a6a5e5791ade432ac086996a9e7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_recurrent_collection_activity.kql", sha256: d370c5160944ded65157b0b88fb3580c49537547f76ffed4ddca9ec294267f6d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_recurrent_collection_activity.sql", sha256: d6fb9808e98eb8b13174caae10678207cc2f52952e5d24421dc863d61edf1003, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_recurrent_collection_activity.eql", sha256: 79e9cf8241444a1c36b7d1f80a622e08ed9154e0c677a771f387e4dfd1a32012, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_recurrent_collection_activity.yml", sha256: 2d6d308a5c4c81c7dd74a011940a4be00618e6a7fdde7c33caeb3526d3af297a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

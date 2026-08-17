@@ -1,0 +1,22 @@
+title: "A process with outbound network activity deletes a file matching its own executable hash"
+name: sliver_self_delete_after_egress
+status: experimental
+description: "A process with outbound network activity deletes a file matching its own executable hash"
+source_yaral: "detections/sliver/yaral/sliver_self_delete_after_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-002,PROC-026"
+log_source_prerequisites: "EDR file-deletion telemetry with file hash, and process-attributed network telemetry with file hash, sharing a stable process entity"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "FILE_DELETION"]
+  condition: selection_event_type
+falsepositives:
+  - "Self-updating software and installers that replace or remove their own binary after execution"
+level: high

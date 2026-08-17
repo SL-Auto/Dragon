@@ -1,0 +1,22 @@
+title: "A process performs LSA Kerberos cache mutation followed by resource authentication"
+name: havoc_kerberos_ticket_effect
+status: experimental
+description: "A process performs LSA Kerberos cache mutation followed by resource authentication"
+source_yaral: "detections/havoc/yaral/havoc_kerberos_ticket_effect.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/havoc/source-analysis.md"
+procedure_ids: "HV-P17"
+log_source_prerequisites: "Tenant-verified EDR or ETW LSA Kerberos operation plus 4769 or resource authentication joined by account and host"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4769", "KERBEROS_RESOURCE_AUTHENTICATION", "KERBEROS_TICKET_SUBMIT", "LSA_KERBEROS_OPERATION"]
+  condition: selection_event_type
+falsepositives:
+  - "Authorized ticket administration, SSO troubleshooting and security tooling"
+level: high

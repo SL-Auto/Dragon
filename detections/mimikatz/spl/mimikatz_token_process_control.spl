@@ -1,0 +1,17 @@
+# source_yaral: detections/mimikatz/yaral/mimikatz_token_process_control.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: mimikatz_token_process_control
+# severity: medium
+# procedure_ids: P02,P03,P04,P05
+# description: Detects endpoint-reported token manipulation, parent override or sensitive process control.
+# log_source_prerequisites: EDR token and process-control telemetry with source, target, user and operation.
+# false_positives: Security, support, accessibility and process-broker software.
+# references: reports/mimikatz/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "*")
+| eval canonical_rule="mimikatz_token_process_control"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

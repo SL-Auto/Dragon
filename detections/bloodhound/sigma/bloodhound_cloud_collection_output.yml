@@ -1,0 +1,22 @@
+title: "Correlates sustained Graph or ARM reads with local JSON output or service lifecycle effects."
+name: bloodhound_cloud_collection_output
+status: experimental
+description: "Correlates sustained Graph or ARM reads with local JSON output or service lifecycle effects."
+source_yaral: "detections/bloodhound/yaral/bloodhound_cloud_collection_output.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-020"
+log_source_prerequisites: "Process-attributed cloud egress plus file creation or Windows service events joined by host/process."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["11", "4697", "7045", "AZURE_RESOURCE_READ", "AzureActivity", "FILE_CREATION", "MicrosoftGraphActivityLogs"]
+  condition: selection_event_type
+falsepositives:
+  - "Cloud inventory exporters, scheduled governance jobs and authorized AzureHound deployments."
+level: medium

@@ -1,0 +1,22 @@
+title: "Correlates multiple JSON file creations with archive creation or rapid intermediate-file deletion by one process."
+name: bloodhound_collection_archive_creation
+status: experimental
+description: "Correlates multiple JSON file creations with archive creation or rapid intermediate-file deletion by one process."
+source_yaral: "detections/bloodhound/yaral/bloodhound_collection_archive_creation.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/bloodhound/source-analysis.md"
+procedure_ids: "BH-015"
+log_source_prerequisites: "EDR or Sysmon file create/delete events with stable process entity, path and extension."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["11", "FILE_CREATION"]
+  condition: selection_event_type
+falsepositives:
+  - "Backup, export, packaging, browser download and administrative reporting software."
+level: medium

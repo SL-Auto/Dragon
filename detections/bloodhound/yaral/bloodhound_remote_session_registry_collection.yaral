@@ -1,0 +1,29 @@
+rule bloodhound_remote_session_registry_collection {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates SRVSVC session enumeration or remote registry reads, bound to a stable source process entity, with multi-host SMB/RPC activity."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Remote session and logged-on-user collection reveals lateral-movement opportunities."
+    procedure_ids = "BH-007,BH-008"
+    log_source_prerequisites = "NDR/EDR RPC interface or REGISTRY_READ telemetry plus source process entity, source identity and target host."
+    false_positives = "Endpoint inventory, helpdesk, EDR and authorized administration."
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_remote_session_registry_collection.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized SRVSVC and remote-registry fixtures with approved-management negatives and PID-reuse/concurrent-session cases."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $e.metadata.product_event_type = /(RPC_CALL|REGISTRY_READ)/
+    $e.principal.hostname = $source
+    $e.principal.process.product_specific_process_id = $pid
+    $e.target.hostname = $target
+    re.regex($e.target.resource.attribute.labels["operation"], `(?i)(NetSessionEnum|SRVSVC|remote.registry|logged.on)`)
+  match:
+    $source, $pid over 15m
+  outcome:
+    $targets = count_distinct($target)
+  condition:
+    $e and $targets >= 5
+}

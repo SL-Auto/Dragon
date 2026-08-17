@@ -1,0 +1,30 @@
+rule sliver_self_delete_after_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "A process with outbound network activity deletes a file matching its own executable hash"
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Same-hash self-deletion after egress is a high-specificity teardown signal; compensates for the broad cleanup rule where stable process/file identity between deletion and egress is not proven"
+    procedure_ids = "PROC-002,PROC-026"
+    log_source_prerequisites = "EDR file-deletion telemetry with file hash, and process-attributed network telemetry with file hash, sharing a stable process entity"
+    false_positives = "Self-updating software and installers that replace or remove their own binary after execution"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_cleanup_after_egress.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "accepted_as_compensating_rule_from_unvalidated_proposal"
+  events:
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+    $n.principal.process.file.sha256 = $hash
+
+    $d.metadata.event_type = "FILE_DELETION"
+    $d.principal.hostname = $host
+    $d.principal.process.product_specific_process_id = $pid
+    $d.target.file.sha256 = $hash
+  match: $host, $pid, $hash over 30m
+  condition: $n and $d
+}

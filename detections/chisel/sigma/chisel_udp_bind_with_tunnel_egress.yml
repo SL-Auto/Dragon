@@ -1,0 +1,22 @@
+title: "Detects process-owned UDP bind or receive activity combined with outbound tunnel-like connectivity"
+name: chisel_udp_bind_with_tunnel_egress
+status: experimental
+description: "Detects process-owned UDP bind or receive activity combined with outbound tunnel-like connectivity"
+source_yaral: "detections/chisel/yaral/chisel_udp_bind_with_tunnel_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/chisel/source-analysis.md"
+procedure_ids: "CH-P03,CH-P04"
+log_source_prerequisites: "EDR UDP bind or receive and outbound connection telemetry with stable process entity"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "UDP_BIND", "UDP_RECEIVE"]
+  condition: selection_event_type
+falsepositives:
+  - "DNS relays media services VPNs and approved UDP proxies"
+level: high

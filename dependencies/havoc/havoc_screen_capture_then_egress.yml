@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: havoc
+rule_name: havoc_screen_capture_then_egress
+canonical_path: detections/havoc/yaral/havoc_screen_capture_then_egress.yaral
+canonical_sha256: 2ae8ab28ca63ff96912eda593c62c9e176bd0fab0ec6f5988a0c90ffd0500aef
+description: "A process with screen-capture telemetry also performs outbound network activity"
+severity: high
+procedure_ids: ["HV-P14"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Tenant-verified EDR screen capture semantic event and process-attributed network telemetry"
+atomic_event_types: ["NETWORK_CONNECTION", "SCREEN_CAPTURE"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Conferencing, support, accessibility and approved screen-recording software"
+references: "reports/havoc/source-analysis.md"
+translations:
+  spl: { path: "detections/havoc/spl/havoc_screen_capture_then_egress.spl", sha256: 3b351dfb570e7e795012cced45f168cbaf5dc094a213a3c2bda169e0997d00d6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_screen_capture_then_egress.kql", sha256: 29b4f49ab0464ede8a8de16aafdd206b008d56915b7e9cbb72a1fb3cffa1455d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_screen_capture_then_egress.sql", sha256: c7c096436546f150f6ec129af80ca9e6a6a57c3a68d0c65edd92f362b31c2a80, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_screen_capture_then_egress.eql", sha256: db2acafbdf5b482fd1b6b383a5be1a8f434843e1d8432a363a0e95c38b50b3d5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_screen_capture_then_egress.yml", sha256: d462e21aa3bc72a88614b1c0299018d19021204caf4af40974dda77051a05b1a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

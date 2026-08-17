@@ -1,0 +1,17 @@
+// source_yaral: detections/bloodhound/yaral/bloodhound_samr_local_group_enumeration.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: bloodhound_samr_local_group_enumeration
+// severity: high
+// procedure_ids: BH-009,BH-010
+// description: Detects SAMR or LSA policy read operations against multiple remote hosts.
+// log_source_prerequisites: NDR or EDR RPC telemetry exposing SAMR/LSA interface or operation and source/target identity.
+// false_positives: Asset inventory, compliance scanners and endpoint-management systems.
+// references: reports/bloodhound/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("RPC_CALL") or EventType in ("RPC_CALL")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="bloodhound_samr_local_group_enumeration"

@@ -1,0 +1,20 @@
+schema_version: 1
+tool_id: chisel
+analyzed_revision: 6d283495b5e3eff76841038d679fcc53a57ba7dd
+inventory_method: complete deployed Go package command transport proxy and lifecycle reconciliation
+inventory_complete: true
+inventory_evidence: [reports/chisel/source-analysis.md]
+excluded_paths:
+  - { path: tests-example-ci-docs-static-assets, reason: non-deployed evidence or presentation material }
+procedures:
+  - { id: CH-P01, name: persistent WebSocket SSH client transport, telemetry_status: assessed, detection_status: detected, detection_rules: [chisel_recurrent_encrypted_process_egress] }
+  - { id: CH-P02, name: forward TCP proxy, telemetry_status: assessed, detection_status: detected, detection_rules: [chisel_listener_with_tunnel_egress] }
+  - { id: CH-P03, name: forward UDP proxy, telemetry_status: assessed, detection_status: detected, detection_rules: [chisel_udp_bind_with_tunnel_egress] }
+  - { id: CH-P04, name: reverse TCP and UDP proxy, telemetry_status: assessed, detection_status: detected, detection_rules: [chisel_listener_with_tunnel_egress, chisel_udp_bind_with_tunnel_egress] }
+  - { id: CH-P05, name: SOCKS5 dynamic forwarding, telemetry_status: assessed, detection_status: detected, detection_rules: [chisel_proxy_destination_fanout] }
+  - { id: CH-P06, name: stdio tunnel bridge, telemetry_status: assessed, detection_status: detected, detection_rules: [chisel_stdio_network_bridge] }
+  - { id: CH-P07, name: upstream HTTP or SOCKS proxy chain, telemetry_status: assessed, detection_status: detected, detection_rules: [chisel_proxy_destination_fanout] }
+  - { id: CH-P08, name: server listener and HTTP camouflage, telemetry_status: assessed, detection_status: detected, detection_rules: [chisel_listener_with_tunnel_egress] }
+  - { id: CH-P09, name: authentication and authorization state, telemetry_status: assessed, detection_status: not_observable, detection_rules: [], compensating_signal: application audit or resulting accepted denied network behavior }
+  - { id: CH-P10, name: keepalive reconnect and teardown, telemetry_status: assessed, detection_status: detected, detection_rules: [chisel_recurrent_encrypted_process_egress] }
+completion: { total_procedures: 10, detected: 9, not_observable: 1, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

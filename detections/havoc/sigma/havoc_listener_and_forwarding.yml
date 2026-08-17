@@ -1,0 +1,22 @@
+title: "A process listens locally and also establishes outbound connections consistent with forwarding"
+name: havoc_listener_and_forwarding
+status: experimental
+description: "A process listens locally and also establishes outbound connections consistent with forwarding"
+source_yaral: "detections/havoc/yaral/havoc_listener_and_forwarding.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/havoc/source-analysis.md"
+procedure_ids: "HV-P16"
+log_source_prerequisites: "EDR socket listen and connect telemetry with stable process identity and direction"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "NETWORK_LISTEN"]
+  condition: selection_event_type
+falsepositives:
+  - "Approved proxies, VPNs, developer tunnels and network services"
+level: high

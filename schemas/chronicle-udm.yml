@@ -1,0 +1,9 @@
+schema_version: 1
+id: chronicle-udm
+language: YARA-L 2.0
+role: canonical
+event_table: UDM event stream
+identity_fields: [metadata.event_type, metadata.product_event_type, principal.hostname, principal.user.userid, target.hostname, target.user.userid]
+correlation: native match windows, outcomes, cardinality, and multi-event conditions
+absence_logic: supported only with complete telemetry and validated window semantics
+shared_limitations: [parser-specific additional fields, product mapping variance, missing stable entity identifiers]

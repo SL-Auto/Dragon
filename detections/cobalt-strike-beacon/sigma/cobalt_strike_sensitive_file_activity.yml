@@ -1,0 +1,22 @@
+title: "Detects sensitive file read/write/rename activity followed by outbound network activity from the same process."
+name: cobalt_strike_sensitive_file_activity
+status: experimental
+description: "Detects sensitive file read/write/rename activity followed by outbound network activity from the same process."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_file_activity.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-024,CSB-025"
+log_source_prerequisites: "Normalize FILE_READ/FILE_WRITE/FILE_RENAME and process-attributed NETWORK_CONNECTION with stable process entity, path sensitivity and direction."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Backup, synchronization, DLP, indexing, document management and approved transfer tools."
+level: high

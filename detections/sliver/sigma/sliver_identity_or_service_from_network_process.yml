@@ -1,0 +1,22 @@
+title: "Explicit credentials privileged logon or service operation associated with a network process/account"
+name: sliver_identity_or_service_from_network_process
+status: experimental
+description: "Explicit credentials privileged logon or service operation associated with a network process/account"
+source_yaral: "detections/sliver/yaral/sliver_identity_or_service_from_network_process.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-016,PROC-017,PROC-019"
+log_source_prerequisites: "Windows identity/service and process network telemetry normalized by host and account"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4648", "4672", "4697", "7045", "NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Deployment, backup, authorized administration"
+level: high

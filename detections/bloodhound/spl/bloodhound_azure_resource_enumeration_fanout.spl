@@ -1,0 +1,17 @@
+# source_yaral: detections/bloodhound/yaral/bloodhound_azure_resource_enumeration_fanout.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: bloodhound_azure_resource_enumeration_fanout
+# severity: high
+# procedure_ids: BH-018
+# description: Detects one principal reading many Azure Resource Manager provider and scope families.
+# log_source_prerequisites: ARM read-plane, AzureActivity or gateway audit with principal, source, operation, provider and scope.
+# false_positives: CSPM, cloud inventory, cost management and governance automation.
+# references: reports/bloodhound/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "AZURE_RESOURCE_READ", "AzureActivity")
+| eval canonical_rule="bloodhound_azure_resource_enumeration_fanout"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

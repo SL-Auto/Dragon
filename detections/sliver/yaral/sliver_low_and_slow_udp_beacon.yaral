@@ -1,0 +1,28 @@
+rule sliver_low_and_slow_udp_beacon {
+  meta:
+    author = "Detection Research Agent"
+    description = "One process makes low-volume, time-spread, repeated DNS or UDP connections to the same destination and port"
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Per-destination recurrence with a time-spread requirement covers low-and-slow DNS/WireGuard-style channels that a flat 20-events-per-10-minutes burst threshold misses"
+    procedure_ids = "PROC-004"
+    log_source_prerequisites = "Process-attributed DNS or UDP network telemetry with stable destination and port"
+    false_positives = "DNS resolvers, VPN/WireGuard clients, monitoring agents, chat/voice UDP applications"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_dns_or_udp_process_egress.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "accepted_as_compensating_rule_from_unvalidated_proposal"
+  events:
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $pid
+    $e.target.ip = $destination
+    $e.target.port = $port
+    ($e.metadata.event_type = "NETWORK_DNS" or $e.network.ip_protocol = "UDP")
+  match: $host, $pid, $destination, $port over 30m
+  outcome:
+    $connections = count($e.metadata.id)
+    $active_minutes = count_distinct(timestamp.get_minute($e.metadata.event_timestamp.seconds))
+  condition: $e and $connections >= 6 and $active_minutes >= 4
+}

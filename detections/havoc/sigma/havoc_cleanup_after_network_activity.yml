@@ -1,0 +1,22 @@
+title: "A process deletes a file or terminates shortly after outbound network activity"
+name: havoc_cleanup_after_network_activity
+status: experimental
+description: "A process deletes a file or terminates shortly after outbound network activity"
+source_yaral: "detections/havoc/yaral/havoc_cleanup_after_network_activity.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/havoc/source-analysis.md"
+procedure_ids: "HV-P20"
+log_source_prerequisites: "EDR file deletion or process termination and process-attributed network telemetry with stable identity"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["FILE_DELETION", "NETWORK_CONNECTION", "PROCESS_TERMINATION"]
+  condition: selection_event_type
+falsepositives:
+  - "Installers, updaters, temporary helpers and self-cleaning applications"
+level: medium

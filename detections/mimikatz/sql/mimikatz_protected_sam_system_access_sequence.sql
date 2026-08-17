@@ -1,0 +1,19 @@
+-- source_yaral: detections/mimikatz/yaral/mimikatz_protected_sam_system_access_sequence.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: partial
+-- rule_name: mimikatz_protected_sam_system_access_sequence
+-- severity: high
+-- procedure_ids: P12
+-- description: Correlates one process accessing protected SYSTEM/LSA and SAM account data.
+-- log_source_prerequisites: Normalize Windows 4656/4663 or EDR sensitive-registry read events; preserve process ID, host, registry path, and access operation.
+-- false_positives: Backup, disaster recovery, endpoint protection, forensic acquisition, and authorized registry inventory.
+-- references: reports/mimikatz/source-analysis.md
+-- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+-- schema_profile: schemas/normalized-sql.yml
+-- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).
+SELECT hostname, user_id, COUNT(*) AS event_count,
+       'mimikatz_protected_sam_system_access_sequence' AS canonical_rule
+FROM normalized_events
+WHERE product_event_type IN ('REGISTRY_READ') OR event_type IN ('REGISTRY_READ')
+GROUP BY hostname, user_id
+HAVING COUNT(*) > 0;

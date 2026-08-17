@@ -1,0 +1,27 @@
+rule sliver_parent_egress_with_spawned_interpreter {
+  meta:
+    author = "Detection Research Agent"
+    description = "Network process spawns a command interpreter"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Strong remotely tasked execution correlation"
+    procedure_ids = "PROC-010"
+    log_source_prerequisites = "Process and network events with parent PID"
+    false_positives = "Automation, management, installers"
+    references = "reports/sliver/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+  events:
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    $p.principal.process.product_specific_process_id = $pid re.regex($p.target.process.file.full_path,`(?i)[\\/](cmd|powershell|pwsh|sh|bash)(\.exe)?$`)
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match: $host, $pid over 5m
+  condition: $p and $n
+}

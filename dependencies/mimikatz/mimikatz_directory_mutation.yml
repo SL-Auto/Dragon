@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_directory_mutation
+canonical_path: detections/mimikatz/yaral/mimikatz_directory_mutation.yaral
+canonical_sha256: c886cd424273d029f50c6310783977485f84448a146038e960ea889d86463fb3
+description: "Detects directory replication, SIDHistory or identity-attribute mutation requiring source-host triage."
+severity: high
+procedure_ids: ["P15", "P29"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Domain controller 4662 and 5136 events normalized with subject, object, attribute and source."
+atomic_event_types: ["4662", "5136"]
+required_udm_fields: ["metadata.product_event_type", "security_result.description"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Approved domain promotion, identity migration and directory administration."
+references: "reports/mimikatz/source-analysis.md"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_directory_mutation.spl", sha256: 91c10a55aa266aa187c064c9b412cbd42d7fe20798ce1b2b795538c33ba802e3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_directory_mutation.kql", sha256: 8efb93b87fb1ae0e17ba94b89434dc579168560b49dffca38234e87096ded5a2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_directory_mutation.sql", sha256: 2bb4d4b53f3ba6024b832ab7f00646906fe5205751b06b60017467a8aa7674c8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_directory_mutation.eql", sha256: 125a21a5b0b2f7c20310678346caf8d7870484aa822557491f4e654878cfedbf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_directory_mutation.yml", sha256: 551b4c3016c04cf8f107fb41e1a013b95955df479ef2349d4c65ba44836e1911, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

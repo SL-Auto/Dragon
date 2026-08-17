@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: mimikatz
+rule_name: mimikatz_event_log_impairment
+canonical_path: detections/mimikatz/yaral/mimikatz_event_log_impairment.yaral
+canonical_sha256: 444e1acc7df4b7774b3adf5127557d9c2cc7692e8e4c38b62cd3dae8f73c405e
+description: "Detects log clearing or endpoint telemetry reporting Event Log service tampering."
+severity: high
+procedure_ids: ["P26"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Forwarded Security 1102, System 104 or EDR service-tamper telemetry."
+atomic_event_types: ["104", "1102"]
+required_udm_fields: ["metadata.product_event_type", "security_result.description"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Authorized log maintenance and lab reset."
+references: "reports/mimikatz/source-analysis.md"
+translations:
+  spl: { path: "detections/mimikatz/spl/mimikatz_event_log_impairment.spl", sha256: 4c72c5193b7598755ec4eed04b8bc3434a24d87e291e9fdf58c01673b6d275e1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_event_log_impairment.kql", sha256: 0d525da8e941043f77a835d9302c456acfca9556993ccdd870008d7f2bbff1fb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_event_log_impairment.sql", sha256: 2b1e964c1acae31c522c4ac298a1470b31d67366888c4596ae6931549fad3450, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_event_log_impairment.eql", sha256: db357d77f7840c1e9e12dab3e221dd581a0198d41c99b0aff427b26007e69921, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_event_log_impairment.yml", sha256: a8d89b1dde8005406e5aff48e77fe2db0908789d8aefd26349e34c18788392b7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

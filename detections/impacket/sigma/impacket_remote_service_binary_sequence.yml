@@ -1,0 +1,22 @@
+title: "Correlates an administrative-share file write with remote service installation on the same host."
+name: impacket_remote_service_binary_sequence
+status: experimental
+description: "Correlates an administrative-share file write with remote service installation on the same host."
+source_yaral: "detections/impacket/yaral/impacket_remote_service_binary_sequence.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-03"
+log_source_prerequisites: "Normalize Windows 5145 plus 7045/4697 or EDR file/service events with target host, account, source IP, service path, and timestamps."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4697", "5145", "7045"]
+  condition: selection_event_type
+falsepositives:
+  - "Software deployment, endpoint management, backup, and approved remote support."
+level: high

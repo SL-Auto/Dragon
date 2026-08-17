@@ -1,0 +1,29 @@
+rule bloodhound_azure_graph_enumeration_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one cloud principal reading many Microsoft Graph directory resource families."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Broad cross-object Entra enumeration can expose identity attack paths."
+    procedure_ids = "BH-017"
+    log_source_prerequisites = "MicrosoftGraphActivityLogs with principal/app, source, request URI/resource family, method and result."
+    false_positives = "Identity governance, synchronization, compliance and cloud security posture tools."
+    references = "reports/bloodhound/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Test approved single-purpose apps and sanitized multi-resource pagination fixtures."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "MicrosoftGraphActivityLogs"
+    $e.principal.user.userid = $principal
+    $e.principal.ip = $source
+    $e.network.http.method = "GET"
+    $e.target.resource.attribute.labels["resource_family"] = $family
+  match:
+    $principal, $source over 30m
+  outcome:
+    $families = count_distinct($family)
+  condition:
+    $e and $families >= 6
+}

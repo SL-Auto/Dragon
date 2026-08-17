@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_ticket_use_without_credible_kdc_issue
+canonical_path: detections/rubeus/yaral/rubeus_ticket_use_without_credible_kdc_issue.yaral
+canonical_sha256: b86e32320bf2c240bc4747a1f1162ed63cf032a2d011fffa1cfae3a6162a851e
+description: "Detects anomalous Kerberos-authenticated service use without a corresponding observed service-ticket issue, gated on an explicit domain-controller collection-health signal so absence-based logic never fires during known incomplete DC coverage."
+severity: high
+procedure_ids: ["PROC-008", "PROC-009"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Centralize complete 4769 telemetry and resource-side Kerberos service-use/PAC anomaly data with normalized user, source, and service, plus a collection-health event that proves all authoritative domain controllers reported for the correlation window."
+atomic_event_types: ["4769", "COLLECTION_HEALTH", "USER_LOGIN"]
+required_udm_fields: ["additional.fields", "metadata.event_type", "metadata.product_event_type", "principal.ip", "security_result.auth_details", "target.resource.name", "target.user.userid"]
+correlation_window: "12h"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Missing DC logs, cached tickets, referrals, cross-realm activity, and parser mismatches; the collection-health gate mitigates but does not eliminate these because health may be reported as true while an individual DC's forwarder is silently stalled."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_use_without_credible_kdc_issue.md"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_ticket_use_without_credible_kdc_issue.spl", sha256: 32fc156a8e34e247b4080a04f3114b902362b7aaa8455f1b5191600c2f35a9ea, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_ticket_use_without_credible_kdc_issue.kql", sha256: 27309de30db8fdddabce30eb218c2a48f6a26913ba5ff26dd8fdb498a5ba6c17, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_ticket_use_without_credible_kdc_issue.sql", sha256: 937fdbd838ff9bc34541ed1a7cdc172157368ff4459da1cbf7e66728feb220be, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_ticket_use_without_credible_kdc_issue.eql", sha256: 80f0ed011bc5f5d98f32591cafc91731e3fae138377b945b6cfe292f0e146410, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_ticket_use_without_credible_kdc_issue.yml", sha256: 4f4876e80a6d839ab37d6304110b66daa26f191f0b5661e502643da4c7a8f859, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

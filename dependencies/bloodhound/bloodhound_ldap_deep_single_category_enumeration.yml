@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_ldap_deep_single_category_enumeration
+canonical_path: detections/bloodhound/yaral/bloodhound_ldap_deep_single_category_enumeration.yaral
+canonical_sha256: 4214be36b71b1a22cb046788d29576891756a76735a9c8a4b27605d6bc59b07d
+description: "Detects a single identity performing deep-pagination LDAP enumeration within one directory naming context, compensating for collection that stays under the multi-category fanout threshold of bloodhound_ldap_directory_discovery_fanout."
+severity: high
+procedure_ids: ["BH-002", "BH-004"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Directory-side or EDR LDAP_SEARCH/1644 events with source process/account, naming context and resolved per-result object identity."
+atomic_event_types: ["1644", "LDAP_SEARCH"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.user.userid", "target.resource.attribute.labels"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Identity governance, directory synchronization, migration tooling and authorized security assessment performing bulk single-category export."
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_ldap_directory_discovery_fanout.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_ldap_deep_single_category_enumeration.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_ldap_deep_single_category_enumeration.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_ldap_deep_single_category_enumeration.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_ldap_deep_single_category_enumeration.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_ldap_deep_single_category_enumeration.yml", sha256: missing, status: "", fidelity: "" }

@@ -1,0 +1,22 @@
+title: "Correlates LDAP SPN discovery with service-ticket fan-out by the same host and user."
+name: rubeus_kerberoast_sequence
+status: experimental
+description: "Correlates LDAP SPN discovery with service-ticket fan-out by the same host and user."
+source_yaral: "detections/rubeus/yaral/rubeus_kerberoast_sequence.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+procedure_ids: "PROC-004"
+log_source_prerequisites: "Normalize directory-side LDAP filters and 4769 with host, user, and service."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4769", "LDAP_SEARCH"]
+  condition: selection_event_type
+falsepositives:
+  - "Service inventory, monitoring, identity governance, and authorized assessment."
+level: high

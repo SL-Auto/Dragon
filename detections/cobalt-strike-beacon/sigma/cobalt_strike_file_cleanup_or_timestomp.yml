@@ -1,0 +1,22 @@
+title: "Detects deletion or timestamp modification by a rare/unsigned process and covers observable teardown artifacts."
+name: cobalt_strike_file_cleanup_or_timestomp
+status: experimental
+description: "Detects deletion or timestamp modification by a rare/unsigned process and covers observable teardown artifacts."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_file_cleanup_or_timestomp.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-026,CSB-034"
+log_source_prerequisites: "Normalize Sysmon 2/23/26 or EDR FILE_DELETE/FILE_TIMESTAMP_CHANGE with process, path, old/new timestamps, signer/prevalence and user."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["2", "23", "26", "FILE_DELETE", "FILE_TIMESTAMP_CHANGE"]
+  condition: selection_event_type
+falsepositives:
+  - "Installers, updaters, cleanup utilities, browsers, temporary-file frameworks and backup restore."
+level: medium

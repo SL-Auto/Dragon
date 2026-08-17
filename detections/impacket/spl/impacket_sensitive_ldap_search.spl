@@ -1,0 +1,17 @@
+# source_yaral: detections/impacket/yaral/impacket_sensitive_ldap_search.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: impacket_sensitive_ldap_search
+# severity: medium
+# procedure_ids: IMP-09
+# description: Detects LDAP searches for sensitive credential or delegation attributes.
+# log_source_prerequisites: LDAP diagnostic 1644 or directory audit preserving filter and requested attributes.
+# false_positives: Identity governance, AD health and security assessment.
+# references: reports/impacket/source-analysis.md
+# assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "1644")
+| eval canonical_rule="impacket_sensitive_ldap_search"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

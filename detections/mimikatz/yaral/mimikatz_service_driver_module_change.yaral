@@ -1,0 +1,20 @@
+rule mimikatz_service_driver_module_change {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects service, driver, authentication extension or print-monitor installation events."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "HIGH"
+  severity_rationale = "Novel privileged modules can provide persistence or kernel access."
+  procedure_ids = "P06,P36,P44,P45"
+  log_source_prerequisites = "Security 4697, System 7045, Sysmon driver/image load and registry change telemetry."
+  false_positives = "Approved software, driver, print-monitor and authentication-package deployment."
+  references = "reports/mimikatz/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/mimikatz/detection-review.md"
+ events:
+  re.regex($e.metadata.product_event_type, `^(4697|7045|6|7)$`)
+ condition:
+  $e
+}

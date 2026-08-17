@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_wmi_subscription_change
+canonical_path: detections/impacket/yaral/impacket_wmi_subscription_change.yaral
+canonical_sha256: a552ad69e460526b0d4b64c89da92a42e3cb6c0588b2e2df40ac90d8a1170fae
+description: "Detects WMI filter, consumer or binding creation."
+severity: high
+procedure_ids: ["IMP-06"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Sysmon 19-21 or equivalent WMI repository events."
+atomic_event_types: ["19", "20", "21", "5861"]
+required_udm_fields: ["metadata.product_event_type"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Approved monitoring and management products."
+references: "reports/impacket/source-analysis.md"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_wmi_subscription_change.spl", sha256: 64607afc0a401894eefa3a28c549956c53c04fdd716da900c02a9256229fcd1c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_wmi_subscription_change.kql", sha256: 5c9475dcdb1deedecf14a87954a7574edbdfe3c8235485dfc4fe3ae95d6594b4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_wmi_subscription_change.sql", sha256: e4c95661440de5db2192d6c94e9d483ff749695a3c9c57b0beabd9b821c41b6b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_wmi_subscription_change.eql", sha256: 967c5e48dd3cc5b21aed4eae54ba17d2cb8866f0c8b954a2fcefac8916170c0b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_wmi_subscription_change.yml", sha256: 2725519c809e445885ae2cd0c063995040bdfb6faec53a39c76307e4e5288819, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,9 @@
+schema_version: 1
+id: splunk-cim
+language: Splunk SPL
+role: secondary
+default_dataset: configured CIM-aligned indexes or data models
+required_mapping: [index or data model, event code/type, host, user, process entity, source and target]
+correlation: stats, transaction only when justified, streamstats, eventstats, subsearch or scheduled summary
+absence_logic: scheduled search with explicitly complete source and bounded time range
+shared_limitations: [index names are tenant-specific, transaction can be expensive, CIM coverage varies]

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "chunker_version": 1,
+  "embedding": {"adapter": "none", "model": null, "dimensions": null},
+  "chunking": {"target_words": 500, "max_words": 800},
+  "ranking": {"authority_boost": {"mandatory": 1.2, "recommended": 1.1, "reference": 1.0, "historical": 0.8}, "max_chunks_per_source": 2},
+  "sources": [
+    {"path": "AGENTS.md", "domain": "operations", "type": "standard", "authority": "mandatory"},
+    {"path": "CHANGELOG.md", "domain": "operations", "type": "history", "authority": "reference"},
+    {"path": "README.md", "domain": "operations", "type": "reference", "authority": "recommended"},
+    {"path": "knowledge", "glob": "**/*.md", "domain": "knowledge", "type": "standard", "authority": "recommended"},
+    {"path": "context", "glob": "**/*.md", "domain": "operations", "type": "standard", "authority": "mandatory"},
+    {"path": "dashboard", "glob": "**/*.md", "domain": "operations", "type": "reference", "authority": "recommended"},
+    {"path": "reports", "glob": "**/*.md", "domain": "tool-analysis", "type": "evidence", "authority": "reference"},
+    {"path": "summaries", "glob": "**/*.md", "domain": "tool-analysis", "type": "generated-summary", "authority": "reference"},
+    {"path": "reviews", "glob": "**/*.md", "domain": "detection-engineering", "type": "review", "authority": "reference"},
+    {"path": "telemetry", "glob": "**/*.md", "domain": "telemetry", "type": "requirements", "authority": "reference"},
+    {"path": "schemas", "glob": "**/*.yml", "domain": "schema", "type": "mapping", "authority": "reference"},
+    {"path": "templates", "glob": "**/*", "domain": "detection-engineering", "type": "template", "authority": "mandatory"},
+    {"path": "public-rules/comparisons", "glob": "**/*.md", "domain": "public-rule-comparison", "type": "review", "authority": "reference"},
+    {"path": "research", "glob": "**/*.md", "domain": "research", "type": "evidence", "authority": "reference"}
+  ]
+}

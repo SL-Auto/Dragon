@@ -1,0 +1,73 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+name: "Cobalt Strike Beacon"
+lifecycle_status: analyzed
+analyzed_revision: "4.13-docs-202606220941"
+context_entry_points:
+  registry: registry/tools.yml
+  summary: summaries/cobalt-strike-beacon.md
+  coverage: coverage/cobalt-strike-beacon.yml
+  report: reports/cobalt-strike-beacon/source-analysis.md
+  telemetry: telemetry/cobalt-strike-beacon.md
+counts:
+  procedures: 34
+  canonical_rules: 38
+  spl_translations: 21
+  kql_translations: 21
+  sql_translations: 21
+  eql_translations: 21
+  sigma_translations: 21
+completion_states:
+  source_analysis: complete
+  canonical_detection: complete
+  telemetry_reconciliation: complete_for_experimental_rules
+  secondary_translation: in_progress
+  rule_validation_labels: "38 needs_validation"
+artifact_hashes:
+  registry: 4375b961f994082e15626a22cba5c97c6c846fa8c46f21494dbf15dd735e8d73
+  coverage: 6cd481615b2a7fdaa58000f9294eab8badd3d354e639c5b374db0f6dd3d820ec
+  report: 5a76b896d287446e468706249dbdd265b7d0983da175cb747b5d32c84073d604
+  telemetry: e33ca7cc306217a9c2a8eec30da5f42447f91b75fc7b6f65844e9b69855f974d
+  detection_review: 09815ba6ddfbe0dca3b4648f9ec7a80a074d74c4191767f423858383b583e3cb
+  translation_review: e88774bd429c518dcf51dd028298b3d7ee513a3112316c4c2751b567ef27e0f2
+rules:
+  - { name: cobalt_strike_alternate_identity_process, severity: medium, procedures: "CSB-012", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_alternate_identity_process.yml, canonical_sha256: 6f8ab791f0538b46d0f34f125cd8d09211f06d6801c45f1e99bbb07eb0017305 }
+  - { name: cobalt_strike_credential_access_effect, severity: high, procedures: "CSB-028", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_credential_access_effect.yml, canonical_sha256: eeeb5a4c58efefe547cd594ffd9640f1da192b787274e170ab4b5b87f9d70221 }
+  - { name: cobalt_strike_credential_access_effect_compensating_signal, severity: high, procedures: "CSB-028", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_credential_access_effect_compensating_signal.yml, canonical_sha256: 5fdd9d811aa199828cb28df611ff50d166e616a77de0a4a8dff505d7e26536ea }
+  - { name: cobalt_strike_cross_process_injection, severity: high, procedures: "CSB-018,CSB-019", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_cross_process_injection.yml, canonical_sha256: 2bcdf7155871ed5de50630725254560998b72cd42c68c34730311dfc791cc79c }
+  - { name: cobalt_strike_directory_discovery, severity: medium, procedures: "CSB-022", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_directory_discovery.yml, canonical_sha256: 86081ee86a59ca118c4f803db16cdb3c34224d7030ab29448b8681ca4b7a9a28 }
+  - { name: cobalt_strike_directory_discovery_compensating_signal, severity: medium, procedures: "CSB-022", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_directory_discovery_compensating_signal.yml, canonical_sha256: 73d3698033a79910cda25a7c5677d6a923ddf99dae0e7df1650658f8f345d848 }
+  - { name: cobalt_strike_discovery_fanout, severity: medium, procedures: "CSB-021", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_discovery_fanout.yml, canonical_sha256: 7868c485d52f83087d38e03a214bd53cd71c5dea728ff92e8d0f485418d51882 }
+  - { name: cobalt_strike_discovery_fanout_compensating_signal, severity: medium, procedures: "CSB-021", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_discovery_fanout_compensating_signal.yml, canonical_sha256: 4458ff1349e042482e28129f0cb84817a60cc6b4338c3b1839374ee704e05ea3 }
+  - { name: cobalt_strike_dns_process_context, severity: medium, procedures: "CSB-006", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_dns_process_context.yml, canonical_sha256: d56bc7d7af9ade225c23a7d0fba876147eced440cc9b4d8248d7c4df0a871958 }
+  - { name: cobalt_strike_dns_process_context_compensating_signal, severity: medium, procedures: "CSB-006", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_dns_process_context_compensating_signal.yml, canonical_sha256: 42ca16d007fa8b11e0825d185206b4566d132e7f3b6c3bc444d441e892a984cd }
+  - { name: cobalt_strike_file_cleanup_or_timestomp, severity: medium, procedures: "CSB-026,CSB-034", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp.yml, canonical_sha256: be19fc74fda1d95ee4d18ca9047f04533e13933cbc06f14114573392f2639694 }
+  - { name: cobalt_strike_file_cleanup_or_timestomp_compensating_signal, severity: medium, procedures: "CSB-026,CSB-034", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.yml, canonical_sha256: 4c826f873446a3d563ace83e1bbf1482822f5fb21e3d884dd683a201cabf447e }
+  - { name: cobalt_strike_named_pipe_peer_activity, severity: medium, procedures: "CSB-007", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_named_pipe_peer_activity.yml, canonical_sha256: 5d8dd04225288eba55e28ed5ebf75eff4a0207f095c377d72755231caee04b25 }
+  - { name: cobalt_strike_named_pipe_peer_activity_compensating_signal, severity: high, procedures: "CSB-007", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_named_pipe_peer_activity_compensating_signal.yml, canonical_sha256: 6b38f31481c512da42515251fd3d83a18b6a8bd13fbf36684f25435c806980d1 }
+  - { name: cobalt_strike_powershell_or_clr_in_unusual_host, severity: high, procedures: "CSB-015,CSB-017", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_powershell_or_clr_in_unusual_host.yml, canonical_sha256: f71d27760edbdf9e66752e21ce05e9640727f28252cec917b8d57249b6ac1962 }
+  - { name: cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal, severity: high, procedures: "CSB-015,CSB-017", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal.yml, canonical_sha256: cf6e17e7841ecae2506a85978ab3759c9c3e72a7720667bc4d517121f2d357da }
+  - { name: cobalt_strike_privileged_context_change, severity: medium, procedures: "CSB-011", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_privileged_context_change.yml, canonical_sha256: a805797e08e42cef32c9f860938ae7672c11ff12d2334d672e7baf1458aed353 }
+  - { name: cobalt_strike_privileged_context_change_compensating_signal, severity: high, procedures: "CSB-011", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_privileged_context_change_compensating_signal.yml, canonical_sha256: 25d40c617116917bf026d397fdb38d7bb2bdcdd9a27877b155207a6ece1eb115 }
+  - { name: cobalt_strike_process_network_context, severity: medium, procedures: "CSB-001,CSB-002,CSB-005", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_process_network_context.yml, canonical_sha256: b255f3a0bfc3a3b322da2599c59439e3665f56ee7e027d5d3d57638296eefd6d }
+  - { name: cobalt_strike_process_network_context_compensating_signal, severity: high, procedures: "CSB-001,CSB-002,CSB-005", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_process_network_context_compensating_signal.yml, canonical_sha256: 0a0da7f5c54a7f93c54aca8f55ef5818b8ba1544fa571e84a04c33845014cfa4 }
+  - { name: cobalt_strike_remote_management_execution, severity: medium, procedures: "CSB-031,CSB-032,CSB-033", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_remote_management_execution.yml, canonical_sha256: 70a7a94468b3a41641d89393c9c9881ceb59f71737efdf33de505f2bfdd671cd }
+  - { name: cobalt_strike_remote_service_sequence, severity: high, procedures: "CSB-030", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_remote_service_sequence.yml, canonical_sha256: 9082f2835f8ada2d2ce243dad44d1ec0c0a26926ec751f42ad5e0aa843376edf }
+  - { name: cobalt_strike_remote_service_sequence_compensating_signal, severity: high, procedures: "CSB-030", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_remote_service_sequence_compensating_signal.yml, canonical_sha256: bcd57de25e496e1656f7ff74459db1ec9a1119596fc4c59726c70111508183e0 }
+  - { name: cobalt_strike_sensitive_file_activity, severity: high, procedures: "CSB-024,CSB-025", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_sensitive_file_activity.yml, canonical_sha256: f4fc5aecd904a818e6d0107e9da6b165c46b394cc741876c1531a44e4cbefc28 }
+  - { name: cobalt_strike_sensitive_file_activity_compensating_signal, severity: high, procedures: "CSB-024,CSB-025", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_sensitive_file_activity_compensating_signal.yml, canonical_sha256: d7a9a29eebdc8b36abca17f3b6c74b757dae7a5dc32a086c8f7fef3600ec0680 }
+  - { name: cobalt_strike_sensitive_registry_read, severity: medium, procedures: "CSB-023", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read.yml, canonical_sha256: a76d3807c31c0247e77123714f6ab09408f0ccfc7e149776f96951d5cb62b6ee }
+  - { name: cobalt_strike_sensitive_registry_read_compensating_signal, severity: medium, procedures: "CSB-023", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read_compensating_signal.yml, canonical_sha256: 291d845da0f1e309ebc1b5d2ea24d59fb115101647d1bc8ea7594b8d18ff1cca }
+  - { name: cobalt_strike_service_or_integrity_transition, severity: high, procedures: "CSB-020", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_service_or_integrity_transition.yml, canonical_sha256: 67f4e031c20437fc9062da8199abd59d13aa71fa2e0398737631d992c872c48f }
+  - { name: cobalt_strike_service_or_integrity_transition_compensating_signal, severity: high, procedures: "CSB-020", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_service_or_integrity_transition_compensating_signal.yml, canonical_sha256: 129a0233edf6bd7ea462f3b7ceebdbbefde01f7afe6c0854d6f39f0c1e0f058b }
+  - { name: cobalt_strike_socket_fanout_or_forwarding, severity: medium, procedures: "CSB-009", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_socket_fanout_or_forwarding.yml, canonical_sha256: 460c62b248514121434ee905ccd18767f08240fc77c0ef651f5b2ade21efb844 }
+  - { name: cobalt_strike_socket_fanout_or_forwarding_compensating_signal, severity: high, procedures: "CSB-009", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.yml, canonical_sha256: e3ba110d2a6eef3cbd778e21f9cca0904c064ad74694c53e85d9ba5abebb0e04 }
+  - { name: cobalt_strike_socket_listen_or_rare_egress, severity: medium, procedures: "CSB-008", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_socket_listen_or_rare_egress.yml, canonical_sha256: 6b28f7860160c99d956c9dd303ab671d26940329b71f3ba18b33a8b391f843c8 }
+  - { name: cobalt_strike_socket_listen_or_rare_egress_compensating_signal, severity: high, procedures: "CSB-008", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.yml, canonical_sha256: b28a6d39550ed4a8553514927f6741346b5bebaaab83efbbbf7b2c2be22bd4a4 }
+  - { name: cobalt_strike_suspicious_process_lineage_or_memory, severity: high, procedures: "CSB-004,CSB-014,CSB-016", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_suspicious_process_lineage_or_memory.yml, canonical_sha256: 2739595c7cb1ee3f9152d7c9c9aa2a0c1dde413d380aa8e1c0d37f9ebaecbf45 }
+  - { name: cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal, severity: high, procedures: "CSB-004,CSB-014,CSB-016", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.yml, canonical_sha256: 38a665bb2e53c78b6c05ce51982a0eb11569a7b001df32a33e12a6c920a495ae }
+  - { name: cobalt_strike_unusual_authentication_material_use, severity: high, procedures: "CSB-013", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_unusual_authentication_material_use.yml, canonical_sha256: e778f250cb52cd5c511a971d99ed1a7e9bb52ef6a4cd11836ffc1a109c873ceb }
+  - { name: cobalt_strike_user_data_collection, severity: high, procedures: "CSB-027", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_user_data_collection.yml, canonical_sha256: 0db696c12dab3a143bceee934714761c005927813579e66b0856d84a195ae36a }
+  - { name: cobalt_strike_user_data_collection_compensating_signal, severity: high, procedures: "CSB-027", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_user_data_collection_compensating_signal.yml, canonical_sha256: 5b887a179aa3f4c56d3ce9e93611f286d4e963a80ec72bfbc4de943bf2ec416d }
+unresolved:
+  source_blockers: 0

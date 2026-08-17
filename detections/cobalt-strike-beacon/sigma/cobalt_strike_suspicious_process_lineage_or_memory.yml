@@ -1,0 +1,22 @@
+title: "Detects parent/creator mismatch, private executable memory, or unusual in-process execution telemetry without requiring default Beacon spawn targets."
+name: cobalt_strike_suspicious_process_lineage_or_memory
+status: experimental
+description: "Detects parent/creator mismatch, private executable memory, or unusual in-process execution telemetry without requiring default Beacon spawn targets."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_suspicious_process_lineage_or_memory.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md"
+procedure_ids: "CSB-004,CSB-014,CSB-016"
+log_source_prerequisites: "Normalize EDR PROCESS_LAUNCH, EXECUTABLE_MEMORY or PARENT_MISMATCH with creator/effective parent, process entity, user, signer and memory attributes."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["EXECUTABLE_MEMORY", "PARENT_MISMATCH", "PROCESS_LAUNCH"]
+  condition: selection_event_type
+falsepositives:
+  - "EDR, debuggers, JIT runtimes, application virtualization, compatibility tools and approved injection frameworks."
+level: high

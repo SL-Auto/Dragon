@@ -1,0 +1,14 @@
+// source_yaral: detections/havoc/yaral/havoc_screen_capture_then_egress.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: havoc_screen_capture_then_egress
+// severity: high
+// procedure_ids: HV-P14
+// description: A process with screen-capture telemetry also performs outbound network activity
+// log_source_prerequisites: Tenant-verified EDR screen capture semantic event and process-attributed network telemetry
+// false_positives: Conferencing, support, accessibility and approved screen-recording software
+// references: reports/havoc/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("NETWORK_CONNECTION", "SCREEN_CAPTURE") or event.action in ("NETWORK_CONNECTION", "SCREEN_CAPTURE")

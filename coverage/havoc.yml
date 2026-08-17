@@ -1,0 +1,33 @@
+schema_version: 1
+tool_id: havoc
+analyzed_revision: c84f7755a8b1c0f737576bdd3a0e982a296012f1
+inventory_method: complete command handler transport client service listener builder and extension-boundary reconciliation
+inventory_complete: true
+inventory_evidence: [reports/havoc/source-analysis.md]
+excluded_paths:
+  - { path: teamserver/pkg/profile/yaotl, reason: vendored parser without independent deployed behavior }
+  - { path: teamserver-client-build-listener-service-control, reason: server/operator-side behavior excluded by victim-host eligibility scope; server code may support agent protocol interpretation only }
+  - { path: tests-docs-assets-packaging, reason: non-deployed material }
+  - { path: upstream-prebuilt-payload-files, reason: not opened; source implementation used instead }
+procedures:
+  - { id: HV-P01, name: lifecycle and HTTP check-in, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_recurrent_process_egress, havoc_stable_destination_beaconing] }
+  - { id: HV-P02, name: SMB named-pipe transport, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_named_pipe_network_context] }
+  - { id: HV-P03, name: sleep kill-date working-hours runtime configuration, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_recurrent_process_egress, havoc_stable_destination_beaconing] }
+  - { id: HV-P04, name: process discovery and module inspection, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_discovery_fanout] }
+  - { id: HV-P05, name: process creation and command execution, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_spawned_command_execution] }
+  - { id: HV-P06, name: filesystem discovery and reads, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_file_activity_from_network_process] }
+  - { id: HV-P07, name: file transfer and staging, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_file_activity_from_network_process] }
+  - { id: HV-P08, name: file mutation and cleanup, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_file_activity_from_network_process] }
+  - { id: HV-P09, name: COFF BOF inline execution, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_memory_execution_from_network_process] }
+  - { id: HV-P10, name: CLR dotnet assembly execution, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_memory_execution_from_network_process] }
+  - { id: HV-P11, name: DLL and shellcode execution injection, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_memory_execution_from_network_process] }
+  - { id: HV-P12, name: token discovery and manipulation, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_token_authentication_sequence] }
+  - { id: HV-P13, name: network and directory discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_discovery_fanout] }
+  - { id: HV-P14, name: screen capture, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_screen_capture_then_egress] }
+  - { id: HV-P15, name: SMB pivot management, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_named_pipe_network_context] }
+  - { id: HV-P16, name: port forwarding and SOCKS proxy, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_listener_and_forwarding] }
+  - { id: HV-P17, name: Kerberos ticket operations, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_kerberos_ticket_effect] }
+  - { id: HV-P18, name: memory-file staging, telemetry_status: assessed, detection_status: not_observable, detection_rules: [], compensating_signal: downstream memory execution file or network effects }
+  - { id: HV-P19, name: job and transfer control, telemetry_status: assessed, detection_status: not_observable, detection_rules: [], compensating_signal: resulting thread process transfer and network state changes }
+  - { id: HV-P20, name: exit and teardown, telemetry_status: assessed, detection_status: detected, detection_rules: [havoc_cleanup_after_network_activity] }
+completion: { total_procedures: 20, detected: 18, not_observable: 2, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

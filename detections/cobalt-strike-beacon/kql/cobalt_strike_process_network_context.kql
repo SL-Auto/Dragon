@@ -1,0 +1,17 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_process_network_context.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: cobalt_strike_process_network_context
+// severity: medium
+// procedure_ids: CSB-001,CSB-002,CSB-005
+// description: Surfaces process-attributed repeated outbound network activity from an unsigned or uncommon executable; intended as Beacon-compatible C2 context, not attribution.
+// log_source_prerequisites: Normalize EDR process-attributed NETWORK_CONNECTION events with stable process entity, host, destination, direction, signer and executable prevalence enrichment.
+// false_positives: Software updaters, monitoring agents, remote support, browsers, synchronization and backup clients.
+// references: reports/cobalt-strike-beacon/source-analysis.md; https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/content/topics/post-exploitation_asynch-interactive.htm
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/sentinel-asim.yml
+NormalizedEvents
+| where ProductEventType in ("NETWORK_CONNECTION") or EventType in ("NETWORK_CONNECTION")
+| summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
+| where EventCount > 0
+| extend CanonicalRule="cobalt_strike_process_network_context"

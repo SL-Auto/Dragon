@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_browser_debugging_from_network_process
+canonical_path: detections/sliver/yaral/sliver_browser_debugging_from_network_process.yaral
+canonical_sha256: 96dbc0b7bae8d43a067c6aa497fd5f4955e69ec881c3de9f6401451221f48b06
+description: "Network process launches a browser child with remote debugging enabled and a debug listener is established"
+severity: high
+procedure_ids: ["PROC-022"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process command line plus parent network telemetry and child listen-socket telemetry"
+atomic_event_types: ["NETWORK_CONNECTION", "PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id", "target.process.command_line", "target.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Developers, browser automation and testing frameworks that launch browsers with remote debugging"
+references: "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_browser_debugging_from_network_process.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_browser_debugging_from_network_process.spl", sha256: 5e9e3ee941f95f85c71fe16c61f116a8d884f5f6af729b8e369fc316782e3c14, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_browser_debugging_from_network_process.kql", sha256: 68b04c10d65e4d5fe0c0039b7b76d7b97dc6c15efbefa251c53e589cf65d2ed2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_browser_debugging_from_network_process.sql", sha256: d25eb757ce8534fe49bb09ccde296812f83c6e700168cda47015b5dd24e3ab7e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_browser_debugging_from_network_process.eql", sha256: 7b7de0bbeda250439baffb2df9e92f6ae81b7c81ed2553a96ce0c76775eb26fc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_browser_debugging_from_network_process.yml", sha256: 5fb8de5eaf176de59631a904b639461491657218905f6dc77d2b29714c403543, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

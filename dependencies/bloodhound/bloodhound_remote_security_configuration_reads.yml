@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_remote_security_configuration_reads
+canonical_path: detections/bloodhound/yaral/bloodhound_remote_security_configuration_reads.yaral
+canonical_sha256: 9c6173a622eee840ac1c22423688d51fc12a3d3ebaace3b01c7025b33df9e877
+description: "Detects remote reads of CA, Netlogon, LDAP or NTLM security configuration across hosts."
+severity: high
+procedure_ids: ["BH-012"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR REGISTRY_READ or scoped 4656/4663 with full key path, source identity and target host."
+atomic_event_types: ["4656", "4663", "REGISTRY_READ"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "target.hostname", "target.registry.registry_key"]
+correlation_window: "20m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Security posture assessment, PKI administration and domain-controller compliance tools."
+references: "reports/bloodhound/source-analysis.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_remote_security_configuration_reads.spl", sha256: 5d9092e47ffb540d7cd30a81f68a0f6c525fee3a7a7a5521b80c9e6deb9b1349, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_remote_security_configuration_reads.kql", sha256: 00529a71072a3e2afb937240259dafa7788acc9a8b913b7d4c5b61cb1c18efd8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_remote_security_configuration_reads.sql", sha256: 6db673f0f6d3ae731f50d97c28d66dc970b069ca23474d1a5625d25607717ae8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_remote_security_configuration_reads.eql", sha256: 643aa8d7a8f38e5f61f085e6a285ff0a6c7bb21189171531f6938667845f3c3f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_remote_security_configuration_reads.yml", sha256: c6753126ba7579df523ae8f4d0ab3ca9fc74ac7944c54c80fa07007e7251be77, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

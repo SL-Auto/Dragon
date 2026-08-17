@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_asrep_roast_sequence
+canonical_path: detections/rubeus/yaral/rubeus_asrep_roast_sequence.yaral
+canonical_sha256: a61074793e9cd077527eb94cab74d29e00008a858ebdca4747b5512dfe52eca3
+description: "Detects one source requesting no-preauthentication AS responses for multiple accounts."
+severity: high
+procedure_ids: ["PROC-003"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize 4768 with source IP, account, and PreAuthType in the configured additional field."
+atomic_event_types: ["4768"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.ip", "target.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Authorized account configuration audits and identity assessment."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_asrep_roast_sequence.spl", sha256: 9765f8064ea65fc7bbca88f3e0b1385e9beb7bfd5c370cdfdbbe9890b54e3a80, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_asrep_roast_sequence.kql", sha256: ff738d7a84e4fca9bcf245c414f0615138f39d1589a40b52f9301c75a915e681, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_asrep_roast_sequence.sql", sha256: b27d28f7f3d9671c20edb3a89241d262d986f4ce50fbde78753acb87fda8da13, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_asrep_roast_sequence.eql", sha256: 2b69decc3e3c058aedbd09f229ecf18c5aeffe8a0e4ff1f4955c8d793ccba4e8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_asrep_roast_sequence.yml", sha256: 6cc9f0d0ce689a0005ba8ee56121ce6e127721e2d68ee6c27fd884d9fd0d44d6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

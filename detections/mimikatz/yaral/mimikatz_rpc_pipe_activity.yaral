@@ -1,0 +1,19 @@
+rule mimikatz_rpc_pipe_activity {
+ meta:
+  author = "Detection Research Agent"
+  description = "Surfaces named-pipe or RPC activity associated with authentication coercion or remote control context."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "MEDIUM"
+  severity_rationale = "Unusual RPC and named-pipe activity can connect coercion and control procedures."
+  procedure_ids = "P35,P38"
+  log_source_prerequisites = "Sysmon 17/18 or EDR RPC and network telemetry with process, endpoint and peer."
+  false_positives = "Normal Windows RPC, print, EFS and management traffic."
+  references = "reports/mimikatz/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/mimikatz/detection-review.md"
+ events:
+  (re.regex($e.metadata.product_event_type, `^(17|18)$`) or re.regex($e.security_result.description, `(?i)(RPC|named.pipe)`))
+ condition: $e
+}

@@ -1,0 +1,34 @@
+rule impacket_remote_service_binary_sequence {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates an administrative-share file write with remote service installation on the same host."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "The sequence can indicate privileged SMB service execution, but is shared with software deployment tools."
+    procedure_ids = "IMP-03"
+    log_source_prerequisites = "Normalize Windows 5145 plus 7045/4697 or EDR file/service events with target host, account, source IP, service path, and timestamps."
+    false_positives = "Software deployment, endpoint management, backup, and approved remote support."
+    references = "reports/impacket/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized service-deployment and authorized red-team telemetry; never execute Impacket."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/impacket/detection-review.md"
+
+  events:
+    $write.metadata.product_event_type = "5145"
+    $write.target.hostname = $host
+    $write.principal.user.userid = $user
+    re.regex($write.target.resource.name, `(?i)\\(ADMIN\$|C\$|IPC\$)\\`)
+    re.regex($write.security_result.description, `(?i)(WriteData|AppendData|0x2|0x4)`)
+
+    $service.metadata.product_event_type = /(7045|4697)/
+    $service.target.hostname = $host
+    $service.principal.user.userid = $user
+
+  match:
+    $host, $user over 5m
+
+  condition:
+    $write and $service
+}

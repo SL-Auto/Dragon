@@ -1,0 +1,22 @@
+title: "Detects one process listening locally while maintaining outbound connectivity consistent with bidirectional forwarding"
+name: chisel_listener_with_tunnel_egress
+status: experimental
+description: "Detects one process listening locally while maintaining outbound connectivity consistent with bidirectional forwarding"
+source_yaral: "detections/chisel/yaral/chisel_listener_with_tunnel_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/chisel/source-analysis.md"
+procedure_ids: "CH-P02,CH-P04,CH-P08"
+log_source_prerequisites: "EDR socket listen and outbound connect telemetry with stable process entity"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "NETWORK_LISTEN"]
+  condition: selection_event_type
+falsepositives:
+  - "Approved proxies VPNs developer tunnels service meshes and remote support"
+level: high

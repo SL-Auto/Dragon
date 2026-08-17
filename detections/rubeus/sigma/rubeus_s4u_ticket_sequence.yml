@@ -1,0 +1,25 @@
+title: "Detects S4U requests against an unapproved delegation edge or multi-service fan-out."
+name: rubeus_s4u_ticket_sequence
+status: experimental
+description: "Detects a service identity making S4U requests against an authoritatively unapproved delegation edge, or requesting S4U tickets across multiple distinct target services when edge-approval enrichment is unavailable."
+source_yaral: "detections/rubeus/yaral/rubeus_s4u_ticket_sequence.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend. This is now a two-branch OR: two-or-more distinct target services in the window, or any single S4U request against an edge explicitly marked unapproved; plain Sigma cannot express the fan-out cardinality branch without a correlation rule. Both branches must identify S4U activity through EITHER a free-text description match OR a structured delegation-flow field match (whichever the parser actually populates); do not implement only one."
+references:
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+  - "public-rules/comparisons/rubeus/rubeus_s4u_ticket_sequence.md"
+procedure_ids: "PROC-005"
+log_source_prerequisites: "Normalize 4769 with requesting account, client/source, target service, transited services, ticket options, and delegation context, plus an authoritative delegation-edge-approval enrichment keyed by service account and target service."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4769"]
+  filter_unapproved_edge:
+    delegation_edge_approved: false
+  condition: selection_event_type and filter_unapproved_edge
+falsepositives:
+  - "Approved constrained delegation, protocol transition, web front ends, and identity middleware; stale or incomplete delegation-edge enrichment."
+level: high

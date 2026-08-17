@@ -1,0 +1,30 @@
+rule bloodhound_recurrent_collection_activity {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects repeated directory or remote-host collection bursts from the same process entity."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Recurrence strengthens discovery context while tolerating configurable delay and jitter."
+    procedure_ids = "BH-014"
+    log_source_prerequisites = "Stable process entity and normalized LDAP_SEARCH, RPC_CALL or REGISTRY_READ events retained for several hours."
+    false_positives = "Scheduled identity inventory, monitoring and compliance collection."
+    references = "reports/bloodhound/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Test irregular recurring bursts, one-off activity and missing interval fixtures."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $e.metadata.product_event_type = /(LDAP_SEARCH|RPC_CALL|REGISTRY_READ)/
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $entity
+    $e.target.hostname = $target
+    $e.principal.process.file.labels["prevalence"] = "rare"
+  match:
+    $host, $entity over 4h
+  outcome:
+    $events = count($e.metadata.id)
+    $targets = count_distinct($target)
+  condition:
+    $e and $events >= 100 and $targets >= 5
+}

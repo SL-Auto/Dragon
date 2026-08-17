@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: chisel
+rule_name: chisel_udp_bind_with_tunnel_egress
+canonical_path: detections/chisel/yaral/chisel_udp_bind_with_tunnel_egress.yaral
+canonical_sha256: f9d8e509e62582b27e063da49633ea80bfa4430f460949e672d0e12c8be5736c
+description: "Detects process-owned UDP bind or receive activity combined with outbound tunnel-like connectivity"
+severity: high
+procedure_ids: ["CH-P03", "CH-P04"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR UDP bind or receive and outbound connection telemetry with stable process entity"
+atomic_event_types: ["NETWORK_CONNECTION", "UDP_BIND", "UDP_RECEIVE"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "DNS relays media services VPNs and approved UDP proxies"
+references: "reports/chisel/source-analysis.md"
+translations:
+  spl: { path: "detections/chisel/spl/chisel_udp_bind_with_tunnel_egress.spl", sha256: 4a1f22af2bae033842c4680cb89e893242e0b046751b4c05928436268066cef9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/chisel/kql/chisel_udp_bind_with_tunnel_egress.kql", sha256: 912e7a2c64efc14a7aca97852f05ef8ab416fcb9fd483c4f06d56dac272a1ffc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/chisel/sql/chisel_udp_bind_with_tunnel_egress.sql", sha256: 0ddc52355be23e489223034d9db81203abb255a8b016061ed30db2975c3e0062, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/chisel/eql/chisel_udp_bind_with_tunnel_egress.eql", sha256: f433dd7025dc51dd98f37052505ce33e9374411517de79d55ea50c4753a8e287, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/chisel/sigma/chisel_udp_bind_with_tunnel_egress.yml", sha256: 5b451e4aac0aadba12ca576258cd5a9b2d9d83427cafbcdc93fb5b23c4d168ca, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

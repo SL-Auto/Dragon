@@ -1,0 +1,29 @@
+rule havoc_memory_execution_from_network_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "A network-active process performs cross-process access, injection or memory-backed execution"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Sensitive memory execution effects are strong signals when causally linked to a network process"
+    procedure_ids = "HV-P09,HV-P10,HV-P11"
+    log_source_prerequisites = "Tenant-verified EDR process access injection memory execution or CLR load events plus process network telemetry"
+    false_positives = "EDR, debuggers, profilers, accessibility and managed-runtime hosts"
+    references = "reports/havoc/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/havoc/detection-review.md"
+  events:
+    re.regex($m.metadata.product_event_type, `(?i)^(PROCESS_ACCESS|PROCESS_INJECTION|REMOTE_THREAD|MEMORY_EXECUTION|CLR_ASSEMBLY_LOAD)$`)
+    $m.principal.hostname = $host
+    $m.principal.process.product_specific_process_id = $pid
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match:
+    $host, $pid over 10m
+  condition:
+    $m and $n
+}

@@ -1,0 +1,14 @@
+// source_yaral: detections/bloodhound/yaral/bloodhound_ldap_directory_discovery_fanout.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: bloodhound_ldap_directory_discovery_fanout
+// severity: high
+// procedure_ids: BH-002,BH-004
+// description: Detects broad process-attributed LDAP enumeration across multiple directory object categories.
+// log_source_prerequisites: Directory-side or EDR LDAP_SEARCH events with source process/account, base DN, filter, attributes and result category.
+// false_positives: Identity governance, directory inventory, migration and authorized security assessment.
+// references: reports/bloodhound/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("1644", "LDAP_SEARCH") or event.action in ("1644", "LDAP_SEARCH")

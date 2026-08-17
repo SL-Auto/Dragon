@@ -1,0 +1,14 @@
+// source_yaral: detections/chisel/yaral/chisel_listener_with_tunnel_egress.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: chisel_listener_with_tunnel_egress
+// severity: high
+// procedure_ids: CH-P02,CH-P04,CH-P08
+// description: Detects one process listening locally while maintaining outbound connectivity consistent with bidirectional forwarding
+// log_source_prerequisites: EDR socket listen and outbound connect telemetry with stable process entity
+// false_positives: Approved proxies VPNs developer tunnels service meshes and remote support
+// references: reports/chisel/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("NETWORK_CONNECTION", "NETWORK_LISTEN") or event.action in ("NETWORK_CONNECTION", "NETWORK_LISTEN")

@@ -1,0 +1,17 @@
+# source_yaral: detections/rubeus/yaral/rubeus_netonly_ticket_sequence.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: rubeus_netonly_ticket_sequence
+# severity: high
+# procedure_ids: PROC-007
+# description: Correlates a Type 9 logon session with ticket submission into the same LUID.
+# log_source_prerequisites: Normalize 4624 LogonType and TargetLogonId plus EDR KerbSubmitTicketMessage target LUID.
+# false_positives: Runas netonly, administrative workflows, SSO testing, and authorized assessments.
+# references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+# schema_profile: schemas/splunk-cim.yml
+index=<configured_index>
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "4624", "EDR_API_CALL")
+| eval canonical_rule="rubeus_netonly_ticket_sequence"
+| stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
+| where count > 0

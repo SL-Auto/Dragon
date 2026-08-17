@@ -1,0 +1,38 @@
+rule mimikatz_protected_sam_system_access_sequence {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates one process accessing protected SYSTEM/LSA and SAM account data."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Combined access to SYSTEM key material and SAM account data is consistent with local hash recovery."
+    procedure_ids = "P12"
+    log_source_prerequisites = "Normalize Windows 4656/4663 or EDR sensitive-registry read events; preserve process ID, host, registry path, and access operation."
+    false_positives = "Backup, disaster recovery, endpoint protection, forensic acquisition, and authorized registry inventory."
+    references = "reports/mimikatz/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use synthetic registry-audit fixtures and equivalent non-sensitive test keys; never read real SAM values."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/mimikatz/detection-review.md"
+
+  events:
+    $system.metadata.event_type = "REGISTRY_READ"
+    $system.principal.hostname = $host
+    $system.principal.process.product_specific_process_id = $pid
+    $system.principal.process.file.full_path = $process
+    $system.principal.user.userid = $user
+    re.regex($system.target.resource.name, `(?i)\\SYSTEM\\.*\\(Control\\Lsa|JD|Skew1|GBG|Data)`)
+
+    $sam.metadata.event_type = "REGISTRY_READ"
+    $sam.principal.hostname = $host
+    $sam.principal.process.product_specific_process_id = $pid
+    $sam.principal.process.file.full_path = $process
+    $sam.principal.user.userid = $user
+    re.regex($sam.target.resource.name, `(?i)\\SAM\\Domains\\Account(\\Users)?`)
+
+  match:
+    $host, $pid, $process, $user over 5m
+
+  condition:
+    $system and $sam
+}

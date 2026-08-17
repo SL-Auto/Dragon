@@ -1,0 +1,22 @@
+title: "File read or mutation by an outbound-network process"
+name: sliver_file_activity_from_network_process
+status: experimental
+description: "File read or mutation by an outbound-network process"
+source_yaral: "detections/sliver/yaral/sliver_file_activity_from_network_process.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/sliver/source-analysis.md"
+procedure_ids: "PROC-007,PROC-008,PROC-009"
+log_source_prerequisites: "EDR file and network telemetry sharing stable PID"
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["FILE_CREATION", "FILE_DELETION", "FILE_MODIFICATION", "FILE_READ", "NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Sync, backup, browsers, package managers"
+level: medium

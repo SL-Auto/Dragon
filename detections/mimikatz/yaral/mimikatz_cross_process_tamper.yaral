@@ -1,0 +1,21 @@
+rule mimikatz_cross_process_tamper {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects endpoint-reported cross-process memory tampering affecting security-sensitive processes."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "HIGH"
+  severity_rationale = "Unexpected memory write or injection can alter authentication and security services."
+  procedure_ids = "P22,P27,P28,P32,P40"
+  log_source_prerequisites = "EDR process tamper telemetry normalized with source and target processes and operation."
+  false_positives = "Approved security sensors, diagnostics, accessibility and support tooling."
+  references = "reports/mimikatz/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/mimikatz/detection-review.md"
+ events:
+  $e.metadata.event_type = "PROCESS_OPEN"
+  re.regex($e.security_result.description, `(?i)(write|inject|remote.thread|tamper)`)
+ condition:
+  $e
+}

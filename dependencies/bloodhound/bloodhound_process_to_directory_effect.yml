@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_process_to_directory_effect
+canonical_path: detections/bloodhound/yaral/bloodhound_process_to_directory_effect.yaral
+canonical_sha256: d352c74810d79f6ef74ee161bbb508f8184834e596ce9b07a77c481c38592b31
+description: "Detects a process launch followed by confirmed multi-object LDAP, Graph or ARM enumeration from the same process entity, independent of process prevalence, signer status or executable path, compensating for bloodhound_collector_process_network_context's dependence on rarity and connection count."
+severity: medium
+procedure_ids: ["BH-001"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR process launch with stable process entity ID plus process-attributed LDAP_SEARCH, MicrosoftGraphActivityLogs or AZURE_RESOURCE_READ events carrying resolved object/resource identity."
+atomic_event_types: ["AZURE_RESOURCE_READ", "LDAP_SEARCH", "MicrosoftGraphActivityLogs", "PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "principal.hostname", "principal.process.product_specific_process_id", "target.process.product_specific_process_id", "target.resource.name"]
+correlation_window: "20m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Identity inventory, endpoint management, directory administration and cloud governance tooling, including signed and prevalent software."
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_collector_process_network_context.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_process_to_directory_effect.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_process_to_directory_effect.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_process_to_directory_effect.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_process_to_directory_effect.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_process_to_directory_effect.yml", sha256: missing, status: "", fidelity: "" }

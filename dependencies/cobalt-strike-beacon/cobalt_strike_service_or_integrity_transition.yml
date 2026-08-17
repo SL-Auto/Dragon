@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_service_or_integrity_transition
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_service_or_integrity_transition.yaral
+canonical_sha256: 67f4e031c20437fc9062da8199abd59d13aa71fa2e0398737631d992c872c48f
+description: "Detects a new service or unusual medium-to-high/SYSTEM integrity transition correlated to process execution."
+severity: high
+procedure_ids: ["CSB-020"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Normalize Windows 4697/System 7045 and EDR INTEGRITY_TRANSITION with subject, service, image, source/child process, old/new integrity and host."
+atomic_event_types: ["4697", "7045", "INTEGRITY_TRANSITION"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type"]
+correlation_window: ""
+uses_multi_event_correlation: false
+uses_aggregation: false
+uses_absence_logic: false
+false_positives: "Software deployment, driver installation, endpoint management and approved elevation tools."
+references: "reports/cobalt-strike-beacon/source-analysis.md"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_service_or_integrity_transition.spl", sha256: b66ed41c700cc84b1ced01099918d8cfa20ee1dec7e1b1b6ecf92067284eef59, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_service_or_integrity_transition.kql", sha256: cffb9520226082b7f587bd352126838c650a8b1980439f911e834be5e11d4093, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_service_or_integrity_transition.sql", sha256: 1721d16acb421f84a7ccfd69c5f79f3a649756ca40fa9d63d6f51bcf958e91a4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_service_or_integrity_transition.eql", sha256: 081dee1b5b28412952ca1f44df2ee1bb399c6fb80c0a4ef34070d801edaddd46, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_service_or_integrity_transition.yml", sha256: 762b48913f5a0afda60767fa171c7451210fbb39ef628e331ce60a951056e5db, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,22 @@
+rule cobalt_strike_user_data_collection {
+  meta:
+    author = "Detection Research Agent"
+    description = "Surfaces vendor collection telemetry for screen, clipboard, input or browser-secret access by an uncommon process."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "User-data capture can expose sensitive information but these events are vendor-specific and some accessibility tools overlap."
+    procedure_ids = "CSB-027"
+    log_source_prerequisites = "Normalize EDR SCREEN_CAPTURE, CLIPBOARD_READ, INPUT_CAPTURE or BROWSER_SECRET_READ with process, user/session, collection type and signer/prevalence."
+    false_positives = "Accessibility, conferencing, remote support, password managers, browsers and approved monitoring."
+    references = "reports/cobalt-strike-beacon/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Use product-provided benign test telemetry without collecting real user data."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+  events:
+    ($e.metadata.event_type = "SCREEN_CAPTURE" or $e.metadata.event_type = "CLIPBOARD_READ" or $e.metadata.event_type = "INPUT_CAPTURE" or $e.metadata.event_type = "BROWSER_SECRET_READ")
+    ($e.principal.process.file.is_signed = false or $e.principal.process.file.prevalence = "RARE")
+  condition:
+    $e
+}

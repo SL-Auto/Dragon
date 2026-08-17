@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: bloodhound
+rule_name: bloodhound_remote_security_configuration_value_reads
+canonical_path: detections/bloodhound/yaral/bloodhound_remote_security_configuration_value_reads.yaral
+canonical_sha256: 13a070661c07358f6384d99dddc7987668b56ce755e4e98afa52f740f310e6dc
+description: "Detects reads of two or more named security-relevant registry values (certificate binding, NTLM restriction, LDAP channel binding/signing, certificate mapping) from a single source, compensating for single-target reads that stay below bloodhound_remote_security_configuration_reads's multi-host threshold."
+severity: high
+procedure_ids: ["BH-012"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR REGISTRY_READ or scoped 4656/4663 with full registry key AND value name, source and target host."
+atomic_event_types: ["4656", "4663", "REGISTRY_READ"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "target.hostname", "target.registry.registry_key", "target.registry.registry_value_name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Security posture assessment, PKI administration and domain-controller compliance tools reading multiple settings on one host."
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_remote_security_configuration_reads.md"
+translations:
+  spl: { path: "detections/bloodhound/spl/bloodhound_remote_security_configuration_value_reads.spl", sha256: missing, status: "", fidelity: "" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_remote_security_configuration_value_reads.kql", sha256: missing, status: "", fidelity: "" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_remote_security_configuration_value_reads.sql", sha256: missing, status: "", fidelity: "" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_remote_security_configuration_value_reads.eql", sha256: missing, status: "", fidelity: "" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_remote_security_configuration_value_reads.yml", sha256: missing, status: "", fidelity: "" }

@@ -1,0 +1,14 @@
+// source_yaral: detections/sliver/yaral/sliver_cleanup_after_egress.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: sliver_cleanup_after_egress
+// severity: high
+// procedure_ids: PROC-002,PROC-026
+// description: Network process deletes its own image or related artifacts
+// log_source_prerequisites: File deletion and network telemetry with stable PID
+// false_positives: Installers, updaters, temporary utilities
+// references: reports/sliver/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("FILE_DELETION", "NETWORK_CONNECTION") or event.action in ("FILE_DELETION", "NETWORK_CONNECTION")

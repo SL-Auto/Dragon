@@ -1,0 +1,14 @@
+// source_yaral: detections/impacket/yaral/impacket_unusual_protocol_listener.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: impacket_unusual_protocol_listener
+// severity: medium
+// procedure_ids: IMP-02
+// description: Detects non-server processes listening on SMB or relay-associated service ports.
+// log_source_prerequisites: EDR network-listen events with process, host, port and direction.
+// false_positives: Approved file servers, development services and security tools.
+// references: reports/impacket/source-analysis.md
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
+// schema_profile: schemas/elastic-ecs.yml
+// ECS assumption: event.code carries product IDs and event.action carries normalized event types.
+any where event.code in ("NETWORK_CONNECTION") or event.action in ("NETWORK_CONNECTION")

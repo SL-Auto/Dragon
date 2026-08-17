@@ -1,0 +1,210 @@
+schema_version: 1
+tools:
+  - id: rubeus
+    name: Rubeus
+    aliases: []
+    category: credential-access
+    status: analyzed
+    source_code:
+      availability: public
+      repository: https://github.com/GhostPack/Rubeus
+      analyzed_revision: 74215f68ea70bd6a66c008da91bf5fe21d20b154
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence:
+      - path: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md
+      - path: coverage/rubeus.yml
+      - path: detections/rubeus/
+      - path: reviews/rubeus/detection-review.md
+    notes: Comprehensive for pinned revision; detections remain experimental pending tenant field mapping and fixture validation.
+  - id: cobalt-strike-beacon
+    name: Cobalt Strike Beacon
+    aliases: [Beacon]
+    category: command-and-control
+    status: analyzed
+    source_code: { availability: unavailable, repository: null, analyzed_revision: 4.13-docs-202606220941 }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence:
+      - { path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }
+      - { path: reports/cobalt-strike-beacon/source-analysis.md }
+      - { path: coverage/cobalt-strike-beacon.yml }
+      - { path: detections/cobalt-strike-beacon/ }
+      - { path: reviews/cobalt-strike-beacon/detection-review.md }
+      - { path: telemetry/cobalt-strike-beacon.md }
+    notes: Comprehensive for documented Fortra 4.13 Beacon behavior; proprietary internals and arbitrary extensions are explicitly bounded. Detections remain experimental pending tenant field mapping and fixture validation.
+  - id: sliver
+    name: Sliver
+    aliases: []
+    category: command-and-control
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/BishopFox/sliver, analyzed_revision: 13c2d3344927429cf55f6f7212499087e804bf47 }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: reports/sliver/source-analysis.md }, { path: coverage/sliver.yml }, { path: detections/sliver/ }, { path: reviews/sliver/detection-review.md }]
+  - id: havoc
+    name: Havoc
+    aliases: []
+    category: command-and-control
+    status: analyzed
+    source_code: { availability: public_archived, repository: https://github.com/HavocFramework/Havoc, analyzed_revision: c84f7755a8b1c0f737576bdd3a0e982a296012f1 }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: reports/havoc/source-analysis.md }, { path: coverage/havoc.yml }, { path: detections/havoc/ }, { path: reviews/havoc/detection-review.md }, { path: reviews/havoc/translation-review.md }, { path: telemetry/havoc.md }, { path: public-rules/comparisons/havoc/ }]
+    notes: Comprehensive for pinned core Demon teamserver client and extension-boundary revision; detections remain experimental pending tenant field mapping and safe fixture validation.
+  - id: caldera
+    name: MITRE CALDERA
+    aliases: [CALDERA]
+    category: adversary-emulation
+    status: deprecated
+    source_code: { availability: public, repository: https://github.com/mitre/caldera, analyzed_revision: b24f6e7a99cab19cbf417009bda9b9c6c81abc31-core-scope-check }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+    notes: Out of scope because CALDERA is a BAS/adversary-emulation platform. Preserve registry history but do not analyze or select it from the backlog.
+  - id: mimikatz
+    name: Mimikatz
+    aliases: []
+    category: credential-access
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/gentilkiwi/mimikatz, analyzed_revision: 306bc6b43099c7b698f2898401fddbded6a630c8 }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: reports/mimikatz/source-analysis.md }, { path: coverage/mimikatz.yml }, { path: detections/mimikatz/ }, { path: reviews/mimikatz/detection-review.md }]
+  - id: impacket
+    name: Impacket
+    aliases: []
+    category: lateral-movement
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/fortra/impacket, analyzed_revision: c23b3d55bc846a2460a459437601a94bfd25a269 }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: reports/impacket/source-analysis.md }, { path: coverage/impacket.yml }, { path: detections/impacket/ }, { path: reviews/impacket/detection-review.md }]
+  - id: bloodhound
+    name: BloodHound collectors
+    aliases: [SharpHound, AzureHound]
+    category: discovery
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/SpecterOps/BloodHound, analyzed_revision: bloodhound-v9.5.1_sharphound-a2f8435_common-fcb6cb9_azurehound-23735c8 }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: EMERGING_ATTACKER_TOOLING_2026-08-15.md }, { path: sources/bloodhound-manifest.md }, { path: reports/bloodhound/source-analysis.md }, { path: coverage/bloodhound.yml }, { path: detections/bloodhound/ }, { path: reviews/bloodhound/detection-review.md }, { path: reviews/bloodhound/translation-review.md }, { path: telemetry/bloodhound.md }]
+    notes: Comprehensive for the pinned BloodHound collector-family revisions; server/UI behavior is explicitly excluded. Detections and translations remain experimental pending tenant mapping and authorized validation.
+  - id: nmap
+    name: Nmap
+    aliases: []
+    category: discovery
+    status: triaged
+    source_code: { availability: public, repository: https://github.com/nmap/nmap, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+  - id: chisel
+    name: Chisel
+    aliases: []
+    category: proxy
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/jpillora/chisel, analyzed_revision: 6d283495b5e3eff76841038d679fcc53a57ba7dd }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: reports/chisel/source-analysis.md }, { path: coverage/chisel.yml }, { path: detections/chisel/ }, { path: reviews/chisel/detection-review.md }, { path: telemetry/chisel.md }, { path: public-rules/comparisons/chisel/ }]
+    notes: Comprehensive for the pinned deployed Go source revision; behavior-first detections and translations remain experimental pending provider mapping and authorized fixture validation.
+  - id: ligolo-ng
+    name: Ligolo-ng
+    aliases: []
+    category: proxy
+    status: triaged
+    source_code: { availability: public, repository: https://github.com/nicocha30/ligolo-ng, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+  - id: evilginx2
+    name: Evilginx2
+    aliases: []
+    category: credential-phishing
+    status: triaged
+    source_code: { availability: public, repository: https://github.com/kgretzky/evilginx2, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: EMERGING_ATTACKER_TOOLING_2026-08-15.md }]
+  - id: gophish
+    name: GoPhish
+    aliases: []
+    category: phishing
+    status: triaged
+    source_code: { availability: public, repository: https://github.com/gophish/gophish, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+  - id: pacu
+    name: Pacu
+    aliases: []
+    category: cloud
+    status: triaged
+    source_code: { availability: public, repository: https://github.com/RhinoSecurityLabs/pacu, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+  - id: cloudfox
+    name: CloudFox
+    aliases: []
+    category: cloud
+    status: triaged
+    source_code: { availability: public, repository: https://github.com/BishopFox/cloudfox, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+  - id: roadtools
+    name: ROADtools
+    aliases: []
+    category: cloud-identity
+    status: triaged
+    source_code: { availability: public, repository: https://github.com/dirkjanm/ROADtools, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+  - id: scoutsuite
+    name: ScoutSuite
+    aliases: []
+    category: cloud
+    status: triaged
+    source_code: { availability: public, repository: https://github.com/nccgroup/ScoutSuite, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+  - id: adaptixc2
+    name: AdaptixC2
+    aliases: []
+    category: command-and-control
+    status: discovered
+    source_code: { availability: public, repository: https://github.com/Adaptix-Framework/AdaptixC2, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: EMERGING_ATTACKER_TOOLING_2026-08-15.md }]
+  - id: metasploit-framework
+    name: Metasploit Framework
+    aliases: [Metasploit]
+    category: exploitation-framework
+    status: discovered
+    source_code: { availability: public, repository: https://github.com/rapid7/metasploit-framework, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: EMERGING_ATTACKER_TOOLING_2026-08-15.md }]
+  - id: brickstorm
+    name: BRICKSTORM
+    aliases: []
+    category: malware
+    status: blocked_source
+    source_code: { availability: unavailable, repository: null, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: EMERGING_ATTACKER_TOOLING_2026-08-15.md }]
+  - id: spawnchimera
+    name: SPAWNCHIMERA
+    aliases: []
+    category: malware
+    status: blocked_source
+    source_code: { availability: unavailable, repository: null, analyzed_revision: unknown }
+    first_seen: unknown
+    last_reviewed: 2026-08-15
+    evidence: [{ path: EMERGING_ATTACKER_TOOLING_2026-08-15.md }]

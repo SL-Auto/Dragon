@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: sliver
+rule_name: sliver_dns_or_udp_process_egress
+canonical_path: detections/sliver/yaral/sliver_dns_or_udp_process_egress.yaral
+canonical_sha256: b4971ecd76cbd288a53394c27b79a873922766adcf60d96efa457325d2c1ff95
+description: "High-volume DNS or UDP from one process"
+severity: medium
+procedure_ids: ["PROC-004"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed DNS or UDP network telemetry"
+atomic_event_types: ["NETWORK_DNS"]
+required_udm_fields: ["metadata.event_type", "metadata.id", "network.ip_protocol", "principal.hostname", "principal.process.file.full_path"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Resolvers, browsers, VPN clients"
+references: "reports/sliver/source-analysis.md"
+translations:
+  spl: { path: "detections/sliver/spl/sliver_dns_or_udp_process_egress.spl", sha256: c351e05950dc922f235633f94038909b9be5eb15193ffe9fc5870c8739c59d89, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_dns_or_udp_process_egress.kql", sha256: b439920fdb96f3da256bfba51c8cdd652992b7d458ab1801778844bfeae0ef26, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_dns_or_udp_process_egress.sql", sha256: e957a9c602007753ec9f5b5601dcd7f9edd0a034d28061c071040891620bb6ea, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_dns_or_udp_process_egress.eql", sha256: 16076f409a409b268980a3da2622a5076d2074e9f742dadd12c5a651064d67a4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_dns_or_udp_process_egress.yml", sha256: aa5686241a1de86e66051ef748100ebbb464c951b7430e8111f89556d1442208, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

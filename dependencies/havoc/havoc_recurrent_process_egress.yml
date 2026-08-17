@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: havoc
+rule_name: havoc_recurrent_process_egress
+canonical_path: detections/havoc/yaral/havoc_recurrent_process_egress.yaral
+canonical_sha256: 3940ecdc051be03fa38cd9143e8eebfa35d3a34b896a13b93e4925606a809fc0
+description: "A process produces recurrent outbound network activity consistent with a long-lived task channel"
+severity: medium
+procedure_ids: ["HV-P01", "HV-P03"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed network telemetry with stable process entity and event timestamps"
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "metadata.id", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Monitoring, update, VPN, messaging and management agents"
+references: "reports/havoc/source-analysis.md"
+translations:
+  spl: { path: "detections/havoc/spl/havoc_recurrent_process_egress.spl", sha256: 77b863a1e8dd10e87f09601ce2ba4898dff5859a89aec3c3f117387c9bd99e43, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_recurrent_process_egress.kql", sha256: d6d26ddefb11de2f0f7d3fb3f702f732e96ead559445713a9ed9a7e73b07c8bd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_recurrent_process_egress.sql", sha256: 5edfacde0ed47340861266f829bdc0da479575f7a731e764b2dca3081cc89706, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_recurrent_process_egress.eql", sha256: 7e63f04cca768ff4af9534f2ac88a3b6130300f43fc6aa54a326f3fac5ede1b1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_recurrent_process_egress.yml", sha256: 6a185b15062fa9520e7d918c6f816fa5709a04df5a38ad44604bffc5bf024250, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
