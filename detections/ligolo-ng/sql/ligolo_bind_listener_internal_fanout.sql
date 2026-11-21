@@ -1,0 +1,19 @@
+-- source_yaral: detections/ligolo-ng/yaral/ligolo_bind_listener_internal_fanout.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: partial
+-- rule_name: ligolo_bind_listener_internal_fanout
+-- severity: high
+-- procedure_ids: LG-P02,LG-P04,LG-P05
+-- description: Detects a process that accepts an inbound connection from a non-internal source and then connects to many distinct internal or loopback destinations or ports. This is the bind-mode pivot, where the operator connects into the agent instead of the agent dialing out.
+-- log_source_prerequisites: Process-attributed NETWORK_CONNECTION telemetry with INBOUND direction and remote source IP for the accept (principal.process is the local listening process, per repository convention), plus OUTBOUND events with destination IP and port, host and stable process ID.
+-- false_positives: Internet-facing reverse proxies, VPN concentrators, load balancers and jump services that accept external clients and forward to internal servers; approve by asset role.
+-- references: reports/ligolo-ng/source-analysis.md#procedure-analysis; reviews/ligolo-ng/detection-review.md
+-- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+-- schema_profile: schemas/normalized-sql.yml
+-- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).
+SELECT hostname, user_id, COUNT(*) AS event_count,
+       'ligolo_bind_listener_internal_fanout' AS canonical_rule
+FROM normalized_events
+WHERE product_event_type IN ('NETWORK_CONNECTION') OR event_type IN ('NETWORK_CONNECTION')
+GROUP BY hostname, user_id
+HAVING COUNT(*) > 0;

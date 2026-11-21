@@ -1,0 +1,22 @@
+title: "Detects a process that opens a listening socket and accepts an inbound connection while also holding an outbound connection to a non-internal destination. This is the host effect of an agent-side listener used for reverse port forwarding or chaining a second agent."
+name: ligolo_agent_listener_with_tunnel_egress
+status: experimental
+description: "Detects a process that opens a listening socket and accepts an inbound connection while also holding an outbound connection to a non-internal destination. This is the host effect of an agent-side listener used for reverse port forwarding or chaining a second agent."
+source_yaral: "detections/ligolo-ng/yaral/ligolo_agent_listener_with_tunnel_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/ligolo-ng/source-analysis.md#procedure-analysis; reviews/ligolo-ng/detection-review.md"
+procedure_ids: "LG-P07"
+log_source_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry with LISTEN (or bind) and INBOUND accept events for the local process, and OUTBOUND events with destination IP, host and stable process ID."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Peer-to-peer clients, collaboration and conferencing software, remote-support tools, developer servers and update caches; approve by signer and image path."
+level: medium

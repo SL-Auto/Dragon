@@ -1,0 +1,49 @@
+rule ligolo_agent_listener_with_tunnel_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a process that opens a listening socket and accepts an inbound connection while also holding an outbound connection to a non-internal destination. This is the host effect of an agent-side listener used for reverse port forwarding or chaining a second agent."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Listener plus external egress plus an accepted peer in one process is consistent with a relay. Many legitimate applications combine listening and egress, so this is a correlation signal that needs signer and asset context."
+    procedure_ids = "LG-P07"
+    log_source_prerequisites = "Process-attributed NETWORK_CONNECTION telemetry with LISTEN (or bind) and INBOUND accept events for the local process, and OUTBOUND events with destination IP, host and stable process ID."
+    false_positives = "Peer-to-peer clients, collaboration and conferencing software, remote-support tools, developer servers and update caches; approve by signer and image path."
+    references = "reports/ligolo-ng/source-analysis.md#procedure-analysis; reviews/ligolo-ng/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized fixtures of a listen, an internal inbound accept and external egress from one process within 10 minutes; baseline signed peer-to-peer and collaboration software."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/ligolo-ng/detection-review.md"
+  events:
+    $lis.metadata.event_type = "NETWORK_CONNECTION"
+    $lis.network.direction = "LISTEN"
+    $lis.principal.hostname = $host
+    $lis.principal.process.product_specific_process_id = $pid
+
+    $acc.metadata.event_type = "NETWORK_CONNECTION"
+    $acc.network.direction = "INBOUND"
+    $acc.principal.hostname = $host
+    $acc.principal.process.product_specific_process_id = $pid
+
+    $up.metadata.event_type = "NETWORK_CONNECTION"
+    $up.network.direction = "OUTBOUND"
+    $up.principal.hostname = $host
+    $up.principal.process.product_specific_process_id = $pid
+    not net.ip_in_range_cidr($up.target.ip, "10.0.0.0/8")
+    not net.ip_in_range_cidr($up.target.ip, "172.16.0.0/12")
+    not net.ip_in_range_cidr($up.target.ip, "192.168.0.0/16")
+    not net.ip_in_range_cidr($up.target.ip, "127.0.0.0/8")
+    not net.ip_in_range_cidr($up.target.ip, "169.254.0.0/16")
+    not net.ip_in_range_cidr($up.target.ip, "fc00::/7")
+    not net.ip_in_range_cidr($up.target.ip, "::1/128")
+    $up.principal.process.file.signature_info.verification_status != "VERIFIED"
+  match:
+    $host, $pid over 10m
+  outcome:
+    $listen_ports = array_distinct($lis.target.port)
+    $inbound_peers = array_distinct($acc.principal.ip)
+    $upstream = array_distinct($up.target.ip)
+    $process = array_distinct($up.principal.process.file.full_path)
+  condition:
+    $lis and $acc and $up
+}

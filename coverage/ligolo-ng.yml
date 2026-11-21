@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: ligolo-ng
+analyzed_revision: e543732f4be6dc899096ae322ae620bf010bfbfc
+inventory_method: complete agent-side Go package and protocol request-type reconciliation (every HandleConn branch mapped)
+inventory_complete: true
+inventory_evidence: [reports/ligolo-ng/source-analysis.md]
+excluded_paths:
+  - { path: cmd/proxy, reason: operator proxy runs on attacker infrastructure; read only to interpret agent requests }
+  - { path: pkg/proxy, reason: operator proxy TUN and netstack on attacker infrastructure }
+  - { path: pkg/controller, reason: operator listener control plane }
+  - { path: web, reason: operator web UI }
+  - { path: pkg/utils/codenames, reason: proxy-side naming word lists with no agent behavior }
+  - { path: tests-docs-build, reason: "*_test.go, doc/ and Makefile are non-deployed" }
+procedures:
+  - { id: LG-P01, name: outbound tunnel transport and reconnect, telemetry_status: assessed, detection_status: detected, detection_rules: [ligolo_tunnel_process_internal_fanout, ligolo_websocket_default_user_agent, ligolo_agent_command_line_trust_flags] }
+  - { id: LG-P02, name: bind mode inbound tunnel, telemetry_status: assessed, detection_status: detected, detection_rules: [ligolo_bind_listener_internal_fanout, ligolo_process_internal_admin_port_sweep] }
+  - { id: LG-P03, name: host and interface reporting, telemetry_status: not_observable, detection_status: not_observable, detection_rules: [], compensating_signal: "os.Hostname, user.Current and net.Interfaces produce no standard telemetry; use the tunnel and fan-out signals" }
+  - { id: LG-P04, name: TCP and UDP pivot connections, telemetry_status: assessed, detection_status: detected, detection_rules: [ligolo_tunnel_process_internal_fanout, ligolo_bind_listener_internal_fanout, ligolo_process_internal_admin_port_sweep] }
+  - { id: LG-P05, name: agent-host loopback access via magic range, telemetry_status: assessed, detection_status: detected, detection_rules: [ligolo_tunnel_process_internal_fanout, ligolo_bind_listener_internal_fanout] }
+  - { id: LG-P06, name: ICMP host discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [ligolo_agent_ping_probe_children] }
+  - { id: LG-P07, name: agent-side listeners for reverse forwarding and chaining, telemetry_status: assessed, detection_status: detected, detection_rules: [ligolo_agent_listener_with_tunnel_egress] }
+  - { id: LG-P08, name: teardown and agent kill, telemetry_status: not_observable, detection_status: not_observable, detection_rules: [], compensating_signal: "process termination and socket close are generic; correlate with prior fan-out alerts" }
+  - { id: LG-P09, name: TLS trust configuration, telemetry_status: assessed, detection_status: detected, detection_rules: [ligolo_agent_command_line_trust_flags], notes: "observable through the compiled flag grammar on the process command line (LG-DR-11); TLS metadata is a network compensating signal" }
+completion: { total_procedures: 9, detected: 7, not_observable: 2, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

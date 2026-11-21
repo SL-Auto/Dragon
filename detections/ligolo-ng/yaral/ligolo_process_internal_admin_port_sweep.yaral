@@ -1,0 +1,42 @@
+rule ligolo_process_internal_admin_port_sweep {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one unverified process connecting to many distinct internal hosts on administrative service ports within 10 minutes, without requiring a visible tunnel leg. It compensates for pivots whose upstream is an internal proxy, a chained agent or an inbound session that the parser cannot orient."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "A tunnelled sweep is completed by the agent process itself, so it appears as one process reaching many internal hosts on remote-administration ports. Without the tunnel leg this also matches unapproved scanners, hence medium."
+    procedure_ids = "LG-P02,LG-P04"
+    log_source_prerequisites = "Process-attributed OUTBOUND NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with destination IP and port, host and stable process ID; optional signature verification status."
+    false_positives = "Unapproved or unsigned inventory, vulnerability and monitoring scanners and custom administration scripts; approve scanner images and hosts."
+    references = "reports/ligolo-ng/source-analysis.md#procedure-analysis; public-rules/comparisons/ligolo-ng/ligolo_tunnel_process_internal_fanout.md; reviews/ligolo-ng/detection-review.md#lg-dr-10"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized flow fixtures of one process reaching 30 or more internal hosts on administrative ports, and baseline approved scanners before enabling."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/ligolo-ng/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.network.direction = "OUTBOUND"
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $pid
+    (
+      $e.target.port = 21 or $e.target.port = 22 or $e.target.port = 23 or $e.target.port = 135 or
+      $e.target.port = 139 or $e.target.port = 445 or $e.target.port = 3389 or $e.target.port = 5985 or
+      $e.target.port = 5986
+    )
+    (
+      net.ip_in_range_cidr($e.target.ip, "10.0.0.0/8") or
+      net.ip_in_range_cidr($e.target.ip, "172.16.0.0/12") or
+      net.ip_in_range_cidr($e.target.ip, "192.168.0.0/16") or
+      net.ip_in_range_cidr($e.target.ip, "fc00::/7")
+    )
+    $e.principal.process.file.signature_info.verification_status != "VERIFIED"
+  match:
+    $host, $pid over 10m
+  outcome:
+    $internal_hosts = count_distinct($e.target.ip)
+    $ports = array_distinct($e.target.port)
+    $process = array_distinct($e.principal.process.file.full_path)
+  condition:
+    $e and $internal_hosts >= 30
+}

@@ -1,0 +1,40 @@
+title: "Detects HTTP requests carrying Ligolo-ng's hard-coded default WebSocket User-Agent (Chrome 103 on Windows 10 x64) from a source that is not a browser process. Current browsers auto-update far beyond Chrome 103, so this static string is anomalous."
+name: ligolo_websocket_default_user_agent_base
+status: experimental
+description: "Detects HTTP requests carrying Ligolo-ng's hard-coded default WebSocket User-Agent (Chrome 103 on Windows 10 x64) from a source that is not a browser process. Current browsers auto-update far beyond Chrome 103, so this static string is anomalous."
+source_yaral: "detections/ligolo-ng/yaral/ligolo_websocket_default_user_agent.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, source_ip, user_agent, target_host, process_path); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/ligolo-ng/source-analysis.md#evidence; reviews/ligolo-ng/detection-review.md"
+procedure_ids: "LG-P01"
+log_source_prerequisites: "Web proxy, NDR or EDR NETWORK_HTTP events with the User-Agent header and source host or IP; the initiating process image where available."
+logsource:
+  category: proxy
+detection:
+  sel:
+    event_type: "NETWORK_HTTP"
+    user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+  filter0:
+    process_path|re: "(?i)\\\\(chrome|msedge|brave|opera|vivaldi|firefox)\\.exe$"
+  condition: sel and not filter0
+falsepositives:
+  - "Legacy embedded browsers or kiosk devices pinned to Chrome 103, and scripts or tools that copy this User-Agent."
+level: low
+---
+title: "Detects HTTP requests carrying Ligolo-ng's hard-coded default WebSocket User-Agent (Chrome 103 on Windows 10 x64) from a source that is not a browser process. Current browsers auto-update far beyond Chrome 103, so this static string is anomalous."
+name: ligolo_websocket_default_user_agent
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - ligolo_websocket_default_user_agent_base
+  group-by:
+    - source_ip
+  timespan: 60m
+  condition:
+    gte: 1
+level: low

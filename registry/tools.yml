@@ -113,11 +113,12 @@ tools:
     name: Ligolo-ng
     aliases: []
     category: proxy
-    status: triaged
-    source_code: { availability: public, repository: https://github.com/nicocha30/ligolo-ng, analyzed_revision: unknown }
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/nicocha30/ligolo-ng, analyzed_revision: e543732f4be6dc899096ae322ae620bf010bfbfc }
     first_seen: unknown
-    last_reviewed: 2026-08-15
-    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+    last_reviewed: 2026-11-21
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: reports/ligolo-ng/source-analysis.md }, { path: coverage/ligolo-ng.yml }, { path: detections/ligolo-ng/ }, { path: reviews/ligolo-ng/detection-review.md }, { path: telemetry/ligolo-ng.md }, { path: public-rules/comparisons/ligolo-ng/ }]
+    notes: "Comprehensive for the pinned agent source (every protocol request type mapped); the operator proxy is excluded as attacker infrastructure. Detections and translations remain experimental pending tenant field mapping and fixture validation."
   - id: evilginx2
     name: Evilginx2
     aliases: []

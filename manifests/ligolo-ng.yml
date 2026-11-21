@@ -1,27 +1,42 @@
 schema_version: 1
 tool_id: ligolo-ng
 name: "Ligolo-ng"
-lifecycle_status: triaged
-analyzed_revision: "unknown"
+lifecycle_status: analyzed
+analyzed_revision: "e543732f4be6dc899096ae322ae620bf010bfbfc"
 context_entry_points:
   registry: registry/tools.yml
+  summary: summaries/ligolo-ng.md
+  coverage: coverage/ligolo-ng.yml
+  report: reports/ligolo-ng/source-analysis.md
+  telemetry: telemetry/ligolo-ng.md
 counts:
-  procedures: 0
-  canonical_rules: 0
-  spl_translations: 0
-  kql_translations: 0
-  sql_translations: 0
-  eql_translations: 0
-  sigma_translations: 0
+  procedures: 9
+  canonical_rules: 7
+  spl_translations: 7
+  kql_translations: 7
+  sql_translations: 7
+  eql_translations: 7
+  sigma_translations: 7
 completion_states:
-  source_analysis: incomplete
-  canonical_detection: not_started
-  telemetry_reconciliation: not_started
-  secondary_translation: not_started
-  rule_validation_labels: "not_applicable"
+  source_analysis: complete
+  canonical_detection: complete
+  telemetry_reconciliation: complete_for_experimental_rules
+  secondary_translation: draft_complete
+  rule_validation_labels: "7 needs_validation"
 artifact_hashes:
-  registry: 40233cf4546b292673c0f25102756a53b0bbb16961b625397c0cd25fff81e592
+  registry: 3762b7b0bfd0d49924b4d34e2d434d34022bc537838176ec99394e7df9f47ae2
+  coverage: c5c76fd78eb8b64f7e2732f667be5556ca911e531047b11da04f106589f7c696
+  report: cf86779698a4ee575cde0573d52c28434f83be9c73785df88165b4314c9c1f2f
+  telemetry: d04468ce7501718a2fe4e2f1cea773a47110ff38842b0b68c39f9eaba8040c47
+  detection_review: eea038f3d08dcd525f55439cfbddb2ef8f5277f3633f4b82aa99019d3b292fc4
+  translation_review: c6db50e9bdbc98541c6591ddcee48b3c09a8c564d88a9ebfed9be28b6870c46a
 rules:
-  []
+  - { name: ligolo_agent_command_line_trust_flags, severity: high, procedures: "LG-P01,LG-P09", dependency: dependencies/ligolo-ng/ligolo_agent_command_line_trust_flags.yml, canonical_sha256: 5eeab19c362dcb45dabfdd0862ab9220b2a472b145e90f54ed2a78ec7814dd2c }
+  - { name: ligolo_agent_listener_with_tunnel_egress, severity: medium, procedures: "LG-P07", dependency: dependencies/ligolo-ng/ligolo_agent_listener_with_tunnel_egress.yml, canonical_sha256: cc94941e54cdd003b5fb857a7903b21d39da5f4f409de8276a8c31571138e053 }
+  - { name: ligolo_agent_ping_probe_children, severity: high, procedures: "LG-P06", dependency: dependencies/ligolo-ng/ligolo_agent_ping_probe_children.yml, canonical_sha256: 74fdfae3154c99992c9c5d3000efe83ab47d15e96c94b9adebcbc5dc74f98ff9 }
+  - { name: ligolo_bind_listener_internal_fanout, severity: high, procedures: "LG-P02,LG-P04,LG-P05", dependency: dependencies/ligolo-ng/ligolo_bind_listener_internal_fanout.yml, canonical_sha256: e6cb07a9f58eaa22e554ed3f71bab6aa9a152e4b8e9f61ce260989c35db1b81e }
+  - { name: ligolo_process_internal_admin_port_sweep, severity: medium, procedures: "LG-P02,LG-P04", dependency: dependencies/ligolo-ng/ligolo_process_internal_admin_port_sweep.yml, canonical_sha256: f269328add65e345b73fc2e3669ea265cba8b536a512815c11328cf074578bd4 }
+  - { name: ligolo_tunnel_process_internal_fanout, severity: high, procedures: "LG-P01,LG-P04,LG-P05", dependency: dependencies/ligolo-ng/ligolo_tunnel_process_internal_fanout.yml, canonical_sha256: ea49c324ec74172123956c8573e684bafb2a43154a91591bc2bfea4cb3118814 }
+  - { name: ligolo_websocket_default_user_agent, severity: low, procedures: "LG-P01", dependency: dependencies/ligolo-ng/ligolo_websocket_default_user_agent.yml, canonical_sha256: d543b80870fbe5923e1cfbef62fdf798d19cf77c4484b9e5adf5108f96093b04 }
 unresolved:
   source_blockers: 0

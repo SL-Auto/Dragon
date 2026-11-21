@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: ligolo-ng
+rule_name: ligolo_process_internal_admin_port_sweep
+canonical_path: detections/ligolo-ng/yaral/ligolo_process_internal_admin_port_sweep.yaral
+canonical_sha256: f269328add65e345b73fc2e3669ea265cba8b536a512815c11328cf074578bd4
+description: "Detects one unverified process connecting to many distinct internal hosts on administrative service ports within 10 minutes, without requiring a visible tunnel leg. It compensates for pivots whose upstream is an internal proxy, a chained agent or an inbound session that the parser cannot orient."
+severity: medium
+procedure_ids: ["LG-P02", "LG-P04"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed OUTBOUND NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with destination IP and port, host and stable process ID; optional signature verification status."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.file.full_path", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id", "target.ip", "target.port"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Unapproved or unsigned inventory, vulnerability and monitoring scanners and custom administration scripts; approve scanner images and hosts."
+references: "reports/ligolo-ng/source-analysis.md#procedure-analysis; public-rules/comparisons/ligolo-ng/ligolo_tunnel_process_internal_fanout.md; reviews/ligolo-ng/detection-review.md#lg-dr-10"
+translations:
+  spl: { path: "detections/ligolo-ng/spl/ligolo_process_internal_admin_port_sweep.spl", sha256: 3a32b396a2da0778e9c2076e9cc85709ac5bfd0dc79b9a5e334438904e620b36, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/ligolo-ng/kql/ligolo_process_internal_admin_port_sweep.kql", sha256: 9367b57ea885c82b6a4d52b8621a31abc7a799fdf18a134ae0b51c7b916fbfc2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/ligolo-ng/sql/ligolo_process_internal_admin_port_sweep.sql", sha256: 173879b76fb5cd02fc7a50107c2925bda83f6ff5daa581f60a1ff68b76de6bee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/ligolo-ng/eql/ligolo_process_internal_admin_port_sweep.eql", sha256: baa8b91fc14d232d8e8335b154323fb5fcf8f7f4672c8a215fe82fdcd6897cb1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/ligolo-ng/sigma/ligolo_process_internal_admin_port_sweep.yml", sha256: a1489890fc5aba99d88115160d592283bd48cfb622cce80b14dfb920c3289da9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

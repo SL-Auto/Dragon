@@ -1,0 +1,30 @@
+rule ligolo_websocket_default_user_agent {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects HTTP requests carrying Ligolo-ng's hard-coded default WebSocket User-Agent (Chrome 103 on Windows 10 x64) from a source that is not a browser process. Current browsers auto-update far beyond Chrome 103, so this static string is anomalous."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "LOW"
+    severity_rationale = "The string is the agent default and stale, but the operator can change it with one flag and other tools may reuse it. It is useful as a corroborating signal, not a standalone verdict."
+    procedure_ids = "LG-P01"
+    log_source_prerequisites = "Web proxy, NDR or EDR NETWORK_HTTP events with the User-Agent header and source host or IP; the initiating process image where available."
+    false_positives = "Legacy embedded browsers or kiosk devices pinned to Chrome 103, and scripts or tools that copy this User-Agent."
+    references = "reports/ligolo-ng/source-analysis.md#evidence; reviews/ligolo-ng/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Search historical proxy logs for the exact string to measure benign prevalence before enabling; replay a sanitized WebSocket upgrade fixture with the default header."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/ligolo-ng/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_HTTP"
+    $e.network.http.user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+    not re.regex($e.principal.process.file.full_path, `(?i)\\(chrome|msedge|brave|opera|vivaldi|firefox)\.exe$`)
+    $e.principal.ip = $source
+  match:
+    $source over 1h
+  outcome:
+    $destinations = array_distinct($e.target.hostname)
+    $processes = array_distinct($e.principal.process.file.full_path)
+    $requests = count($e.metadata.id)
+  condition:
+    $e
+}

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: ligolo-ng
+rule_name: ligolo_agent_ping_probe_children
+canonical_path: detections/ligolo-ng/yaral/ligolo_agent_ping_probe_children.yaral
+canonical_sha256: 74fdfae3154c99992c9c5d3000efe83ab47d15e96c94b9adebcbc5dc74f98ff9
+description: "Detects a non-shell parent process spawning the system ping command with Ligolo-ng's exact single-probe argument shape (Windows: ping /n 1 /w 3000 <target>; other platforms: ping -c 1 -W 3 <target>) against three or more targets. This is the unprivileged fallback of the agent's ICMP host-discovery handler."
+severity: high
+procedure_ids: ["LG-P06"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, or EDR, or Linux process execution) with the child command line, the parent image path, host and parent process ID."
+atomic_event_types: ["PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.file.full_path", "principal.process.product_specific_process_id", "target.process.command_line"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Monitoring agents or custom services that shell out to ping with the same single-probe arguments; approve their parent images after validation."
+references: "reports/ligolo-ng/source-analysis.md#procedure-analysis; reviews/ligolo-ng/detection-review.md"
+translations:
+  spl: { path: "detections/ligolo-ng/spl/ligolo_agent_ping_probe_children.spl", sha256: 9f38f5ef243a4bc97eceb2331b606d0d80e6a3129d847a82e7bb29019ab0edfd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/ligolo-ng/kql/ligolo_agent_ping_probe_children.kql", sha256: f810119a38dfb1732ddeeda4f58a1e204cbdd1392bc361b80959759f7cced837, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/ligolo-ng/sql/ligolo_agent_ping_probe_children.sql", sha256: 482242929ede21329605fc555ef4ad88508180b706c68c4bd575371e97df600b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/ligolo-ng/eql/ligolo_agent_ping_probe_children.eql", sha256: cb603a85637ca7160c4a7ee614e7f4ff6850c7e92087703a43d42c510603ac35, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/ligolo-ng/sigma/ligolo_agent_ping_probe_children.yml", sha256: 7b2a641b9f8e760ac282313337dd8e02cc2fca7ac953330f546e1537c76362d7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

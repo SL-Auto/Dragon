@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: ligolo-ng
+rule_name: ligolo_agent_listener_with_tunnel_egress
+canonical_path: detections/ligolo-ng/yaral/ligolo_agent_listener_with_tunnel_egress.yaral
+canonical_sha256: cc94941e54cdd003b5fb857a7903b21d39da5f4f409de8276a8c31571138e053
+description: "Detects a process that opens a listening socket and accepts an inbound connection while also holding an outbound connection to a non-internal destination. This is the host effect of an agent-side listener used for reverse port forwarding or chaining a second agent."
+severity: medium
+procedure_ids: ["LG-P07"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry with LISTEN (or bind) and INBOUND accept events for the local process, and OUTBOUND events with destination IP, host and stable process ID."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.ip", "principal.process.file.full_path", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id", "target.ip", "target.port"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Peer-to-peer clients, collaboration and conferencing software, remote-support tools, developer servers and update caches; approve by signer and image path."
+references: "reports/ligolo-ng/source-analysis.md#procedure-analysis; reviews/ligolo-ng/detection-review.md"
+translations:
+  spl: { path: "detections/ligolo-ng/spl/ligolo_agent_listener_with_tunnel_egress.spl", sha256: d2e89a794f8f0abec1110fee88aee0aff29df8e46ef14f7aa855eda17ec424fd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/ligolo-ng/kql/ligolo_agent_listener_with_tunnel_egress.kql", sha256: 207425f3d1b53d14227ee7f9e18cece166d4addf5654524c220c78a1ce340fde, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/ligolo-ng/sql/ligolo_agent_listener_with_tunnel_egress.sql", sha256: a544108ba88432a404560a3790e11e0625f35b3bcc9189b20a625b9d7a2d5358, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/ligolo-ng/eql/ligolo_agent_listener_with_tunnel_egress.eql", sha256: 17672d9367cf104b54778c5762b1224ff45bb8572e1db1d7a2f452d16c50271e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/ligolo-ng/sigma/ligolo_agent_listener_with_tunnel_egress.yml", sha256: 287aeee436117ea93dffc13cc54bbf84cf5fe08d64dc8e9d5d5264d429982066, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -25,6 +25,8 @@ All notable agent capabilities and workflow changes are recorded here. The struc
 
 ### Added
 
+- `scripts/native_translations/specs_ligolo.py` renders native translations for single-event Ligolo-ng rules. `translate_lib.py` now maps `command_line`, `parent_process_path`, `parent_process_id` and `user_agent` to ECS.
+
 - `scripts/native_translations/`: a deterministic renderer and per-rule correlation specs that regenerate native secondary translations. KQL/SQL get exact ordered joins, SPL a stats correlation, EQL `sequence ... by` with per-event keys, and Sigma `temporal_ordered`/`value_count` correlations with aliases. Covers 29 rules that previously had no translations.
 - Historical run logs and action journals were migrated to the validated format at the owner's request. Originals are preserved in `runs/_pre-migration-20261121/`; receipts were cited only where the local receipt store holds them.
 

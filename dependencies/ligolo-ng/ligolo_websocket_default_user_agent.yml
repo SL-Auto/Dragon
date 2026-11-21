@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: ligolo-ng
+rule_name: ligolo_websocket_default_user_agent
+canonical_path: detections/ligolo-ng/yaral/ligolo_websocket_default_user_agent.yaral
+canonical_sha256: d543b80870fbe5923e1cfbef62fdf798d19cf77c4484b9e5adf5108f96093b04
+description: "Detects HTTP requests carrying Ligolo-ng's hard-coded default WebSocket User-Agent (Chrome 103 on Windows 10 x64) from a source that is not a browser process. Current browsers auto-update far beyond Chrome 103, so this static string is anomalous."
+severity: low
+procedure_ids: ["LG-P01"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Web proxy, NDR or EDR NETWORK_HTTP events with the User-Agent header and source host or IP; the initiating process image where available."
+atomic_event_types: ["NETWORK_HTTP"]
+required_udm_fields: ["metadata.event_type", "metadata.id", "network.http.user_agent", "principal.ip", "principal.process.file.full_path", "target.hostname"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Legacy embedded browsers or kiosk devices pinned to Chrome 103, and scripts or tools that copy this User-Agent."
+references: "reports/ligolo-ng/source-analysis.md#evidence; reviews/ligolo-ng/detection-review.md"
+translations:
+  spl: { path: "detections/ligolo-ng/spl/ligolo_websocket_default_user_agent.spl", sha256: 1ca5f9d78536aa8e062a49505114bffa84bfa3ef53a95c23dfc1c905ed9c668f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/ligolo-ng/kql/ligolo_websocket_default_user_agent.kql", sha256: 083e6b8ba925dc42391150d098348688d0f52d20b7655c3b412a7841c6d4bdb3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/ligolo-ng/sql/ligolo_websocket_default_user_agent.sql", sha256: 6641cffe1b57d3778c16edc89dcc6eb331a1532f0dec2ee19a52696312df7eca, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/ligolo-ng/eql/ligolo_websocket_default_user_agent.eql", sha256: 697196a835dc14fd4d8f3f15651e6cb093fafa5449b1641f912da921eb66488f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/ligolo-ng/sigma/ligolo_websocket_default_user_agent.yml", sha256: 91a46120a7a8b906c082f882ede23575b452dd0160d35eaa9afe5f4938a20834, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

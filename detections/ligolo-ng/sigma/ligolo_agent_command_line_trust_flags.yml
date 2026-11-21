@@ -1,0 +1,41 @@
+title: "Detects a process started with the agent's compiled flag grammar: a -connect target together with -ignore-cert or -accept-fingerprint followed by a 64-hex-character SHA-256 value. Flag names are fixed in the agent binary and survive renaming the executable."
+name: ligolo_agent_command_line_trust_flags_base
+status: experimental
+description: "Detects a process started with the agent's compiled flag grammar: a -connect target together with -ignore-cert or -accept-fingerprint followed by a 64-hex-character SHA-256 value. Flag names are fixed in the agent binary and survive renaming the executable."
+source_yaral: "detections/ligolo-ng/yaral/ligolo_agent_command_line_trust_flags.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, process_path, command_line); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/ligolo-ng/source-analysis.md#evidence; public-rules/comparisons/ligolo-ng/ligolo_agent_listener_with_tunnel_egress.md; reviews/ligolo-ng/detection-review.md#lg-dr-11"
+procedure_ids: "LG-P01,LG-P09"
+log_source_prerequisites: "PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, Linux auditd EXECVE or EDR) with the full command line, image path and host."
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  sel:
+    event_type: "PROCESS_LAUNCH"
+    command_line|re: "(?i)(^|\\s)-{1,2}connect(\\s+|=)\"?\\S+"
+    command_line|re: "(?i)(^|\\s)-{1,2}(ignore-cert(\\s|=|$)|accept-fingerprint(\\s+|=)\"?[0-9a-f]{64})"
+  condition: sel
+falsepositives:
+  - "Other tools that happen to share both -connect and -ignore-cert or -accept-fingerprint flags; authorized red-team exercises."
+level: high
+---
+title: "Detects a process started with the agent's compiled flag grammar: a -connect target together with -ignore-cert or -accept-fingerprint followed by a 64-hex-character SHA-256 value. Flag names are fixed in the agent binary and survive renaming the executable."
+name: ligolo_agent_command_line_trust_flags
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - ligolo_agent_command_line_trust_flags_base
+  group-by:
+    - hostname
+    - process_path
+  timespan: 60m
+  condition:
+    gte: 1
+level: high

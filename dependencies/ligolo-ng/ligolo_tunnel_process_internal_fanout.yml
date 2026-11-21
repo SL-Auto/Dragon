@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: ligolo-ng
+rule_name: ligolo_tunnel_process_internal_fanout
+canonical_path: detections/ligolo-ng/yaral/ligolo_tunnel_process_internal_fanout.yaral
+canonical_sha256: ea49c324ec74172123956c8573e684bafb2a43154a91591bc2bfea4cb3118814
+description: "Detects one process that holds an outbound connection to a non-internal destination (the tunnel) while connecting to many distinct internal or loopback destinations or ports, which is the host effect of a pivot agent relaying operator traffic and scans into the network."
+severity: high
+procedure_ids: ["LG-P01", "LG-P04", "LG-P05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR equivalent) with direction, destination IP and port, host and a stable process ID; optional signature verification status for triage."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.file.full_path", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id", "target.ip", "target.port"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Unsigned or unverified browsers, collaboration clients, management agents, vulnerability scanners and backup software that combine internet egress with broad internal connectivity. Verified-signed images are excluded; the exclusion fails open when signature enrichment is absent (LG-DR-02)."
+references: "reports/ligolo-ng/source-analysis.md#procedure-analysis; reviews/ligolo-ng/detection-review.md"
+translations:
+  spl: { path: "detections/ligolo-ng/spl/ligolo_tunnel_process_internal_fanout.spl", sha256: ce32f7cf0f7d4c102a8383f2e077690c9b4733572aceb9de93193216d093a77a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/ligolo-ng/kql/ligolo_tunnel_process_internal_fanout.kql", sha256: 7e0f986d2c5f55c3bf753716fb0e708fc30fe76a9bb2041fe45e98e475a1345b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/ligolo-ng/sql/ligolo_tunnel_process_internal_fanout.sql", sha256: 1337bfbe1111ed25e5eace57765ddb0ea764121ec718975ddf91f9ceb4aa14b3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/ligolo-ng/eql/ligolo_tunnel_process_internal_fanout.eql", sha256: caad80b762932cb5d1ddfb6bcffb377572472da5cc57bfb48fa7918654d85d33, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/ligolo-ng/sigma/ligolo_tunnel_process_internal_fanout.yml", sha256: 29969218ad56b59455c90a034fcbd05e9c6de9fcda7eb915764d72b7dcf7d580, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

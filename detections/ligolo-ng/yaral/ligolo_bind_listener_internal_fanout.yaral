@@ -1,0 +1,50 @@
+rule ligolo_bind_listener_internal_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a process that accepts an inbound connection from a non-internal source and then connects to many distinct internal or loopback destinations or ports. This is the bind-mode pivot, where the operator connects into the agent instead of the agent dialing out."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "An inbound session from outside followed by broad internal fan-out from the same process is the bind-mode equivalent of the outbound pivot and is uncommon for ordinary listeners."
+    procedure_ids = "LG-P02,LG-P04,LG-P05"
+    log_source_prerequisites = "Process-attributed NETWORK_CONNECTION telemetry with INBOUND direction and remote source IP for the accept (principal.process is the local listening process, per repository convention), plus OUTBOUND events with destination IP and port, host and stable process ID."
+    false_positives = "Internet-facing reverse proxies, VPN concentrators, load balancers and jump services that accept external clients and forward to internal servers; approve by asset role."
+    references = "reports/ligolo-ng/source-analysis.md#procedure-analysis; reviews/ligolo-ng/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized fixtures of one process with an external inbound accept followed by ten or more internal destinations; confirm the parser's inbound field orientation before enabling."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/ligolo-ng/detection-review.md"
+  events:
+    $acc.metadata.event_type = "NETWORK_CONNECTION"
+    $acc.network.direction = "INBOUND"
+    $acc.principal.hostname = $host
+    $acc.principal.process.product_specific_process_id = $pid
+    not net.ip_in_range_cidr($acc.principal.ip, "10.0.0.0/8")
+    not net.ip_in_range_cidr($acc.principal.ip, "172.16.0.0/12")
+    not net.ip_in_range_cidr($acc.principal.ip, "192.168.0.0/16")
+    not net.ip_in_range_cidr($acc.principal.ip, "127.0.0.0/8")
+    not net.ip_in_range_cidr($acc.principal.ip, "fc00::/7")
+    not net.ip_in_range_cidr($acc.principal.ip, "::1/128")
+
+    $in.metadata.event_type = "NETWORK_CONNECTION"
+    $in.network.direction = "OUTBOUND"
+    $in.principal.hostname = $host
+    $in.principal.process.product_specific_process_id = $pid
+    (
+      net.ip_in_range_cidr($in.target.ip, "10.0.0.0/8") or
+      net.ip_in_range_cidr($in.target.ip, "172.16.0.0/12") or
+      net.ip_in_range_cidr($in.target.ip, "192.168.0.0/16") or
+      net.ip_in_range_cidr($in.target.ip, "127.0.0.0/8") or
+      net.ip_in_range_cidr($in.target.ip, "fc00::/7") or
+      net.ip_in_range_cidr($in.target.ip, "::1/128")
+    )
+  match:
+    $host, $pid over 15m
+  outcome:
+    $internal_destinations = count_distinct($in.target.ip)
+    $internal_ports = count_distinct($in.target.port)
+    $inbound_sources = array_distinct($acc.principal.ip)
+    $process = array_distinct($in.principal.process.file.full_path)
+  condition:
+    $acc and $in and ($internal_destinations >= 10 or $internal_ports >= 10)
+}

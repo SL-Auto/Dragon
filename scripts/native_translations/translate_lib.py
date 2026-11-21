@@ -21,6 +21,8 @@ ECS_MAP = {
     "direction": "network.direction", "dns_query": "dns.question.name", "dns_type": "dns.question.type",
     "registry_key": "registry.key", "registry_value": "registry.value", "integrity_level": "process.Ext.token.integrity_level_name",
     "source_ip": "source.ip", "service_name": "service.name", "logon_type": "labels.logon_type",
+    "command_line": "process.command_line", "parent_process_path": "process.parent.executable",
+    "parent_process_id": "process.parent.entity_id", "user_agent": "user_agent.original",
 }
 
 

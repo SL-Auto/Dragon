@@ -1,0 +1,31 @@
+rule ligolo_agent_ping_probe_children {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a non-shell parent process spawning the system ping command with Ligolo-ng's exact single-probe argument shape (Windows: ping /n 1 /w 3000 <target>; other platforms: ping -c 1 -W 3 <target>) against three or more targets. This is the unprivileged fallback of the agent's ICMP host-discovery handler."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "The argument vector is hard-coded in the agent, one child is spawned per probed host, and interactive or scripted ping normally descends from a shell. A non-shell parent issuing repeated single-probe pings is a specific host-discovery signal."
+    procedure_ids = "LG-P06"
+    log_source_prerequisites = "PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, or EDR, or Linux process execution) with the child command line, the parent image path, host and parent process ID."
+    false_positives = "Monitoring agents or custom services that shell out to ping with the same single-probe arguments; approve their parent images after validation."
+    references = "reports/ligolo-ng/source-analysis.md#procedure-analysis; reviews/ligolo-ng/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized process-creation fixtures of a non-shell parent spawning ping with the exact argument shape against three targets, plus interactive shell pings and monitoring-agent pings as negatives."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/ligolo-ng/detection-review.md"
+  events:
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    $p.principal.process.product_specific_process_id = $parent
+    re.regex($p.target.process.command_line, `(?i)^"?([a-z]:\\[^"]*\\)?ping(\.exe)?"?\s+/n\s+1\s+/w\s+3000\s+\S+\s*$|^(\S*/)?ping\s+-c\s+1\s+-W\s+3\s+\S+\s*$`)
+    not re.regex($p.principal.process.file.full_path, `(?i)(\\(cmd|powershell|pwsh|wscript|cscript)\.exe|/(ba|z|da|k|c|tc|fi)?sh)$`)
+    $p.target.process.command_line = $command
+  match:
+    $host, $parent over 10m
+  outcome:
+    $probes = count_distinct($command)
+    $parent_image = array_distinct($p.principal.process.file.full_path)
+  condition:
+    $p and $probes >= 3
+}

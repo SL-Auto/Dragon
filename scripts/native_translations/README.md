@@ -8,6 +8,7 @@ These scripts regenerate hand-specified secondary translations (SPL, KQL, SQL, E
 | `specs_csb.py` | 17 Cobalt Strike `*_compensating_signal` rules |
 | `specs_ri.py` | 4 Rubeus and 3 Impacket rules added 2026-08-16 |
 | `bloodhound_compensating.py` | 5 BloodHound compensating rules (hand-authored per backend) |
+| `specs_ligolo.py` | 4 single-event Ligolo-ng rules (the 3 multi-event correlations use the generator) |
 
 Usage, from any directory (the scripts do not execute detection content):
 
@@ -15,6 +16,7 @@ Usage, from any directory (the scripts do not execute detection content):
 python -I scripts/native_translations/specs_csb.py
 python -I scripts/native_translations/specs_ri.py
 python -I scripts/native_translations/bloodhound_compensating.py
+python -I scripts/native_translations/specs_ligolo.py
 ```
 
 When a canonical rule in these sets changes:

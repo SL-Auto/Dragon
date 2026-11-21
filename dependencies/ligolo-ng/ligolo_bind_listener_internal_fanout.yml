@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: ligolo-ng
+rule_name: ligolo_bind_listener_internal_fanout
+canonical_path: detections/ligolo-ng/yaral/ligolo_bind_listener_internal_fanout.yaral
+canonical_sha256: e6cb07a9f58eaa22e554ed3f71bab6aa9a152e4b8e9f61ce260989c35db1b81e
+description: "Detects a process that accepts an inbound connection from a non-internal source and then connects to many distinct internal or loopback destinations or ports. This is the bind-mode pivot, where the operator connects into the agent instead of the agent dialing out."
+severity: high
+procedure_ids: ["LG-P02", "LG-P04", "LG-P05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry with INBOUND direction and remote source IP for the accept (principal.process is the local listening process, per repository convention), plus OUTBOUND events with destination IP and port, host and stable process ID."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.ip", "principal.process.file.full_path", "principal.process.product_specific_process_id", "target.ip", "target.port"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Internet-facing reverse proxies, VPN concentrators, load balancers and jump services that accept external clients and forward to internal servers; approve by asset role."
+references: "reports/ligolo-ng/source-analysis.md#procedure-analysis; reviews/ligolo-ng/detection-review.md"
+translations:
+  spl: { path: "detections/ligolo-ng/spl/ligolo_bind_listener_internal_fanout.spl", sha256: 99a212d0a4dafef57fb5139aa83f4dd43c3bfad4966e16dd23c3fcb3984c3add, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/ligolo-ng/kql/ligolo_bind_listener_internal_fanout.kql", sha256: c45b933b7cd56e1070758fa02a77af7f5dfb9e092251510c7fb8e21b909fcff4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/ligolo-ng/sql/ligolo_bind_listener_internal_fanout.sql", sha256: 373ddceaf6299e58891809022adc74afba448a7678ca547e08bc1148ffa86dc1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/ligolo-ng/eql/ligolo_bind_listener_internal_fanout.eql", sha256: 8840b5a6a371adc6a0e1e1af7082f7b0d92dce1833e66afefb931bd9125a7548, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/ligolo-ng/sigma/ligolo_bind_listener_internal_fanout.yml", sha256: 54cd6b5e975940cae1d68ed959f57082cfc34bc9fb0eca9520e9f596ab177434, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

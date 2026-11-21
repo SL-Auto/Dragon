@@ -1,0 +1,19 @@
+-- source_yaral: detections/ligolo-ng/yaral/ligolo_tunnel_process_internal_fanout.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: partial
+-- rule_name: ligolo_tunnel_process_internal_fanout
+-- severity: high
+-- procedure_ids: LG-P01,LG-P04,LG-P05
+-- description: Detects one process that holds an outbound connection to a non-internal destination (the tunnel) while connecting to many distinct internal or loopback destinations or ports, which is the host effect of a pivot agent relaying operator traffic and scans into the network.
+-- log_source_prerequisites: Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR equivalent) with direction, destination IP and port, host and a stable process ID; optional signature verification status for triage.
+-- false_positives: Unsigned or unverified browsers, collaboration clients, management agents, vulnerability scanners and backup software that combine internet egress with broad internal connectivity. Verified-signed images are excluded; the exclusion fails open when signature enrichment is absent (LG-DR-02).
+-- references: reports/ligolo-ng/source-analysis.md#procedure-analysis; reviews/ligolo-ng/detection-review.md
+-- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+-- schema_profile: schemas/normalized-sql.yml
+-- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).
+SELECT hostname, user_id, COUNT(*) AS event_count,
+       'ligolo_tunnel_process_internal_fanout' AS canonical_rule
+FROM normalized_events
+WHERE product_event_type IN ('NETWORK_CONNECTION') OR event_type IN ('NETWORK_CONNECTION')
+GROUP BY hostname, user_id
+HAVING COUNT(*) > 0;
