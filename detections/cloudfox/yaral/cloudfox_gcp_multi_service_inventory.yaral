@@ -1,0 +1,27 @@
+rule cloudfox_gcp_multi_service_inventory {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one GCP principal issuing list, get or search calls to ten or more distinct GCP services within 30 minutes, including Cloud Asset SearchAllResources and secret metadata listing."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Breadth across services is the signature of automated inventory; posture tools overlap."
+    procedure_ids = "CF-G02,CF-G06"
+    log_source_prerequisites = "GCP Cloud Audit Logs normalized with methodName in metadata.product_event_type, serviceName in target.application, resourceName in target.resource.name and principalEmail in principal.user.email_addresses; Data Access logs enabled for the inventoried services (coverage scales with enablement)."
+    false_positives = "Security Command Center, CSPM and asset-inventory service accounts."
+    references = "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized audit entries across ten services; record which services log Data Access in the tenant."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cloudfox/detection-review.md"
+  events:
+    re.regex($e.metadata.product_event_type, `(?i)\.(List|Get|Search|Aggregated)[A-Za-z]*$|\.(list|get|search|aggregatedList)$`)
+    $e.principal.user.email_addresses = $principal
+    $e.target.application = $service
+  match:
+    $principal over 30m
+  outcome:
+    $services = count_distinct($service)
+  condition:
+    $e and $services >= 10
+}

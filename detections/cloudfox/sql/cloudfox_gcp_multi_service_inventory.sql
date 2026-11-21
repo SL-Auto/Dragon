@@ -1,0 +1,20 @@
+-- source_yaral: detections/cloudfox/yaral/cloudfox_gcp_multi_service_inventory.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: high
+-- rule_name: cloudfox_gcp_multi_service_inventory
+-- severity: medium
+-- procedure_ids: CF-G02,CF-G06
+-- description: Detects one GCP principal issuing list, get or search calls to ten or more distinct GCP services within 30 minutes, including Cloud Asset SearchAllResources and secret metadata listing.
+-- log_source_prerequisites: GCP Cloud Audit Logs normalized with methodName in metadata.product_event_type, serviceName in target.application, resourceName in target.resource.name and principalEmail in principal.user.email_addresses; Data Access logs enabled for the inventoried services (coverage scales with enablement).
+-- false_positives: Security Command Center, CSPM and asset-inventory service accounts.
+-- references: reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md
+-- schema_profile: schemas/normalized-sql.yml
+-- field_mapping: normalized columns (product_event_type, principal_email, service_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+-- assumptions_and_gaps: Native filter, grouping by principal_email and threshold. Hop window approximated by scheduling every 10 minutes over the trailing 30 minutes. Regex and interval syntax are dialect-specific.
+-- Schema assumption: normalized_events with columns event_time, product_event_type, principal_email, service_name.
+SELECT principal_email, COUNT(DISTINCT service_name) AS matched_count, 'cloudfox_gcp_multi_service_inventory' AS canonical_rule
+FROM normalized_events
+WHERE event_time >= CURRENT_TIMESTAMP - INTERVAL '30' MINUTE
+  AND REGEXP_LIKE(product_event_type, '\.(List|Get|Search|Aggregated)[A-Za-z]*$|\.(list|get|search|aggregatedList)$', 'i')
+GROUP BY principal_email
+HAVING COUNT(DISTINCT service_name) >= 10;

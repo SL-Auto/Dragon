@@ -1,0 +1,39 @@
+title: "Detects one GCP principal reading IAM policies (getIamPolicy) on ten or more distinct resources within 30 minutes."
+name: cloudfox_gcp_iam_policy_read_fanout_base
+status: experimental
+description: "Detects one GCP principal reading IAM policies (getIamPolicy) on ten or more distinct resources within 30 minutes."
+source_yaral: "detections/cloudfox/yaral/cloudfox_gcp_iam_policy_read_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, principal_email, resource_name, service_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+procedure_ids: "CF-G01"
+log_source_prerequisites: "GCP Cloud Audit Logs normalized with methodName in metadata.product_event_type, serviceName in target.application, resourceName in target.resource.name and principalEmail in principal.user.email_addresses; ADMIN_READ Data Access logs enabled for Resource Manager, IAM and the relevant services."
+logsource:
+  category: gcp_audit
+  product: gcp
+detection:
+  sel:
+    product_event_type|re: "(?i)GetIamPolicy$"
+  condition: sel
+falsepositives:
+  - "Policy Analyzer, CSPM and IAM governance service accounts."
+level: medium
+---
+title: "Detects one GCP principal reading IAM policies (getIamPolicy) on ten or more distinct resources within 30 minutes."
+name: cloudfox_gcp_iam_policy_read_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - cloudfox_gcp_iam_policy_read_fanout_base
+  group-by:
+    - principal_email
+  timespan: 30m
+  condition:
+    field: resource_name
+    gte: 10
+level: medium

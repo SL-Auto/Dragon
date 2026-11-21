@@ -1,0 +1,34 @@
+schema_version: 1
+tool_id: cloudfox
+analyzed_revision: f65be085cde3768281c2dbafc57542a56ee12ebe
+inventory_method: every registered AWS, Azure and GCP command mapped to its extracted cloud API calls; victim-side audit-log effects analyzed
+inventory_complete: true
+inventory_evidence: [reports/cloudfox/source-analysis.md]
+excluded_paths:
+  - { path: "aws/cape.go aws/cape-tui.go (cape, tui)", reason: offline privilege-escalation graph analysis and terminal UI on the operator machine }
+  - { path: aws/pmapper.go, reason: reads local PMapper graph files; no victim-side effect }
+  - { path: aws/graph.go aws/graph, reason: local Cypher export of collected data }
+  - { path: gcp/commands/foxmapper.go, reason: reads local FoxMapper graph files }
+  - { path: all-checks, reason: orchestration of other commands only }
+  - { path: "*_test.go, test-data, misc, Makefile", reason: non-deployed }
+procedures:
+  - { id: CF-A01, name: AWS identity and organization context, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_aws_multi_service_enumeration_fanout] }
+  - { id: CF-A02, name: AWS IAM and trust enumeration, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_aws_multi_service_enumeration_fanout, cloudfox_aws_authorization_details_dump] }
+  - { id: CF-A03, name: AWS policy simulation, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_aws_policy_simulation_fanout] }
+  - { id: CF-A04, name: AWS multi-service inventory, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_aws_multi_service_enumeration_fanout] }
+  - { id: CF-A05, name: AWS secret-bearing configuration reads, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_aws_instance_userdata_bulk_read, cloudfox_aws_secret_bearing_config_sweep] }
+  - { id: CF-A06, name: AWS secret inventory metadata, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_aws_multi_service_enumeration_fanout] }
+  - { id: CF-A07, name: AWS CloudTrail AssumeRole history lookup, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_aws_programmatic_assumerole_history_lookup] }
+  - { id: CF-Z01, name: Azure tenant and subscription context, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_azure_arm_read_fanout] }
+  - { id: CF-Z02, name: Azure RBAC and directory users, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_azure_arm_read_fanout] }
+  - { id: CF-Z03, name: Azure resource inventory, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_azure_arm_read_fanout] }
+  - { id: CF-Z04, name: Azure secret-bearing reads, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_azure_app_settings_secret_list, cloudfox_azure_arm_read_fanout] }
+  - { id: CF-Z05, name: Azure storage container and blob listing, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_azure_storage_listing_fanout] }
+  - { id: CF-G01, name: GCP IAM and identity enumeration, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_gcp_iam_policy_read_fanout] }
+  - { id: CF-G02, name: GCP multi-service inventory, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_gcp_multi_service_inventory] }
+  - { id: CF-G03, name: GCP BigQuery data sampling, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_gcp_bigquery_select_star_sampling] }
+  - { id: CF-G04, name: GCP log-entry scanning, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_gcp_content_listing_fanout] }
+  - { id: CF-G05, name: GCP bucket object listing, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_gcp_content_listing_fanout] }
+  - { id: CF-G06, name: GCP secret inventory metadata, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_gcp_multi_service_inventory, cloudfox_gcp_secret_metadata_multi_project] }
+  - { id: CF-X01, name: CloudFox execution on a monitored endpoint, telemetry_status: assessed, detection_status: detected, detection_rules: [cloudfox_cli_module_grammar_execution] }
+completion: { total_procedures: 19, detected: 19, not_observable: 0, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

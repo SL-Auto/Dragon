@@ -1,0 +1,29 @@
+rule cloudfox_cli_module_grammar_execution {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a process launched with CloudFox's provider-plus-module argument grammar (for example aws outbound-assumed-roles, aws env-vars, azure tokencache, gcp hiddenadmins) on a monitored endpoint. The grammar survives renaming the binary and uses module names that do not collide with the AWS, Azure or gcloud CLIs."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "When the operator runs CloudFox from a compromised or monitored host, the launch itself is visible; the module names are specific to the tool's command tree in cli/aws.go, cli/azure.go and gcp/commands."
+    procedure_ids = "CF-X01"
+    log_source_prerequisites = "PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, Linux auditd EXECVE or EDR) with the full command line and image path."
+    false_positives = "Authorized cloud security assessments; internal wrappers that reuse CloudFox module names."
+    references = "reports/cloudfox/source-analysis.md#completeness-inventory; public-rules/comparisons/cloudfox/cloudfox_aws_authorization_details_dump.md; reviews/cloudfox/detection-review.md#cf-dr-12"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized command lines for each provider prefix and confirm AWS CLI, az and gcloud command lines do not match."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cloudfox/detection-review.md"
+  events:
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    re.regex($p.target.process.command_line, `(?i)(^|\s)(aws\s+(all-checks|access-keys|api-gw|env-vars|filesystems|iam-simulator|ecs-tasks|elastic-network-interfaces|network-ports|outbound-assumed-roles|principals|resource-trusts|role-trusts|workloads|cape|pmapper)|azure\s+(whoami|tokencache|rbac|automation)|gcp\s+(all-checks|hiddenadmins|privesc|lateralmovement|dataexfiltration|foxmapper|bucketenum|logenum|bigqueryenum|domainwidedelegation|workloadidentity))(\s|$)`)
+    $p.target.process.file.full_path = $image
+  match:
+    $host, $image over 1h
+  outcome:
+    $command_lines = array_distinct($p.target.process.command_line)
+    $users = array_distinct($p.principal.user.userid)
+  condition:
+    $p
+}

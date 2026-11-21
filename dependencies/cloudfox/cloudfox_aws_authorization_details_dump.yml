@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cloudfox
+rule_name: cloudfox_aws_authorization_details_dump
+canonical_path: detections/cloudfox/yaral/cloudfox_aws_authorization_details_dump.yaral
+canonical_sha256: 81c273dc4cc1a901dd64d5a9ed3fdb35f466213ade93e27343a951e6f14752b6
+description: "Detects iam:GetAccountAuthorizationDetails, which returns every user, group, role and policy in the account in one call."
+severity: medium
+procedure_ids: ["CF-A02"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid."
+atomic_event_types: ["GetAccountAuthorizationDetails"]
+required_udm_fields: ["metadata.id", "metadata.product_event_type", "metadata.product_name", "principal.ip", "principal.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "IAM governance, CSPM and backup tools; approve their role ARNs."
+references: "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+translations:
+  spl: { path: "detections/cloudfox/spl/cloudfox_aws_authorization_details_dump.spl", sha256: b38bad237c57bf1948244be3a66851ba49634d831a9721f7cc03130a7965155f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cloudfox/kql/cloudfox_aws_authorization_details_dump.kql", sha256: 6f0dddf1621acfdf0c53760d37fa98aacaf203ac2ca9eaca27ba955e00633d75, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cloudfox/sql/cloudfox_aws_authorization_details_dump.sql", sha256: bb94a33ee78e83aa76236ef3d851416e95d0db11e4fea0c1cd3d897069efd697, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cloudfox/eql/cloudfox_aws_authorization_details_dump.eql", sha256: 4e0fabe64cb1cf523276340ea8c3c41eee54e3390ab03477e7075b9bcb37067b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cloudfox/sigma/cloudfox_aws_authorization_details_dump.yml", sha256: 0800dda3183676166f9c55122bc12f06cdc6e0902fe0932657d915591257508b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

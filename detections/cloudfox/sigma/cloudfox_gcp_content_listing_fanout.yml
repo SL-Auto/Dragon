@@ -1,0 +1,39 @@
+title: "Detects one GCP principal listing log entries or bucket objects across five or more distinct logs or buckets within 30 minutes, the content-discovery sweep that precedes credential pattern matching."
+name: cloudfox_gcp_content_listing_fanout_base
+status: experimental
+description: "Detects one GCP principal listing log entries or bucket objects across five or more distinct logs or buckets within 30 minutes, the content-discovery sweep that precedes credential pattern matching."
+source_yaral: "detections/cloudfox/yaral/cloudfox_gcp_content_listing_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, principal_email, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+procedure_ids: "CF-G04,CF-G05"
+log_source_prerequisites: "GCP Cloud Audit Logs normalized with methodName in metadata.product_event_type, serviceName in target.application, resourceName in target.resource.name and principalEmail in principal.user.email_addresses; DATA_READ Data Access logs enabled for Cloud Storage and Cloud Logging."
+logsource:
+  category: gcp_audit
+  product: gcp
+detection:
+  sel:
+    product_event_type|re: "(?i)(storage\\.objects\\.list|ListLogEntries)$"
+  condition: sel
+falsepositives:
+  - "Log exporters, SIEM collectors, backup and data-catalog services."
+level: medium
+---
+title: "Detects one GCP principal listing log entries or bucket objects across five or more distinct logs or buckets within 30 minutes, the content-discovery sweep that precedes credential pattern matching."
+name: cloudfox_gcp_content_listing_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - cloudfox_gcp_content_listing_fanout_base
+  group-by:
+    - principal_email
+  timespan: 30m
+  condition:
+    field: resource_name
+    gte: 5
+level: medium

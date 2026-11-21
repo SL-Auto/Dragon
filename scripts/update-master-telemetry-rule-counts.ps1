@@ -36,6 +36,13 @@ $aliases = @{
     'Microsoft Sysmon|18' = @('NAMED_PIPE_CONNECTION')
     'Microsoft Sysmon|23' = @('FILE_DELETION')
     'Microsoft Sysmon|26' = @('FILE_DELETION')
+    # Event classes: rules match these with a verb-prefix regex rather than one event name.
+    'AWS CloudTrail|Read-only API calls' = @('(List|Describe|Get)')
+    'Google Cloud Audit Logs|List/Get/Search methods' = @('(List|Get|Search|Aggregated)')
+    # Rules write these event names inside regexes with escaped dots or optional path segments.
+    'Google Cloud Audit Logs|jobservice.insert' = @('jobservice\.insert', 'JobService\.InsertJob')
+    'Google Cloud Audit Logs|storage.objects.list' = @('storage\.objects\.list')
+    'Azure Activity Log|MICROSOFT.WEB/SITES/CONFIG/LIST/ACTION' = @('CONFIG/LIST/ACTION')
 }
 
 function Test-RuleDependency([string]$text, [string]$provider, [string]$eventType) {

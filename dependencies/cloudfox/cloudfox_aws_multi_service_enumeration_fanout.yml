@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cloudfox
+rule_name: cloudfox_aws_multi_service_enumeration_fanout
+canonical_path: detections/cloudfox/yaral/cloudfox_aws_multi_service_enumeration_fanout.yaral
+canonical_sha256: 2a76f1b0b629c316597ce214f70bb83d73f46db054d6a0e09552620bd861e88a
+description: "Detects one AWS principal issuing List, Describe or Get calls to fifteen or more distinct AWS services within 30 minutes, the breadth signature of automated account enumeration."
+severity: medium
+procedure_ids: ["CF-A01", "CF-A02", "CF-A04", "CF-A06"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid; read-only management events enabled on the trail; userAgent in network.http.user_agent (console sessions excluded, CF-DR-09)."
+atomic_event_types: ["Describe", "List"]
+required_udm_fields: ["metadata.product_event_type", "metadata.product_name", "network.http.user_agent", "principal.ip", "principal.user.userid", "target.application"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "CSPM, inventory, backup and cloud-governance platforms; approved security assessments. Approve their role ARNs."
+references: "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md; public-rules/comparisons/cloudfox/cloudfox_aws_multi_service_enumeration_fanout.md; reviews/cloudfox/detection-review.md#cf-dr-09"
+translations:
+  spl: { path: "detections/cloudfox/spl/cloudfox_aws_multi_service_enumeration_fanout.spl", sha256: cb5e9e922e280311d4b05a7f61b77c1f02467e35a60f9bbd084304eefc223d45, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cloudfox/kql/cloudfox_aws_multi_service_enumeration_fanout.kql", sha256: 1bb45fa8b002cff88a5b3ca3b22a7b6015f7ceb89fe72b90bb28d723a9af5d5a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cloudfox/sql/cloudfox_aws_multi_service_enumeration_fanout.sql", sha256: 5c4f2c4831c1820b1f60fa5c5443cd36da71c861e943b13659e06a1903e888a7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cloudfox/eql/cloudfox_aws_multi_service_enumeration_fanout.eql", sha256: c26b816f6b387625928a32696bd978f25a3cb2d6177e71efdc86af7a58b8bd52, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cloudfox/sigma/cloudfox_aws_multi_service_enumeration_fanout.yml", sha256: cea7b0831ead9cd6af23958995eb0e6c662ffdc641968cc723bd7f5bc62ee63b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

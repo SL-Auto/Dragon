@@ -1,0 +1,28 @@
+rule cloudfox_gcp_bigquery_select_star_sampling {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one GCP principal running BigQuery query jobs of the form SELECT * FROM project.dataset.table LIMIT n against two or more tables within 30 minutes, the shape of automated sensitive-data sampling."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "BigQuery data-access audit logs are enabled by default and carry the query text; templated full-row sampling across tables reads data directly."
+    procedure_ids = "CF-G03"
+    log_source_prerequisites = "GCP Cloud Audit Logs normalized with methodName in metadata.product_event_type, serviceName in target.application, resourceName in target.resource.name and principalEmail in principal.user.email_addresses; BigQuery job query text in additional.fields['query']."
+    false_positives = "Data-catalog profilers, DLP scanners and analysts previewing tables; approve their service accounts."
+    references = "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized BigQuery jobs.insert audit entries with the templated query for two tables."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cloudfox/detection-review.md"
+  events:
+    re.regex($e.metadata.product_event_type, `(?i)(jobservice\.insert|JobService\.InsertJob|jobs\.insert)`)
+    re.regex($e.additional.fields["query"], `(?i)^\s*SELECT\s+\*\s+FROM\s+\x60[^\x60]+\.[^\x60]+\.[^\x60]+\x60\s+LIMIT\s+\d+\s*$`)
+    $e.principal.user.email_addresses = $principal
+    $e.additional.fields["query"] = $query
+  match:
+    $principal over 30m
+  outcome:
+    $tables = count_distinct($query)
+  condition:
+    $e and $tables >= 2
+}

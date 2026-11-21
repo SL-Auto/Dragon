@@ -1,0 +1,31 @@
+rule cloudfox_aws_instance_userdata_bulk_read {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one AWS principal reading EC2 instance user data (DescribeInstanceAttribute with attribute userData) for three or more instances within 30 minutes, harvesting bootstrap scripts that often embed credentials."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Reading user data across instances is rare outside provisioning tooling and directly exposes embedded secrets."
+    procedure_ids = "CF-A05"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid; requestParameters.attribute in additional.fields['attribute'] and instanceId in target.resource.name; userIdentity.invokedBy in additional.fields['invokedBy'] (calls made by AWS services on a principal's behalf are excluded, CF-DR-10)."
+    false_positives = "Configuration-management or migration tooling that inspects user data; approve their role ARNs."
+    references = "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md; public-rules/comparisons/cloudfox/cloudfox_aws_instance_userdata_bulk_read.md; reviews/cloudfox/detection-review.md#cf-dr-10"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized DescribeInstanceAttribute userData events for three instances and confirm the attribute field mapping."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cloudfox/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    $e.metadata.product_event_type = "DescribeInstanceAttribute"
+    re.regex($e.additional.fields["attribute"], `(?i)^userData$`)
+    not re.regex($e.additional.fields["invokedBy"], `(?i)(AWS Internal|\.amazonaws\.com)$`)
+    $e.principal.user.userid = $principal
+    $e.target.resource.name = $instance
+  match:
+    $principal over 30m
+  outcome:
+    $instances = count_distinct($instance)
+    $source_ips = array_distinct($e.principal.ip)
+  condition:
+    $e and $instances >= 3
+}

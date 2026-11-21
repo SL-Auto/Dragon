@@ -1,0 +1,42 @@
+title: "Detects one AWS principal issuing List, Describe or Get calls to fifteen or more distinct AWS services within 30 minutes, the breadth signature of automated account enumeration."
+name: cloudfox_aws_multi_service_enumeration_fanout_base
+status: experimental
+description: "Detects one AWS principal issuing List, Describe or Get calls to fifteen or more distinct AWS services within 30 minutes, the breadth signature of automated account enumeration."
+source_yaral: "detections/cloudfox/yaral/cloudfox_aws_multi_service_enumeration_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md; public-rules/comparisons/cloudfox/cloudfox_aws_multi_service_enumeration_fanout.md; reviews/cloudfox/detection-review.md#cf-dr-09"
+procedure_ids: "CF-A01,CF-A02,CF-A04,CF-A06"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid; read-only management events enabled on the trail; userAgent in network.http.user_agent (console sessions excluded, CF-DR-09)."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    product_event_type|re: "(?i)^(List|Describe|Get)[A-Z]"
+  filter0:
+    user_agent|re: "(?i)(console\\.amazonaws\\.com|signin\\.amazonaws\\.com|AWS Internal)"
+  condition: sel and not filter0
+falsepositives:
+  - "CSPM, inventory, backup and cloud-governance platforms; approved security assessments. Approve their role ARNs."
+level: medium
+---
+title: "Detects one AWS principal issuing List, Describe or Get calls to fifteen or more distinct AWS services within 30 minutes, the breadth signature of automated account enumeration."
+name: cloudfox_aws_multi_service_enumeration_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - cloudfox_aws_multi_service_enumeration_fanout_base
+  group-by:
+    - principal_arn
+  timespan: 30m
+  condition:
+    field: event_source
+    gte: 15
+level: medium

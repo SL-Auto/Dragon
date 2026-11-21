@@ -1,0 +1,15 @@
+// source_yaral: detections/cloudfox/yaral/cloudfox_aws_authorization_details_dump.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: cloudfox_aws_authorization_details_dump
+// severity: medium
+// procedure_ids: CF-A02
+// description: Detects iam:GetAccountAuthorizationDetails, which returns every user, group, role and policy in the account in one call.
+// log_source_prerequisites: AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid.
+// false_positives: IAM governance, CSPM and backup tools; approve their role ARNs.
+// references: reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where labels.product_name == "AWS CloudTrail"
+  and event.code == "GetAccountAuthorizationDetails"

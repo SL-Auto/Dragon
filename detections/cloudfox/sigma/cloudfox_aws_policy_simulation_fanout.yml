@@ -1,0 +1,40 @@
+title: "Detects one AWS principal calling iam:SimulatePrincipalPolicy for three or more distinct principals within 30 minutes, computing which identities can perform sensitive actions."
+name: cloudfox_aws_policy_simulation_fanout_base
+status: experimental
+description: "Detects one AWS principal calling iam:SimulatePrincipalPolicy for three or more distinct principals within 30 minutes, computing which identities can perform sensitive actions."
+source_yaral: "detections/cloudfox/yaral/cloudfox_aws_policy_simulation_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+procedure_ids: "CF-A03"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid; requestParameters.policySourceArn in target.resource.name."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    product_event_type: "SimulatePrincipalPolicy"
+  condition: sel
+falsepositives:
+  - "IAM Access Analyzer-style governance tools and policy test pipelines."
+level: medium
+---
+title: "Detects one AWS principal calling iam:SimulatePrincipalPolicy for three or more distinct principals within 30 minutes, computing which identities can perform sensitive actions."
+name: cloudfox_aws_policy_simulation_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - cloudfox_aws_policy_simulation_fanout_base
+  group-by:
+    - principal_arn
+  timespan: 30m
+  condition:
+    field: resource_name
+    gte: 3
+level: medium

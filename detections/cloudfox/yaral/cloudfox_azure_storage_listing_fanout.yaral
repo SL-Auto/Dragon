@@ -1,0 +1,27 @@
+rule cloudfox_azure_storage_listing_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one identity listing containers or blobs in three or more storage accounts within 30 minutes."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Cross-account data-plane listing is consistent with data discovery; backup and analytics services overlap."
+    procedure_ids = "CF-Z05"
+    log_source_prerequisites = "StorageBlobLogs via diagnostic settings, with OperationName in metadata.product_event_type, RequesterObjectId in principal.user.userid and AccountName in target.resource.name."
+    false_positives = "Backup, data-catalog and analytics services; approve their object IDs."
+    references = "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized StorageBlobLogs ListContainers and ListBlobs across three accounts."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cloudfox/detection-review.md"
+  events:
+    $e.metadata.product_event_type = /^(ListContainers|ListBlobs)$/
+    $e.principal.user.userid = $requester
+    $e.target.resource.name = $account
+  match:
+    $requester over 30m
+  outcome:
+    $accounts = count_distinct($account)
+  condition:
+    $e and $accounts >= 3
+}

@@ -1,0 +1,21 @@
+-- source_yaral: detections/cloudfox/yaral/cloudfox_cli_module_grammar_execution.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: high
+-- rule_name: cloudfox_cli_module_grammar_execution
+-- severity: high
+-- procedure_ids: CF-X01
+-- description: Detects a process launched with CloudFox's provider-plus-module argument grammar (for example aws outbound-assumed-roles, aws env-vars, azure tokencache, gcp hiddenadmins) on a monitored endpoint. The grammar survives renaming the binary and uses module names that do not collide with the AWS, Azure or gcloud CLIs.
+-- log_source_prerequisites: PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, Linux auditd EXECVE or EDR) with the full command line and image path.
+-- false_positives: Authorized cloud security assessments; internal wrappers that reuse CloudFox module names.
+-- references: reports/cloudfox/source-analysis.md#completeness-inventory; public-rules/comparisons/cloudfox/cloudfox_aws_authorization_details_dump.md; reviews/cloudfox/detection-review.md#cf-dr-12
+-- schema_profile: schemas/normalized-sql.yml
+-- field_mapping: normalized columns (event_type, hostname, process_path, command_line); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+-- assumptions_and_gaps: Native filter, grouping by hostname, process_path and threshold. Hop window approximated by scheduling every 20 minutes over the trailing 60 minutes. Regex and interval syntax are dialect-specific.
+-- Schema assumption: normalized_events with columns event_time, event_type, hostname, process_path, command_line.
+SELECT hostname, process_path, COUNT(*) AS matched_count, 'cloudfox_cli_module_grammar_execution' AS canonical_rule
+FROM normalized_events
+WHERE event_time >= CURRENT_TIMESTAMP - INTERVAL '60' MINUTE
+  AND event_type = 'PROCESS_LAUNCH'
+  AND REGEXP_LIKE(command_line, '(^|\s)(aws\s+(all-checks|access-keys|api-gw|env-vars|filesystems|iam-simulator|ecs-tasks|elastic-network-interfaces|network-ports|outbound-assumed-roles|principals|resource-trusts|role-trusts|workloads|cape|pmapper)|azure\s+(whoami|tokencache|rbac|automation)|gcp\s+(all-checks|hiddenadmins|privesc|lateralmovement|dataexfiltration|foxmapper|bucketenum|logenum|bigqueryenum|domainwidedelegation|workloadidentity))(\s|$)', 'i')
+GROUP BY hostname, process_path
+HAVING COUNT(*) >= 1;

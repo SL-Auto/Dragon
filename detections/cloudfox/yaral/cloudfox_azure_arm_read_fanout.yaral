@@ -1,0 +1,27 @@
+rule cloudfox_azure_arm_read_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one Azure caller reading resources from five or more distinct resource providers within 30 minutes, the breadth of automated tenant enumeration including runbook content and VM user data."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Breadth across providers distinguishes automated enumeration; posture tools overlap."
+    procedure_ids = "CF-Z01,CF-Z02,CF-Z03,CF-Z04"
+    log_source_prerequisites = "ARM read-plane telemetry (product event type AZURE_RESOURCE_READ, the same normalized label used by the BloodHound rules) with caller and resource provider in additional.fields['resource_provider']; the default Activity Log does not record reads."
+    false_positives = "Defender for Cloud, CSPM, inventory and governance tooling."
+    references = "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized read-plane fixtures across five providers; confirm read-plane collection exists before enabling."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cloudfox/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "AZURE_RESOURCE_READ"
+    $e.principal.user.userid = $caller
+    $e.additional.fields["resource_provider"] = $provider
+  match:
+    $caller over 30m
+  outcome:
+    $providers = count_distinct($provider)
+  condition:
+    $e and $providers >= 5
+}

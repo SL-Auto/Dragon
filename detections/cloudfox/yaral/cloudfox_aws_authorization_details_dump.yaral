@@ -1,0 +1,28 @@
+rule cloudfox_aws_authorization_details_dump {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects iam:GetAccountAuthorizationDetails, which returns every user, group, role and policy in the account in one call."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "A complete IAM dump is a high-value reconnaissance step with limited routine use."
+    procedure_ids = "CF-A02"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid."
+    false_positives = "IAM governance, CSPM and backup tools; approve their role ARNs."
+    references = "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Search historical CloudTrail for the event to baseline approved callers."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cloudfox/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    $e.metadata.product_event_type = "GetAccountAuthorizationDetails"
+    $e.principal.user.userid = $principal
+  match:
+    $principal over 1h
+  outcome:
+    $calls = count($e.metadata.id)
+    $source_ips = array_distinct($e.principal.ip)
+  condition:
+    $e
+}

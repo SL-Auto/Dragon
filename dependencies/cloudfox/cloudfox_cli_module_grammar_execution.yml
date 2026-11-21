@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cloudfox
+rule_name: cloudfox_cli_module_grammar_execution
+canonical_path: detections/cloudfox/yaral/cloudfox_cli_module_grammar_execution.yaral
+canonical_sha256: b4c82d0e373d926fd5f3a9b939458e78b87f5899858524c7ed17a96272d6aa7f
+description: "Detects a process launched with CloudFox's provider-plus-module argument grammar (for example aws outbound-assumed-roles, aws env-vars, azure tokencache, gcp hiddenadmins) on a monitored endpoint. The grammar survives renaming the binary and uses module names that do not collide with the AWS, Azure or gcloud CLIs."
+severity: high
+procedure_ids: ["CF-X01"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, Linux auditd EXECVE or EDR) with the full command line and image path."
+atomic_event_types: ["PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.user.userid", "target.process.command_line", "target.process.file.full_path"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Authorized cloud security assessments; internal wrappers that reuse CloudFox module names."
+references: "reports/cloudfox/source-analysis.md#completeness-inventory; public-rules/comparisons/cloudfox/cloudfox_aws_authorization_details_dump.md; reviews/cloudfox/detection-review.md#cf-dr-12"
+translations:
+  spl: { path: "detections/cloudfox/spl/cloudfox_cli_module_grammar_execution.spl", sha256: 8422459b21ecebc3ff356c76631626ce5d3503f560dca02cf3786f5c79753cc9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cloudfox/kql/cloudfox_cli_module_grammar_execution.kql", sha256: 6663cd150f14e5096b177d36315ea1c98d68b384032a55ece8800962a1720de7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cloudfox/sql/cloudfox_cli_module_grammar_execution.sql", sha256: 1c287d0e24b74b89c7d75f0f117fdde4753147d936d0df58210e6ee2a7c11e00, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cloudfox/eql/cloudfox_cli_module_grammar_execution.eql", sha256: 38d6270a77dd442670f1b405f59bd0171835c44b9c0b3a6062c2f4ca9bad064b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cloudfox/sigma/cloudfox_cli_module_grammar_execution.yml", sha256: 1f5fbd817a0d67f7c98b7d399e75c06b9b355fc887437e91f00af9e388b1fe3e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

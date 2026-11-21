@@ -1,0 +1,39 @@
+title: "Detects iam:GetAccountAuthorizationDetails, which returns every user, group, role and policy in the account in one call."
+name: cloudfox_aws_authorization_details_dump_base
+status: experimental
+description: "Detects iam:GetAccountAuthorizationDetails, which returns every user, group, role and policy in the account in one call."
+source_yaral: "detections/cloudfox/yaral/cloudfox_aws_authorization_details_dump.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+procedure_ids: "CF-A02"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    product_event_type: "GetAccountAuthorizationDetails"
+  condition: sel
+falsepositives:
+  - "IAM governance, CSPM and backup tools; approve their role ARNs."
+level: medium
+---
+title: "Detects iam:GetAccountAuthorizationDetails, which returns every user, group, role and policy in the account in one call."
+name: cloudfox_aws_authorization_details_dump
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - cloudfox_aws_authorization_details_dump_base
+  group-by:
+    - principal_arn
+  timespan: 60m
+  condition:
+    gte: 1
+level: medium

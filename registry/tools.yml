@@ -152,11 +152,12 @@ tools:
     name: CloudFox
     aliases: []
     category: cloud
-    status: triaged
-    source_code: { availability: public, repository: https://github.com/BishopFox/cloudfox, analyzed_revision: unknown }
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/BishopFox/cloudfox, analyzed_revision: f65be085cde3768281c2dbafc57542a56ee12ebe }
     first_seen: unknown
-    last_reviewed: 2026-08-15
-    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+    last_reviewed: 2026-11-21
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: reports/cloudfox/source-analysis.md }, { path: coverage/cloudfox.yml }, { path: detections/cloudfox/ }, { path: reviews/cloudfox/detection-review.md }, { path: telemetry/cloudfox.md }, { path: public-rules/comparisons/cloudfox/ }]
+    notes: "Comprehensive for the pinned revision: every AWS, Azure and GCP command mapped to its cloud API calls. Analysis covers victim-side audit records plus endpoint execution (CF-X01); operator-local graph and UI modules are excluded. Rules are experimental and several depend on Data Access or read-plane logging that tenants often disable."
   - id: roadtools
     name: ROADtools
     aliases: []

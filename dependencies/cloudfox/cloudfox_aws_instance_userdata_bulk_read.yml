@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cloudfox
+rule_name: cloudfox_aws_instance_userdata_bulk_read
+canonical_path: detections/cloudfox/yaral/cloudfox_aws_instance_userdata_bulk_read.yaral
+canonical_sha256: a32256881e56432e5ce0ad4bb0fa06eeeb08a16f3d1a1e820c23a73bed408b5c
+description: "Detects one AWS principal reading EC2 instance user data (DescribeInstanceAttribute with attribute userData) for three or more instances within 30 minutes, harvesting bootstrap scripts that often embed credentials."
+severity: high
+procedure_ids: ["CF-A05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid; requestParameters.attribute in additional.fields['attribute'] and instanceId in target.resource.name; userIdentity.invokedBy in additional.fields['invokedBy'] (calls made by AWS services on a principal's behalf are excluded, CF-DR-10)."
+atomic_event_types: ["DescribeInstanceAttribute"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "metadata.product_name", "principal.ip", "principal.user.userid", "target.resource.name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Configuration-management or migration tooling that inspects user data; approve their role ARNs."
+references: "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md; public-rules/comparisons/cloudfox/cloudfox_aws_instance_userdata_bulk_read.md; reviews/cloudfox/detection-review.md#cf-dr-10"
+translations:
+  spl: { path: "detections/cloudfox/spl/cloudfox_aws_instance_userdata_bulk_read.spl", sha256: 01de033e49adfc0256833fc7a6cc918244b493258beb3edef4ebae142c093284, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cloudfox/kql/cloudfox_aws_instance_userdata_bulk_read.kql", sha256: 02b5c77528a61f02284a1dd208477d9f03d54d9b3d6515dcded8fbf255e60dce, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cloudfox/sql/cloudfox_aws_instance_userdata_bulk_read.sql", sha256: 78b24ebb71ad6031e7bb7ffcc5e7871c09112bb2d415e36399d9cc27766ddf13, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cloudfox/eql/cloudfox_aws_instance_userdata_bulk_read.eql", sha256: 696f315ff249fdd2dbb4e2033d751a27536be7d4d220e8445d389c62584057d8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cloudfox/sigma/cloudfox_aws_instance_userdata_bulk_read.yml", sha256: 9919b33a210735d82149620ec13ed3237f016acc8f2a9c3393a0fc177fc5a62e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

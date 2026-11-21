@@ -1,0 +1,31 @@
+rule cloudfox_aws_multi_service_enumeration_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one AWS principal issuing List, Describe or Get calls to fifteen or more distinct AWS services within 30 minutes, the breadth signature of automated account enumeration."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Automated recon tools sweep many services quickly; humans and most single-purpose automation touch few. Breadth is tool-agnostic, but cloud-management and posture platforms overlap."
+    procedure_ids = "CF-A01,CF-A02,CF-A04,CF-A06"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid; read-only management events enabled on the trail; userAgent in network.http.user_agent (console sessions excluded, CF-DR-09)."
+    false_positives = "CSPM, inventory, backup and cloud-governance platforms; approved security assessments. Approve their role ARNs."
+    references = "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md; public-rules/comparisons/cloudfox/cloudfox_aws_multi_service_enumeration_fanout.md; reviews/cloudfox/detection-review.md#cf-dr-09"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized CloudTrail read events from one ARN across 15 services in 30 minutes and baseline CSPM roles."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cloudfox/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    re.regex($e.metadata.product_event_type, `^(List|Describe|Get)[A-Z]`)
+    not re.regex($e.network.http.user_agent, `(?i)(console\.amazonaws\.com|signin\.amazonaws\.com|AWS Internal)`)
+    $e.principal.user.userid = $principal
+    $e.target.application = $service
+  match:
+    $principal over 30m
+  outcome:
+    $services = count_distinct($service)
+    $source_ips = array_distinct($e.principal.ip)
+    $user_agents = array_distinct($e.network.http.user_agent)
+  condition:
+    $e and $services >= 15
+}

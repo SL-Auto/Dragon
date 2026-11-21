@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cloudfox
+rule_name: cloudfox_aws_policy_simulation_fanout
+canonical_path: detections/cloudfox/yaral/cloudfox_aws_policy_simulation_fanout.yaral
+canonical_sha256: bae7390c9cdcba7d37c846c3eb9c45646a09a0c41331f9f5128c851e94aa7585
+description: "Detects one AWS principal calling iam:SimulatePrincipalPolicy for three or more distinct principals within 30 minutes, computing which identities can perform sensitive actions."
+severity: medium
+procedure_ids: ["CF-A03"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid; requestParameters.policySourceArn in target.resource.name."
+atomic_event_types: ["SimulatePrincipalPolicy"]
+required_udm_fields: ["metadata.product_event_type", "metadata.product_name", "principal.user.userid", "target.resource.name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "IAM Access Analyzer-style governance tools and policy test pipelines."
+references: "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+translations:
+  spl: { path: "detections/cloudfox/spl/cloudfox_aws_policy_simulation_fanout.spl", sha256: 57c5662695d42a763718160fe7c21a830436fc11b57828f7d1a721c2f9d35329, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cloudfox/kql/cloudfox_aws_policy_simulation_fanout.kql", sha256: b61d5711cc03cf3a60fe720805ded6125c4c557804c4f88c790bc61737b9ac46, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cloudfox/sql/cloudfox_aws_policy_simulation_fanout.sql", sha256: cb071b0a29f3059bd441f168d4a4f0a17c7ba4d59323320dfe949b8f46fe5776, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cloudfox/eql/cloudfox_aws_policy_simulation_fanout.eql", sha256: dd2c1f0d2481f4c1d37928e66586025cee12e4c4c4c0d60feb8b9778e132f06f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cloudfox/sigma/cloudfox_aws_policy_simulation_fanout.yml", sha256: 986aaac110b9491d561107ff67616c512051f5f312d8bc260a2e6cc2aac7d2ac, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

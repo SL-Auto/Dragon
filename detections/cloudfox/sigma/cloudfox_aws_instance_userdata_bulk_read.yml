@@ -1,0 +1,43 @@
+title: "Detects one AWS principal reading EC2 instance user data (DescribeInstanceAttribute with attribute userData) for three or more instances within 30 minutes, harvesting bootstrap scripts that often embed credentials."
+name: cloudfox_aws_instance_userdata_bulk_read_base
+status: experimental
+description: "Detects one AWS principal reading EC2 instance user data (DescribeInstanceAttribute with attribute userData) for three or more instances within 30 minutes, harvesting bootstrap scripts that often embed credentials."
+source_yaral: "detections/cloudfox/yaral/cloudfox_aws_instance_userdata_bulk_read.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, request_attribute, resource_name, invoked_by); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md; public-rules/comparisons/cloudfox/cloudfox_aws_instance_userdata_bulk_read.md; reviews/cloudfox/detection-review.md#cf-dr-10"
+procedure_ids: "CF-A05"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid; requestParameters.attribute in additional.fields['attribute'] and instanceId in target.resource.name; userIdentity.invokedBy in additional.fields['invokedBy'] (calls made by AWS services on a principal's behalf are excluded, CF-DR-10)."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    product_event_type: "DescribeInstanceAttribute"
+    request_attribute|re: "(?i)^userData$"
+  filter0:
+    invoked_by|re: "(?i)(AWS Internal|\\.amazonaws\\.com)$"
+  condition: sel and not filter0
+falsepositives:
+  - "Configuration-management or migration tooling that inspects user data; approve their role ARNs."
+level: high
+---
+title: "Detects one AWS principal reading EC2 instance user data (DescribeInstanceAttribute with attribute userData) for three or more instances within 30 minutes, harvesting bootstrap scripts that often embed credentials."
+name: cloudfox_aws_instance_userdata_bulk_read
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - cloudfox_aws_instance_userdata_bulk_read_base
+  group-by:
+    - principal_arn
+  timespan: 30m
+  condition:
+    field: resource_name
+    gte: 3
+level: high

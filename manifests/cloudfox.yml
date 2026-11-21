@@ -1,27 +1,50 @@
 schema_version: 1
 tool_id: cloudfox
 name: "CloudFox"
-lifecycle_status: triaged
-analyzed_revision: "unknown"
+lifecycle_status: analyzed
+analyzed_revision: "f65be085cde3768281c2dbafc57542a56ee12ebe"
 context_entry_points:
   registry: registry/tools.yml
+  summary: summaries/cloudfox.md
+  coverage: coverage/cloudfox.yml
+  report: reports/cloudfox/source-analysis.md
+  telemetry: telemetry/cloudfox.md
 counts:
-  procedures: 0
-  canonical_rules: 0
-  spl_translations: 0
-  kql_translations: 0
-  sql_translations: 0
-  eql_translations: 0
-  sigma_translations: 0
+  procedures: 19
+  canonical_rules: 15
+  spl_translations: 15
+  kql_translations: 15
+  sql_translations: 15
+  eql_translations: 15
+  sigma_translations: 15
 completion_states:
-  source_analysis: incomplete
-  canonical_detection: not_started
-  telemetry_reconciliation: not_started
-  secondary_translation: not_started
-  rule_validation_labels: "not_applicable"
+  source_analysis: complete
+  canonical_detection: complete
+  telemetry_reconciliation: complete_for_experimental_rules
+  secondary_translation: draft_complete
+  rule_validation_labels: "15 needs_validation"
 artifact_hashes:
-  registry: 3762b7b0bfd0d49924b4d34e2d434d34022bc537838176ec99394e7df9f47ae2
+  registry: 5d9b28e4ea91785054ba14299210b638ab12473a2e666795a18d98ef71962a17
+  coverage: ecdbcf5b404de32cf328d8e7f450581423cf78cbe86002801ddb035a925faf7e
+  report: cfa4613bd6c66be431c4025c0fd41efb8c5ec19b4ab90bc1427e12b6b89efcf2
+  telemetry: 6fb0bfa41f253ccc97be0bbfd92e84dfbc7137c4345b9c7f5678050461de4831
+  detection_review: 37f8433e4b22855138ce1515915793f76b4ab98fded3b4ebffa552cb08f04e53
+  translation_review: 5efd336a5e65a91f8ef54d2c23d07df5a30d552c7e3e0cbee54303009c1af4ef
 rules:
-  []
+  - { name: cloudfox_aws_authorization_details_dump, severity: medium, procedures: "CF-A02", dependency: dependencies/cloudfox/cloudfox_aws_authorization_details_dump.yml, canonical_sha256: 81c273dc4cc1a901dd64d5a9ed3fdb35f466213ade93e27343a951e6f14752b6 }
+  - { name: cloudfox_aws_instance_userdata_bulk_read, severity: high, procedures: "CF-A05", dependency: dependencies/cloudfox/cloudfox_aws_instance_userdata_bulk_read.yml, canonical_sha256: a32256881e56432e5ce0ad4bb0fa06eeeb08a16f3d1a1e820c23a73bed408b5c }
+  - { name: cloudfox_aws_multi_service_enumeration_fanout, severity: medium, procedures: "CF-A01,CF-A02,CF-A04,CF-A06", dependency: dependencies/cloudfox/cloudfox_aws_multi_service_enumeration_fanout.yml, canonical_sha256: 2a76f1b0b629c316597ce214f70bb83d73f46db054d6a0e09552620bd861e88a }
+  - { name: cloudfox_aws_policy_simulation_fanout, severity: medium, procedures: "CF-A03", dependency: dependencies/cloudfox/cloudfox_aws_policy_simulation_fanout.yml, canonical_sha256: bae7390c9cdcba7d37c846c3eb9c45646a09a0c41331f9f5128c851e94aa7585 }
+  - { name: cloudfox_aws_programmatic_assumerole_history_lookup, severity: low, procedures: "CF-A07", dependency: dependencies/cloudfox/cloudfox_aws_programmatic_assumerole_history_lookup.yml, canonical_sha256: 0ddc6737720ecbfc9b5e876788ebb9fb19192334652a05a916d4dcf8a716c585 }
+  - { name: cloudfox_aws_secret_bearing_config_sweep, severity: high, procedures: "CF-A05", dependency: dependencies/cloudfox/cloudfox_aws_secret_bearing_config_sweep.yml, canonical_sha256: 7099f02006fcbffba334df2cbecf1265bdf58d77de20124a2c27f90b9881068b }
+  - { name: cloudfox_azure_app_settings_secret_list, severity: high, procedures: "CF-Z04", dependency: dependencies/cloudfox/cloudfox_azure_app_settings_secret_list.yml, canonical_sha256: b821a3fb09176a5b70ae9c303ae4e8e2eebe81d3726733fb382e95ccad63a9d2 }
+  - { name: cloudfox_azure_arm_read_fanout, severity: medium, procedures: "CF-Z01,CF-Z02,CF-Z03,CF-Z04", dependency: dependencies/cloudfox/cloudfox_azure_arm_read_fanout.yml, canonical_sha256: 1dac79254682a44becf36e3c3358e793bbcbfc0f6f08561c75b249cde08bc030 }
+  - { name: cloudfox_azure_storage_listing_fanout, severity: medium, procedures: "CF-Z05", dependency: dependencies/cloudfox/cloudfox_azure_storage_listing_fanout.yml, canonical_sha256: c498587efbdc8f44f8c0284e6e0bb3a2e42003581553d6d956115319b13d790b }
+  - { name: cloudfox_cli_module_grammar_execution, severity: high, procedures: "CF-X01", dependency: dependencies/cloudfox/cloudfox_cli_module_grammar_execution.yml, canonical_sha256: b4c82d0e373d926fd5f3a9b939458e78b87f5899858524c7ed17a96272d6aa7f }
+  - { name: cloudfox_gcp_bigquery_select_star_sampling, severity: high, procedures: "CF-G03", dependency: dependencies/cloudfox/cloudfox_gcp_bigquery_select_star_sampling.yml, canonical_sha256: 76b2be3c0ce911996ce3332abe83cc3b6b45e38e78e331e514f1330e944f684a }
+  - { name: cloudfox_gcp_content_listing_fanout, severity: medium, procedures: "CF-G04,CF-G05", dependency: dependencies/cloudfox/cloudfox_gcp_content_listing_fanout.yml, canonical_sha256: 10868d8b92ee0457c5add545542bfeb1840dcb6277c667dbc05415b47c64d6b1 }
+  - { name: cloudfox_gcp_iam_policy_read_fanout, severity: medium, procedures: "CF-G01", dependency: dependencies/cloudfox/cloudfox_gcp_iam_policy_read_fanout.yml, canonical_sha256: c37de982582d3b8f78cb8b464c17e5019b6d668a7804634d1d33fc2b17b3bc0c }
+  - { name: cloudfox_gcp_multi_service_inventory, severity: medium, procedures: "CF-G02,CF-G06", dependency: dependencies/cloudfox/cloudfox_gcp_multi_service_inventory.yml, canonical_sha256: a4177dbc097a7601153a44484c00b15abd3af0eff292f4dce31b739c2ea1fdb7 }
+  - { name: cloudfox_gcp_secret_metadata_multi_project, severity: medium, procedures: "CF-G06", dependency: dependencies/cloudfox/cloudfox_gcp_secret_metadata_multi_project.yml, canonical_sha256: 4cc4bb882774b7113d08de04328995a80b7ca742b3006e0e23670f58227afe7e }
 unresolved:
   source_blockers: 0

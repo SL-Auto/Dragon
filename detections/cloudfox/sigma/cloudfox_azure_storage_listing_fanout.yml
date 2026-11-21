@@ -1,0 +1,41 @@
+title: "Detects one identity listing containers or blobs in three or more storage accounts within 30 minutes."
+name: cloudfox_azure_storage_listing_fanout_base
+status: experimental
+description: "Detects one identity listing containers or blobs in three or more storage accounts within 30 minutes."
+source_yaral: "detections/cloudfox/yaral/cloudfox_azure_storage_listing_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, requester, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+procedure_ids: "CF-Z05"
+log_source_prerequisites: "StorageBlobLogs via diagnostic settings, with OperationName in metadata.product_event_type, RequesterObjectId in principal.user.userid and AccountName in target.resource.name."
+logsource:
+  category: azure_storage
+  product: azure
+detection:
+  sel:
+    product_event_type:
+      - "ListContainers"
+      - "ListBlobs"
+  condition: sel
+falsepositives:
+  - "Backup, data-catalog and analytics services; approve their object IDs."
+level: medium
+---
+title: "Detects one identity listing containers or blobs in three or more storage accounts within 30 minutes."
+name: cloudfox_azure_storage_listing_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - cloudfox_azure_storage_listing_fanout_base
+  group-by:
+    - requester
+  timespan: 30m
+  condition:
+    field: resource_name
+    gte: 3
+level: medium

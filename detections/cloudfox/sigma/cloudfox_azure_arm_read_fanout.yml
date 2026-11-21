@@ -1,0 +1,39 @@
+title: "Detects one Azure caller reading resources from five or more distinct resource providers within 30 minutes, the breadth of automated tenant enumeration including runbook content and VM user data."
+name: cloudfox_azure_arm_read_fanout_base
+status: experimental
+description: "Detects one Azure caller reading resources from five or more distinct resource providers within 30 minutes, the breadth of automated tenant enumeration including runbook content and VM user data."
+source_yaral: "detections/cloudfox/yaral/cloudfox_azure_arm_read_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, caller, resource_provider); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+procedure_ids: "CF-Z01,CF-Z02,CF-Z03,CF-Z04"
+log_source_prerequisites: "ARM read-plane telemetry (product event type AZURE_RESOURCE_READ, the same normalized label used by the BloodHound rules) with caller and resource provider in additional.fields['resource_provider']; the default Activity Log does not record reads."
+logsource:
+  category: azure_activity
+  product: azure
+detection:
+  sel:
+    product_event_type: "AZURE_RESOURCE_READ"
+  condition: sel
+falsepositives:
+  - "Defender for Cloud, CSPM, inventory and governance tooling."
+level: medium
+---
+title: "Detects one Azure caller reading resources from five or more distinct resource providers within 30 minutes, the breadth of automated tenant enumeration including runbook content and VM user data."
+name: cloudfox_azure_arm_read_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - cloudfox_azure_arm_read_fanout_base
+  group-by:
+    - caller
+  timespan: 30m
+  condition:
+    field: resource_provider
+    gte: 5
+level: medium

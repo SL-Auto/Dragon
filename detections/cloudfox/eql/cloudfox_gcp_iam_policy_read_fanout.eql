@@ -1,0 +1,14 @@
+// source_yaral: detections/cloudfox/yaral/cloudfox_gcp_iam_policy_read_fanout.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: cloudfox_gcp_iam_policy_read_fanout
+// severity: medium
+// procedure_ids: CF-G01
+// description: Detects one GCP principal reading IAM policies (getIamPolicy) on ten or more distinct resources within 30 minutes.
+// log_source_prerequisites: GCP Cloud Audit Logs normalized with methodName in metadata.product_event_type, serviceName in target.application, resourceName in target.resource.name and principalEmail in principal.user.email_addresses; ADMIN_READ Data Access logs enabled for Resource Manager, IAM and the relevant services.
+// false_positives: Policy Analyzer, CSPM and IAM governance service accounts.
+// references: reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_event_type, principal_email, resource_name, service_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where event.code regex~ "GetIamPolicy$"

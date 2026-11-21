@@ -1,0 +1,39 @@
+title: "Detects one GCP principal issuing list, get or search calls to ten or more distinct GCP services within 30 minutes, including Cloud Asset SearchAllResources and secret metadata listing."
+name: cloudfox_gcp_multi_service_inventory_base
+status: experimental
+description: "Detects one GCP principal issuing list, get or search calls to ten or more distinct GCP services within 30 minutes, including Cloud Asset SearchAllResources and secret metadata listing."
+source_yaral: "detections/cloudfox/yaral/cloudfox_gcp_multi_service_inventory.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, principal_email, service_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+procedure_ids: "CF-G02,CF-G06"
+log_source_prerequisites: "GCP Cloud Audit Logs normalized with methodName in metadata.product_event_type, serviceName in target.application, resourceName in target.resource.name and principalEmail in principal.user.email_addresses; Data Access logs enabled for the inventoried services (coverage scales with enablement)."
+logsource:
+  category: gcp_audit
+  product: gcp
+detection:
+  sel:
+    product_event_type|re: "(?i)\\.(List|Get|Search|Aggregated)[A-Za-z]*$|\\.(list|get|search|aggregatedList)$"
+  condition: sel
+falsepositives:
+  - "Security Command Center, CSPM and asset-inventory service accounts."
+level: medium
+---
+title: "Detects one GCP principal issuing list, get or search calls to ten or more distinct GCP services within 30 minutes, including Cloud Asset SearchAllResources and secret metadata listing."
+name: cloudfox_gcp_multi_service_inventory
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - cloudfox_gcp_multi_service_inventory_base
+  group-by:
+    - principal_email
+  timespan: 30m
+  condition:
+    field: service_name
+    gte: 10
+level: medium

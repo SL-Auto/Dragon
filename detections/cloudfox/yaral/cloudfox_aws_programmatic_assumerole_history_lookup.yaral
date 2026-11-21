@@ -1,0 +1,29 @@
+rule cloudfox_aws_programmatic_assumerole_history_lookup {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects programmatic (non-console) cloudtrail:LookupEvents filtered to AssumeRole, used to learn which roles have been assumed from the account."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "LOW"
+    severity_rationale = "Targeted history lookups for AssumeRole from SDK clients are unusual, but security analysts also run them."
+    procedure_ids = "CF-A07"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, eventSource in target.application, userIdentity ARN in principal.user.userid; requestParameters.lookupAttributes serialized in additional.fields['lookupAttributes'] and userAgent in network.http.user_agent."
+    false_positives = "Security analysts and SOAR playbooks querying CloudTrail history via SDK."
+    references = "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay a sanitized LookupEvents event with an AssumeRole lookup attribute from an SDK user agent."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cloudfox/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    $e.metadata.product_event_type = "LookupEvents"
+    re.regex($e.additional.fields["lookupAttributes"], `AssumeRole`)
+    not re.regex($e.network.http.user_agent, `(?i)(console\.amazonaws\.com|signin\.amazonaws\.com|AWS Internal)`)
+    $e.principal.user.userid = $principal
+  match:
+    $principal over 1h
+  outcome:
+    $user_agents = array_distinct($e.network.http.user_agent)
+  condition:
+    $e
+}

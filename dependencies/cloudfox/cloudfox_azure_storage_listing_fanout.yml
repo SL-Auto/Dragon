@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cloudfox
+rule_name: cloudfox_azure_storage_listing_fanout
+canonical_path: detections/cloudfox/yaral/cloudfox_azure_storage_listing_fanout.yaral
+canonical_sha256: c498587efbdc8f44f8c0284e6e0bb3a2e42003581553d6d956115319b13d790b
+description: "Detects one identity listing containers or blobs in three or more storage accounts within 30 minutes."
+severity: medium
+procedure_ids: ["CF-Z05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "StorageBlobLogs via diagnostic settings, with OperationName in metadata.product_event_type, RequesterObjectId in principal.user.userid and AccountName in target.resource.name."
+atomic_event_types: []
+required_udm_fields: ["metadata.product_event_type", "principal.user.userid", "target.resource.name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Backup, data-catalog and analytics services; approve their object IDs."
+references: "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+translations:
+  spl: { path: "detections/cloudfox/spl/cloudfox_azure_storage_listing_fanout.spl", sha256: c39e424d345976fffc4b77d953e01fd031a2f0e2dd685ff8ac8dfa6fbac0c950, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cloudfox/kql/cloudfox_azure_storage_listing_fanout.kql", sha256: b3ebaa42d40b96680ccf93b2c344cf8ff196d13841e9fb4424b3bce13b012f67, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cloudfox/sql/cloudfox_azure_storage_listing_fanout.sql", sha256: 4c38fd6f02740e0b9cf10fb17d393e881b0802bc2c9ecd0ccc076b5fa7ac9992, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cloudfox/eql/cloudfox_azure_storage_listing_fanout.eql", sha256: a5e1216624207e94b85006fb12412f016e8c2c0c15a9933c4b8a154d4d9f4d44, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cloudfox/sigma/cloudfox_azure_storage_listing_fanout.yml", sha256: c7b70f18d06e16c689226942519199344e99c388363e4e21ac86a85571571b6b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

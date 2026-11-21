@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cloudfox
+rule_name: cloudfox_gcp_iam_policy_read_fanout
+canonical_path: detections/cloudfox/yaral/cloudfox_gcp_iam_policy_read_fanout.yaral
+canonical_sha256: c37de982582d3b8f78cb8b464c17e5019b6d668a7804634d1d33fc2b17b3bc0c
+description: "Detects one GCP principal reading IAM policies (getIamPolicy) on ten or more distinct resources within 30 minutes."
+severity: medium
+procedure_ids: ["CF-G01"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "GCP Cloud Audit Logs normalized with methodName in metadata.product_event_type, serviceName in target.application, resourceName in target.resource.name and principalEmail in principal.user.email_addresses; ADMIN_READ Data Access logs enabled for Resource Manager, IAM and the relevant services."
+atomic_event_types: []
+required_udm_fields: ["metadata.product_event_type", "principal.user.email_addresses", "target.application", "target.resource.name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Policy Analyzer, CSPM and IAM governance service accounts."
+references: "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+translations:
+  spl: { path: "detections/cloudfox/spl/cloudfox_gcp_iam_policy_read_fanout.spl", sha256: 84be4f2ea4ce66d6ee6b595faa84c870725768779e8ce547fd21f71db3745a4e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cloudfox/kql/cloudfox_gcp_iam_policy_read_fanout.kql", sha256: cd9fd744b7915d1bd0cb64256bedb46deb1429015a53966c4fe9d42e6f900aae, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cloudfox/sql/cloudfox_gcp_iam_policy_read_fanout.sql", sha256: da48a77421e77d562315368e7f5e3d2ecda6e11f0b2017538ac2aa0140a3969d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cloudfox/eql/cloudfox_gcp_iam_policy_read_fanout.eql", sha256: 673e7d5459a92e531e296cf04de256cb079fa1bcccd5f7a265eb98e494c6d616, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cloudfox/sigma/cloudfox_gcp_iam_policy_read_fanout.yml", sha256: 3d8ef99d152fed84eb30365c3acec86383b33c6b7eabe00601ff38b343bd51a4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

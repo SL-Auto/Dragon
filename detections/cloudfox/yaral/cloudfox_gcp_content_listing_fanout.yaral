@@ -1,0 +1,27 @@
+rule cloudfox_gcp_content_listing_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one GCP principal listing log entries or bucket objects across five or more distinct logs or buckets within 30 minutes, the content-discovery sweep that precedes credential pattern matching."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Listing contents across many buckets or logs reveals data locations; both are DATA_READ listings with equivalent observability."
+    procedure_ids = "CF-G04,CF-G05"
+    log_source_prerequisites = "GCP Cloud Audit Logs normalized with methodName in metadata.product_event_type, serviceName in target.application, resourceName in target.resource.name and principalEmail in principal.user.email_addresses; DATA_READ Data Access logs enabled for Cloud Storage and Cloud Logging."
+    false_positives = "Log exporters, SIEM collectors, backup and data-catalog services."
+    references = "reports/cloudfox/source-analysis.md#procedure-analysis; reviews/cloudfox/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized storage.objects.list and ListLogEntries entries across five resources; confirm DATA_READ logging."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cloudfox/detection-review.md"
+  events:
+    re.regex($e.metadata.product_event_type, `(?i)(storage\.objects\.list|ListLogEntries)$`)
+    $e.principal.user.email_addresses = $principal
+    $e.target.resource.name = $resource
+  match:
+    $principal over 30m
+  outcome:
+    $resources = count_distinct($resource)
+  condition:
+    $e and $resources >= 5
+}
