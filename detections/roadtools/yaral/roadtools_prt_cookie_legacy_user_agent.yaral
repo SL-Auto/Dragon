@@ -1,0 +1,27 @@
+rule roadtools_prt_cookie_legacy_user_agent {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects sign-in or HTTP activity with the fixed legacy user agent ROADtools sends during PRT-cookie authentication: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; Win64; x64; Trident/7.0; .NET4.0C; .NET4.0E)."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "MSIE 7.0 combined with Windows NT 10.0 is anachronistic; the string is hard-coded but can be replaced by the operator."
+    procedure_ids = "RT-P04"
+    log_source_prerequisites = "Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields; proxy NETWORK_HTTP with User-Agent where available."
+    false_positives = "Legacy embedded web controls presenting compatibility user agents."
+    references = "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Search historical sign-in logs for the exact string; replay a sanitized record."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/roadtools/detection-review.md"
+  events:
+    re.regex($e.network.http.user_agent, `MSIE 7\.0; Windows NT 10\.0; Win64; x64; Trident/7\.0; \.NET4\.0C; \.NET4\.0E`)
+    $e.principal.user.userid = $principal
+  match:
+    $principal over 1h
+  outcome:
+    $ips = array_distinct($e.principal.ip)
+    $sources = array_distinct($e.metadata.product_event_type)
+  condition:
+    $e
+}

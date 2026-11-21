@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_registered_device_default_name
+canonical_path: detections/roadtools/yaral/roadtools_registered_device_default_name.yaral
+canonical_sha256: 7ba0c879c71a2d51272c266263676ede65f4f6dc8e7fd96d93d8d0caafdec0c9
+description: "Detects device registration or join of a device named DESKTOP- followed by seven upper-case alphanumerics where the registration was not performed by device-management enrollment (Intune or Autopilot)."
+severity: low
+procedure_ids: ["RT-P03"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Entra ID audit logs (AuditLogs) normalized with activityDisplayName in metadata.product_event_type, initiating user in principal.user.userid, target user or device in target.user.userid or target.resource.name, and modified-property values in additional.fields['modifiedProperties']; enrollment service in additional.fields['initiatedByApp']."
+atomic_event_types: []
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.user.userid", "target.resource.name"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "New Windows devices registered outside Intune or Autopilot."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_registered_device_default_name.spl", sha256: a7830c35596435203cd2dc0a19f9129abceaa1edfdfd413b68e5feb64f4d373a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_registered_device_default_name.kql", sha256: 3bafa69e92ddec012ccff751cedfc0226904c89ce9be75a269c4da4038cd38a6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_registered_device_default_name.sql", sha256: a637d6375722d357f2b7287b81cc432bbc6381af6a77f09bf06780ccaa26152f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_registered_device_default_name.eql", sha256: f8af1fff4319ea3e42ac1462d5666326be9231de032927cdfade3e3af828a470, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_registered_device_default_name.yml", sha256: 78ca56519361cfdaf1a46b8185a40cb4c3f1d9736748a2f5ddde7fbdf4df9838, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

@@ -1,0 +1,31 @@
+rule roadtools_device_registration_then_hello_key {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a device registration by a user followed within 1 hour by a Windows Hello for Business key or passkey being added to that user, the persistence sequence of registering an attacker device and binding a key to it."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "New-device enrollment also adds Hello keys, so this chain needs context such as unexpected location or device; it is the closest default-telemetry signal for key-based persistence."
+    procedure_ids = "RT-P03,RT-P05"
+    log_source_prerequisites = "Entra ID audit logs (AuditLogs) normalized with activityDisplayName in metadata.product_event_type, initiating user in principal.user.userid, target user or device in target.user.userid or target.resource.name, and modified-property values in additional.fields['modifiedProperties']."
+    false_positives = "Legitimate new-device enrollment with Windows Hello provisioning."
+    references = "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay a sanitized Register device event followed by a Hello key addition for the same user."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/roadtools/detection-review.md"
+  events:
+    $d.metadata.product_event_type = /^(Register device|Add device)$/
+    $d.principal.user.userid = $user
+
+    re.regex($k.metadata.product_event_type, `(?i)(Windows Hello|passkey|FIDO2|security info|security key)`)
+    $k.target.user.userid = $user
+
+    $d.metadata.event_timestamp.seconds <= $k.metadata.event_timestamp.seconds
+  match:
+    $user over 1h
+  outcome:
+    $devices = array_distinct($d.target.resource.name)
+  condition:
+    $d and $k
+}

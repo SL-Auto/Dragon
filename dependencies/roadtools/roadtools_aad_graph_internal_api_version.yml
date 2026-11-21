@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_aad_graph_internal_api_version
+canonical_path: detections/roadtools/yaral/roadtools_aad_graph_internal_api_version.yaral
+canonical_sha256: 1ec697386c6cdddc87cf9dc897a8cb4e1024525f6cd3523bc46a28db7c95acad
+description: "Detects Azure AD Graph requests using the internal API versions 1.61-internal or 1.6-internal, which ROADrecon hard-codes for its directory dump."
+severity: high
+procedure_ids: ["RT-P11"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Azure AD Graph activity logs (AADGraphActivityLogs) normalized with api-version in additional.fields['apiVersion'], caller in principal.user.userid and request URI in target.url."
+atomic_event_types: ["AADGraphActivityLogs"]
+required_udm_fields: ["additional.fields", "metadata.id", "metadata.product_event_type", "network.http.user_agent", "principal.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Legacy first-party tooling that still calls internal Azure AD Graph versions."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; public-rules/comparisons/roadtools/roadtools_aad_graph_resource_token.md; reviews/roadtools/detection-review.md#rt-dr-09"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_aad_graph_internal_api_version.spl", sha256: bb58e78c781ef0d897661c396fa260d39393258c673db5b6f422d721ed3ce5f9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_aad_graph_internal_api_version.kql", sha256: e3268bf18079c50d4b8d8b4cf6e9e9fac7da46854fbbaa26df077133775db4b7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_aad_graph_internal_api_version.sql", sha256: b880e4bc16bceeb543949302b72bdf4423a93f7cf5aaff35cd613c5e10ac3a4e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_aad_graph_internal_api_version.eql", sha256: 577576244fe12e1cfc255b713a876b2400009b0f5632adbdac083827793d626f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_aad_graph_internal_api_version.yml", sha256: e97bb954a8bb488b868f55bfd7f4299920b48023118170764922c04ee1241138, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

@@ -1,0 +1,33 @@
+rule roadtools_browsercore_native_host_hijack {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects registration or creation of a com.microsoft.browsercore native-messaging host whose manifest path is not the Microsoft BrowserCore executable, the fake host that signs PRT cookies from a stolen PRT."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "The legitimate host is installed by Windows and points to BrowserCore.exe; a replacement pointing to a script or user path is a direct credential-abuse artifact."
+    procedure_ids = "RT-P12"
+    log_source_prerequisites = "REGISTRY_MODIFICATION (Sysmon Event ID 13) for NativeMessagingHosts keys, and FILE_CREATION (Sysmon Event ID 11) for manifest and BrowserCore.py files, with host and process."
+    false_positives = "None expected outside security research."
+    references = "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized registry and file fixtures for a fake manifest."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/roadtools/detection-review.md"
+  events:
+    (
+      ($e.metadata.event_type = "REGISTRY_MODIFICATION" and
+       re.regex($e.target.registry.registry_key, `(?i)\\NativeMessagingHosts\\com\.microsoft\.browsercore`) and
+       not re.regex($e.target.registry.registry_value_data, `(?i)\\Windows\\BrowserCore\\manifest\.json`)) or
+      ($e.metadata.event_type = "FILE_CREATION" and
+       re.regex($e.target.file.full_path, `(?i)\\BrowserCore\.py$`))
+    )
+    $e.principal.hostname = $host
+  match:
+    $host over 1h
+  outcome:
+    $artifacts = array_distinct($e.target.file.full_path)
+    $keys = array_distinct($e.target.registry.registry_key)
+  condition:
+    $e
+}

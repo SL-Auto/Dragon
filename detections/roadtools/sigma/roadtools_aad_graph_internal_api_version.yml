@@ -1,0 +1,39 @@
+title: "Detects Azure AD Graph requests using the internal API versions 1.61-internal or 1.6-internal, which ROADrecon hard-codes for its directory dump."
+name: roadtools_aad_graph_internal_api_version_base
+status: experimental
+description: "Detects Azure AD Graph requests using the internal API versions 1.61-internal or 1.6-internal, which ROADrecon hard-codes for its directory dump."
+source_yaral: "detections/roadtools/yaral/roadtools_aad_graph_internal_api_version.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type, api_version); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/roadtools/source-analysis.md#procedure-analysis; public-rules/comparisons/roadtools/roadtools_aad_graph_resource_token.md; reviews/roadtools/detection-review.md#rt-dr-09"
+procedure_ids: "RT-P11"
+log_source_prerequisites: "Azure AD Graph activity logs (AADGraphActivityLogs) normalized with api-version in additional.fields['apiVersion'], caller in principal.user.userid and request URI in target.url."
+logsource:
+  category: azure_aadgraph
+  product: azure
+detection:
+  sel:
+    product_event_type: "AADGraphActivityLogs"
+    api_version|re: "(?i)^1\\.61?-internal$"
+  condition: sel
+falsepositives:
+  - "Legacy first-party tooling that still calls internal Azure AD Graph versions."
+level: high
+---
+title: "Detects Azure AD Graph requests using the internal API versions 1.61-internal or 1.6-internal, which ROADrecon hard-codes for its directory dump."
+name: roadtools_aad_graph_internal_api_version
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - roadtools_aad_graph_internal_api_version_base
+  group-by:
+    - user_id
+  timespan: 60m
+  condition:
+    gte: 1
+level: high

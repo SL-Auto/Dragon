@@ -1,0 +1,19 @@
+-- source_yaral: detections/roadtools/yaral/roadtools_device_registration_then_prt_signin.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: partial
+-- rule_name: roadtools_device_registration_then_prt_signin
+-- severity: high
+-- procedure_ids: RT-P03,RT-P04
+-- description: Detects a device registration by a user followed within 1 hour by a sign-in by that user whose incoming token type is a Primary Refresh Token, the sequence of registering an attacker device and then using its PRT.
+-- log_source_prerequisites: Entra ID audit logs (AuditLogs) normalized with activityDisplayName in metadata.product_event_type, initiating user in principal.user.userid, target user or device in target.user.userid or target.resource.name, and modified-property values in additional.fields['modifiedProperties']; Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields.
+-- false_positives: Users enrolling new corporate devices (Autopilot, first sign-in).
+-- references: reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md
+-- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+-- schema_profile: schemas/normalized-sql.yml
+-- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).
+SELECT hostname, user_id, COUNT(*) AS event_count,
+       'roadtools_device_registration_then_prt_signin' AS canonical_rule
+FROM normalized_events
+WHERE product_event_type IN ('AADNonInteractiveUserSignInLogs', 'Add device', 'Register device', 'SigninLogs') OR event_type IN ('AADNonInteractiveUserSignInLogs', 'Add device', 'Register device', 'SigninLogs')
+GROUP BY hostname, user_id
+HAVING COUNT(*) > 0;

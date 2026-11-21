@@ -1,0 +1,18 @@
+# source_yaral: detections/roadtools/yaral/roadtools_graph_directory_bulk_read.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: roadtools_graph_directory_bulk_read
+# severity: medium
+# procedure_ids: RT-P10,RT-P11
+# description: Detects one identity issuing five hundred or more Microsoft Graph requests to directory endpoints (users, groups, devices, applications, servicePrincipals, directoryRoles, roleManagement, policies) within 10 minutes.
+# log_source_prerequisites: MicrosoftGraphActivityLogs with RequestUri, UserId or ServicePrincipalId in principal.user.userid.
+# false_positives: Directory synchronization, identity governance and backup applications.
+# references: reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type, request_uri); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by user_id and threshold. Hop window approximated by scheduling every 5 minutes over the trailing 10 minutes.
+| search index=<configured_index> earliest=-10m@m latest=now
+| where product_event_type=="MicrosoftGraphActivityLogs" AND match(request_uri, "(?i)/(v1\\.0|beta)/(users|groups|devices|applications|servicePrincipals|directoryRoles|roleManagement|policies)")
+| stats count as matched_count  by user_id
+| where matched_count >= 500
+| eval canonical_rule="roadtools_graph_directory_bulk_read"

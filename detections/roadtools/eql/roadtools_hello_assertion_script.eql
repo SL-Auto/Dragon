@@ -1,0 +1,15 @@
+// source_yaral: detections/roadtools/yaral/roadtools_hello_assertion_script.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: roadtools_hello_assertion_script
+// severity: medium
+// procedure_ids: RT-P13
+// description: Detects PowerShell script blocks that request Windows Hello or WebAuthn assertions through native APIs, as in the ROADtools Windows Hello assertion scripts.
+// log_source_prerequisites: PowerShell script-block logging (Event 4104) normalized with ScriptBlockText in additional.fields['ScriptBlockText'] and host.
+// false_positives: Security research and authorized testing.
+// references: reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_event_type, hostname, user_id, script_block_text); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where event.code == "4104"
+  and labels.script_block_text regex~ "(WebAuthNAuthenticatorGetAssertion|webauthn\\.dll|Microsoft Passport Key Storage Provider|NCryptSignHash)"

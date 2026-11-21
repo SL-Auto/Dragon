@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_broker_client_device_code_signin
+canonical_path: detections/roadtools/yaral/roadtools_broker_client_device_code_signin.yaral
+canonical_sha256: 67a364c50f33b69c4503a8c18b7446533e360680a4b44246164ab1f64b27a2a8
+description: "Detects successful device-code sign-ins to the Microsoft Authentication Broker client (29d9ed98-a469-4536-ade2-f981bc1d605e), the client ROADtools uses for device registration and PRT acquisition."
+severity: high
+procedure_ids: ["RT-P01", "RT-P03", "RT-P04"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Entra ID sign-in logs with authenticationProtocol and appId in additional.fields, UPN in principal.user.userid."
+atomic_event_types: []
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.ip", "principal.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Rare administrative device-enrollment scenarios using device code with the broker."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; public-rules/comparisons/roadtools/roadtools_device_code_or_ropc_signin.md; reviews/roadtools/detection-review.md#rt-dr-10"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_broker_client_device_code_signin.spl", sha256: a7543927a3a9029278c843f33f87a26c3a1368fcdacb5e24821dfaaa4315f06c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_broker_client_device_code_signin.kql", sha256: c0b24ff7205381970aa49518c133915398a887484e2004892e94b0282c5abba3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_broker_client_device_code_signin.sql", sha256: 8f79cd8644317ffa7bd3d53f6b3651cc3c3962ca994885c61428e2ec7d58c5d8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_broker_client_device_code_signin.eql", sha256: c5e0f2eb64c61ca88c84bedbfa10be693f6d6d0c4aee8994c8bf1466ab4c01e1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_broker_client_device_code_signin.yml", sha256: aec7631155235c678ef285e47de0c10304814169d81d425aaee040f8d65db157, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

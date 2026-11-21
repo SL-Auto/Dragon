@@ -1,0 +1,27 @@
+rule roadtools_hello_assertion_script {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects PowerShell script blocks that request Windows Hello or WebAuthn assertions through native APIs, as in the ROADtools Windows Hello assertion scripts."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Script-driven WebAuthn assertion requests are uncommon outside research; the API names are specific."
+    procedure_ids = "RT-P13"
+    log_source_prerequisites = "PowerShell script-block logging (Event 4104) normalized with ScriptBlockText in additional.fields['ScriptBlockText'] and host."
+    false_positives = "Security research and authorized testing."
+    references = "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized 4104 records containing WebAuthNAuthenticatorGetAssertion and NCrypt Hello key usage."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/roadtools/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "4104"
+    re.regex($e.additional.fields["ScriptBlockText"], `(?i)(WebAuthNAuthenticatorGetAssertion|webauthn\.dll|Microsoft Passport Key Storage Provider|NCryptSignHash)`)
+    $e.principal.hostname = $host
+  match:
+    $host over 1h
+  outcome:
+    $users = array_distinct($e.principal.user.userid)
+  condition:
+    $e
+}

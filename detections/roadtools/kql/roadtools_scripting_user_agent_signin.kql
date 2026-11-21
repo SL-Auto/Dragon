@@ -1,0 +1,20 @@
+// source_yaral: detections/roadtools/yaral/roadtools_scripting_user_agent_signin.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: roadtools_scripting_user_agent_signin
+// severity: medium
+// procedure_ids: RT-P01,RT-P04,RT-P06,RT-P07,RT-P10,RT-P11
+// description: Detects user or service-principal sign-ins, or Graph requests, whose user agent is a Python HTTP library default (python-requests or aiohttp), as used by ROADtools when no user agent is chosen.
+// log_source_prerequisites: Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields; MicrosoftGraphActivityLogs with UserAgent.
+// false_positives: Approved Python automation and service principals; security tooling.
+// references: reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native filter, grouping by user_id and threshold. Hop window approximated by scheduling every 20 minutes over the trailing 60 minutes. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+NormalizedEvents
+| where TimeGenerated > ago(60m)
+| where product_event_type in ("SigninLogs", "AADNonInteractiveUserSignInLogs", "AADServicePrincipalSignInLogs", "MicrosoftGraphActivityLogs")
+    and user_agent matches regex @"(?i)(python-requests/|aiohttp/|Python/[0-9.]+ aiohttp)"
+| summarize MatchedCount = count(), product_event_type_values = make_set(product_event_type, 20) by user_id
+| where MatchedCount >= 1
+| extend CanonicalRule = "roadtools_scripting_user_agent_signin"

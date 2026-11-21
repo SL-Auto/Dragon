@@ -1,0 +1,17 @@
+// source_yaral: detections/roadtools/yaral/roadtools_broker_client_device_code_signin.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: roadtools_broker_client_device_code_signin
+// severity: high
+// procedure_ids: RT-P01,RT-P03,RT-P04
+// description: Detects successful device-code sign-ins to the Microsoft Authentication Broker client (29d9ed98-a469-4536-ade2-f981bc1d605e), the client ROADtools uses for device registration and PRT acquisition.
+// log_source_prerequisites: Entra ID sign-in logs with authenticationProtocol and appId in additional.fields, UPN in principal.user.userid.
+// false_positives: Rare administrative device-enrollment scenarios using device code with the broker.
+// references: reports/roadtools/source-analysis.md#procedure-analysis; public-rules/comparisons/roadtools/roadtools_device_code_or_ropc_signin.md; reviews/roadtools/detection-review.md#rt-dr-10
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where event.code in ("SigninLogs", "AADNonInteractiveUserSignInLogs")
+  and labels.auth_protocol regex~ "^deviceCode$"
+  and labels.app_id == "29d9ed98-a469-4536-ade2-f981bc1d605e"
+  and labels.result_type == "0"

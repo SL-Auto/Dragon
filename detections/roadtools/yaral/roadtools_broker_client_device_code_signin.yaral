@@ -1,0 +1,30 @@
+rule roadtools_broker_client_device_code_signin {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects successful device-code sign-ins to the Microsoft Authentication Broker client (29d9ed98-a469-4536-ade2-f981bc1d605e), the client ROADtools uses for device registration and PRT acquisition."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Device-code authentication to the broker client is not part of normal user flows; it lets a phished code yield device-registration and PRT capability."
+    procedure_ids = "RT-P01,RT-P03,RT-P04"
+    log_source_prerequisites = "Entra ID sign-in logs with authenticationProtocol and appId in additional.fields, UPN in principal.user.userid."
+    false_positives = "Rare administrative device-enrollment scenarios using device code with the broker."
+    references = "reports/roadtools/source-analysis.md#procedure-analysis; public-rules/comparisons/roadtools/roadtools_device_code_or_ropc_signin.md; reviews/roadtools/detection-review.md#rt-dr-10"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized sign-ins with authenticationProtocol deviceCode and the broker appId."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/roadtools/detection-review.md"
+  events:
+    $e.metadata.product_event_type = /^(SigninLogs|AADNonInteractiveUserSignInLogs)$/
+    re.regex($e.additional.fields["authenticationProtocol"], `(?i)^deviceCode$`)
+    $e.additional.fields["appId"] = "29d9ed98-a469-4536-ade2-f981bc1d605e"
+    $e.additional.fields["resultType"] = "0"
+    $e.principal.user.userid = $user
+  match:
+    $user over 1h
+  outcome:
+    $ips = array_distinct($e.principal.ip)
+    $resources = array_distinct($e.additional.fields["resourceId"])
+  condition:
+    $e
+}

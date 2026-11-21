@@ -1,0 +1,43 @@
+title: "Detects successful device-code sign-ins to the Microsoft Authentication Broker client (29d9ed98-a469-4536-ade2-f981bc1d605e), the client ROADtools uses for device registration and PRT acquisition."
+name: roadtools_broker_client_device_code_signin_base
+status: experimental
+description: "Detects successful device-code sign-ins to the Microsoft Authentication Broker client (29d9ed98-a469-4536-ade2-f981bc1d605e), the client ROADtools uses for device registration and PRT acquisition."
+source_yaral: "detections/roadtools/yaral/roadtools_broker_client_device_code_signin.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/roadtools/source-analysis.md#procedure-analysis; public-rules/comparisons/roadtools/roadtools_device_code_or_ropc_signin.md; reviews/roadtools/detection-review.md#rt-dr-10"
+procedure_ids: "RT-P01,RT-P03,RT-P04"
+log_source_prerequisites: "Entra ID sign-in logs with authenticationProtocol and appId in additional.fields, UPN in principal.user.userid."
+logsource:
+  category: azure_signin
+  product: azure
+detection:
+  sel:
+    product_event_type:
+      - "SigninLogs"
+      - "AADNonInteractiveUserSignInLogs"
+    auth_protocol|re: "(?i)^deviceCode$"
+    app_id: "29d9ed98-a469-4536-ade2-f981bc1d605e"
+    result_type: "0"
+  condition: sel
+falsepositives:
+  - "Rare administrative device-enrollment scenarios using device code with the broker."
+level: high
+---
+title: "Detects successful device-code sign-ins to the Microsoft Authentication Broker client (29d9ed98-a469-4536-ade2-f981bc1d605e), the client ROADtools uses for device registration and PRT acquisition."
+name: roadtools_broker_client_device_code_signin
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - roadtools_broker_client_device_code_signin_base
+  group-by:
+    - user_id
+  timespan: 60m
+  condition:
+    gte: 1
+level: high

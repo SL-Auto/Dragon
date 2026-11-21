@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_seamless_sso_ticket_from_unusual_process
+canonical_path: detections/roadtools/yaral/roadtools_seamless_sso_ticket_from_unusual_process.yaral
+canonical_sha256: be75fbbb7bece40b19b4990dc1b0596eeee3d9801c8630f3eafa181f7189b8bc
+description: "Detects Kerberos service tickets for the Seamless SSO computer account (AZUREADSSOACC$) requested by an account that, within 10 minutes, signs in with a scripting user agent, linking on-premises SSO token minting to tooling."
+severity: medium
+procedure_ids: ["RT-P06"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Windows Security 4769 with service name and account; Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields; the on-premises sAMAccountName enrichment in additional.fields['onPremSamAccountName'] on sign-in records."
+atomic_event_types: ["4769"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "network.http.user_agent", "principal.ip", "target.resource.name", "target.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Users whose scripted automation also uses Seamless SSO."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_seamless_sso_ticket_from_unusual_process.spl", sha256: 5bd82d67ebaaf327cf145dcea1a48feda25411dd3069ecae38c7178250204dfe, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/roadtools/kql/roadtools_seamless_sso_ticket_from_unusual_process.kql", sha256: 9078ae742622a50852b7a18a7b455f91cbf161c850abb2c8865eee809c7be370, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/roadtools/sql/roadtools_seamless_sso_ticket_from_unusual_process.sql", sha256: cd6a8b293238c0dbf5b46bf9a5f398d358cc80c05c5314d36a0fa6738ad11b07, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/roadtools/eql/roadtools_seamless_sso_ticket_from_unusual_process.eql", sha256: be05578cf2bf922d787527190115f0fac297b57ebe9ce943edb9b72f37876349, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_seamless_sso_ticket_from_unusual_process.yml", sha256: 544803a3a2df6b3802b697c99f5870beb5cac424991f4440d58f1765df99db88, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

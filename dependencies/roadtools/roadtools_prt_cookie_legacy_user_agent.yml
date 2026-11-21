@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_prt_cookie_legacy_user_agent
+canonical_path: detections/roadtools/yaral/roadtools_prt_cookie_legacy_user_agent.yaral
+canonical_sha256: 186d1cc9b00c21c55f4545da53ed4ec76c113893938aae8695bed51ce7302efa
+description: "Detects sign-in or HTTP activity with the fixed legacy user agent ROADtools sends during PRT-cookie authentication: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 10.0; Win64; x64; Trident/7.0; .NET4.0C; .NET4.0E)."
+severity: medium
+procedure_ids: ["RT-P04"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields; proxy NETWORK_HTTP with User-Agent where available."
+atomic_event_types: []
+required_udm_fields: ["metadata.product_event_type", "network.http.user_agent", "principal.ip", "principal.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Legacy embedded web controls presenting compatibility user agents."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_prt_cookie_legacy_user_agent.spl", sha256: ba71349aaab22ea8c4eca07d6e8afc5169d6cfd8e602f7edb1bbace7412319ac, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_prt_cookie_legacy_user_agent.kql", sha256: a7804e2f069379cb4bf3920760d7121d95c6c9f50cd09e9da24cf00cff2c0895, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_prt_cookie_legacy_user_agent.sql", sha256: d00aa39d439b49d364fce5333d2b4df02be3574374d1ea49760588e7de1f5336, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_prt_cookie_legacy_user_agent.eql", sha256: 04546d6685ddabdbf0a10d819ec7b4c0bb953ea3ac4f0e41f123e9e3b51afe81, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_prt_cookie_legacy_user_agent.yml", sha256: 39e43bc2af16fc3f7440678515e42475fe6fe5912efa5b6b5602c96442cd2c47, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

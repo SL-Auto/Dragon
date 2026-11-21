@@ -164,11 +164,12 @@ tools:
     name: ROADtools
     aliases: []
     category: cloud-identity
-    status: triaged
-    source_code: { availability: public, repository: https://github.com/dirkjanm/ROADtools, analyzed_revision: unknown }
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/dirkjanm/ROADtools, analyzed_revision: 792708365789be4e6f58db65c3f90701159fd0ea }
     first_seen: unknown
-    last_reviewed: 2026-08-15
-    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+    last_reviewed: 2026-11-21
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: reports/roadtools/source-analysis.md }, { path: coverage/roadtools.yml }, { path: detections/roadtools/ }, { path: reviews/roadtools/detection-review.md }, { path: telemetry/roadtools.md }, { path: public-rules/comparisons/roadtools/ }]
+    notes: "Comprehensive for the pinned revision: all roadtx and roadrecon subcommands, roadlib and endpoint helpers mapped to tenant and endpoint effects. roadoidc is excluded as attacker infrastructure. Actor-token issuance is not observable. Rules are experimental."
   - id: scoutsuite
     name: ScoutSuite
     aliases: []

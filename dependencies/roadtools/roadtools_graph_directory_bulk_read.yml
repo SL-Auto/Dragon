@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_graph_directory_bulk_read
+canonical_path: detections/roadtools/yaral/roadtools_graph_directory_bulk_read.yaral
+canonical_sha256: 8247b401d95ed355f5532a80504bb6650efb19f9f3923ec197d923f9b8fd10bc
+description: "Detects one identity issuing five hundred or more Microsoft Graph requests to directory endpoints (users, groups, devices, applications, servicePrincipals, directoryRoles, roleManagement, policies) within 10 minutes."
+severity: medium
+procedure_ids: ["RT-P10", "RT-P11"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "MicrosoftGraphActivityLogs with RequestUri, UserId or ServicePrincipalId in principal.user.userid."
+atomic_event_types: ["MicrosoftGraphActivityLogs"]
+required_udm_fields: ["metadata.id", "metadata.product_event_type", "principal.user.userid", "target.url"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Directory synchronization, identity governance and backup applications."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_graph_directory_bulk_read.spl", sha256: ca4aa2aba733613cb8bb5d9f4736ccc5265259af0758c1254e1b89bdfb087a7f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_graph_directory_bulk_read.kql", sha256: 74bf3689f3c529cabaa317225aeec1b0f74d3cc5d0b0bafb8c5f66ebbeb86479, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_graph_directory_bulk_read.sql", sha256: 08f359e6fd8a371f21456a73902e6c7e606a3191be583c2e9e0c0c775099b5a1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_graph_directory_bulk_read.eql", sha256: 935aa8e5ff2e489ae6254d453cd9262ec3a15281555f67d93f93e7fb15186c18, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_graph_directory_bulk_read.yml", sha256: 0aa55f25d895b45b89ce5f9544a8ee797e90905d54b355eae4d7933c9a393ed7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

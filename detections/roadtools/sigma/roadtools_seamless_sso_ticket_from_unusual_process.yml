@@ -1,0 +1,22 @@
+title: "Detects Kerberos service tickets for the Seamless SSO computer account (AZUREADSSOACC$) requested by an account that, within 10 minutes, signs in with a scripting user agent, linking on-premises SSO token minting to tooling."
+name: roadtools_seamless_sso_ticket_from_unusual_process
+status: experimental
+description: "Detects Kerberos service tickets for the Seamless SSO computer account (AZUREADSSOACC$) requested by an account that, within 10 minutes, signs in with a scripting user agent, linking on-premises SSO token minting to tooling."
+source_yaral: "detections/roadtools/yaral/roadtools_seamless_sso_ticket_from_unusual_process.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+procedure_ids: "RT-P06"
+log_source_prerequisites: "Windows Security 4769 with service name and account; Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields; the on-premises sAMAccountName enrichment in additional.fields['onPremSamAccountName'] on sign-in records."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["4769", "AADNonInteractiveUserSignInLogs", "SigninLogs"]
+  condition: selection_event_type
+falsepositives:
+  - "Users whose scripted automation also uses Seamless SSO."
+level: medium

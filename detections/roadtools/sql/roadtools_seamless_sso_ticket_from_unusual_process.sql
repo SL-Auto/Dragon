@@ -1,0 +1,19 @@
+-- source_yaral: detections/roadtools/yaral/roadtools_seamless_sso_ticket_from_unusual_process.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: partial
+-- rule_name: roadtools_seamless_sso_ticket_from_unusual_process
+-- severity: medium
+-- procedure_ids: RT-P06
+-- description: Detects Kerberos service tickets for the Seamless SSO computer account (AZUREADSSOACC$) requested by an account that, within 10 minutes, signs in with a scripting user agent, linking on-premises SSO token minting to tooling.
+-- log_source_prerequisites: Windows Security 4769 with service name and account; Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields; the on-premises sAMAccountName enrichment in additional.fields['onPremSamAccountName'] on sign-in records.
+-- false_positives: Users whose scripted automation also uses Seamless SSO.
+-- references: reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md
+-- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+-- schema_profile: schemas/normalized-sql.yml
+-- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).
+SELECT hostname, user_id, COUNT(*) AS event_count,
+       'roadtools_seamless_sso_ticket_from_unusual_process' AS canonical_rule
+FROM normalized_events
+WHERE product_event_type IN ('4769', 'AADNonInteractiveUserSignInLogs', 'SigninLogs') OR event_type IN ('4769', 'AADNonInteractiveUserSignInLogs', 'SigninLogs')
+GROUP BY hostname, user_id
+HAVING COUNT(*) > 0;

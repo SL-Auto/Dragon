@@ -1,0 +1,15 @@
+// source_yaral: detections/roadtools/yaral/roadtools_graph_directory_bulk_read.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: roadtools_graph_directory_bulk_read
+// severity: medium
+// procedure_ids: RT-P10,RT-P11
+// description: Detects one identity issuing five hundred or more Microsoft Graph requests to directory endpoints (users, groups, devices, applications, servicePrincipals, directoryRoles, roleManagement, policies) within 10 minutes.
+// log_source_prerequisites: MicrosoftGraphActivityLogs with RequestUri, UserId or ServicePrincipalId in principal.user.userid.
+// false_positives: Directory synchronization, identity governance and backup applications.
+// references: reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type, request_uri); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where event.code == "MicrosoftGraphActivityLogs"
+  and labels.request_uri regex~ "/(v1\\.0|beta)/(users|groups|devices|applications|servicePrincipals|directoryRoles|roleManagement|policies)"

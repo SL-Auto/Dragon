@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_scripting_user_agent_signin
+canonical_path: detections/roadtools/yaral/roadtools_scripting_user_agent_signin.yaral
+canonical_sha256: 46896bed8d4ec07950c7ce310a9d34e01f31decb16c3bf2ceb9a56dacbc02e29
+description: "Detects user or service-principal sign-ins, or Graph requests, whose user agent is a Python HTTP library default (python-requests or aiohttp), as used by ROADtools when no user agent is chosen."
+severity: medium
+procedure_ids: ["RT-P01", "RT-P04", "RT-P06", "RT-P07", "RT-P10", "RT-P11"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields; MicrosoftGraphActivityLogs with UserAgent."
+atomic_event_types: ["AADNonInteractiveUserSignInLogs", "AADServicePrincipalSignInLogs"]
+required_udm_fields: ["metadata.product_event_type", "network.http.user_agent", "principal.ip", "principal.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Approved Python automation and service principals; security tooling."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_scripting_user_agent_signin.spl", sha256: 113d428dbce73401a023aeb744093d3ce3ce2d5cd7c1cd7d55317cb5fe64641a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_scripting_user_agent_signin.kql", sha256: e43ee6b45a4b6843bb69f0107d67de521e635c2b3336dfa82ba2266de1cd7331, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_scripting_user_agent_signin.sql", sha256: a6bd42656203ee37d72c677946f316354245ed3edba02f0a61211ab05ba07468, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_scripting_user_agent_signin.eql", sha256: 5697c504a38c918baf51f31bd0ee2a614985901bff2ef176adae7c13094dbd5c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_scripting_user_agent_signin.yml", sha256: 1ee5f2468db460c8acdf1ae18826f4924650d7658d7bbea7889f2e4b09fc8d6c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

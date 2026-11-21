@@ -1,0 +1,26 @@
+schema_version: 1
+tool_id: roadtools
+analyzed_revision: 792708365789be4e6f58db65c3f90701159fd0ea
+inventory_method: every roadtx and roadrecon subcommand, the roadlib authentication library and the endpoint helpers mapped to tenant and endpoint effects
+inventory_complete: true
+inventory_evidence: [reports/roadtools/source-analysis.md]
+excluded_paths:
+  - { path: roadoidc, reason: "attacker-hosted OIDC issuer; its victim-side effect is the federated service-principal sign-in (RT-P07)" }
+  - { path: "roadrecon plugins, server.py and dist_gui", reason: offline analysis of the local database }
+  - { path: "roadtx decrypt describe listaliases getotp decryptadfskey", reason: local cryptographic or display operations with no victim-side effect when run }
+  - { path: "tests azure-pipelines.yml", reason: non-deployed }
+procedures:
+  - { id: RT-P01, name: token acquisition flows, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_device_code_or_ropc_signin, roadtools_scripting_user_agent_signin, roadtools_broker_client_device_code_signin] }
+  - { id: RT-P02, name: FOCI refresh-token pivot, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_foci_refresh_token_client_hopping] }
+  - { id: RT-P03, name: device registration, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_device_registration_then_prt_signin, roadtools_device_registration_then_hello_key, roadtools_registered_device_default_name] }
+  - { id: RT-P04, name: PRT acquisition and use, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_device_registration_then_prt_signin, roadtools_prt_cookie_legacy_user_agent, roadtools_scripting_user_agent_signin, roadtools_broker_client_device_code_signin] }
+  - { id: RT-P05, name: Windows Hello and passkey persistence, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_passkey_default_name_registration, roadtools_device_registration_then_hello_key] }
+  - { id: RT-P06, name: Seamless SSO and autologon, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_seamless_sso_ticket_from_unusual_process, roadtools_scripting_user_agent_signin] }
+  - { id: RT-P07, name: service-principal authentication, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_federated_credential_sp_signin, roadtools_scripting_user_agent_signin] }
+  - { id: RT-P08, name: actor and impersonation tokens, telemetry_status: not_observable, detection_status: not_observable, detection_rules: [], compensating_signal: "issuance is not logged; service-principal sign-ins and downstream service audit logs" }
+  - { id: RT-P09, name: SAML token generation, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_federated_signin_without_idp_issuance] }
+  - { id: RT-P10, name: Graph requests, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_graph_directory_bulk_read, roadtools_scripting_user_agent_signin] }
+  - { id: RT-P11, name: directory dump, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_aad_graph_resource_token, roadtools_graph_directory_bulk_read, roadtools_scripting_user_agent_signin, roadtools_aad_graph_internal_api_version] }
+  - { id: RT-P12, name: BrowserCore native-host hijack, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_browsercore_native_host_hijack] }
+  - { id: RT-P13, name: Windows Hello assertion scripts, telemetry_status: assessed, detection_status: detected, detection_rules: [roadtools_hello_assertion_script] }
+completion: { total_procedures: 13, detected: 12, not_observable: 1, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

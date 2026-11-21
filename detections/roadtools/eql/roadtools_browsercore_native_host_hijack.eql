@@ -1,0 +1,14 @@
+// source_yaral: detections/roadtools/yaral/roadtools_browsercore_native_host_hijack.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: roadtools_browsercore_native_host_hijack
+// severity: high
+// procedure_ids: RT-P12
+// description: Detects registration or creation of a com.microsoft.browsercore native-messaging host whose manifest path is not the Microsoft BrowserCore executable, the fake host that signs PRT cookies from a stolen PRT.
+// log_source_prerequisites: REGISTRY_MODIFICATION (Sysmon Event ID 13) for NativeMessagingHosts keys, and FILE_CREATION (Sysmon Event ID 11) for manifest and BrowserCore.py files, with host and process.
+// false_positives: None expected outside security research.
+// references: reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (event_type, hostname, registry_key, registry_value_data, target_path); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where ((event.action == "REGISTRY_MODIFICATION" and registry.key regex~ "\\NativeMessagingHosts\\com\\.microsoft\\.browsercore" and not labels.registry_value_data regex~ "\\Windows\\BrowserCore\\manifest\\.json") or (event.action == "FILE_CREATION" and file.path regex~ "\\BrowserCore\\.py$"))

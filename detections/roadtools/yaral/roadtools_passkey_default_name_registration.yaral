@@ -1,0 +1,28 @@
+rule roadtools_passkey_default_name_registration {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects registration of a passkey or security key whose display name is the ROADtools default (roadtx)."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "An attacker-registered passkey is a phishing-resistant persistent credential; the default name is specific to the tool, although the operator can change it."
+    procedure_ids = "RT-P05"
+    log_source_prerequisites = "Entra ID audit logs (AuditLogs) normalized with activityDisplayName in metadata.product_event_type, initiating user in principal.user.userid, target user or device in target.user.userid or target.resource.name, and modified-property values in additional.fields['modifiedProperties']."
+    false_positives = "A user who deliberately names a key roadtx."
+    references = "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay a sanitized passkey-registration audit event with the default name."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/roadtools/detection-review.md"
+  events:
+    re.regex($k.metadata.product_event_type, `(?i)(passkey|FIDO2|security info|security key)`)
+    re.regex($k.additional.fields["modifiedProperties"], `(?i)\broadtx\b`)
+    $k.target.user.userid = $user
+  match:
+    $user over 1h
+  outcome:
+    $activities = array_distinct($k.metadata.product_event_type)
+    $initiators = array_distinct($k.principal.user.userid)
+  condition:
+    $k
+}

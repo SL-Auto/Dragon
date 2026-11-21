@@ -1,0 +1,27 @@
+rule roadtools_graph_directory_bulk_read {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one identity issuing five hundred or more Microsoft Graph requests to directory endpoints (users, groups, devices, applications, servicePrincipals, directoryRoles, roleManagement, policies) within 10 minutes."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Bulk directory reads build a tenant map; sync and governance tools overlap."
+    procedure_ids = "RT-P10,RT-P11"
+    log_source_prerequisites = "MicrosoftGraphActivityLogs with RequestUri, UserId or ServicePrincipalId in principal.user.userid."
+    false_positives = "Directory synchronization, identity governance and backup applications."
+    references = "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized Graph activity records; baseline approved applications."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/roadtools/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "MicrosoftGraphActivityLogs"
+    re.regex($e.target.url, `(?i)/(v1\.0|beta)/(users|groups|devices|applications|servicePrincipals|directoryRoles|roleManagement|policies)`)
+    $e.principal.user.userid = $principal
+  match:
+    $principal over 10m
+  outcome:
+    $requests = count($e.metadata.id)
+  condition:
+    $e and $requests >= 500
+}

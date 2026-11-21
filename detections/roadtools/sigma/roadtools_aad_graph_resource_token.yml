@@ -1,0 +1,42 @@
+title: "Detects user sign-ins that obtain tokens for the legacy Azure AD Graph resource (00000002-0000-0000-c000-000000000000), which ROADrecon uses for its directory dump."
+name: roadtools_aad_graph_resource_token_base
+status: experimental
+description: "Detects user sign-ins that obtain tokens for the legacy Azure AD Graph resource (00000002-0000-0000-c000-000000000000), which ROADrecon uses for its directory dump."
+source_yaral: "detections/roadtools/yaral/roadtools_aad_graph_resource_token.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+procedure_ids: "RT-P11"
+log_source_prerequisites: "Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields."
+logsource:
+  category: azure_signin
+  product: azure
+detection:
+  sel:
+    product_event_type:
+      - "SigninLogs"
+      - "AADNonInteractiveUserSignInLogs"
+    resource_id: "00000002-0000-0000-c000-000000000000"
+    result_type: "0"
+  condition: sel
+falsepositives:
+  - "Legacy applications still using Azure AD Graph."
+level: medium
+---
+title: "Detects user sign-ins that obtain tokens for the legacy Azure AD Graph resource (00000002-0000-0000-c000-000000000000), which ROADrecon uses for its directory dump."
+name: roadtools_aad_graph_resource_token
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - roadtools_aad_graph_resource_token_base
+  group-by:
+    - user_id
+  timespan: 60m
+  condition:
+    gte: 1
+level: medium

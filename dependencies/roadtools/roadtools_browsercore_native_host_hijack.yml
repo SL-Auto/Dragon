@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_browsercore_native_host_hijack
+canonical_path: detections/roadtools/yaral/roadtools_browsercore_native_host_hijack.yaral
+canonical_sha256: 78585977590c21b62e8f9900815050c804e36817fba82a11422572e415f704b3
+description: "Detects registration or creation of a com.microsoft.browsercore native-messaging host whose manifest path is not the Microsoft BrowserCore executable, the fake host that signs PRT cookies from a stolen PRT."
+severity: high
+procedure_ids: ["RT-P12"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "REGISTRY_MODIFICATION (Sysmon Event ID 13) for NativeMessagingHosts keys, and FILE_CREATION (Sysmon Event ID 11) for manifest and BrowserCore.py files, with host and process."
+atomic_event_types: ["FILE_CREATION", "REGISTRY_MODIFICATION"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "target.file.full_path", "target.registry.registry_key", "target.registry.registry_value_data"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "None expected outside security research."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_browsercore_native_host_hijack.spl", sha256: 174111d541c03bf0b877f201896ab5f160c7e7a7b59e9dcc670d8f2d1ee813a9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_browsercore_native_host_hijack.kql", sha256: ae7dd6b3f340d4618de3e98e2b0273d67682e4b4b5a373475f854b0cf26d440b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_browsercore_native_host_hijack.sql", sha256: c80c0a2f961c1965d81ba3fbe918a434373a0eca984889dbd7d69a9bbf687291, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_browsercore_native_host_hijack.eql", sha256: 22d8d7a94bc02124129763872a72092f360683210928d85c35b3c7699835f4d2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_browsercore_native_host_hijack.yml", sha256: 705560120e7c74ab92f2fc52e23050989069bf64d16970709247479abbd64a9f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

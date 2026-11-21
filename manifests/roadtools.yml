@@ -1,27 +1,52 @@
 schema_version: 1
 tool_id: roadtools
 name: "ROADtools"
-lifecycle_status: triaged
-analyzed_revision: "unknown"
+lifecycle_status: analyzed
+analyzed_revision: "792708365789be4e6f58db65c3f90701159fd0ea"
 context_entry_points:
   registry: registry/tools.yml
+  summary: summaries/roadtools.md
+  coverage: coverage/roadtools.yml
+  report: reports/roadtools/source-analysis.md
+  telemetry: telemetry/roadtools.md
 counts:
-  procedures: 0
-  canonical_rules: 0
-  spl_translations: 0
-  kql_translations: 0
-  sql_translations: 0
-  eql_translations: 0
-  sigma_translations: 0
+  procedures: 13
+  canonical_rules: 17
+  spl_translations: 17
+  kql_translations: 17
+  sql_translations: 17
+  eql_translations: 17
+  sigma_translations: 17
 completion_states:
-  source_analysis: incomplete
-  canonical_detection: not_started
-  telemetry_reconciliation: not_started
-  secondary_translation: not_started
-  rule_validation_labels: "not_applicable"
+  source_analysis: complete
+  canonical_detection: complete
+  telemetry_reconciliation: complete_for_experimental_rules
+  secondary_translation: draft_complete
+  rule_validation_labels: "17 needs_validation"
 artifact_hashes:
-  registry: a472cdce6fb052c7b943d29648d8575fbe6f02db5e4f70c1dadaf684f889731c
+  registry: 1d81b73176af57e72d2a6ae7af61bddf345397a860bfcd84fc2fdf80f1a6ecc3
+  coverage: 0f88a4d86c4ef71711a0749fd1eb6cdbed64c39073123a43fcc323ec948ac3fb
+  report: f94cc2b9745602b221727ee7e5de191c8ecb3bf47f4396752f2fa7afc106ece1
+  telemetry: 6d950863ce04cad4bf1c6d4078f120b0ee87dc30aae211eb8b7115acb718267c
+  detection_review: 1596c3caff4dc3060632e8e703d225a40592f369273a289378ef95a39da69734
+  translation_review: efad87a4d827c0a01a97e0199721111beb14713eaa86b06d251c7f0099e8783f
 rules:
-  []
+  - { name: roadtools_aad_graph_internal_api_version, severity: high, procedures: "RT-P11", dependency: dependencies/roadtools/roadtools_aad_graph_internal_api_version.yml, canonical_sha256: 1ec697386c6cdddc87cf9dc897a8cb4e1024525f6cd3523bc46a28db7c95acad }
+  - { name: roadtools_aad_graph_resource_token, severity: medium, procedures: "RT-P11", dependency: dependencies/roadtools/roadtools_aad_graph_resource_token.yml, canonical_sha256: 5218544323bf909af561f1ea8b1be60a9dab95641e59e7c01251d8d440b4da57 }
+  - { name: roadtools_broker_client_device_code_signin, severity: high, procedures: "RT-P01,RT-P03,RT-P04", dependency: dependencies/roadtools/roadtools_broker_client_device_code_signin.yml, canonical_sha256: 67a364c50f33b69c4503a8c18b7446533e360680a4b44246164ab1f64b27a2a8 }
+  - { name: roadtools_browsercore_native_host_hijack, severity: high, procedures: "RT-P12", dependency: dependencies/roadtools/roadtools_browsercore_native_host_hijack.yml, canonical_sha256: 78585977590c21b62e8f9900815050c804e36817fba82a11422572e415f704b3 }
+  - { name: roadtools_device_code_or_ropc_signin, severity: medium, procedures: "RT-P01", dependency: dependencies/roadtools/roadtools_device_code_or_ropc_signin.yml, canonical_sha256: fd635c24e6bc479990dad66c2a3a3520b7ff0bb9a0cef2a9e783c66d30716fb0 }
+  - { name: roadtools_device_registration_then_hello_key, severity: medium, procedures: "RT-P03,RT-P05", dependency: dependencies/roadtools/roadtools_device_registration_then_hello_key.yml, canonical_sha256: a2f008dc29d804ca9bc4e56fe81d9a578e24a27e02e9da9c1d9a29d943f7d566 }
+  - { name: roadtools_device_registration_then_prt_signin, severity: high, procedures: "RT-P03,RT-P04", dependency: dependencies/roadtools/roadtools_device_registration_then_prt_signin.yml, canonical_sha256: 20a0bed28ae5635f11c004423a4e5079d980a5b5da1134bb9cc5c6d6f06157c4 }
+  - { name: roadtools_federated_credential_sp_signin, severity: medium, procedures: "RT-P07", dependency: dependencies/roadtools/roadtools_federated_credential_sp_signin.yml, canonical_sha256: 7646bc4bbb00520845c50d866a3403b5eba67102edd1a1a0e5fc553b7e5fc500 }
+  - { name: roadtools_federated_signin_without_idp_issuance, severity: medium, procedures: "RT-P09", dependency: dependencies/roadtools/roadtools_federated_signin_without_idp_issuance.yml, canonical_sha256: 77aaee8614eb4d08b78e372151543eb28f5c91fb4dea2fbbf5cc8c2411d91447 }
+  - { name: roadtools_foci_refresh_token_client_hopping, severity: high, procedures: "RT-P02", dependency: dependencies/roadtools/roadtools_foci_refresh_token_client_hopping.yml, canonical_sha256: bbeed740a4aff7dc04b342109e3f5f4cf27ca705467658b321520c9add875527 }
+  - { name: roadtools_graph_directory_bulk_read, severity: medium, procedures: "RT-P10,RT-P11", dependency: dependencies/roadtools/roadtools_graph_directory_bulk_read.yml, canonical_sha256: 8247b401d95ed355f5532a80504bb6650efb19f9f3923ec197d923f9b8fd10bc }
+  - { name: roadtools_hello_assertion_script, severity: medium, procedures: "RT-P13", dependency: dependencies/roadtools/roadtools_hello_assertion_script.yml, canonical_sha256: 86670ea8b011b6b2aaeacfdb282c2a3a66ac3d434b056396a424df18e1ded8bc }
+  - { name: roadtools_passkey_default_name_registration, severity: high, procedures: "RT-P05", dependency: dependencies/roadtools/roadtools_passkey_default_name_registration.yml, canonical_sha256: 8ed192ad1d7c19e0492b3a58f8e5fe45212112059f0e5c4c132e32d22d9cc43d }
+  - { name: roadtools_prt_cookie_legacy_user_agent, severity: medium, procedures: "RT-P04", dependency: dependencies/roadtools/roadtools_prt_cookie_legacy_user_agent.yml, canonical_sha256: 186d1cc9b00c21c55f4545da53ed4ec76c113893938aae8695bed51ce7302efa }
+  - { name: roadtools_registered_device_default_name, severity: low, procedures: "RT-P03", dependency: dependencies/roadtools/roadtools_registered_device_default_name.yml, canonical_sha256: 7ba0c879c71a2d51272c266263676ede65f4f6dc8e7fd96d93d8d0caafdec0c9 }
+  - { name: roadtools_scripting_user_agent_signin, severity: medium, procedures: "RT-P01,RT-P04,RT-P06,RT-P07,RT-P10,RT-P11", dependency: dependencies/roadtools/roadtools_scripting_user_agent_signin.yml, canonical_sha256: 46896bed8d4ec07950c7ce310a9d34e01f31decb16c3bf2ceb9a56dacbc02e29 }
+  - { name: roadtools_seamless_sso_ticket_from_unusual_process, severity: medium, procedures: "RT-P06", dependency: dependencies/roadtools/roadtools_seamless_sso_ticket_from_unusual_process.yml, canonical_sha256: be75fbbb7bece40b19b4990dc1b0596eeee3d9801c8630f3eafa181f7189b8bc }
 unresolved:
   source_blockers: 0

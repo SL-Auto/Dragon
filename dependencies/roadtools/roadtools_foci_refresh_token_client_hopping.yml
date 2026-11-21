@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_foci_refresh_token_client_hopping
+canonical_path: detections/roadtools/yaral/roadtools_foci_refresh_token_client_hopping.yaral
+canonical_sha256: bbeed740a4aff7dc04b342109e3f5f4cf27ca705467658b321520c9add875527
+description: "Detects one user obtaining tokens for four or more distinct client applications through non-interactive refresh-token sign-ins within 30 minutes, the family-of-client-IDs pivot used to expand token scope."
+severity: high
+procedure_ids: ["RT-P02"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields."
+atomic_event_types: ["AADNonInteractiveUserSignInLogs"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.ip", "principal.user.userid"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Users running several Microsoft 365 desktop apps at sign-in time; Office suite bootstrap on new devices."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_foci_refresh_token_client_hopping.spl", sha256: 757718a8313da03b7b34780168fb051dfeceecc1f60ff86c8da4cc18db83c7dc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_foci_refresh_token_client_hopping.kql", sha256: 3b4c2248d7025abaabb7845a214c7e2b2c6060a387a498bd9dad87ebd4e85b2a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_foci_refresh_token_client_hopping.sql", sha256: 7626004130fdbb190c134655f152bf09d58caebed037f6aec9da8337b6082b08, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_foci_refresh_token_client_hopping.eql", sha256: eee5e723d9d7d2ea6ca4d8b5d608407131c85ff9cf0c35c0e7a4633f4219a2ff, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_foci_refresh_token_client_hopping.yml", sha256: a533882af81351266b0479c3c4021d2bb8f9a2909d2052cc3a7e9d2b2e6c5d3c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

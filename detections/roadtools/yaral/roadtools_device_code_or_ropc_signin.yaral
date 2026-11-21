@@ -1,0 +1,30 @@
+rule roadtools_device_code_or_ropc_signin {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects successful user sign-ins that use the device-code or resource-owner password (ROPC) protocol, the non-interactive flows that token tools use with stolen codes or passwords."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Both protocols bypass the normal browser sign-in experience; device code is a common phishing vector and ROPC is uncommon for modern applications."
+    procedure_ids = "RT-P01"
+    log_source_prerequisites = "Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields."
+    false_positives = "Input-constrained devices, legacy scripts and CLI tools that legitimately use these flows."
+    references = "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized sign-in records with authenticationProtocol deviceCode and ropc; inventory approved applications."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/roadtools/detection-review.md"
+  events:
+    $e.metadata.product_event_type = /^(SigninLogs|AADNonInteractiveUserSignInLogs)$/
+    re.regex($e.additional.fields["authenticationProtocol"], `(?i)^(deviceCode|ropc)$`)
+    $e.additional.fields["resultType"] = "0"
+    $e.principal.user.userid = $user
+  match:
+    $user over 1h
+  outcome:
+    $protocols = array_distinct($e.additional.fields["authenticationProtocol"])
+    $apps = array_distinct($e.additional.fields["appId"])
+    $ips = array_distinct($e.principal.ip)
+  condition:
+    $e
+}

@@ -12,6 +12,7 @@ These scripts regenerate hand-specified secondary translations (SPL, KQL, SQL, E
 | `specs_cloudfox.py` | 15 CloudFox cloud-audit and endpoint rules |
 | `specs_nmap.py` | 13 Nmap, Ncat and Nping rules |
 | `specs_pacu.py` | 21 Pacu CloudTrail and EKS rules (one rule uses the generator) |
+| `specs_roadtools.py` | 13 single-event ROADtools rules (4 multi-event rules use the generator) |
 
 Usage, from any directory (the scripts do not execute detection content):
 
@@ -23,6 +24,7 @@ python -I scripts/native_translations/specs_ligolo.py
 python -I scripts/native_translations/specs_cloudfox.py
 python -I scripts/native_translations/specs_nmap.py
 python -I scripts/native_translations/specs_pacu.py
+python -I scripts/native_translations/specs_roadtools.py
 ```
 
 When a canonical rule in these sets changes:

@@ -1,0 +1,39 @@
+title: "Detects one identity issuing five hundred or more Microsoft Graph requests to directory endpoints (users, groups, devices, applications, servicePrincipals, directoryRoles, roleManagement, policies) within 10 minutes."
+name: roadtools_graph_directory_bulk_read_base
+status: experimental
+description: "Detects one identity issuing five hundred or more Microsoft Graph requests to directory endpoints (users, groups, devices, applications, servicePrincipals, directoryRoles, roleManagement, policies) within 10 minutes."
+source_yaral: "detections/roadtools/yaral/roadtools_graph_directory_bulk_read.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type, request_uri); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+procedure_ids: "RT-P10,RT-P11"
+log_source_prerequisites: "MicrosoftGraphActivityLogs with RequestUri, UserId or ServicePrincipalId in principal.user.userid."
+logsource:
+  category: azure_graph
+  product: azure
+detection:
+  sel:
+    product_event_type: "MicrosoftGraphActivityLogs"
+    request_uri|re: "(?i)/(v1\\.0|beta)/(users|groups|devices|applications|servicePrincipals|directoryRoles|roleManagement|policies)"
+  condition: sel
+falsepositives:
+  - "Directory synchronization, identity governance and backup applications."
+level: medium
+---
+title: "Detects one identity issuing five hundred or more Microsoft Graph requests to directory endpoints (users, groups, devices, applications, servicePrincipals, directoryRoles, roleManagement, policies) within 10 minutes."
+name: roadtools_graph_directory_bulk_read
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - roadtools_graph_directory_bulk_read_base
+  group-by:
+    - user_id
+  timespan: 10m
+  condition:
+    gte: 500
+level: medium

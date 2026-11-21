@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_federated_signin_without_idp_issuance
+canonical_path: detections/roadtools/yaral/roadtools_federated_signin_without_idp_issuance.yaral
+canonical_sha256: 77aaee8614eb4d08b78e372151543eb28f5c91fb4dea2fbbf5cc8c2411d91447
+description: "Detects a federated (SAML or WS-Federation) Entra sign-in for a user with no corresponding token-issuance event on the organization's AD FS within 10 minutes, consistent with a forged SAML token."
+severity: medium
+procedure_ids: ["RT-P09"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields; AD FS Security auditing events 1200 or 1202 (token issued) normalized with the user in principal.user.userid."
+atomic_event_types: ["SigninLogs"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: true
+false_positives: "AD FS audit gaps, multiple identity providers and clock skew."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_federated_signin_without_idp_issuance.spl", sha256: 7311196babc75e861f58cb8c8d15512f42e92c883a429d7055eee3056dfd69e2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "unsupported" }
+  kql: { path: "detections/roadtools/kql/roadtools_federated_signin_without_idp_issuance.kql", sha256: 2c6d78bc489536f5cf0a665f2de0587c33927694db5f9364213dfeb483990b62, status: "experimental_needs_backend_mapping_and_validation", fidelity: "unsupported" }
+  sql: { path: "detections/roadtools/sql/roadtools_federated_signin_without_idp_issuance.sql", sha256: f4a6de2820a289ccf521375058be42df5891ab7e9832a877857ae2a6deca9e25, status: "experimental_needs_backend_mapping_and_validation", fidelity: "unsupported" }
+  eql: { path: "detections/roadtools/eql/roadtools_federated_signin_without_idp_issuance.eql", sha256: 3700022905bd2626bcdcff2f848da0eb2df427eb2c4968c40bc2c3c0e67a674b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "unsupported" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_federated_signin_without_idp_issuance.yml", sha256: 94d69928ec1fcabe039842339b0e553fddb6588134e89761118aa8a624dfa3bf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "unsupported" }

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_aad_graph_resource_token
+canonical_path: detections/roadtools/yaral/roadtools_aad_graph_resource_token.yaral
+canonical_sha256: 5218544323bf909af561f1ea8b1be60a9dab95641e59e7c01251d8d440b4da57
+description: "Detects user sign-ins that obtain tokens for the legacy Azure AD Graph resource (00000002-0000-0000-c000-000000000000), which ROADrecon uses for its directory dump."
+severity: medium
+procedure_ids: ["RT-P11"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields."
+atomic_event_types: []
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.ip", "principal.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Legacy applications still using Azure AD Graph."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_aad_graph_resource_token.spl", sha256: 4dfdbc3c7d6d8524b764fde2a05cf78733be93fad5cd8b484705953273cd8a78, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_aad_graph_resource_token.kql", sha256: 39c6812a4344886bf68683c6bdb8e209e12976680a4f59cfed285863d54896a5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_aad_graph_resource_token.sql", sha256: 6576e38ad6003ac9e1571decdf49711cbabf24eebd2cf001e7dbdd76ccf44145, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_aad_graph_resource_token.eql", sha256: bc674bd1618771627ead43f04061c92a5a9d2841508fea7f57845c55a466adc5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_aad_graph_resource_token.yml", sha256: aff6fe82ea9e92a7ed6cf7a91786294f8ceef99e3ce42dfb99b7b841d988f6ee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

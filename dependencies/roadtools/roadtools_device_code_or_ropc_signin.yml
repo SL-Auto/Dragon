@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_device_code_or_ropc_signin
+canonical_path: detections/roadtools/yaral/roadtools_device_code_or_ropc_signin.yaral
+canonical_sha256: fd635c24e6bc479990dad66c2a3a3520b7ff0bb9a0cef2a9e783c66d30716fb0
+description: "Detects successful user sign-ins that use the device-code or resource-owner password (ROPC) protocol, the non-interactive flows that token tools use with stolen codes or passwords."
+severity: medium
+procedure_ids: ["RT-P01"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields."
+atomic_event_types: []
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.ip", "principal.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Input-constrained devices, legacy scripts and CLI tools that legitimately use these flows."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_device_code_or_ropc_signin.spl", sha256: 024874cb225157c0f0f92b51c3643426fb7fe991a52cb3077e211c8fddc97d04, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_device_code_or_ropc_signin.kql", sha256: 04194cf34a8f8a5cb87050d8b89d0912b5e7dec63a9e2186c73a83d01eb1efe4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_device_code_or_ropc_signin.sql", sha256: 7ca44cad2f6c74eb4dfda042b1e03a3ec4ac75913f5f9ea179f5db6a55801484, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_device_code_or_ropc_signin.eql", sha256: a2fcb392e67addb181c70485171659f647ae0d9eb4f223b7d60fa88c10441b36, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_device_code_or_ropc_signin.yml", sha256: 699a7f57964ab00fc86af7654706504336344beb732b3da26c506f1648e1a2f7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_passkey_default_name_registration
+canonical_path: detections/roadtools/yaral/roadtools_passkey_default_name_registration.yaral
+canonical_sha256: 8ed192ad1d7c19e0492b3a58f8e5fe45212112059f0e5c4c132e32d22d9cc43d
+description: "Detects registration of a passkey or security key whose display name is the ROADtools default (roadtx)."
+severity: high
+procedure_ids: ["RT-P05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Entra ID audit logs (AuditLogs) normalized with activityDisplayName in metadata.product_event_type, initiating user in principal.user.userid, target user or device in target.user.userid or target.resource.name, and modified-property values in additional.fields['modifiedProperties']."
+atomic_event_types: ["FIDO2", "security info", "security key"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.user.userid", "target.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "A user who deliberately names a key roadtx."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_passkey_default_name_registration.spl", sha256: 2e45b1d44c69470e6cf2efb1c64f1f661c9107ac615a1c4fe5cbc875348dceed, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_passkey_default_name_registration.kql", sha256: d7f2c6e763fa2ffaf521cc9e36d5cc19ed89da8d2ce0c5f567fd816a8d61d668, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_passkey_default_name_registration.sql", sha256: 6ecd4c7c0b37e6ea6f2b031ea99c68c9723c09dc842d9aedf09872a474f4a36f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_passkey_default_name_registration.eql", sha256: d77a10f47e906e6126ef7d5a7ad0f7faf4edfe0f98caa3f78b63ac020042e0f8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_passkey_default_name_registration.yml", sha256: e46fd6a34bf6397274a2f8ca730013713ea1e274900cec94b4660f6efd076b7d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

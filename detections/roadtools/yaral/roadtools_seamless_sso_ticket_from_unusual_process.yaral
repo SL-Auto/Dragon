@@ -1,0 +1,31 @@
+rule roadtools_seamless_sso_ticket_from_unusual_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects Kerberos service tickets for the Seamless SSO computer account (AZUREADSSOACC$) requested by an account that, within 10 minutes, signs in with a scripting user agent, linking on-premises SSO token minting to tooling."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Seamless SSO tickets are normal from browsers; pairing with a scripting user agent isolates tool-driven desktop SSO."
+    procedure_ids = "RT-P06"
+    log_source_prerequisites = "Windows Security 4769 with service name and account; Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields; the on-premises sAMAccountName enrichment in additional.fields['onPremSamAccountName'] on sign-in records."
+    false_positives = "Users whose scripted automation also uses Seamless SSO."
+    references = "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay a sanitized 4769 for AZUREADSSOACC$ and a python-requests sign-in for the same user."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/roadtools/detection-review.md"
+  events:
+    $k.metadata.product_event_type = "4769"
+    re.regex($k.target.resource.name, `(?i)^AZUREADSSOACC\$?$`)
+    $k.target.user.userid = $account
+
+    $s.metadata.product_event_type = /^(SigninLogs|AADNonInteractiveUserSignInLogs)$/
+    re.regex($s.network.http.user_agent, `(?i)(python-requests/|aiohttp/)`)
+    $s.additional.fields["onPremSamAccountName"] = $account
+  match:
+    $account over 10m
+  outcome:
+    $ips = array_distinct($s.principal.ip)
+  condition:
+    $k and $s
+}

@@ -1,0 +1,18 @@
+# source_yaral: detections/roadtools/yaral/roadtools_foci_refresh_token_client_hopping.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: roadtools_foci_refresh_token_client_hopping
+# severity: high
+# procedure_ids: RT-P02
+# description: Detects one user obtaining tokens for four or more distinct client applications through non-interactive refresh-token sign-ins within 30 minutes, the family-of-client-IDs pivot used to expand token scope.
+# log_source_prerequisites: Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields.
+# false_positives: Users running several Microsoft 365 desktop apps at sign-in time; Office suite bootstrap on new devices.
+# references: reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by user_id, source_ip and threshold. Hop window approximated by scheduling every 10 minutes over the trailing 30 minutes.
+| search index=<configured_index> earliest=-30m@m latest=now
+| where product_event_type=="AADNonInteractiveUserSignInLogs" AND match(incoming_token_type, "(?i)refreshToken") AND result_type=="0"
+| stats dc(app_id) as matched_count  by user_id source_ip
+| where matched_count >= 4
+| eval canonical_rule="roadtools_foci_refresh_token_client_hopping"

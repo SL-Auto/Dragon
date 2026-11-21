@@ -1,0 +1,22 @@
+title: "Detects a device registration by a user followed within 1 hour by a Windows Hello for Business key or passkey being added to that user, the persistence sequence of registering an attacker device and binding a key to it."
+name: roadtools_device_registration_then_hello_key
+status: experimental
+description: "Detects a device registration by a user followed within 1 hour by a Windows Hello for Business key or passkey being added to that user, the persistence sequence of registering an attacker device and binding a key to it."
+source_yaral: "detections/roadtools/yaral/roadtools_device_registration_then_hello_key.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+procedure_ids: "RT-P03,RT-P05"
+log_source_prerequisites: "Entra ID audit logs (AuditLogs) normalized with activityDisplayName in metadata.product_event_type, initiating user in principal.user.userid, target user or device in target.user.userid or target.resource.name, and modified-property values in additional.fields['modifiedProperties']."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["Add device", "FIDO2", "passkey", "Register device", "security info", "security key"]
+  condition: selection_event_type
+falsepositives:
+  - "Legitimate new-device enrollment with Windows Hello provisioning."
+level: medium

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: roadtools
+rule_name: roadtools_hello_assertion_script
+canonical_path: detections/roadtools/yaral/roadtools_hello_assertion_script.yaral
+canonical_sha256: 86670ea8b011b6b2aaeacfdb282c2a3a66ac3d434b056396a424df18e1ded8bc
+description: "Detects PowerShell script blocks that request Windows Hello or WebAuthn assertions through native APIs, as in the ROADtools Windows Hello assertion scripts."
+severity: medium
+procedure_ids: ["RT-P13"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "PowerShell script-block logging (Event 4104) normalized with ScriptBlockText in additional.fields['ScriptBlockText'] and host."
+atomic_event_types: ["4104"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.hostname", "principal.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Security research and authorized testing."
+references: "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+translations:
+  spl: { path: "detections/roadtools/spl/roadtools_hello_assertion_script.spl", sha256: 75987a702877754152f61a9be3e1822b06cda3b0b94de5ca29f0b6585918bf72, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/roadtools/kql/roadtools_hello_assertion_script.kql", sha256: 20d7ce4513018a7f0a5226741a67247fcb16a51f48208439cfc574df749e4746, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/roadtools/sql/roadtools_hello_assertion_script.sql", sha256: 284029a79e8f11e23a615fc3d4cb5944a05aa4daeb0986b977e584a03ec9f2d6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/roadtools/eql/roadtools_hello_assertion_script.eql", sha256: ab6f33ddeb926e30f16620bdacedaa379627b48fa2fdd1a0243dd7fac8abb088, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/roadtools/sigma/roadtools_hello_assertion_script.yml", sha256: f2c7f878bbd686862b13bd33500fbed25bfb6bccd84a2afb36b3d3ff9a2a9802, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

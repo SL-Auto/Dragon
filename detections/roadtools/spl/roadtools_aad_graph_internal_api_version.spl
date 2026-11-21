@@ -1,0 +1,18 @@
+# source_yaral: detections/roadtools/yaral/roadtools_aad_graph_internal_api_version.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: roadtools_aad_graph_internal_api_version
+# severity: high
+# procedure_ids: RT-P11
+# description: Detects Azure AD Graph requests using the internal API versions 1.61-internal or 1.6-internal, which ROADrecon hard-codes for its directory dump.
+# log_source_prerequisites: Azure AD Graph activity logs (AADGraphActivityLogs) normalized with api-version in additional.fields['apiVersion'], caller in principal.user.userid and request URI in target.url.
+# false_positives: Legacy first-party tooling that still calls internal Azure AD Graph versions.
+# references: reports/roadtools/source-analysis.md#procedure-analysis; public-rules/comparisons/roadtools/roadtools_aad_graph_resource_token.md; reviews/roadtools/detection-review.md#rt-dr-09
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type, api_version); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by user_id and threshold. Hop window approximated by scheduling every 20 minutes over the trailing 60 minutes.
+| search index=<configured_index> earliest=-60m@m latest=now
+| where product_event_type=="AADGraphActivityLogs" AND match(api_version, "(?i)^1\\.61?-internal$")
+| stats count as matched_count values(user_agent) as user_agent_values by user_id
+| where matched_count >= 1
+| eval canonical_rule="roadtools_aad_graph_internal_api_version"

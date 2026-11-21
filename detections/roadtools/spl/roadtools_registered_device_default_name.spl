@@ -1,0 +1,18 @@
+# source_yaral: detections/roadtools/yaral/roadtools_registered_device_default_name.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: roadtools_registered_device_default_name
+# severity: low
+# procedure_ids: RT-P03
+# description: Detects device registration or join of a device named DESKTOP- followed by seven upper-case alphanumerics where the registration was not performed by device-management enrollment (Intune or Autopilot).
+# log_source_prerequisites: Entra ID audit logs (AuditLogs) normalized with activityDisplayName in metadata.product_event_type, initiating user in principal.user.userid, target user or device in target.user.userid or target.resource.name, and modified-property values in additional.fields['modifiedProperties']; enrollment service in additional.fields['initiatedByApp'].
+# false_positives: New Windows devices registered outside Intune or Autopilot.
+# references: reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type, device_name, initiated_by_app); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by user_id and threshold. Hop window approximated by scheduling every 20 minutes over the trailing 60 minutes.
+| search index=<configured_index> earliest=-60m@m latest=now
+| where in(product_event_type, "Register device", "Add device") AND match(device_name, "(?i)^DESKTOP-[A-Z0-9]{7}$") AND NOT match(coalesce(initiated_by_app,""), "(?i)(intune|autopilot|device management)")
+| stats count as matched_count values(device_name) as device_name_values by user_id
+| where matched_count >= 1
+| eval canonical_rule="roadtools_registered_device_default_name"

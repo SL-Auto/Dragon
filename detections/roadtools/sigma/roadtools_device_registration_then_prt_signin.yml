@@ -1,0 +1,22 @@
+title: "Detects a device registration by a user followed within 1 hour by a sign-in by that user whose incoming token type is a Primary Refresh Token, the sequence of registering an attacker device and then using its PRT."
+name: roadtools_device_registration_then_prt_signin
+status: experimental
+description: "Detects a device registration by a user followed within 1 hour by a sign-in by that user whose incoming token type is a Primary Refresh Token, the sequence of registering an attacker device and then using its PRT."
+source_yaral: "detections/roadtools/yaral/roadtools_device_registration_then_prt_signin.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+procedure_ids: "RT-P03,RT-P04"
+log_source_prerequisites: "Entra ID audit logs (AuditLogs) normalized with activityDisplayName in metadata.product_event_type, initiating user in principal.user.userid, target user or device in target.user.userid or target.resource.name, and modified-property values in additional.fields['modifiedProperties']; Entra ID sign-in logs (SigninLogs, AADNonInteractiveUserSignInLogs, AADServicePrincipalSignInLogs) normalized with the log name in metadata.product_event_type, UPN or service principal in principal.user.userid, IP in principal.ip, userAgent in network.http.user_agent, and appId, resourceId, authenticationProtocol, incomingTokenType, deviceId, sessionId and resultType in additional.fields."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["AADNonInteractiveUserSignInLogs", "Add device", "Register device", "SigninLogs"]
+  condition: selection_event_type
+falsepositives:
+  - "Users enrolling new corporate devices (Autopilot, first sign-in)."
+level: high

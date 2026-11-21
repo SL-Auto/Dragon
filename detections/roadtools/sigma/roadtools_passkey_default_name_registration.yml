@@ -1,0 +1,39 @@
+title: "Detects registration of a passkey or security key whose display name is the ROADtools default (roadtx)."
+name: roadtools_passkey_default_name_registration_base
+status: experimental
+description: "Detects registration of a passkey or security key whose display name is the ROADtools default (roadtx)."
+source_yaral: "detections/roadtools/yaral/roadtools_passkey_default_name_registration.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, user_id, source_ip, user_agent, app_id, resource_id, auth_protocol, incoming_token_type, result_type, target_user, modified_properties); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+procedure_ids: "RT-P05"
+log_source_prerequisites: "Entra ID audit logs (AuditLogs) normalized with activityDisplayName in metadata.product_event_type, initiating user in principal.user.userid, target user or device in target.user.userid or target.resource.name, and modified-property values in additional.fields['modifiedProperties']."
+logsource:
+  category: azure_audit
+  product: azure
+detection:
+  sel:
+    product_event_type|re: "(?i)(passkey|FIDO2|security info|security key)"
+    modified_properties|re: "(?i)\\broadtx\\b"
+  condition: sel
+falsepositives:
+  - "A user who deliberately names a key roadtx."
+level: high
+---
+title: "Detects registration of a passkey or security key whose display name is the ROADtools default (roadtx)."
+name: roadtools_passkey_default_name_registration
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - roadtools_passkey_default_name_registration_base
+  group-by:
+    - target_user
+  timespan: 60m
+  condition:
+    gte: 1
+level: high

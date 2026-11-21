@@ -1,0 +1,43 @@
+title: "Detects registration or creation of a com.microsoft.browsercore native-messaging host whose manifest path is not the Microsoft BrowserCore executable, the fake host that signs PRT cookies from a stolen PRT."
+name: roadtools_browsercore_native_host_hijack_base
+status: experimental
+description: "Detects registration or creation of a com.microsoft.browsercore native-messaging host whose manifest path is not the Microsoft BrowserCore executable, the fake host that signs PRT cookies from a stolen PRT."
+source_yaral: "detections/roadtools/yaral/roadtools_browsercore_native_host_hijack.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, registry_key, registry_value_data, target_path); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/roadtools/source-analysis.md#procedure-analysis; reviews/roadtools/detection-review.md"
+procedure_ids: "RT-P12"
+log_source_prerequisites: "REGISTRY_MODIFICATION (Sysmon Event ID 13) for NativeMessagingHosts keys, and FILE_CREATION (Sysmon Event ID 11) for manifest and BrowserCore.py files, with host and process."
+logsource:
+  category: registry_set
+  product: windows
+detection:
+  alt0_0:
+    event_type: "REGISTRY_MODIFICATION"
+    registry_key|re: "(?i)\\NativeMessagingHosts\\com\\.microsoft\\.browsercore"
+    registry_value_data|re: "(?i)\\Windows\\BrowserCore\\manifest\\.json"
+  alt0_1:
+    event_type: "FILE_CREATION"
+    target_path|re: "(?i)\\BrowserCore\\.py$"
+  condition: 1 of alt0_*
+falsepositives:
+  - "None expected outside security research."
+level: high
+---
+title: "Detects registration or creation of a com.microsoft.browsercore native-messaging host whose manifest path is not the Microsoft BrowserCore executable, the fake host that signs PRT cookies from a stolen PRT."
+name: roadtools_browsercore_native_host_hijack
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - roadtools_browsercore_native_host_hijack_base
+  group-by:
+    - hostname
+  timespan: 60m
+  condition:
+    gte: 1
+level: high
