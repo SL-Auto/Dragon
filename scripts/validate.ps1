@@ -231,6 +231,36 @@ if (-not (Test-Path -LiteralPath $masterTelemetryPath -PathType Leaf)) {
     }
 }
 
+# Structured YAML must actually parse. Regex field-marker checks above cannot detect syntax errors
+# (for example an unquoted ': ' inside a plain scalar), which break every YAML consumer such as the dashboard.
+$yamlCheck = @'
+import pathlib, sys
+try:
+    import yaml
+except ImportError:
+    print("PyYAML is not installed; cannot verify YAML syntax"); sys.exit(2)
+root = pathlib.Path(sys.argv[1])
+paths = [root / "registry/tools.yml"]
+for pattern in ("coverage/*.yml", "manifests/*.yml", "dependencies/*/*.yml", "detections/*/sigma/*.yml", "schemas/*.yml"):
+    paths += sorted(root.glob(pattern))
+bad = 0
+for p in paths:
+    try:
+        list(yaml.safe_load_all(p.read_text(encoding="utf-8")))
+    except Exception as exc:
+        bad += 1
+        print(f"Invalid YAML: {p.relative_to(root).as_posix()}: {str(exc).splitlines()[0]}")
+sys.exit(1 if bad else 0)
+'@
+$python = Get-Command python -ErrorAction SilentlyContinue
+if (-not $python) {
+    $errors.Add('Python is required to verify YAML syntax')
+} else {
+    $yamlOutput = $yamlCheck | & $python.Source - $repoRoot 2>&1
+    if ($LASTEXITCODE -ne 0) { $yamlOutput | ForEach-Object { $errors.Add([string]$_) } }
+}
+if ($errors.Count -gt 0) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
+
 & (Join-Path $repoRoot 'scripts/update-master-telemetry-rule-counts.ps1') -Check
 
 foreach ($schemaProfile in @('chronicle-udm.yml', 'splunk-cim.yml', 'sentinel-asim.yml', 'normalized-sql.yml', 'elastic-ecs.yml', 'sigma.yml')) {

@@ -127,7 +127,7 @@ tools:
     first_seen: unknown
     last_reviewed: 2026-11-21
     evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: EMERGING_ATTACKER_TOOLING_2026-08-15.md }]
-    notes: Out of scope (owner decision 2026-11-21): Evilginx2 is an adversary-in-the-middle phishing reverse proxy that runs only on attacker-controlled infrastructure. No component executes or loads on a victim host, so it has no host-observable procedure to analyze. Downstream effects (session-token replay sign-ins) are covered as identity telemetry, not as this tool's procedures. Preserve history; do not analyze or select it from the backlog.
+    notes: "Out of scope (owner decision 2026-11-21): Evilginx2 is an adversary-in-the-middle phishing reverse proxy that runs only on attacker-controlled infrastructure. No component executes or loads on a victim host, so it has no host-observable procedure to analyze. Downstream effects (session-token replay sign-ins) are covered as identity telemetry, not as this tool's procedures. Preserve history; do not analyze or select it from the backlog."
   - id: gophish
     name: GoPhish
     aliases: []
@@ -137,7 +137,7 @@ tools:
     first_seen: unknown
     last_reviewed: 2026-11-21
     evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
-    notes: Out of scope (owner decision 2026-11-21): GoPhish is a phishing campaign server and admin console that runs only on attacker-controlled infrastructure. No component executes or loads on a victim host. Preserve history; do not analyze or select it from the backlog.
+    notes: "Out of scope (owner decision 2026-11-21): GoPhish is a phishing campaign server and admin console that runs only on attacker-controlled infrastructure. No component executes or loads on a victim host. Preserve history; do not analyze or select it from the backlog."
   - id: pacu
     name: Pacu
     aliases: []

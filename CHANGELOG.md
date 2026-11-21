@@ -8,6 +8,7 @@ All notable agent capabilities and workflow changes are recorded here. The struc
 
 ### Fixed
 
+- `scripts/validate.ps1` now parses every structured YAML file and fails on syntax errors. The files checked are the registry, coverage ledgers, manifests, dependency records, Sigma translations and schemas. The check runs before the generator checks, whose exceptions would otherwise hide it. Previously only regex field markers were checked, so an unquoted `: ` in a registry note passed validation but stopped the dashboard from loading. The two 2026-11-21 deprecation notes are now quoted.
 - `state/work-items.yml` is a real backlog view again. When the fabricated non-terminal states were removed, the generator was left emitting `items: []` unconditionally, so the resume file showed no work while the registry held eight actionable tools. `scripts/update-context-index.ps1` now emits:
   - One item per tool that still has safe in-scope work, ordered by lifecycle state (`analysis_in_progress`, then `analyzed` with residual work, `triaged`, `discovered`).
   - A `next_phase` derived from which authoritative artifacts exist. The phases are eligibility gate, source inventory, procedure analysis, canonical YARA-L, adversarial review, telemetry, translations, public comparison, comparison decision, and validation.
