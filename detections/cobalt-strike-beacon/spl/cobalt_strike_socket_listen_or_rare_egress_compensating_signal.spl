@@ -1,0 +1,20 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_socket_listen_or_rare_egress_compensating_signal
+# severity: high
+# procedure_ids: CSB-008
+# description: Correlates a rare-process socket listen with an accepted inbound connection on the same port and process, closing the gap between merely listening and actually receiving a connection that the base standalone-listen rule leaves open.
+# log_source_prerequisites: Normalize SOCKET_LISTEN and inbound NETWORK_CONNECTION with a stable vendor process identifier (product_specific_process_id), process signer/prevalence, and port, joined on host, process and port within 30 minutes, listen first.
+# false_positives: Development tools and local services that legitimately listen from rare binaries and receive local or authorized connections.
+# references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_socket_listen_or_rare_egress.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, direction, process_id, target_process_id, target_port, process_signed, process_prevalence); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native ordered two-event correlation on hostname, listen_process, target_port within 30 minutes (first event before second). Scheduled every 10 minutes over the trailing 60 minutes. SPL compares the earliest first-leg and latest second-leg time per key, which is weaker than per-pair ordering.
+| search index=<configured_index> earliest=-60m@m latest=now
+| eval leg=case(event_type=="SOCKET_LISTEN" AND ((process_signed=="false") OR (process_prevalence=="RARE")), "a", event_type=="NETWORK_CONNECTION" AND direction=="INBOUND", "b")
+| where isnotnull(leg)
+| eval listen_process=case(leg="a", process_id, leg="b", target_process_id)
+| stats min(eval(if(leg="a", _time, null()))) as first_a max(eval(if(leg="b", _time, null()))) as last_b by hostname listen_process target_port
+| where isnotnull(first_a) AND isnotnull(last_b) AND first_a <= last_b AND last_b - first_a <= 1800
+| eval canonical_rule="cobalt_strike_socket_listen_or_rare_egress_compensating_signal"

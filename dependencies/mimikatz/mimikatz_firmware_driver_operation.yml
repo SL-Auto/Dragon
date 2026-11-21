@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_firmware_driver_operation
 canonical_path: detections/mimikatz/yaral/mimikatz_firmware_driver_operation.yaral
-canonical_sha256: eacd18f37c91db14c05b428c5a956aa946a7759faccbffa2638a310d02317677
+canonical_sha256: 476adf2b80e5f1cf28316a66d035fe3cb4ccc80aef72b127f8e40e2de3753a8e
 description: "Detects firmware-variable or kernel-driver activity reported by endpoint controls."
 severity: high
 procedure_ids: ["P39", "P43"]

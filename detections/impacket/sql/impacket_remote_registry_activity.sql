@@ -14,6 +14,6 @@
 SELECT hostname, user_id, COUNT(*) AS event_count,
        'impacket_remote_registry_activity' AS canonical_rule
 FROM normalized_events
-WHERE product_event_type IN ('12', '13', '14', '4657', '7036') OR event_type IN ('12', '13', '14', '4657', '7036')
+WHERE product_event_type IN ('12', '13', '14') OR event_type IN ('12', '13', '14')
 GROUP BY hostname, user_id
 HAVING COUNT(*) > 0;

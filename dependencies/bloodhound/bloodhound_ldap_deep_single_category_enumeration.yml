@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_ldap_deep_single_category_enumeration
 canonical_path: detections/bloodhound/yaral/bloodhound_ldap_deep_single_category_enumeration.yaral
-canonical_sha256: 4214be36b71b1a22cb046788d29576891756a76735a9c8a4b27605d6bc59b07d
-description: "Detects a single identity performing deep-pagination LDAP enumeration within one directory naming context, compensating for collection that stays under the multi-category fanout threshold of bloodhound_ldap_directory_discovery_fanout."
+canonical_sha256: 76478a1dc5591af5edffbcd983dd547a417cbc85f2c29214578b5bf3a1848709
+description: "Detects a single identity on one client host retrieving a high volume of distinct directory objects within one naming context over a four-hour window, compensating for single-category or throttled collection that stays under the multi-category fanout threshold of bloodhound_ldap_directory_discovery_fanout."
 severity: high
 procedure_ids: ["BH-002", "BH-004"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "Directory-side or EDR LDAP_SEARCH/1644 events with source process/account, naming context and resolved per-result object identity."
-atomic_event_types: ["1644", "LDAP_SEARCH"]
-required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.user.userid", "target.resource.attribute.labels"]
-correlation_window: "30m"
+telemetry_prerequisites: "Directory-side or EDR LDAP_SEARCH/1644 events expanded to per-result object identity (result_object_id label), with client host, account and naming context; summary-only query events cannot satisfy this rule (see reviews/bloodhound/detection-review.md#bh-dr-10)."
+atomic_event_types: []
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.user.userid", "target.hostname", "target.resource.attribute.labels"]
+correlation_window: "4h"
 uses_multi_event_correlation: true
 uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Identity governance, directory synchronization, migration tooling and authorized security assessment performing bulk single-category export."
-references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_ldap_directory_discovery_fanout.md"
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_ldap_directory_discovery_fanout.md, reviews/bloodhound/detection-review.md#bh-dr-10"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_ldap_deep_single_category_enumeration.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_ldap_deep_single_category_enumeration.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_ldap_deep_single_category_enumeration.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_ldap_deep_single_category_enumeration.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_ldap_deep_single_category_enumeration.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_ldap_deep_single_category_enumeration.spl", sha256: 1bfd0d69bcd341e4c59f0dfa36318ba4710fcec8f88834656de406cb08550f90, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_ldap_deep_single_category_enumeration.kql", sha256: a0efb35e715d8be01b46b572201fc43624502e37c5df19dcbf4deb7f8e7d3ae6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_ldap_deep_single_category_enumeration.sql", sha256: bdf0f77245f7c0b578ea480330986eb1875ef87f21138249cfc5365502abe23c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_ldap_deep_single_category_enumeration.eql", sha256: a13063e7fd5b348301d7c98cc23fc9dfb233fb4b4c39609e238b1e933fbddaed, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_ldap_deep_single_category_enumeration.yml", sha256: 4413de15b2aebb123a7ff16fb5ff76d5fa6e6afe557387ae2000d2d8b6dbb586, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_unusual_authentication_material_use
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_unusual_authentication_material_use.yaral
-canonical_sha256: e778f250cb52cd5c511a971d99ed1a7e9bb52ef6a4cd11836ffc1a109c873ceb
+canonical_sha256: a0abd9ad0a8db742ab77de6a76cd32fde582092181a393db9bc4e4a794d7aed3
 description: "Surfaces Kerberos or NTLM authentication whose endpoint/process context is rare or inconsistent with the account baseline."
 severity: high
 procedure_ids: ["CSB-013"]

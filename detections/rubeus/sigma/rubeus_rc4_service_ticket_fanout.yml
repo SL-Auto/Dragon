@@ -1,0 +1,46 @@
+title: "Detects a single requester obtaining RC4-encrypted service tickets for three or more distinct unapproved-legacy services within a 15-minute window, independent of LDAP SPN-discovery visibility."
+name: rubeus_rc4_service_ticket_fanout_base
+status: experimental
+description: "Detects a single requester obtaining RC4-encrypted service tickets for three or more distinct unapproved-legacy services within a 15-minute window, independent of LDAP SPN-discovery visibility."
+source_yaral: "detections/rubeus/yaral/rubeus_rc4_service_ticket_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, source_ip, user_id, service_name, TicketEncryptionType, Status, approved_legacy_rc4_service); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_kerberoast_sequence.md; public-rules/comparisons/rubeus/rubeus_service_ticket_or_renewal_anomaly.md"
+procedure_ids: "PROC-002,PROC-004"
+log_source_prerequisites: "Normalize DC Security 4769 with source IP, requesting user, target service, TicketEncryptionType and Status, plus an approved-legacy-RC4-service enrichment keyed by target service (missing enrichment fails open)."
+logsource:
+  service: security
+  product: windows
+detection:
+  sel:
+    product_event_type: "4769"
+    TicketEncryptionType: "0x17"
+    Status: "0x0"
+  filter0:
+    approved_legacy_rc4_service: true
+  filter1:
+    service_name|re: "(?i)(\\$$|^krbtgt$)"
+  condition: sel and not filter0 and not filter1
+falsepositives:
+  - "Approved legacy RC4 services and application servers that have not yet been migrated to AES; environments where the legacy-RC4-service enrichment is stale, incomplete, or absent (an unpopulated enrichment field defaults to unapproved and will over-alert until the allowlist is built)."
+level: high
+---
+title: "Detects a single requester obtaining RC4-encrypted service tickets for three or more distinct unapproved-legacy services within a 15-minute window, independent of LDAP SPN-discovery visibility."
+name: rubeus_rc4_service_ticket_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - rubeus_rc4_service_ticket_fanout_base
+  group-by:
+    - source_ip
+    - user_id
+  timespan: 15m
+  condition:
+    field: service_name
+    gte: 3
+level: high

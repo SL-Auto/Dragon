@@ -2,7 +2,7 @@
 
 ## Overall assessment
 
-The 21 rules provide behavior-level coverage for all 31 procedures assessed as observable. They do **not** identify Cobalt Strike by themselves and remain `experimental` / `needs_validation`. The review removed dependence on mutable defaults, separated weak contextual signals from higher-value effects, strengthened correlations with stable process/account/host identities, and made vendor-specific visibility explicit. No blocker remains; accepted gaps are inherent to proprietary internals, custom modules/transports, missing sensor events, or in-memory/client-only behavior.
+The 38 rules (21 original plus 17 compensating signals reviewed 2026-11-21, findings DR-13 to DR-22) provide behavior-level coverage for all 31 procedures assessed as observable. They do **not** identify Cobalt Strike by themselves and remain `experimental` / `needs_validation`. The review removed dependence on mutable defaults, separated weak contextual signals from higher-value effects, strengthened correlations with stable process/account/host identities, and made vendor-specific visibility explicit. No blocker remains; accepted gaps are inherent to proprietary internals, custom modules/transports, missing sensor events, or in-memory/client-only behavior.
 
 ## Findings
 
@@ -100,6 +100,94 @@ The 21 rules provide behavior-level coverage for all 31 procedures assessed as o
 - Covered unmanaged PowerShell/CLR and Interpreter/BOF behavior through runtime, injection, memory and resulting-effect signals.
 - Kept three genuinely client/in-memory configuration surfaces `not_observable` and documented compensating telemetry.
 - Re-review found no unresolved blocker. Remaining high/medium gaps require tenant parser validation or telemetry that is not universally available.
+
+## 2026-11-21 delta review — 17 comparison-adopted compensating signals
+
+Scope: the 17 `*_compensating_signal` rules written into `yaral/` on 2026-08-16 from comparison proposals. They carried `review_status = "reviewed_with_gaps"`, but no finding existed for them. Five base rules that share one defect (DR-13) are included.
+
+### Finding DR-13 — event types absent from the telemetry inventory
+
+- Severity: `high`
+- Rules: directory discovery, DNS, file cleanup, named pipe, remote service, sensitive file compensating signals; base rules `cobalt_strike_directory_discovery`, `cobalt_strike_dns_process_context`, `cobalt_strike_file_cleanup_or_timestomp`, `cobalt_strike_named_pipe_peer_activity`, `cobalt_strike_sensitive_file_activity`.
+- Assumption challenged: the event-type names used exist in the repository's normalization.
+- Gap or failure mode: `LDAP_QUERY`, `DNS_QUERY`, `FILE_DELETE`, `PIPE_CONNECT` and `FILE_WRITE` appear nowhere in `telemetry/MASTER.md`. The rest of the repository uses `LDAP_SEARCH`, `NETWORK_DNS`, `FILE_DELETION`, `NAMED_PIPE_CONNECTION`/`NAMED_PIPE_CREATION` and `FILE_CREATION`/`FILE_MODIFICATION`. A parser following the inventory would never match these rules.
+  - `cobalt_strike_dns_process_context` had no alternative branch at all.
+  - The other base rules survived only through their Sysmon event-ID branches.
+- Resolution: `fixed`. The inventory names were added additively; the old names are kept as vendor aliases.
+
+### Finding DR-14 — cross-host PID join
+
+- Severity: `high`
+- Rule: `cobalt_strike_credential_access_effect_compensating_signal`
+- Gap or failure mode: the match key was `$pid` alone, so an LSASS open on one host and a dump file created on another host with the same PID would correlate.
+- Resolution: `fixed`. Host was added to both events and to the match key; the rule now uses `product_specific_process_id`.
+
+### Finding DR-15 — unordered sequences
+
+- Severity: `medium`
+- Rules: credential access, file cleanup, named pipe, privileged context, remote service, sensitive file, socket fanout, socket listen, memory/thread, user data.
+- Gap or failure mode: each rule's description states an order (for example, open then dump, or listen then accept), but the events never enforced it. Reversed benign activity, such as a dump file created before an unrelated LSASS scan, satisfied the rule.
+- Resolution: `fixed`. Explicit `event_timestamp.seconds <=` ordering was added. Clock skew between sensors is a residual risk, and the windows are kept unchanged to absorb it.
+
+### Finding DR-16 — approval enrichment fails closed
+
+- Severity: `high`
+- Rules: directory discovery, discovery fanout, sensitive registry, integrity transition, memory/thread.
+- Gap or failure mode: `approved_* = false` requires the enrichment to be present. When the allowlist enrichment is missing, the field is empty and the rule silently never matches, so missing enrichment looks like benign activity.
+- Resolution: `fixed`. The predicates are now `!= true`: absent enrichment fails open (more alerts, no silent loss) and only an explicit approval suppresses.
+
+### Finding DR-17 — placeholder comparison in condition
+
+- Severity: `blocker`
+- Rule: `cobalt_strike_dns_process_context_compensating_signal`
+- Gap or failure mode: `($rtype = 16 or $rtype = 10)` compared a multi-valued placeholder inside `condition`. That is not valid YARA-L, and even if it compiled it would be semantically undefined across the aggregated window.
+- Resolution: `fixed`. The record-type predicate moved into `events`, and the distinct-query count is now an outcome. The prerequisites also note that DNS Client service-attributed resolver logs cannot attribute the requesting process.
+
+### Finding DR-18 — CLR rule missed the sacrificial-process pattern
+
+- Severity: `high`
+- Rule: `cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal`
+- Gap or failure mode: in-memory assembly execution and unmanaged PowerShell (CSB-015/017) typically load the CLR into a spawned native, signed, prevalent Windows binary. The rule required an unsigned or rare loader, so it missed exactly that case. The OR of unsigned/rare also fired on every unsigned internal .NET application.
+- Resolution: `fixed`. One branch now matches CLR loads into native Windows host binaries that are not .NET applications (rundll32, dllhost, regsvr32, werfault, searchprotocolhost, gpupdate, spoolsv, notepad, svchost, wuauclt, mstsc). The other branch requires unsigned AND rare. `msiexec` was deliberately excluded because managed installer custom actions load the CLR. Residual false negatives: an operator-chosen host that is itself a .NET application. Compensating signal: the base rule's runtime telemetry.
+
+### Finding DR-19 — exact path join between UNC write and service image path
+
+- Severity: `high`
+- Rule: `cobalt_strike_remote_service_sequence_compensating_signal`
+- Gap or failure mode: the staged write is observed as a UNC/admin-share path or a target-local path, while the 7045 ImagePath may be local, UNC, quoted or carry arguments. Exact string equality almost never holds without a normalization layer the prerequisites did not provide.
+- Resolution: `fixed`. Both sides are joined on the captured image file name (executable/script extension), and both paths are kept as outcomes for triage. Benign deployment tools that reuse one file name remain the main false-positive source, as before.
+
+### Finding DR-20 — non-UDM process entity field
+
+- Severity: `medium`
+- Rules: socket fanout, socket listen, user data.
+- Gap or failure mode: `process.entity_id` is not a UDM field; the rest of the repository correlates on `product_specific_process_id`. Joins on the unmapped field would be empty.
+- Resolution: `fixed`. The rules now use `product_specific_process_id`, and host was added to every joined event. Base rules `cobalt_strike_cross_process_injection` and `cobalt_strike_discovery_fanout` still use `entity_id`; this is recorded as follow-up because those rules are outside this delta.
+
+### Finding DR-21 — enrichment-dependent fields
+
+- Severity: `medium`
+- Rules: all rules using `is_signed`, `prevalence`, `sensitivity`, `domain_baseline_rarity`, `pipe_prevalence`, `interval_variance_bucket` or `dangerous_memory_rights`.
+- Gap or failure mode: these are tenant enrichments, not native telemetry. When they are absent, the rule is silent or degrades to broad behavior.
+- Resolution: `accepted_gap`. They cannot be derived from raw events. Every one is listed in the rule prerequisites and in `telemetry/cobalt-strike-beacon.md`, and the base rule for each procedure remains the compensating signal.
+
+### Finding DR-22 — beacon periodicity enrichment
+
+- Severity: `low`
+- Rule: `cobalt_strike_process_network_context_compensating_signal`
+- Gap or failure mode: periodicity relies on an upstream `interval_variance_bucket`; jittered or sleep-masked beacons may not reach `LOW`.
+- Resolution: `accepted_gap`. YARA-L cannot compute inter-arrival variance natively. Compensating signal: the base rarity and fan-in rule and the stable-destination recurrence rules.
+
+### Re-review of revised rules
+
+All 17 rules were re-traced after the changes above:
+
+- No blocker remains.
+- Every joined event carries host.
+- Every sequence enforces order.
+- Every approval enrichment fails open.
+- Every event type matches the inventory, with legacy names kept as aliases.
+- Every count is computed in `outcome`.
 
 ## Required follow-up
 

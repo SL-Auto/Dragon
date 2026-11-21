@@ -84,6 +84,56 @@
 - Reclassified local key derivation and normal single password change as not uniquely observable rather than overstating detection coverage.
 - Linked every observable procedure to at least one rule and every inherent gap to compensating telemetry.
 
+## 2026-11-21 delta review — four rules added 2026-08-16
+
+Scope:
+
+- `rubeus_lsa_encoded_ticket_retrieval` and `rubeus_lsa_ticket_submission`, adopted from comparisons.
+- `rubeus_rc4_service_ticket_fanout` and `rubeus_ticket_renewal_anomaly`, split from `rubeus_service_ticket_or_renewal_anomaly`.
+
+All four carried review metadata, but no finding existed for them.
+
+### REVIEW-006 — invalid modifier and unanchored message type
+
+- Severity: `high`
+- Rule: `rubeus_lsa_encoded_ticket_retrieval`
+- Gap or failure mode: `re.regex(...) nocase` applies a string-comparison modifier to a function call, which is not valid YARA-L. The unanchored pattern would also match any message type containing the substring.
+- Resolution: `fixed`. The rule uses inline `(?i)` and an anchored `^Kerb(RetrieveEncodedTicket|RetrieveTicket)(Message)?$`. The submission rule received the same anchoring.
+
+### REVIEW-007 — per-call alerts without session context
+
+- Severity: `medium`
+- Rules: both LSA rules.
+- Gap or failure mode: every successful API call raised a separate alert with no caller or session context. `rubeus_lsa_ticket_submission` assigned `$luid` but never used it. Extraction across many logon sessions, which is what a dump does, was not distinguishable from a single self-retrieval.
+- Resolution: `fixed`. The rules aggregate per host and caller process over 10m, with outcomes for target LUIDs (and a count for retrieval), caller paths and accounts, so many-session extraction is visible. Target-LUID versus caller-LUID comparison remains an analyst enrichment.
+
+### REVIEW-008 — RC4 approval fails closed; non-roastable services counted
+
+- Severity: `high`
+- Rule: `rubeus_rc4_service_ticket_fanout`
+- Gap or failure mode:
+  - `approved_legacy_rc4_service = false` silently suppressed every event when the enrichment was absent.
+  - Failed requests were counted.
+  - Machine-account (`$`-suffixed) and `krbtgt` services, which are not Kerberoast targets and are common legacy-client RC4 noise, inflated the fan-out.
+- Resolution: `fixed`. The approval now fails open (`!= true`). The rule requires Status `0x0` and excludes `$`-suffixed services and `krbtgt`.
+
+### REVIEW-009 — renewal burst does not model tool auto-renewal
+
+- Severity: `medium`
+- Rule: `rubeus_ticket_renewal_anomaly`
+- Assumption challenged: Rubeus renewal produces many 4770 events in a short window.
+- Gap or failure mode: Rubeus renewal loops until near expiry or renewal limits (`RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md` §10, `Renew.cs` L13–110). That is low-rate and indistinguishable in 4770 from native LSA renewal. The 15-in-10-minutes burst is a generic scripted-renewal anomaly, not the Rubeus pattern, and MEDIUM overstated its value.
+- Resolution: `accepted_gap` for low-rate auto-renewal, which is inherent to 4770. The description now states the limit honestly and severity is lowered to LOW. Compensating signal: `rubeus_ticket_use_without_credible_kdc_issue`, for renewed tickets with no credible issuance.
+
+### Re-review
+
+All four rules were re-traced:
+
+- No blocker remains.
+- Regexes are anchored and use valid syntax.
+- Approval enrichment fails open.
+- Aggregation keys carry host and process.
+
 ## Required follow-up
 
 - Compile and field-map all rules in the target Google SecOps tenant.

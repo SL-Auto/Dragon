@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: chisel
 rule_name: chisel_udp_bind_with_tunnel_egress
 canonical_path: detections/chisel/yaral/chisel_udp_bind_with_tunnel_egress.yaral
-canonical_sha256: f9d8e509e62582b27e063da49633ea80bfa4430f460949e672d0e12c8be5736c
+canonical_sha256: 4856af8c870ab8cba41190e8458496931e9ee6ee20d663c8a2a192ceffaf652e
 description: "Detects process-owned UDP bind or receive activity combined with outbound tunnel-like connectivity"
 severity: high
 procedure_ids: ["CH-P03", "CH-P04"]

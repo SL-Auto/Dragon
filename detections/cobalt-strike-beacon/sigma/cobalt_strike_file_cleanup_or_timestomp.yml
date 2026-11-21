@@ -15,7 +15,7 @@ logsource:
   category: generic
 detection:
   selection_event_type:
-    event.code: ["2", "23", "26", "FILE_DELETE", "FILE_TIMESTAMP_CHANGE"]
+    event.code: ["2", "23", "26", "FILE_DELETE", "FILE_DELETION", "FILE_TIMESTAMP_CHANGE"]
   condition: selection_event_type
 falsepositives:
   - "Installers, updaters, cleanup utilities, browsers, temporary-file frameworks and backup restore."

@@ -14,6 +14,6 @@ rule impacket_terminal_services_control {
   review_status = "reviewed_with_gaps"
   review_reference = "reviews/impacket/detection-review.md"
  events:
-  $e.metadata.product_event_type = /(4778|4779|23|24|25)/
+  $e.metadata.product_event_type = /^(4778|4779|23|24|25)$/
  condition: $e
 }

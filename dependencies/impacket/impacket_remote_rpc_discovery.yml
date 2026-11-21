@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_remote_rpc_discovery
 canonical_path: detections/impacket/yaral/impacket_remote_rpc_discovery.yaral
-canonical_sha256: 3f6688c38d2dd7d3c07dd16845558a34f05d79359250809501868d36eb14f123
+canonical_sha256: 9e27a968e78f6a707993f7a1017290859dc859481db3c339a867651bbce9cf72
 description: "Detects unusual remote RPC interface enumeration and discovery volume."
 severity: medium
 procedure_ids: ["IMP-08", "IMP-16"]

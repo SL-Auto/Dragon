@@ -1,0 +1,22 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_service_sequence_compensating_signal.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_remote_service_sequence_compensating_signal
+# severity: high
+# procedure_ids: CSB-030
+# description: Correlates a file staged to a remote target with a subsequent System 7045 service install on that target whose service image file name equals the staged file name, tightening the base rule's looser source/account/host proximity join; file-name matching tolerates UNC versus local path forms.
+# log_source_prerequisites: Normalize FILE_CREATION/FILE_MODIFICATION written to a remote target host (SMB/admin-share write with source and target host and full path), and System 7045 on that target with the installed service image path, joined on source host, target host and image file name within 10 minutes, write first.
+# false_positives: Software distribution and endpoint-management tools that stage an installer to a share and then register it as a service using the identical path.
+# references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_remote_service_sequence.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, product_event_type, hostname, target_host, target_path, target_process_path); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native ordered two-event correlation on service_host, image_name within 10 minutes (first event before second). Joined on service host and image file name; the staging source host exists only on the write leg (as in the canonical rule, where $source is bound by the write event). Scheduled every 5 minutes over the trailing 20 minutes. SPL compares the earliest first-leg and latest second-leg time per key, which is weaker than per-pair ordering.
+| search index=<configured_index> earliest=-20m@m latest=now
+| eval leg=case(in(event_type, "FILE_CREATION", "FILE_MODIFICATION", "FILE_WRITE"), "a", product_event_type=="7045", "b")
+| where isnotnull(leg)
+| eval service_host=case(leg="a", target_host, leg="b", hostname)
+| rex field=target_path "(?i)(?<image_name>[^\\\\/]+\\.(?:exe|dll|bat|cmd|ps1))$"
+| rex field=target_process_path "(?i)(?<image_name>[^\\\\/\\\"\\s]+\\.(?:exe|dll|bat|cmd|ps1))"
+| stats min(eval(if(leg="a", _time, null()))) as first_a max(eval(if(leg="b", _time, null()))) as last_b by service_host image_name
+| where isnotnull(first_a) AND isnotnull(last_b) AND first_a <= last_b AND last_b - first_a <= 600
+| eval canonical_rule="cobalt_strike_remote_service_sequence_compensating_signal"

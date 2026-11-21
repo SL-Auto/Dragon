@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: chisel
 rule_name: chisel_stdio_network_bridge
 canonical_path: detections/chisel/yaral/chisel_stdio_network_bridge.yaral
-canonical_sha256: 96c4cea2b69a31c5c94a7c5d61dba6ba2fe270d2f75f1e96ddc073c05fcf97f0
+canonical_sha256: b4f112443fcfdf6d26a4e78bb8c3df23f9694aeb31dd96592ee90577d289ea3b
 description: "Detects a process with redirected standard handles that also establishes sustained outbound connectivity"
 severity: medium
 procedure_ids: ["CH-P06"]

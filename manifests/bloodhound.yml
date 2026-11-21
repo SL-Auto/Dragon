@@ -12,45 +12,45 @@ context_entry_points:
 counts:
   procedures: 20
   canonical_rules: 21
-  spl_translations: 16
-  kql_translations: 16
-  sql_translations: 16
-  eql_translations: 16
-  sigma_translations: 16
+  spl_translations: 21
+  kql_translations: 21
+  sql_translations: 21
+  eql_translations: 21
+  sigma_translations: 21
 completion_states:
   source_analysis: complete
   canonical_detection: complete
   telemetry_reconciliation: complete_for_experimental_rules
-  secondary_translation: in_progress
+  secondary_translation: draft_complete
   rule_validation_labels: "21 needs_validation"
 artifact_hashes:
-  registry: 4375b961f994082e15626a22cba5c97c6c846fa8c46f21494dbf15dd735e8d73
-  coverage: a771545e06dc184cf5a0b47ddc73733ba5a3e6093fc4b0402115c9ab4bdb688b
-  report: 37155793e9719fbe4f91c3dbe399e9ccb0ceda8b94e84d1bc0b6dd0ae69d3bb5
-  telemetry: 8b1e7ad6fa3c557dddae532f5d49d9d5b5ab977e952b0ee52ae31df097431dec
-  detection_review: 633fb7df484d9ad289567f8aae01429473f34fb37d13f75fe2a65498f77f9985
-  translation_review: 9ba40cf6909cb7935a7042f1c6d8829479ed85b046afebf938e13c9df13dee7f
+  registry: 745ab0da2112877731d732ec359b8f894ca2572c615b3c5e19b46c2ac286e883
+  coverage: 4b2a440b281bca4c7dc27593487aec08d524bb1dc80c1abb58c5106e1a6e0288
+  report: a4d106b40b881c5985e9c8a14a42f8efe68037aca135e0e555bb0058da269a27
+  telemetry: 3a32690a2fac2e6c46e85bd76d70569eb279ed4dd110bb17975b1dda04bcbae4
+  detection_review: 145fe91b623b361de73b32df4d5b60b2af29e1bcad4608a83b25c0b3ee80de65
+  translation_review: 42eaeb87acc2478d33187c8500d99ab3d23143f701ca6620c23aa1d86eeb8f9b
 rules:
-  - { name: bloodhound_azure_authentication_context, severity: medium, procedures: "BH-016", dependency: dependencies/bloodhound/bloodhound_azure_authentication_context.yml, canonical_sha256: 1ac130cf67d6e9fdf1f6b3fe0a3c91848c3e091437a166fef314916463615713 }
-  - { name: bloodhound_azure_graph_enumeration_fanout, severity: high, procedures: "BH-017", dependency: dependencies/bloodhound/bloodhound_azure_graph_enumeration_fanout.yml, canonical_sha256: 3382a22914d15905b3e0b72a9913d7cce1a2836f4d08f631b8043e75e552269b }
-  - { name: bloodhound_azure_rbac_enumeration, severity: high, procedures: "BH-019", dependency: dependencies/bloodhound/bloodhound_azure_rbac_enumeration.yml, canonical_sha256: 877d622705c870548b10e8145bde9e49da542413e9258cb73b674e92c5118189 }
-  - { name: bloodhound_azure_resource_enumeration_fanout, severity: high, procedures: "BH-018", dependency: dependencies/bloodhound/bloodhound_azure_resource_enumeration_fanout.yml, canonical_sha256: 814078b86947bc3d4f045a333b6eca8a540ffec4465137f17b7871aef4542590 }
-  - { name: bloodhound_cloud_collection_output, severity: medium, procedures: "BH-020", dependency: dependencies/bloodhound/bloodhound_cloud_collection_output.yml, canonical_sha256: 0cb59244538c72fea05ba5cd52f53fee7073ac76449e5db6c6cd0f356febced0 }
-  - { name: bloodhound_collection_archive_creation, severity: medium, procedures: "BH-015", dependency: dependencies/bloodhound/bloodhound_collection_archive_creation.yml, canonical_sha256: c8163d2e75a99e251f1e935f3fdea5724f5976f7b8061624e3457acd0f7f3970 }
-  - { name: bloodhound_collector_process_network_context, severity: medium, procedures: "BH-001", dependency: dependencies/bloodhound/bloodhound_collector_process_network_context.yml, canonical_sha256: 41b68e8a22f6baba8eb54e87f010ef0a83a130c44ab9267f6ac1bc5e7b962dd5 }
-  - { name: bloodhound_graph_deep_relationship_enumeration, severity: high, procedures: "BH-017", dependency: dependencies/bloodhound/bloodhound_graph_deep_relationship_enumeration.yml, canonical_sha256: d0236d7b77df0419675f0aa9d4971678515d42751b4856c1cfcd45c9bc30f1ec }
-  - { name: bloodhound_ldap_deep_single_category_enumeration, severity: high, procedures: "BH-002,BH-004", dependency: dependencies/bloodhound/bloodhound_ldap_deep_single_category_enumeration.yml, canonical_sha256: 4214be36b71b1a22cb046788d29576891756a76735a9c8a4b27605d6bc59b07d }
-  - { name: bloodhound_ldap_directory_discovery_fanout, severity: high, procedures: "BH-002,BH-004", dependency: dependencies/bloodhound/bloodhound_ldap_directory_discovery_fanout.yml, canonical_sha256: 1832fae8e6508a654846027dc347f20e273fb1aae0a21548bb6d8fbfc9aa618a }
-  - { name: bloodhound_process_to_directory_effect, severity: medium, procedures: "BH-001", dependency: dependencies/bloodhound/bloodhound_process_to_directory_effect.yml, canonical_sha256: d352c74810d79f6ef74ee161bbb508f8184834e596ce9b07a77c481c38592b31 }
-  - { name: bloodhound_recurrent_collection_activity, severity: medium, procedures: "BH-014", dependency: dependencies/bloodhound/bloodhound_recurrent_collection_activity.yml, canonical_sha256: 2bbaf30528c1bf35b6f43ee4463b29864f79f0dc0071e1656ffaf75d4d41185e }
-  - { name: bloodhound_remote_security_configuration_reads, severity: high, procedures: "BH-012", dependency: dependencies/bloodhound/bloodhound_remote_security_configuration_reads.yml, canonical_sha256: 9c6173a622eee840ac1c22423688d51fc12a3d3ebaace3b01c7025b33df9e877 }
-  - { name: bloodhound_remote_security_configuration_value_reads, severity: high, procedures: "BH-012", dependency: dependencies/bloodhound/bloodhound_remote_security_configuration_value_reads.yml, canonical_sha256: 13a070661c07358f6384d99dddc7987668b56ce755e4e98afa52f740f310e6dc }
-  - { name: bloodhound_remote_session_registry_collection, severity: high, procedures: "BH-007,BH-008", dependency: dependencies/bloodhound/bloodhound_remote_session_registry_collection.yml, canonical_sha256: 2085ac5b4368e2e1bed2d13748f36758581ced37cda770cc632968b13450c2d1 }
-  - { name: bloodhound_samr_alias_membership_fanout, severity: high, procedures: "BH-009", dependency: dependencies/bloodhound/bloodhound_samr_alias_membership_fanout.yml, canonical_sha256: f0a036a55e12454d5a4b3fdc6983bbbb3f49b26ced4f18a39a30f198ee79d9ca }
-  - { name: bloodhound_samr_local_group_enumeration, severity: high, procedures: "BH-009,BH-010", dependency: dependencies/bloodhound/bloodhound_samr_local_group_enumeration.yml, canonical_sha256: 23fe74320f471f57f09c0d8d7aca968e6e55ae7e1fdbf718c0fed04aa96defed }
-  - { name: bloodhound_sensitive_directory_attribute_reads, severity: high, procedures: "BH-003,BH-005", dependency: dependencies/bloodhound/bloodhound_sensitive_directory_attribute_reads.yml, canonical_sha256: 360c4cc902c4251d92038c4fb53a080a4b29a5ed166eef32fbf7657df83834d9 }
-  - { name: bloodhound_service_protocol_probe_fanout, severity: medium, procedures: "BH-013", dependency: dependencies/bloodhound/bloodhound_service_protocol_probe_fanout.yml, canonical_sha256: b3ef253ebbcf21e8a80fa147415e3c4e89c21305dc08a410a8f77ba01b14ed4b }
-  - { name: bloodhound_smb_rpc_host_sweep, severity: high, procedures: "BH-006", dependency: dependencies/bloodhound/bloodhound_smb_rpc_host_sweep.yml, canonical_sha256: 217caff224b1079a7005a4c715c6438984e4f159e0d3c54395e9e5e7fd64f8fb }
-  - { name: bloodhound_sysvol_policy_file_collection, severity: medium, procedures: "BH-011", dependency: dependencies/bloodhound/bloodhound_sysvol_policy_file_collection.yml, canonical_sha256: 9b983d3ae579e392ad2316a1db8389430daf41c6d1a907150bc909917fc36bb6 }
+  - { name: bloodhound_azure_authentication_context, severity: medium, procedures: "BH-016", dependency: dependencies/bloodhound/bloodhound_azure_authentication_context.yml, canonical_sha256: a7e8a9433f33cfad4fbe2f5be4a6c87b290a12e9b85ab642fb5b9129bbff64e8 }
+  - { name: bloodhound_azure_graph_enumeration_fanout, severity: high, procedures: "BH-017", dependency: dependencies/bloodhound/bloodhound_azure_graph_enumeration_fanout.yml, canonical_sha256: a25b0e72b2d966f84702fcbb395c13b227f7d3bce29837cd1be4946bc5a8bf5a }
+  - { name: bloodhound_azure_rbac_enumeration, severity: high, procedures: "BH-019", dependency: dependencies/bloodhound/bloodhound_azure_rbac_enumeration.yml, canonical_sha256: 004a0c5a8377812d3092aa9922aad705a48de8059147c9560e6edc143d05cde7 }
+  - { name: bloodhound_azure_resource_enumeration_fanout, severity: high, procedures: "BH-018", dependency: dependencies/bloodhound/bloodhound_azure_resource_enumeration_fanout.yml, canonical_sha256: ff28bf2e17d48169d1d409bfb35730160532762959888a6ae15a65fef3df5d1d }
+  - { name: bloodhound_cloud_collection_output, severity: medium, procedures: "BH-020", dependency: dependencies/bloodhound/bloodhound_cloud_collection_output.yml, canonical_sha256: 64bde079b841adcc1d8c87dddc76adc76f490c35e094b8dee7f97c18ad17790b }
+  - { name: bloodhound_collection_archive_creation, severity: medium, procedures: "BH-015", dependency: dependencies/bloodhound/bloodhound_collection_archive_creation.yml, canonical_sha256: dc6e25a0a562f74c40cbcd314b25b3b6f5466482c70b1b5f70c5a351fded3bd9 }
+  - { name: bloodhound_collector_process_network_context, severity: medium, procedures: "BH-001", dependency: dependencies/bloodhound/bloodhound_collector_process_network_context.yml, canonical_sha256: 0602cfba47cc32b953052fa28619990ebe492780907d14fa34fb9aab120b77cd }
+  - { name: bloodhound_graph_deep_relationship_enumeration, severity: high, procedures: "BH-017", dependency: dependencies/bloodhound/bloodhound_graph_deep_relationship_enumeration.yml, canonical_sha256: 9922ca50d834a24dcb584cc5a96fb6f0ceff73b79c7a6a71cd74439287bc5090 }
+  - { name: bloodhound_ldap_deep_single_category_enumeration, severity: high, procedures: "BH-002,BH-004", dependency: dependencies/bloodhound/bloodhound_ldap_deep_single_category_enumeration.yml, canonical_sha256: 76478a1dc5591af5edffbcd983dd547a417cbc85f2c29214578b5bf3a1848709 }
+  - { name: bloodhound_ldap_directory_discovery_fanout, severity: high, procedures: "BH-002,BH-004", dependency: dependencies/bloodhound/bloodhound_ldap_directory_discovery_fanout.yml, canonical_sha256: ae4a445e6c91072fc066a8991cd68b1b6ce9005bc4758ea12988c0848acb7350 }
+  - { name: bloodhound_process_to_directory_effect, severity: medium, procedures: "BH-001", dependency: dependencies/bloodhound/bloodhound_process_to_directory_effect.yml, canonical_sha256: 14892613f472f068979cc0b750456a992fe827008455317d7d7ecd9718be801a }
+  - { name: bloodhound_recurrent_collection_activity, severity: medium, procedures: "BH-014", dependency: dependencies/bloodhound/bloodhound_recurrent_collection_activity.yml, canonical_sha256: 28583958bd0e50c5690962f2063335bc2b18f59c4c88ea530838f0403f35e8ab }
+  - { name: bloodhound_remote_security_configuration_reads, severity: high, procedures: "BH-012", dependency: dependencies/bloodhound/bloodhound_remote_security_configuration_reads.yml, canonical_sha256: 2783c452478dcfab5a0cde19aed3d9e3278d1d34f253693d02a882126b7d1ef4 }
+  - { name: bloodhound_remote_security_configuration_value_reads, severity: high, procedures: "BH-012", dependency: dependencies/bloodhound/bloodhound_remote_security_configuration_value_reads.yml, canonical_sha256: 510a95cb769fb67eb29497acf18ca81c6743faf49b72e8eb154413cdaa2ff8d8 }
+  - { name: bloodhound_remote_session_registry_collection, severity: high, procedures: "BH-007,BH-008", dependency: dependencies/bloodhound/bloodhound_remote_session_registry_collection.yml, canonical_sha256: 7b6a3f13109e0cc325dc3940b0cba5315239d518e1b601d7e5025f40966e6c18 }
+  - { name: bloodhound_samr_alias_membership_fanout, severity: high, procedures: "BH-009", dependency: dependencies/bloodhound/bloodhound_samr_alias_membership_fanout.yml, canonical_sha256: 038eb0fc13c7c6d3e2318ccd7f3dcdee35ae20608221e5e39123b248701e4b3e }
+  - { name: bloodhound_samr_local_group_enumeration, severity: high, procedures: "BH-009,BH-010", dependency: dependencies/bloodhound/bloodhound_samr_local_group_enumeration.yml, canonical_sha256: fcae52a32d341dce00ff97b0cca666050afb66a0e11cb4574a96ceb8b9152e55 }
+  - { name: bloodhound_sensitive_directory_attribute_reads, severity: high, procedures: "BH-003,BH-005", dependency: dependencies/bloodhound/bloodhound_sensitive_directory_attribute_reads.yml, canonical_sha256: 22731dca59be7028bbe691704f90c62cf9c699ad7538e560ca2fc71fd15d4355 }
+  - { name: bloodhound_service_protocol_probe_fanout, severity: medium, procedures: "BH-013", dependency: dependencies/bloodhound/bloodhound_service_protocol_probe_fanout.yml, canonical_sha256: 854c8d64c9716b87e30ab9b4ea1ecba7a85657960998f2ec34650985b3e4cf07 }
+  - { name: bloodhound_smb_rpc_host_sweep, severity: high, procedures: "BH-006", dependency: dependencies/bloodhound/bloodhound_smb_rpc_host_sweep.yml, canonical_sha256: 408f52390b87b6bcb987dab8731903287612e810c32e9ea84fb4638491b984eb }
+  - { name: bloodhound_sysvol_policy_file_collection, severity: medium, procedures: "BH-011", dependency: dependencies/bloodhound/bloodhound_sysvol_policy_file_collection.yml, canonical_sha256: c41aa540af44af51c22a65a24317a79dc1da3e37fcb8b66aea494d35d32c75cd }
 unresolved:
   source_blockers: 0

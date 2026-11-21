@@ -2,14 +2,14 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_socket_listen_or_rare_egress_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.yaral
-canonical_sha256: b28a6d39550ed4a8553514927f6741346b5bebaaab83efbbbf7b2c2be22bd4a4
+canonical_sha256: 8988223919bc15421679b450577a8223dc61859240972c1d20b9cfdbe05b2680
 description: "Correlates a rare-process socket listen with an accepted inbound connection on the same port and process, closing the gap between merely listening and actually receiving a connection that the base standalone-listen rule leaves open."
 severity: high
 procedure_ids: ["CSB-008"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "Normalize SOCKET_LISTEN and inbound NETWORK_CONNECTION with a stable process entity identifier, process signer/prevalence, and port, joined on host, process entity and port within 30 minutes."
+telemetry_prerequisites: "Normalize SOCKET_LISTEN and inbound NETWORK_CONNECTION with a stable vendor process identifier (product_specific_process_id), process signer/prevalence, and port, joined on host, process and port within 30 minutes, listen first."
 atomic_event_types: ["NETWORK_CONNECTION", "SOCKET_LISTEN"]
-required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.entity_id", "principal.process.file.is_signed", "principal.process.file.prevalence", "target.port", "target.process.entity_id"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "network.direction", "principal.hostname", "principal.process.file.is_signed", "principal.process.file.prevalence", "principal.process.product_specific_process_id", "target.port", "target.process.product_specific_process_id"]
 correlation_window: "30m"
 uses_multi_event_correlation: true
 uses_aggregation: false
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Development tools and local services that legitimately listen from rare binaries and receive local or authorized connections."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_socket_listen_or_rare_egress.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.spl", sha256: 7b5ed047bda549bd28010d7defee5e3c3dd8b4bcf267260d367db30948afd373, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.kql", sha256: a2acc312f389f4a7968e2c0bc0fedffddaf5a17a97fd48c422405a508c8e1f73, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.sql", sha256: 19537936aa583f26d85d8f62bdb1ee10c2e2f8ee19bc68c91dabba12d8e9208e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.eql", sha256: 24d1fd5a95d0a87eb2648dece0c971785fae6462757f98a0c4448526371436a3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.yml", sha256: 7315c52a22b3d5ffbd204d5f96e45ace691d7259f857ba1d6b004074f9d433bb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_lsa_encoded_ticket_retrieval
 canonical_path: detections/rubeus/yaral/rubeus_lsa_encoded_ticket_retrieval.yaral
-canonical_sha256: b2aab2d41c31eb5cc692e8c7dc75b4f691a3e4ccc2e1af809d34b1a176c218b8
+canonical_sha256: 4ee967578b7bdd513ad75b4f56be10c8d8c9c8fa8f700140caee0e75b8a25baf
 description: "Detects a successful Kerberos encoded-ticket retrieval call through LsaCallAuthenticationPackage, separated from lower-confidence cache enumeration/query activity."
 severity: high
 procedure_ids: ["PROC-006"]
 validation_status: "needs_validation"
 telemetry_prerequisites: "EDR must expose LsaCallAuthenticationPackage API calls with Kerberos message type and a success/failure result; process, user, host, and target LUID are required for triage."
 atomic_event_types: ["EDR_API_CALL"]
-required_udm_fields: ["additional.fields", "metadata.product_event_type", "security_result.action"]
-correlation_window: ""
-uses_multi_event_correlation: false
-uses_aggregation: false
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.hostname", "principal.process.file.full_path", "principal.process.product_specific_process_id", "principal.user.userid", "security_result.action"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Klist, SSO components, credential-isolation and IR tooling that legitimately retrieve encoded tickets."
 references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_cache_operations.md"
 translations:
-  spl: { path: "detections/rubeus/spl/rubeus_lsa_encoded_ticket_retrieval.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/rubeus/kql/rubeus_lsa_encoded_ticket_retrieval.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/rubeus/sql/rubeus_lsa_encoded_ticket_retrieval.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/rubeus/eql/rubeus_lsa_encoded_ticket_retrieval.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/rubeus/sigma/rubeus_lsa_encoded_ticket_retrieval.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/rubeus/spl/rubeus_lsa_encoded_ticket_retrieval.spl", sha256: 9723cf8fb2712e3eee8be8b98798fa7019c3466697658025e3a992316d7fb429, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/rubeus/kql/rubeus_lsa_encoded_ticket_retrieval.kql", sha256: 148681dc6b8a68b9d9592036f8be02badc0d659e23a55124bc500ca5737b892c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/rubeus/sql/rubeus_lsa_encoded_ticket_retrieval.sql", sha256: 9484c2d56ee107234d769c955fcecee1efed69dae4da44ee843ee2065a448527, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/rubeus/eql/rubeus_lsa_encoded_ticket_retrieval.eql", sha256: 2f8fc9925112e4657a1990449f4ce36f3ab45bf54ca16056c6da628a1edc8dfd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_lsa_encoded_ticket_retrieval.yml", sha256: c6b0608f89a8548537001eeb0871bf0c480be060c06ac05b4fab8a1878c2ab36, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

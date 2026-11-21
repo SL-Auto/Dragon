@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_event_log_impairment
 canonical_path: detections/mimikatz/yaral/mimikatz_event_log_impairment.yaral
-canonical_sha256: 444e1acc7df4b7774b3adf5127557d9c2cc7692e8e4c38b62cd3dae8f73c405e
+canonical_sha256: b592c31c8ed2a036c2bab3fa3564fb1c6f92280cddc23ef08c85e23290640264
 description: "Detects log clearing or endpoint telemetry reporting Event Log service tampering."
 severity: high
 procedure_ids: ["P26"]

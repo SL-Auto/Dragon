@@ -15,7 +15,7 @@ logsource:
   category: generic
 detection:
   selection_event_type:
-    event.code: ["23", "24", "25", "4778", "4779"]
+    event.code: ["23", "24", "4779"]
   condition: selection_event_type
 falsepositives:
   - "Helpdesk and session administration."

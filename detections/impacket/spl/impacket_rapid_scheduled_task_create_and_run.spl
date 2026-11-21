@@ -11,7 +11,7 @@
 # assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 # schema_profile: schemas/splunk-cim.yml
 index=<configured_index>
-| where in(coalesce('metadata.product_event_type','metadata.event_type'), "100", "106", "200", "4698")
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "*")
 | eval canonical_rule="impacket_rapid_scheduled_task_create_and_run"
 | stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
 | where count > 0

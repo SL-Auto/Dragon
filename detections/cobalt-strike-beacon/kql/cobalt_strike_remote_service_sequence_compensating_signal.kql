@@ -1,0 +1,31 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_service_sequence_compensating_signal.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: cobalt_strike_remote_service_sequence_compensating_signal
+// severity: high
+// procedure_ids: CSB-030
+// description: Correlates a file staged to a remote target with a subsequent System 7045 service install on that target whose service image file name equals the staged file name, tightening the base rule's looser source/account/host proximity join; file-name matching tolerates UNC versus local path forms.
+// log_source_prerequisites: Normalize FILE_CREATION/FILE_MODIFICATION written to a remote target host (SMB/admin-share write with source and target host and full path), and System 7045 on that target with the installed service image path, joined on source host, target host and image file name within 10 minutes, write first.
+// false_positives: Software distribution and endpoint-management tools that stage an installer to a share and then register it as a service using the identical path.
+// references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_remote_service_sequence.md
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (event_type, product_event_type, hostname, target_host, target_path, target_process_path); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native ordered two-event correlation on service_host, image_name within 10 minutes (first event before second). Joined on service host and image file name; the staging source host exists only on the write leg (as in the canonical rule, where $source is bound by the write event). Exact per-pair join; KQL suffixes duplicate right-side columns with 1. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+let window = 10m;
+let first_leg = NormalizedEvents
+    | where TimeGenerated > ago(20m)
+    | where event_type in ("FILE_CREATION", "FILE_MODIFICATION", "FILE_WRITE")
+    | extend image_name = extract(@"(?i)([^\\/]+\.(?:exe|dll|bat|cmd|ps1))$", 1, target_path)
+    | extend service_host = target_host
+    | project-rename FirstTime = TimeGenerated;
+let second_leg = NormalizedEvents
+    | where TimeGenerated > ago(20m)
+    | where product_event_type == "7045"
+    | extend image_name = extract(@"(?i)([^\\/\""\s]+\.(?:exe|dll|bat|cmd|ps1))", 1, target_process_path)
+    | extend service_host = hostname
+    | project-rename SecondTime = TimeGenerated;
+first_leg
+| join kind=inner second_leg on service_host, image_name
+| where SecondTime between (FirstTime .. FirstTime + window)
+| summarize FirstTime = min(FirstTime), LastTime = max(SecondTime), Pairs = count() by service_host, image_name
+| extend CanonicalRule = "cobalt_strike_remote_service_sequence_compensating_signal"

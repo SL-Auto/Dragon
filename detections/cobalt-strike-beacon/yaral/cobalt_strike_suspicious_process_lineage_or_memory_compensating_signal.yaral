@@ -2,7 +2,7 @@ rule cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal {
   meta:
     author = "Detection Research Agent"
     description = "Correlates a private executable-memory region without a backing file with a subsequent thread start whose start address falls in that private region, on the same process, providing execution evidence that the base rule's standalone memory-allocation signal cannot express."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "Execution evidence in a private RX region on a host not expected to host a JIT engine is close to the injected/in-memory-tasking security effect, though legitimate JIT runtimes and application virtualization can match if the JIT-host enrichment is not maintained."
@@ -12,20 +12,22 @@ rule cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal {
     references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_suspicious_process_lineage_or_memory.md"
     validation_status = "needs_validation"
     validation_method = "Replay vendor-provided benign JIT/application-virtualization memory and thread-start fixtures to validate the JIT-host enrichment before enabling."
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
     compensates_for = "cobalt_strike_suspicious_process_lineage_or_memory"
     source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_suspicious_process_lineage_or_memory.md"
   events:
     $mem.metadata.event_type = "EXECUTABLE_MEMORY"
     $mem.principal.hostname = $host
-    $mem.principal.process.pid = $pid
+    $mem.principal.process.product_specific_process_id = $pid
     $mem.additional.fields["memory_is_private"].value.bool_value = true
     $mem.additional.fields["memory_has_backing_file"].value.bool_value = false
     $thread.metadata.event_type = "THREAD_START"
-    $thread.principal.process.pid = $pid
+    $thread.principal.hostname = $host
+    $thread.principal.process.product_specific_process_id = $pid
     $thread.additional.fields["start_address_in_private_rx"].value.bool_value = true
-    $thread.additional.fields["approved_jit_host"].value.bool_value = false
+    $thread.additional.fields["approved_jit_host"].value.bool_value != true
+    $mem.metadata.event_timestamp.seconds <= $thread.metadata.event_timestamp.seconds
   match:
     $host, $pid over 5m
   condition:

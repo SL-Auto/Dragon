@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules_building_block/discovery_generic_registry_query.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules_building_block/discovery_generic_registry_query.toml) - SHA-256 `37032f67cfc07bc195941a853e2d441e7b7ac166a944c12043280ae7d455c5de`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules_building_block/discovery_generic_registry_query.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules_building_block/discovery_generic_registry_query.toml) - SHA-256 `7f8d19ded043ad2c1628197327d066134e9487fb4506f7d2d3adcfd8b61e9e82`
 
 ## Procedure and detection-branch matrix
 
@@ -48,12 +48,15 @@ The canonical rule has broader tool-independent intent, but burst across several
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
-
+- Candidate improvement: independently add the missing procedure branch shown in the proposal; no public predicate is copied.
+- Independent verification (2026-11-21): checked against source analysis, provider field semantics and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: the proposal was copied into canonical YARA-L on 2026-08-16 while this trail read `deferred_pending_rule_improvement_run`, a non-terminal state the workflow prohibits. It is re-decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real, but adversarial review found defects in the proposal as written; the adopted rule diverges as follows:
+  - Approval enrichment now fails open with `!= true`, so missing enrichment cannot silently suppress (DR-16).
+  - Distinct-family count moved to `outcome`.
+- Canonical result: `detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_registry_read_compensating_signal.yaral`, SHA-256 `b5f4c1148237af5eb6158cca199596ca6c862aee58ed302f0822656f69c7950b`. The original proposal is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration completed in the same run: detection review, coverage ledger, tool telemetry file, `telemetry/MASTER.md` counts, all five translations, translation review, dependency/manifest hashes, and the re-comparison below.
 ## Unmatched scope
 
 The public candidate does not cover all branches in `CSB-023`. Conversely, the canonical rule is not evidence of Cobalt Strike attribution and may detect other tooling with equivalent effects.
@@ -87,3 +90,51 @@ rule cobalt_strike_sensitive_registry_read_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Revised rule SHA-256 `b5f4c1148237af5eb6158cca199596ca6c862aee58ed302f0822656f69c7950b`, compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- Between 7e91c15 and 9d792a8 the candidate changed from a 7-day new-terms rule (novel per host/user) to a plain EQL match on every `reg query` or PowerShell registry read. It is now broader and noisier, still command-line based rather than registry-read telemetry, and does not affect our decision.
+
+| Procedure branch / observable effect | Revised ours | Public | Primary signal and strength | Compensating signal | Coverage conclusion | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| One process reading several sensitive registry families | covered per host/process hash | `discovery_generic_registry_query.toml`: narrower implementation-specific context (original matrix); candidate not re-assessed beyond re-pinning | multi-family read burst - moderate | base single-read rule - moderate | complementary | Revised canonical rule, re-pinned candidate, `reviews/cobalt-strike-beacon/detection-review.md`. |
+
+- Final adopted YARA-L (canonical, `experimental` / `needs_validation`):
+
+```yaral
+rule cobalt_strike_sensitive_registry_read_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a single process reading several distinct sensitive-registry-family keys within a short window, surfacing multi-family enumeration bursts that the base single-event sensitivity check does not aggregate."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "A burst of reads across several distinct sensitive registry families by one process is a moderate discovery signal, but inventory and compliance scanners legitimately read these keys in bulk."
+    procedure_ids = "CSB-023"
+    log_source_prerequisites = "Normalize REGISTRY_READ with process hash, hostname, a registry-security-family classification field, and an approved-inventory-process enrichment, joined on host and process hash within 15 minutes."
+    false_positives = "Inventory, compliance, EDR, backup, and forensics tooling that legitimately reads across many sensitive registry families; the approved-inventory-process enrichment is required to keep this usable."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read.md"
+    validation_status = "needs_validation"
+    validation_method = "Use benign reads of non-secret test keys spanning several classification families from both approved and unapproved inventory tooling."
+    review_status = "reviewed"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_sensitive_registry_read"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read.md"
+    modification_note = "Proposal accepted with a required change: added principal.hostname to the joined/matched fields. The original proposal aggregated only by process file hash across the entire fleet with no host in the event or match clause, so a matching alert could not be attributed to a specific host for triage."
+  events:
+    $e.metadata.event_type = "REGISTRY_READ"
+    $e.principal.hostname = $host
+    $e.principal.process.file.sha256 = $hash
+    $e.additional.fields["registry_security_family"].value.string_value = $family
+    $e.additional.fields["approved_inventory_process"].value.bool_value != true
+  match:
+    $host, $hash over 15m
+  outcome:
+    $families = count_distinct($family)
+  condition:
+    $e and $families >= 3
+}
+```
+
+- Re-comparison outcome: the revised rule closes the branch the proposal targeted, within its declared telemetry. Remaining limits are the accepted gaps in `reviews/cobalt-strike-beacon/detection-review.md`, each with a named compensating rule.

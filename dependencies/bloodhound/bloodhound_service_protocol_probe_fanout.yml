@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_service_protocol_probe_fanout
 canonical_path: detections/bloodhound/yaral/bloodhound_service_protocol_probe_fanout.yaral
-canonical_sha256: b3ef253ebbcf21e8a80fa147415e3c4e89c21305dc08a410a8f77ba01b14ed4b
+canonical_sha256: 854c8d64c9716b87e30ab9b4ea1ecba7a85657960998f2ec34650985b3e4cf07
 description: "Detects one process probing at least three distinct service families among WebDAV, SMB, LDAP and LDAPS capability across many hosts, requiring protocol-family diversity rather than raw target/port count."
 severity: medium
 procedure_ids: ["BH-013"]

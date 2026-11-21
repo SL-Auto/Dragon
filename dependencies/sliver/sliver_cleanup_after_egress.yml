@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_cleanup_after_egress
 canonical_path: detections/sliver/yaral/sliver_cleanup_after_egress.yaral
-canonical_sha256: 73961295c1f69271085280dba6de169c93896daa5ff71388b501216c0f502f79
+canonical_sha256: bd5f75c9e717feeabf121342bd62d0e45b00abee9cb8a06aca39aba4272c4ccb
 description: "Network process deletes its own image or related artifacts"
 severity: high
 procedure_ids: ["PROC-002", "PROC-026"]

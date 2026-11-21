@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_parent_egress_with_spawned_interpreter
 canonical_path: detections/sliver/yaral/sliver_parent_egress_with_spawned_interpreter.yaral
-canonical_sha256: 77773ed643ed469e21a483d7b7e2af49ba9c5c0f9a8a8127d7ad817dfcd10d21
+canonical_sha256: 9db91cc7ada5c8387aa0c63fc4db120a526bc8ffdf4c6c98d09edf8935102b3b
 description: "Network process spawns a command interpreter"
 severity: high
 procedure_ids: ["PROC-010"]

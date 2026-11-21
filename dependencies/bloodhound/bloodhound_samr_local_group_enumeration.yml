@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_samr_local_group_enumeration
 canonical_path: detections/bloodhound/yaral/bloodhound_samr_local_group_enumeration.yaral
-canonical_sha256: 23fe74320f471f57f09c0d8d7aca968e6e55ae7e1fdbf718c0fed04aa96defed
+canonical_sha256: fcae52a32d341dce00ff97b0cca666050afb66a0e11cb4574a96ceb8b9152e55
 description: "Detects SAMR or LSA policy read operations against multiple remote hosts."
 severity: high
 procedure_ids: ["BH-009", "BH-010"]

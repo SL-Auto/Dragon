@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_smb_sensitive_file_activity
 canonical_path: detections/impacket/yaral/impacket_smb_sensitive_file_activity.yaral
-canonical_sha256: 8ef9066a332bc412708b63acfc9fa730d3ebb70fccae57824aeee90a43080a70
+canonical_sha256: b794c64432c8706f2c454d4a5368b685dfa103278dc92cf6c9755c60570cf945
 description: "Detects remote SMB access to credential-bearing or administrative paths."
 severity: high
 procedure_ids: ["IMP-01", "IMP-13"]

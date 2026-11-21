@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_dns_process_context_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_dns_process_context_compensating_signal.yaral
-canonical_sha256: 42ca16d007fa8b11e0825d185206b4566d132e7f3b6c3bc444d441e892a984cd
+canonical_sha256: ed53f55d149827c21fdb860c810989367b1eaa9a45eb440e7adfe2a83719fd82
 description: "Detects repeated process-attributed TXT/NULL-type DNS queries to domains flagged as rare by baseline enrichment, covering low-volume record-type-specific tunneling exchanges that the length/entropy-based base rule does not filter by record type."
 severity: medium
 procedure_ids: ["CSB-006"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "Normalize DNS_QUERY with process, host, query name/type, and a domain-rarity baseline enrichment field."
-atomic_event_types: ["DNS_QUERY"]
-required_udm_fields: ["additional.fields", "metadata.event_type", "network.dns.questions.name", "network.dns.questions.type", "principal.hostname", "principal.process.pid"]
+telemetry_prerequisites: "Normalize process-attributed NETWORK_DNS (for example Sysmon 22 or EDR DNS events; DNS Client service-attributed resolver logs cannot attribute the requesting process) with host, process ID, query name/type, and a domain-rarity baseline enrichment field."
+atomic_event_types: []
+required_udm_fields: ["additional.fields", "metadata.event_type", "network.dns.questions.name", "network.dns.questions.type", "principal.hostname", "principal.process.product_specific_process_id"]
 correlation_window: "30m"
 uses_multi_event_correlation: true
-uses_aggregation: false
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Mail-security appliances and anti-abuse services performing bulk legitimate TXT lookups against rare or newly observed domains; the rarity enrichment must be tenant-tuned before enabling."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_dns_process_context.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_dns_process_context_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_dns_process_context_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_dns_process_context_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_dns_process_context_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_dns_process_context_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_dns_process_context_compensating_signal.spl", sha256: 744337d7ca7eeafaa64cbb50dc953f2d7d43580679dc444ae420715867003911, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_dns_process_context_compensating_signal.kql", sha256: cb1ce2d197e21816856e547be571fc91faaf758001d85142ffc98f398564ca5f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_dns_process_context_compensating_signal.sql", sha256: 06551198a87ced41c74d90d7819a23a0bcd0775a384719d0d16a27c2e7edd2b6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_dns_process_context_compensating_signal.eql", sha256: 98ae50059c2b580cead93d5e7b09829b570d0f94e4412ef06082d25f81beca85, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_dns_process_context_compensating_signal.yml", sha256: 10ecba2d0bb84018fec33488ecc0f9208e92e8a6c110c465f1b3c54b56e5e295, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

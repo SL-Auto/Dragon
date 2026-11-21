@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_remote_service_sequence
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_service_sequence.yaral
-canonical_sha256: 9082f2835f8ada2d2ce243dad44d1ec0c0a26926ec751f42ad5e0aa843376edf
+canonical_sha256: da938203d3980561f505143c2e052bcc2c2ab9a0716ce6674c11601d7a38b52c
 description: "Correlates network share access with service installation on the target from the same account/source context."
 severity: high
 procedure_ids: ["CSB-030"]

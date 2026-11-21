@@ -15,7 +15,7 @@ logsource:
   category: generic
 detection:
   selection_event_type:
-    event.code: ["100", "106", "200", "4698"]
+    event.code: ["*"]
   condition: selection_event_type
 falsepositives:
   - "Installers, enterprise schedulers, deployment systems, and ephemeral maintenance tasks."

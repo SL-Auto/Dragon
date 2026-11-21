@@ -1,0 +1,27 @@
+schema_version: 1
+tool_id: revstealer
+name: "REVSTEALER"
+lifecycle_status: blocked_source
+analyzed_revision: "unknown"
+context_entry_points:
+  registry: registry/tools.yml
+counts:
+  procedures: 0
+  canonical_rules: 0
+  spl_translations: 0
+  kql_translations: 0
+  sql_translations: 0
+  eql_translations: 0
+  sigma_translations: 0
+completion_states:
+  source_analysis: blocked_source
+  canonical_detection: not_started
+  telemetry_reconciliation: not_started
+  secondary_translation: not_started
+  rule_validation_labels: "not_applicable"
+artifact_hashes:
+  registry: 745ab0da2112877731d732ec359b8f894ca2572c615b3c5e19b46c2ac286e883
+rules:
+  []
+unresolved:
+  source_blockers: 0

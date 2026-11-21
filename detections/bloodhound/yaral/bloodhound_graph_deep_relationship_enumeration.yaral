@@ -1,30 +1,31 @@
 rule bloodhound_graph_deep_relationship_enumeration {
   meta:
     author = "Detection Research Agent"
-    description = "Detects one Graph principal or application enumerating a high volume of relationship-bearing objects (memberOf, owners, appRoleAssignments, transitiveMembers) within a single resource family, compensating for attackers who avoid multi-family fanout captured by bloodhound_azure_graph_enumeration_fanout."
-    date = "2026-08-16"
+    description = "Detects one Graph user or service principal, per client application, reading relationship endpoints (members, transitiveMembers, memberOf, owners, registeredOwners, registeredUsers, appRoleAssignedTo, appRoleAssignments) for many distinct directory objects, compensating for collection that avoids the multi-family fanout captured by bloodhound_azure_graph_enumeration_fanout."
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
-    severity_rationale = "Deep single-family relationship enumeration exposes group/role membership attack paths as effectively as multi-family fanout."
+    severity_rationale = "Per-object relationship reads across many groups, applications, service principals or devices expose membership and ownership attack paths as effectively as multi-family fanout."
     procedure_ids = "BH-017"
-    log_source_prerequisites = "MicrosoftGraphActivityLogs with principal user ID, application/service-principal ID, HTTP method, request URL and resolved target object identity."
-    false_positives = "Identity governance, synchronization, compliance and cloud security posture tools performing legitimate relationship enumeration."
-    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_azure_graph_enumeration_fanout.md"
+    log_source_prerequisites = "MicrosoftGraphActivityLogs with HTTP method, full request URI, AppId, and UserId or ServicePrincipalId normalized to principal.user.userid / principal.user.product_object_id."
+    false_positives = "Identity governance, HR/identity synchronization, access reviews, compliance and cloud security posture tools performing legitimate per-object relationship enumeration."
+    references = "reports/bloodhound/source-analysis.md#bh-017, sources/azurehound-src client/groups.go#L50-L66, client/apps.go#L51, client/service_principals.go#L50, client/app_role_assignments.go#L33, client/devices.go#L50, config/config.go#L144-L158 (23735c8), public-rules/comparisons/bloodhound/bloodhound_azure_graph_enumeration_fanout.md, reviews/bloodhound/detection-review.md#bh-dr-13"
     validation_status = "needs_validation"
-    validation_method = "Test approved sync/governance apps and sanitized single-family deep-pagination fixtures."
-    review_status = "reviewed_with_gaps"
+    validation_method = "Replay sanitized Graph activity fixtures for delegated and app-only principals across members/owners/appRoleAssignedTo/registeredOwners endpoints at boundary counts; baseline approved governance and sync applications."
+    review_status = "reviewed"
     review_reference = "reviews/bloodhound/detection-review.md"
   events:
     $e.metadata.product_event_type = "MicrosoftGraphActivityLogs"
-    $e.principal.user.userid = $principal
-    $e.principal.application = $app
     $e.network.http.method = "GET"
-    re.regex($e.target.url, `(?i)/(users|groups|servicePrincipals|applications)/.*(memberOf|owners|appRoleAssignments|transitiveMembers)`)
-    $e.target.resource.name = $object
+    $e.principal.application = $app
+    $principal = strings.coalesce($e.principal.user.userid, $e.principal.user.product_object_id)
+    re.regex($e.target.url, `(?i)/(users|groups|servicePrincipals|applications|devices)/[^/?]+/(members|transitiveMembers|memberOf|transitiveMemberOf|owners|registeredOwners|registeredUsers|appRoleAssignedTo|appRoleAssignments)([/?]|$)`)
+    $object = re.capture($e.target.url, `(?i)/(?:users|groups|servicePrincipals|applications|devices)/([^/?]+)/`)
   match:
     $principal, $app over 30m
   outcome:
     $objects = count_distinct($object)
+    $source_ips = array_distinct($e.principal.ip)
   condition:
     $e and $objects >= 100
 }

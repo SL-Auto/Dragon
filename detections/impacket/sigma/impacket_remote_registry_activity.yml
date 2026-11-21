@@ -15,7 +15,7 @@ logsource:
   category: generic
 detection:
   selection_event_type:
-    event.code: ["12", "13", "14", "4657", "7036"]
+    event.code: ["12", "13", "14"]
   condition: selection_event_type
 falsepositives:
   - "Inventory, backup and remote support."

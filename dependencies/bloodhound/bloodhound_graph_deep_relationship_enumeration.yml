@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_graph_deep_relationship_enumeration
 canonical_path: detections/bloodhound/yaral/bloodhound_graph_deep_relationship_enumeration.yaral
-canonical_sha256: d0236d7b77df0419675f0aa9d4971678515d42751b4856c1cfcd45c9bc30f1ec
-description: "Detects one Graph principal or application enumerating a high volume of relationship-bearing objects (memberOf, owners, appRoleAssignments, transitiveMembers) within a single resource family, compensating for attackers who avoid multi-family fanout captured by bloodhound_azure_graph_enumeration_fanout."
+canonical_sha256: 9922ca50d834a24dcb584cc5a96fb6f0ceff73b79c7a6a71cd74439287bc5090
+description: "Detects one Graph user or service principal, per client application, reading relationship endpoints (members, transitiveMembers, memberOf, owners, registeredOwners, registeredUsers, appRoleAssignedTo, appRoleAssignments) for many distinct directory objects, compensating for collection that avoids the multi-family fanout captured by bloodhound_azure_graph_enumeration_fanout."
 severity: high
 procedure_ids: ["BH-017"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "MicrosoftGraphActivityLogs with principal user ID, application/service-principal ID, HTTP method, request URL and resolved target object identity."
+telemetry_prerequisites: "MicrosoftGraphActivityLogs with HTTP method, full request URI, AppId, and UserId or ServicePrincipalId normalized to principal.user.userid / principal.user.product_object_id."
 atomic_event_types: ["MicrosoftGraphActivityLogs"]
-required_udm_fields: ["metadata.product_event_type", "network.http.method", "principal.application", "principal.user.userid", "target.resource.name", "target.url"]
+required_udm_fields: ["metadata.product_event_type", "network.http.method", "principal.application", "principal.ip", "principal.user.product_object_id", "principal.user.userid", "target.url"]
 correlation_window: "30m"
 uses_multi_event_correlation: true
 uses_aggregation: true
 uses_absence_logic: false
-false_positives: "Identity governance, synchronization, compliance and cloud security posture tools performing legitimate relationship enumeration."
-references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_azure_graph_enumeration_fanout.md"
+false_positives: "Identity governance, HR/identity synchronization, access reviews, compliance and cloud security posture tools performing legitimate per-object relationship enumeration."
+references: "reports/bloodhound/source-analysis.md#bh-017, sources/azurehound-src client/groups.go#L50-L66, client/apps.go#L51, client/service_principals.go#L50, client/app_role_assignments.go#L33, client/devices.go#L50, config/config.go#L144-L158 (23735c8), public-rules/comparisons/bloodhound/bloodhound_azure_graph_enumeration_fanout.md, reviews/bloodhound/detection-review.md#bh-dr-13"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_graph_deep_relationship_enumeration.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_graph_deep_relationship_enumeration.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_graph_deep_relationship_enumeration.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_graph_deep_relationship_enumeration.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_graph_deep_relationship_enumeration.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_graph_deep_relationship_enumeration.spl", sha256: aeddc1f8ab17d4acf32a0243e9648b8249c3709051ecb866d28bd52015785170, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_graph_deep_relationship_enumeration.kql", sha256: d3f93898dd7402ee939785b9b2e610cf2d46fdc1c1e9ee5f783900177b843c12, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_graph_deep_relationship_enumeration.sql", sha256: ee1ab6ae021afc927cca15bb9a3175a1e8ebba6818d1777ee443fd097372aeff, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_graph_deep_relationship_enumeration.eql", sha256: a6e2130d00858295e83d9391b2c68df110810ffbbb4d3ca1101ac016297e12dc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_graph_deep_relationship_enumeration.yml", sha256: 896946c9ec586007b2274d54126f6b66d673aee98c825bd05ed4bfe469117c31, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

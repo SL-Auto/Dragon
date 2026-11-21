@@ -11,4 +11,4 @@
 // assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
 // schema_profile: schemas/elastic-ecs.yml
 // ECS assumption: event.code carries product IDs and event.action carries normalized event types.
-any where event.code in ("2", "23", "26", "FILE_DELETE", "FILE_TIMESTAMP_CHANGE") or event.action in ("2", "23", "26", "FILE_DELETE", "FILE_TIMESTAMP_CHANGE")
+any where event.code in ("2", "23", "26", "FILE_DELETE", "FILE_DELETION", "FILE_TIMESTAMP_CHANGE") or event.action in ("2", "23", "26", "FILE_DELETE", "FILE_DELETION", "FILE_TIMESTAMP_CHANGE")

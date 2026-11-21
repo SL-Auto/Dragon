@@ -14,6 +14,6 @@
 SELECT hostname, user_id, COUNT(*) AS event_count,
        'cobalt_strike_directory_discovery' AS canonical_rule
 FROM normalized_events
-WHERE product_event_type IN ('LDAP_QUERY', 'RPC_CALL') OR event_type IN ('LDAP_QUERY', 'RPC_CALL')
+WHERE product_event_type IN ('LDAP_QUERY', 'LDAP_SEARCH', 'RPC_CALL') OR event_type IN ('LDAP_QUERY', 'LDAP_SEARCH', 'RPC_CALL')
 GROUP BY hostname, user_id
 HAVING COUNT(*) > 0;

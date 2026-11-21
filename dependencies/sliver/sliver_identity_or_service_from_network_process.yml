@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_identity_or_service_from_network_process
 canonical_path: detections/sliver/yaral/sliver_identity_or_service_from_network_process.yaral
-canonical_sha256: 73ef2e2699a7255f2a3a5426fe7ed971a018b289d04b33f1f62c5faeb5000169
+canonical_sha256: f9d5d6618d160cefcac63d5691612b565047b039a69b4030b94e34a499577a04
 description: "Explicit credentials privileged logon or service operation associated with a network process/account"
 severity: high
 procedure_ids: ["PROC-016", "PROC-017", "PROC-019"]

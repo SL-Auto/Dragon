@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_sensitive_ldap_search
 canonical_path: detections/impacket/yaral/impacket_sensitive_ldap_search.yaral
-canonical_sha256: 6cba4d140bd1bdae141eedd9f2d688d7e3e950bd63d820deefbb50075d145e5d
+canonical_sha256: 2e94fce776007f454f0fbda2796e3270755c57da76b10e40e518b3a29708f191
 description: "Detects LDAP searches for sensitive credential or delegation attributes."
 severity: medium
 procedure_ids: ["IMP-09"]

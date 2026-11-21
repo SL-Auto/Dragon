@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_azure_authentication_context
 canonical_path: detections/bloodhound/yaral/bloodhound_azure_authentication_context.yaral
-canonical_sha256: 1ac130cf67d6e9fdf1f6b3fe0a3c91848c3e091437a166fef314916463615713
+canonical_sha256: a7e8a9433f33cfad4fbe2f5be4a6c87b290a12e9b85ab642fb5b9129bbff64e8
 description: "Detects a sign-in followed by broad Graph or ARM read activity from the same principal and application, independent of source IP."
 severity: medium
 procedure_ids: ["BH-016"]

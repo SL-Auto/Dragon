@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_discovery_fanout
 canonical_path: detections/havoc/yaral/havoc_discovery_fanout.yaral
-canonical_sha256: 599479a3cf1a171ace75e84b6eaf8e1b470b022586723a1bd5d1df55305b1d4b
+canonical_sha256: 6c3573a4dd1fcb02a9983d71e376d52b157f38f4b75aeceeb5f1f439b98b7caf
 description: "One process performs rapid directory SMB or RPC discovery across multiple targets"
 severity: medium
 procedure_ids: ["HV-P04", "HV-P13"]

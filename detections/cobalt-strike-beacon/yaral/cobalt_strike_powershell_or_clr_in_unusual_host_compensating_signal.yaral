@@ -1,26 +1,34 @@
 rule cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal {
   meta:
     author = "Detection Research Agent"
-    description = "Detects CLR/CoreCLR module load into an unsigned or rare process, providing an alternate detection path for in-memory .NET hosting when runtime-expected/CLR_RUNTIME_LOAD telemetry is unavailable."
-    date = "2026-08-16"
+    description = "Detects CLR/CoreCLR module load either into a native Windows host binary that is not a .NET application (the sacrificial-process pattern used for in-memory assembly execution) or into a process that is both unsigned and rare, providing an alternate detection path when runtime-expected/CLR_RUNTIME_LOAD telemetry is unavailable."
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "CLR loading into an unsigned or rare host process is a strong unmanaged-assembly-execution signal, though legitimate custom .NET hosts and management agents can match."
     procedure_ids = "CSB-015,CSB-017"
-    log_source_prerequisites = "Normalize MODULE_LOAD for clr.dll/coreclr.dll with process signer and prevalence."
+    log_source_prerequisites = "Normalize MODULE_LOAD (Sysmon 7 or EDR image load) for clr.dll/coreclr.dll with loading process image path, signer and prevalence."
     false_positives = "Custom .NET hosts, IDEs, installers, and management agents that legitimately embed the CLR in an uncommon or unsigned process."
     references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_powershell_or_clr_in_unusual_host.md"
     validation_status = "needs_validation"
     validation_method = "Use sanitized approved custom-CLR-host fixtures to confirm the signer/prevalence gate against known-legitimate embedders."
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
     compensates_for = "cobalt_strike_powershell_or_clr_in_unusual_host"
     source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_powershell_or_clr_in_unusual_host.md"
     modification_note = "Proposal accepted with required changes: replaced the invented additional.fields['process_signed']/['process_prevalence'] pair with the native principal.process.file.is_signed/prevalence fields already used by every other signer/rarity check in this rule family, and dropped an unused process_hash match window that had no aggregation function referencing it in the condition."
   events:
     $e.metadata.event_type = "MODULE_LOAD"
+    $e.principal.hostname = $host
     re.regex($e.target.file.full_path, `(?i)\\(clr|coreclr)\.dll$`)
-    ($e.principal.process.file.is_signed = false or $e.principal.process.file.prevalence = "RARE")
+    (
+      re.regex($e.principal.process.file.full_path, `(?i)\\(rundll32|dllhost|regsvr32|werfault|searchprotocolhost|gpupdate|spoolsv|notepad|svchost|wuauclt|mstsc)\.exe$`) or
+      ($e.principal.process.file.is_signed = false and $e.principal.process.file.prevalence = "RARE")
+    )
+  match:
+    $host over 10m
+  outcome:
+    $host_processes = array_distinct($e.principal.process.file.full_path)
   condition:
     $e
 }

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_process_file_context
 canonical_path: detections/mimikatz/yaral/mimikatz_process_file_context.yaral
-canonical_sha256: c5016a0deda0568294c2efa730dd0fec183eaa5f0bc2ac3e100b4cc7c3cf4928
+canonical_sha256: b6dc0442c739f122f77b04452694e15f9dda9d2ef98967bae0c8937a3e516e28
 description: "Provides low-specificity process and output-file context for utility and staging procedures."
 severity: low
 procedure_ids: ["P01", "P31", "P33"]

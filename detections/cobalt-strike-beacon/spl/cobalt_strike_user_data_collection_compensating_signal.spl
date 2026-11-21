@@ -1,0 +1,19 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_user_data_collection_compensating_signal.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_user_data_collection_compensating_signal
+# severity: high
+# procedure_ids: CSB-027
+# description: Correlates a user-data collection effect (screen, clipboard, input, or browser-secret) with an outbound network connection from the same process shortly afterward, distinguishing collection-then-egress from a single benign access that the base standalone-effect rule cannot separate.
+# log_source_prerequisites: Normalize vendor SCREEN_CAPTURE/CLIPBOARD_READ/INPUT_CAPTURE/BROWSER_SECRET_READ and outbound NETWORK_CONNECTION with a stable vendor process identifier (product_specific_process_id), joined on host and process within 15 minutes, collection first.
+# false_positives: Assistive technology, conferencing, remote support, password managers, browsers, and approved monitoring software that both collect and transmit data as part of normal operation.
+# references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_user_data_collection.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, process_id, direction); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native ordered two-event correlation on hostname, process_id within 15 minutes (first event before second). Scheduled every 5 minutes over the trailing 30 minutes. SPL compares the earliest first-leg and latest second-leg time per key, which is weaker than per-pair ordering.
+| search index=<configured_index> earliest=-30m@m latest=now
+| eval leg=case(in(event_type, "SCREEN_CAPTURE", "CLIPBOARD_READ", "INPUT_CAPTURE", "BROWSER_SECRET_READ"), "a", event_type=="NETWORK_CONNECTION" AND direction=="OUTBOUND", "b")
+| where isnotnull(leg)
+| stats min(eval(if(leg="a", _time, null()))) as first_a max(eval(if(leg="b", _time, null()))) as last_b by hostname process_id
+| where isnotnull(first_a) AND isnotnull(last_b) AND first_a <= last_b AND last_b - first_a <= 900
+| eval canonical_rule="cobalt_strike_user_data_collection_compensating_signal"

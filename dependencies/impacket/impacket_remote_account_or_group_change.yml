@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_remote_account_or_group_change
 canonical_path: detections/impacket/yaral/impacket_remote_account_or_group_change.yaral
-canonical_sha256: 1269cf9dbdd73d9e5041e8ffd220a0403a8d664a534516a721d076e3805dd86e
+canonical_sha256: 02cff3f9aa8195a9317319d10fa293662392aaab705ffe68fb43eb075814008e
 description: "Detects account, computer and group membership changes associated with a network-originating logon."
 severity: high
 procedure_ids: ["IMP-07"]

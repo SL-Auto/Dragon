@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_ad_authorization_change
 canonical_path: detections/impacket/yaral/impacket_ad_authorization_change.yaral
-canonical_sha256: b055926dc484d138e9025e1386bf7e210ff2c418424721e4e7a692874c094d98
+canonical_sha256: 244870a29c2a444e26adcb90527f6857f19027f452fa7d1e7156b69ce763270e
 description: "Detects changes to AD authorization, ownership, delegation or dMSA attributes."
 severity: high
 procedure_ids: ["IMP-10"]

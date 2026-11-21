@@ -11,7 +11,7 @@
 // assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
 // schema_profile: schemas/sentinel-asim.yml
 NormalizedEvents
-| where ProductEventType in ("12", "13", "14", "4657", "7036") or EventType in ("12", "13", "14", "4657", "7036")
+| where ProductEventType in ("12", "13", "14") or EventType in ("12", "13", "14")
 | summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
 | where EventCount > 0
 | extend CanonicalRule="impacket_remote_registry_activity"

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_short_lived_command_service
 canonical_path: detections/impacket/yaral/impacket_short_lived_command_service.yaral
-canonical_sha256: 1b461044e86f7eea13628e65cbd36456dac6b952bd96a4f0c03c62451ba750d7
+canonical_sha256: fe1519c87bdb6d84c7904034b20ab1bfb1ecde464ffb86412ede9f45d6f57be6
 description: "Detects service installation paths that invoke a command shell with output redirection."
 severity: high
 procedure_ids: ["IMP-03"]

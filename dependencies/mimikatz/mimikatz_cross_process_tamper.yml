@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_cross_process_tamper
 canonical_path: detections/mimikatz/yaral/mimikatz_cross_process_tamper.yaral
-canonical_sha256: 0b01786c2b755dcad09c4fcf1cc279a888f708b492f022af28af0bce78c1742a
+canonical_sha256: 05feb95b5c55fdb307c796c89284857bffec1108dd7f1663f1de08d472b36ff5
 description: "Detects endpoint-reported cross-process memory tampering affecting security-sensitive processes."
 severity: high
 procedure_ids: ["P22", "P27", "P28", "P32", "P40"]

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_screen_capture_then_egress
 canonical_path: detections/havoc/yaral/havoc_screen_capture_then_egress.yaral
-canonical_sha256: 2ae8ab28ca63ff96912eda593c62c9e176bd0fab0ec6f5988a0c90ffd0500aef
+canonical_sha256: 94f54bd0eea585b0fc172231d6fdb90b820d1a171f54282a68bc09b58befde43
 description: "A process with screen-capture telemetry also performs outbound network activity"
 severity: high
 procedure_ids: ["HV-P14"]

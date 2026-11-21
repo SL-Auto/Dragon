@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_privileged_context_change
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_privileged_context_change.yaral
-canonical_sha256: a805797e08e42cef32c9f860938ae7672c11ff12d2334d672e7baf1458aed353
+canonical_sha256: 7e4823ae2b7587689ec8730b4593c577082cd32b6f343c26dbb76924bbc9685c
 description: "Surfaces special-privilege assignment or endpoint token-privilege modification by an uncommon process."
 severity: medium
 procedure_ids: ["CSB-011"]

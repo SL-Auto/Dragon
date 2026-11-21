@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: chisel
 rule_name: chisel_recurrent_encrypted_process_egress
 canonical_path: detections/chisel/yaral/chisel_recurrent_encrypted_process_egress.yaral
-canonical_sha256: 1abcc69f313196efbd69096ebe0e2bafaf92ef7a330207e212ee044af1802dea
+canonical_sha256: 20efdb9b2dbe6a6657d0b280315f335a9138cd7bded894df1fe7f5bdd659636f
 description: "Detects recurrent encrypted egress by one process to a stable destination consistent with maintained tunnelling"
 severity: medium
 procedure_ids: ["CH-P01", "CH-P10"]

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_remote_security_configuration_reads
 canonical_path: detections/bloodhound/yaral/bloodhound_remote_security_configuration_reads.yaral
-canonical_sha256: 9c6173a622eee840ac1c22423688d51fc12a3d3ebaace3b01c7025b33df9e877
+canonical_sha256: 2783c452478dcfab5a0cde19aed3d9e3278d1d34f253693d02a882126b7d1ef4
 description: "Detects remote reads of CA, Netlogon, LDAP or NTLM security configuration across hosts."
 severity: high
 procedure_ids: ["BH-012"]

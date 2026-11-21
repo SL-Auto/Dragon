@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_wmi_activity_operational_class_signal
 canonical_path: detections/impacket/yaral/impacket_wmi_activity_operational_class_signal.yaral
-canonical_sha256: b7a4c8ec02d809686a432b0785be7852265b27dad64896598bbba63eec9bee79
+canonical_sha256: 2962d814c60df2e0329b39de9b6bbb339bc7cf0a8597546ddfd807058c199eee
 description: "Detects a remote WMI method invocation against the Win32_Process class observed directly in the WMI-Activity Operational log, independent of whether a WmiPrvSE child process was collected."
 severity: medium
 procedure_ids: ["IMP-05"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "WMI-Activity Operational 5857/5858/5860/5861 preserving namespace, class and caller source per reports/impacket/source-analysis.md IMP-05 telemetry note (\\"
-atomic_event_types: ["5857", "5858", "5860", "5861"]
+telemetry_prerequisites: "WMI-Activity Operational 5857/5858/5860/5861 with the operation text parsed into a class label and the caller (ClientMachine) normalized to principal.hostname. Successful Win32_Process.Create calls are not logged by WMI-Activity; this rule sees mainly 5858 failures and 5860/5861 subscription records (review REVIEW-012)."
+atomic_event_types: ["5858", "5860"]
 required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.ip", "target.resource.attribute.labels"]
-correlation_window: ""
-uses_multi_event_correlation: false
-uses_aggregation: false
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Endpoint management, inventory, remediation, monitoring agents and any authorized WMI administration that creates or queries Win32_Process; this event family is high-volume and requires tenant baselining before enforcement."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_wmi_activity_operational_class_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/impacket/kql/impacket_wmi_activity_operational_class_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/impacket/sql/impacket_wmi_activity_operational_class_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/impacket/eql/impacket_wmi_activity_operational_class_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/impacket/sigma/impacket_wmi_activity_operational_class_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/impacket/spl/impacket_wmi_activity_operational_class_signal.spl", sha256: c40751c41c27c3a1d8fe18a2fca7aaeab268a4bbcd0e929b7b0cf2a7c109aabb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/impacket/kql/impacket_wmi_activity_operational_class_signal.kql", sha256: a6543d1dd8ce63fb4c3b3891aa20c05807fe4b9cddf0040e143852001c0b90fa, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/impacket/sql/impacket_wmi_activity_operational_class_signal.sql", sha256: 5afa1d28d49d3a0bdbdb25ca68995516a7d00a10b1a7c14e48ddde1aed767f35, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/impacket/eql/impacket_wmi_activity_operational_class_signal.eql", sha256: ff7b923d0b1851057994a3ef2cd68ac04b38d8d66edb36cca1361d43fa5d26b1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_wmi_activity_operational_class_signal.yml", sha256: 87c31af8b6beed58f5df40952ba0fae1cac2392e976a9cc27a5bfb7458609b60, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

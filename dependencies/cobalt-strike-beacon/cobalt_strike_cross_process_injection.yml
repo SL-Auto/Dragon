@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_cross_process_injection
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_cross_process_injection.yaral
-canonical_sha256: 2bcdf7155871ed5de50630725254560998b72cd42c68c34730311dfc791cc79c
+canonical_sha256: 1d5d7e0b568a7014d9cb31b5279289ece1f916a10258daec734d44d8a3a4b96d
 description: "Detects cross-process access followed by remote thread or executable-memory activity in the same target process."
 severity: high
 procedure_ids: ["CSB-018", "CSB-019"]

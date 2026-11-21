@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_service_or_integrity_transition
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_service_or_integrity_transition.yaral
-canonical_sha256: 67f4e031c20437fc9062da8199abd59d13aa71fa2e0398737631d992c872c48f
+canonical_sha256: dcf79b3bf77959f54fffee94cb2f0922071292b415f3ada06225461476a45873
 description: "Detects a new service or unusual medium-to-high/SYSTEM integrity transition correlated to process execution."
 severity: high
 procedure_ids: ["CSB-020"]

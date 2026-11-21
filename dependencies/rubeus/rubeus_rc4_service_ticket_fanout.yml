@@ -2,12 +2,12 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_rc4_service_ticket_fanout
 canonical_path: detections/rubeus/yaral/rubeus_rc4_service_ticket_fanout.yaral
-canonical_sha256: 890c4df08cbdffe9796cdc0405282712b9bfdfd8e195fe86953ede430c7f2af7
+canonical_sha256: d3c84be9ce37220cb488f1a2c1c1acb6083442186c8a54b1f3a729a9d689d541
 description: "Detects a single requester obtaining RC4-encrypted service tickets for three or more distinct unapproved-legacy services within a 15-minute window, independent of LDAP SPN-discovery visibility."
 severity: high
 procedure_ids: ["PROC-002", "PROC-004"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "Normalize DC Security 4769 with source IP, requesting user, target service, and TicketEncryptionType, plus an approved-legacy-RC4-service enrichment keyed by target service."
+telemetry_prerequisites: "Normalize DC Security 4769 with source IP, requesting user, target service, TicketEncryptionType and Status, plus an approved-legacy-RC4-service enrichment keyed by target service (missing enrichment fails open)."
 atomic_event_types: ["4769"]
 required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.ip", "target.resource.name", "target.user.userid"]
 correlation_window: "15m"
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Approved legacy RC4 services and application servers that have not yet been migrated to AES; environments where the legacy-RC4-service enrichment is stale, incomplete, or absent (an unpopulated enrichment field defaults to unapproved and will over-alert until the allowlist is built)."
 references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_kerberoast_sequence.md; public-rules/comparisons/rubeus/rubeus_service_ticket_or_renewal_anomaly.md"
 translations:
-  spl: { path: "detections/rubeus/spl/rubeus_rc4_service_ticket_fanout.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/rubeus/kql/rubeus_rc4_service_ticket_fanout.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/rubeus/sql/rubeus_rc4_service_ticket_fanout.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/rubeus/eql/rubeus_rc4_service_ticket_fanout.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/rubeus/sigma/rubeus_rc4_service_ticket_fanout.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/rubeus/spl/rubeus_rc4_service_ticket_fanout.spl", sha256: 108984a7fddb7dbcc35adae63b6a71910ea3fd2c8a06f8b63dd9ef79ce4b5a9e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/rubeus/kql/rubeus_rc4_service_ticket_fanout.kql", sha256: aea33fb0913e22dc68d427bf3472dac54906bcaebf37fc7d0435dd4aaa081077, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/rubeus/sql/rubeus_rc4_service_ticket_fanout.sql", sha256: 018b9f6d1db2c9b33a844f13684c4496ce39f80dbcad9f6352d60079535add6c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/rubeus/eql/rubeus_rc4_service_ticket_fanout.eql", sha256: 394d901e73352ae0b9658d617928aba9418e950e298ba12652f1c683b216a659, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_rc4_service_ticket_fanout.yml", sha256: 7f05c03efa6ac8660fa0a12e8ebce64b84303c6e9d0783727f895681caae29a9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

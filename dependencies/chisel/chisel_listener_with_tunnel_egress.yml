@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: chisel
 rule_name: chisel_listener_with_tunnel_egress
 canonical_path: detections/chisel/yaral/chisel_listener_with_tunnel_egress.yaral
-canonical_sha256: f1b10d5e64891c1631a4efa168a7f6eea85af368aae988fe61b8a0bc0e551810
+canonical_sha256: b6f1bac510d08dfd1035a4f291e25cb28f2d93fe7b987461ab7df93165a9833e
 description: "Detects one process listening locally while maintaining outbound connectivity consistent with bidirectional forwarding"
 severity: high
 procedure_ids: ["CH-P02", "CH-P04", "CH-P08"]

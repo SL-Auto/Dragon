@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_process_network_context_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_process_network_context_compensating_signal.yaral
-canonical_sha256: 0a0da7f5c54a7f93c54aca8f55ef5818b8ba1544fa571e84a04c33845014cfa4
+canonical_sha256: 3c8926bcc837a997e750e6ff84fd33e311049e6336a53bd720b1a9e7d13d72e4
 description: "Detects low-variance periodic outbound connections from a rare-prevalence process to a rare destination, adding the classic beacon-interval and destination-novelty dimensions that the base rarity-only fan-in rule does not measure."
 severity: high
 procedure_ids: ["CSB-001", "CSB-002", "CSB-005"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Software updaters, telemetry/monitoring agents, and any low-jitter scheduled task that also happens to run from a rare process against a rare destination."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_process_network_context.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_process_network_context_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_process_network_context_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_process_network_context_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_process_network_context_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_process_network_context_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_process_network_context_compensating_signal.spl", sha256: 42b15628fd5edda68395d7ce2adde7aa73f290ac59f4dc801601b373ffb320be, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_process_network_context_compensating_signal.kql", sha256: 7c9bb1cc79985522c4d833adeaa2fffef8edb2a2149f9e380869777998ed9521, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_process_network_context_compensating_signal.sql", sha256: f9c7c82c37f972267bb116372b1d3e9f7ae5315433538bd542291da48257caa8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_process_network_context_compensating_signal.eql", sha256: 4454e8511cbfc46565c0f364fcd5489624f45182b4574a04f0aa7617e6cb2e45, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_process_network_context_compensating_signal.yml", sha256: dae31e5234095d4e8b667d8e490b53722f3ac0468424d02267560049b8747fc7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

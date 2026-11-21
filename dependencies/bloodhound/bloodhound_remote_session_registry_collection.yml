@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_remote_session_registry_collection
 canonical_path: detections/bloodhound/yaral/bloodhound_remote_session_registry_collection.yaral
-canonical_sha256: 2085ac5b4368e2e1bed2d13748f36758581ced37cda770cc632968b13450c2d1
+canonical_sha256: 7b6a3f13109e0cc325dc3940b0cba5315239d518e1b601d7e5025f40966e6c18
 description: "Correlates SRVSVC session enumeration or remote registry reads, bound to a stable source process entity, with multi-host SMB/RPC activity."
 severity: high
 procedure_ids: ["BH-007", "BH-008"]

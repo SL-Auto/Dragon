@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_token_authentication_sequence
 canonical_path: detections/havoc/yaral/havoc_token_authentication_sequence.yaral
-canonical_sha256: fd1f4115a1db451e52e8dbb0ff638e335ed82c1c054bc03a1fd1e9302e3b260a
+canonical_sha256: 070e236a3aacbe0f47c42ef4f6f600001e340d15fd6d7220c2c647daac97335c
 description: "Explicit-credential or token-manipulation activity is followed by execution under the same account"
 severity: high
 procedure_ids: ["HV-P12"]

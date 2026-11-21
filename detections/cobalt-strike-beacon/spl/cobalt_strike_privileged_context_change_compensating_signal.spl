@@ -1,0 +1,19 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_privileged_context_change_compensating_signal.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_privileged_context_change_compensating_signal
+# severity: high
+# procedure_ids: CSB-011
+# description: Correlates SeDebugPrivilege enablement on a process with that same process subsequently opening a protected process (lsass.exe or winlogon.exe), closing the causal gap left by the base rule's standalone 4672/token-change signal.
+# log_source_prerequisites: Normalize TOKEN_PRIVILEGE_CHANGE with the enabled privilege name, and PROCESS_OPEN with target image path, joined on host and PID within 10 minutes.
+# false_positives: EDR, debuggers, backup/VSS tooling, and administrative diagnostic utilities that enable SeDebugPrivilege before inspecting system processes.
+# references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_privileged_context_change.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, process_id, privilege_name, target_process_path); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native ordered two-event correlation on hostname, process_id within 10 minutes (first event before second). Scheduled every 5 minutes over the trailing 20 minutes. SPL compares the earliest first-leg and latest second-leg time per key, which is weaker than per-pair ordering.
+| search index=<configured_index> earliest=-20m@m latest=now
+| eval leg=case(event_type=="TOKEN_PRIVILEGE_CHANGE" AND privilege_name=="SeDebugPrivilege", "a", event_type=="PROCESS_OPEN" AND match(target_process_path, "(?i)\\\\(lsass|winlogon)\\.exe$"), "b")
+| where isnotnull(leg)
+| stats min(eval(if(leg="a", _time, null()))) as first_a max(eval(if(leg="b", _time, null()))) as last_b by hostname process_id
+| where isnotnull(first_a) AND isnotnull(last_b) AND first_a <= last_b AND last_b - first_a <= 600
+| eval canonical_rule="cobalt_strike_privileged_context_change_compensating_signal"

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_kerberos_over_http_proxy
 canonical_path: detections/rubeus/yaral/rubeus_kerberos_over_http_proxy.yaral
-canonical_sha256: 4165d083c7a7e9ddfb70aaf3a10dbe2239f66f7e7ae404c5dd3fa74971021b04
+canonical_sha256: f8d19c7ad5697408267e8b80b82e9d430db1535d52094fb3be6be89995ee1e77
 description: "Detects Kerberos messages transported over HTTP where either the initiating process or the destination is not on the approved KDC-proxy allowlist."
 severity: high
 procedure_ids: ["PROC-013"]

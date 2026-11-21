@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_process_to_directory_effect
 canonical_path: detections/bloodhound/yaral/bloodhound_process_to_directory_effect.yaral
-canonical_sha256: d352c74810d79f6ef74ee161bbb508f8184834e596ce9b07a77c481c38592b31
-description: "Detects a process launch followed by confirmed multi-object LDAP, Graph or ARM enumeration from the same process entity, independent of process prevalence, signer status or executable path, compensating for bloodhound_collector_process_network_context's dependence on rarity and connection count."
+canonical_sha256: 14892613f472f068979cc0b750456a992fe827008455317d7d7ecd9718be801a
+description: "Detects one endpoint process entity issuing LDAP searches against many distinct directory objects or search bases, independent of process prevalence, signer, executable path or a preceding launch event, compensating for bloodhound_collector_process_network_context's dependence on rarity and connection count."
 severity: medium
 procedure_ids: ["BH-001"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "EDR process launch with stable process entity ID plus process-attributed LDAP_SEARCH, MicrosoftGraphActivityLogs or AZURE_RESOURCE_READ events carrying resolved object/resource identity."
-atomic_event_types: ["AZURE_RESOURCE_READ", "LDAP_SEARCH", "MicrosoftGraphActivityLogs", "PROCESS_LAUNCH"]
-required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "principal.hostname", "principal.process.product_specific_process_id", "target.process.product_specific_process_id", "target.resource.name"]
-correlation_window: "20m"
+telemetry_prerequisites: "Endpoint-attributed LDAP_SEARCH telemetry (EDR LDAP query events) with host, stable process entity identifier, process path, account, and search base DN or per-result object identity normalized to target.resource.name. Cloud audit logs are not process-attributed and are out of scope for this rule."
+atomic_event_types: []
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.process.file.full_path", "principal.process.product_specific_process_id", "principal.user.userid", "target.resource.name"]
+correlation_window: "30m"
 uses_multi_event_correlation: true
 uses_aggregation: true
 uses_absence_logic: false
-false_positives: "Identity inventory, endpoint management, directory administration and cloud governance tooling, including signed and prevalent software."
-references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_collector_process_network_context.md"
+false_positives: "Identity inventory, endpoint management, directory administration consoles, backup and migration tooling, including signed and prevalent software; domain-joined services resolving many group or SID references."
+references: "reports/bloodhound/source-analysis.md#bh-001, public-rules/comparisons/bloodhound/bloodhound_collector_process_network_context.md, reviews/bloodhound/detection-review.md#bh-dr-16"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_process_to_directory_effect.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_process_to_directory_effect.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_process_to_directory_effect.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_process_to_directory_effect.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_process_to_directory_effect.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_process_to_directory_effect.spl", sha256: 5a0327e2ff41657933b8208443442faf2757b5fcddcfee3e9e6a86303c88c3c8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_process_to_directory_effect.kql", sha256: f465175ad67808bf761bcc939adb607e09877870275d85c7e3fb630ba7c29d0e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_process_to_directory_effect.sql", sha256: a64ba245e694a2f0411195c23d9cceff48253dd5b6c5b1431725342c54546a74, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_process_to_directory_effect.eql", sha256: df1600121f3d34f02c445eac0d328e94dcd092703eba1819cb80bcb159b5380e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_process_to_directory_effect.yml", sha256: 63ac88e7f9867a2d0fb9f0098d81337c63ea2a4f821d122e639f0d6530220ddc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

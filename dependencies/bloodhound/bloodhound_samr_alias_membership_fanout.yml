@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_samr_alias_membership_fanout
 canonical_path: detections/bloodhound/yaral/bloodhound_samr_alias_membership_fanout.yaral
-canonical_sha256: f0a036a55e12454d5a4b3fdc6983bbbb3f49b26ced4f18a39a30f198ee79d9ca
-description: "Detects SAMR alias-membership or account enumeration operations resolved to the SAMR interface against multiple remote hosts, compensating for parser/vendor differences that separate SAMR from LSA policy telemetry inside the combined bloodhound_samr_local_group_enumeration regex."
+canonical_sha256: 038eb0fc13c7c6d3e2318ccd7f3dcdee35ae20608221e5e39123b248701e4b3e
+description: "Detects SAMR alias enumeration or alias-membership reads, resolved either by SAMR operation name or by SAMR interface UUID plus opnum, against multiple remote hosts from one source, compensating for parser/vendor differences that separate SAMR from LSA policy telemetry inside the combined bloodhound_samr_local_group_enumeration regex."
 severity: high
 procedure_ids: ["BH-009"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "NDR or EDR RPC telemetry that separately resolves the SAMR interface and operation name (for example GetMembersInAlias or EnumerateAliases), plus source and target host identity."
+telemetry_prerequisites: "NDR or EDR RPC telemetry that resolves the SAMR interface (name or UUID 12345778-1234-abcd-ef00-0123456789ac) and the operation (name such as SamrEnumerateAliasesInDomain/SamrGetMembersInAlias, or opnum 15/33), plus source and target host identity."
 atomic_event_types: ["RPC_CALL"]
-required_udm_fields: ["metadata.product_event_type", "principal.hostname", "target.hostname", "target.resource.attribute.labels"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.user.userid", "target.hostname", "target.resource.attribute.labels"]
 correlation_window: "30m"
 uses_multi_event_correlation: true
 uses_aggregation: true
 uses_absence_logic: false
-false_positives: "Asset inventory, compliance scanners and endpoint-management systems that enumerate local group membership."
-references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_samr_local_group_enumeration.md"
+false_positives: "Asset inventory, compliance scanners, privileged-access management and endpoint-management systems that enumerate local group membership across hosts."
+references: "reports/bloodhound/source-analysis.md#bh-009, https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-samr/, public-rules/comparisons/bloodhound/bloodhound_samr_local_group_enumeration.md, reviews/bloodhound/detection-review.md#bh-dr-22"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_samr_alias_membership_fanout.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_samr_alias_membership_fanout.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_samr_alias_membership_fanout.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_samr_alias_membership_fanout.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_samr_alias_membership_fanout.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_samr_alias_membership_fanout.spl", sha256: cc128cf0bff99c67bad90d2928b53e0a90fc7b71963331cd27489fb9f2458e21, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_samr_alias_membership_fanout.kql", sha256: d4203ddeaa907fb05eba2f1a968c0bdbdbb6836215907d4794692dccac14f94f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_samr_alias_membership_fanout.sql", sha256: 6b6ea748b8a9d9a0c41f37257ed08bb44116c9a5b0f33060877c83af6ffc5687, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_samr_alias_membership_fanout.eql", sha256: 131944747c34ccb9d40e6b1b37f8d1a05e62633a1e6e4bd47a2652c4a6d2eb00, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_samr_alias_membership_fanout.yml", sha256: 65b30b36ca22747f838471e19b043a07541228cd05bb072f459f19d911ba3598, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

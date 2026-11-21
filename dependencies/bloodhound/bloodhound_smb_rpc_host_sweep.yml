@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_smb_rpc_host_sweep
 canonical_path: detections/bloodhound/yaral/bloodhound_smb_rpc_host_sweep.yaral
-canonical_sha256: 217caff224b1079a7005a4c715c6438984e4f159e0d3c54395e9e5e7fd64f8fb
+canonical_sha256: 408f52390b87b6bcb987dab8731903287612e810c32e9ea84fb4638491b984eb
 description: "Detects one process attempting SMB or RPC connections to many internal hosts, excluding destinations outside the internal address range and sources labeled as an approved scanner."
 severity: high
 procedure_ids: ["BH-006"]

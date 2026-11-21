@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_stable_destination_beaconing
 canonical_path: detections/havoc/yaral/havoc_stable_destination_beaconing.yaral
-canonical_sha256: 58a6ab176f8832e2d1bcb6399831881709e35d4f92ffc9cc896f3a9d5b27d22b
+canonical_sha256: 8cbfa1b6f19e05abc7c639af9bd2b4a6b0c0c602df7e646454003dfe923c33e0
 description: "A process repeatedly connects to the same destination across multiple active minutes"
 severity: high
 procedure_ids: ["HV-P01", "HV-P03"]

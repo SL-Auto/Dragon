@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_remote_service_binary_sequence
 canonical_path: detections/impacket/yaral/impacket_remote_service_binary_sequence.yaral
-canonical_sha256: 903ae551969bcd2ee61ca6e77f15b40544fde3ebeb6f24bb93204f6563d0b3b9
+canonical_sha256: 32e573268fa644c8f3897b2d31b57e67e206f5f0da08fce946a87da7eaa5c6cb
 description: "Correlates an administrative-share file write with remote service installation on the same host."
 severity: high
 procedure_ids: ["IMP-03"]

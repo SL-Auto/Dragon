@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_kerberos_ticket_effect
 canonical_path: detections/havoc/yaral/havoc_kerberos_ticket_effect.yaral
-canonical_sha256: 826d045ddb932ed01ff5697772c836db88dcaaeff8f6fd9a0f87d16bca63eeab
+canonical_sha256: 8d54b9669b30236bf43079b3689ec1ecf55aad8324563eba649f2c9de4c1efb8
 description: "A process performs LSA Kerberos cache mutation followed by resource authentication"
 severity: high
 procedure_ids: ["HV-P17"]

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_screen_capture_process_egress
 canonical_path: detections/sliver/yaral/sliver_screen_capture_process_egress.yaral
-canonical_sha256: c3dd246e5bb8d3ed2b32e7f2e5f1c14ad3f84872439ce86c011fd4962f2b3b00
+canonical_sha256: a0e46c4066902b10431d614217b8dd3ebbe54334912df17c510da58f4342ad73
 description: "Tenant-normalized screen capture followed by same-process egress"
 severity: high
 procedure_ids: ["PROC-014"]

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_memory_execution_from_network_process
 canonical_path: detections/havoc/yaral/havoc_memory_execution_from_network_process.yaral
-canonical_sha256: 52ba2d0487582d0fc9989406ca88816fab3a1d9bd56a06d1eb0795d6fce6798a
+canonical_sha256: f20fb49f0e549b86a143fa99735fe0f38c81301d6d3da430a6a6e2602a7c3559
 description: "A network-active process performs cross-process access, injection or memory-backed execution"
 severity: high
 procedure_ids: ["HV-P09", "HV-P10", "HV-P11"]

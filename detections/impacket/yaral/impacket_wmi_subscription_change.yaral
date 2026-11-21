@@ -14,6 +14,6 @@ rule impacket_wmi_subscription_change {
   review_status = "reviewed_with_gaps"
   review_reference = "reviews/impacket/detection-review.md"
  events:
-  $e.metadata.product_event_type = /(19|20|21|5861)/
+  $e.metadata.product_event_type = /^(19|20|21|5861)$/
  condition: $e
 }

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_ldap_directory_discovery_fanout
 canonical_path: detections/bloodhound/yaral/bloodhound_ldap_directory_discovery_fanout.yaral
-canonical_sha256: 1832fae8e6508a654846027dc347f20e273fb1aae0a21548bb6d8fbfc9aa618a
+canonical_sha256: ae4a445e6c91072fc066a8991cd68b1b6ce9005bc4758ea12988c0848acb7350
 description: "Detects broad process-attributed LDAP enumeration across multiple directory object categories."
 severity: high
 procedure_ids: ["BH-002", "BH-004"]

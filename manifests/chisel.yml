@@ -24,17 +24,17 @@ completion_states:
   secondary_translation: draft_complete
   rule_validation_labels: "5 needs_validation"
 artifact_hashes:
-  registry: 4375b961f994082e15626a22cba5c97c6c846fa8c46f21494dbf15dd735e8d73
-  coverage: e5084e5634d917b4bbaff66514f8267d2ea00099816d395df2a26453338804e8
-  report: 95d5a1deb31c5b67bdfc56a6f0b2e638b7ee76c63b2e8bf05b0c67729a20a16a
-  telemetry: ca96572ae2948558365fbb526ae2a1fbc2d403361da3ff0dce7d875fa22b213b
-  detection_review: 53db8f13be58691d4078a24f5113b4e9bc164dd2d3d0f65f7e9bc177ba64d690
-  translation_review: 4255b7d689d3cba548bfdd0e67fa611b1ba16e235f9988be4ef66034418f3332
+  registry: 745ab0da2112877731d732ec359b8f894ca2572c615b3c5e19b46c2ac286e883
+  coverage: 567df7e3d69bef35185a1beb450730d9b6a1463bac5a6227c3f1b18514fe8556
+  report: 03b02caf47618c4a6d55f8bb29e7ead76c621d3c8f0febab5891bc9c6eebf2ca
+  telemetry: a8e3b228ee0e0bf4f24d6318c1d5faca5b00ae31f197db3c67b48d5b55961da7
+  detection_review: 1f3bcd595c328bea4955a44237823631d7ce7160a8ad5581161fa8c024adbd11
+  translation_review: 191b6c555d401ca777b0cb2ba7cd45c2ca858ac489450a0d1a1929564035d924
 rules:
-  - { name: chisel_listener_with_tunnel_egress, severity: high, procedures: "CH-P02,CH-P04,CH-P08", dependency: dependencies/chisel/chisel_listener_with_tunnel_egress.yml, canonical_sha256: f1b10d5e64891c1631a4efa168a7f6eea85af368aae988fe61b8a0bc0e551810 }
-  - { name: chisel_proxy_destination_fanout, severity: high, procedures: "CH-P05,CH-P07", dependency: dependencies/chisel/chisel_proxy_destination_fanout.yml, canonical_sha256: 90d6b84ac1a5892ef54fc864fad915163065f870306c2ae14da5d1edf28bfe30 }
-  - { name: chisel_recurrent_encrypted_process_egress, severity: medium, procedures: "CH-P01,CH-P10", dependency: dependencies/chisel/chisel_recurrent_encrypted_process_egress.yml, canonical_sha256: 1abcc69f313196efbd69096ebe0e2bafaf92ef7a330207e212ee044af1802dea }
-  - { name: chisel_stdio_network_bridge, severity: medium, procedures: "CH-P06", dependency: dependencies/chisel/chisel_stdio_network_bridge.yml, canonical_sha256: 96c4cea2b69a31c5c94a7c5d61dba6ba2fe270d2f75f1e96ddc073c05fcf97f0 }
-  - { name: chisel_udp_bind_with_tunnel_egress, severity: high, procedures: "CH-P03,CH-P04", dependency: dependencies/chisel/chisel_udp_bind_with_tunnel_egress.yml, canonical_sha256: f9d8e509e62582b27e063da49633ea80bfa4430f460949e672d0e12c8be5736c }
+  - { name: chisel_listener_with_tunnel_egress, severity: high, procedures: "CH-P02,CH-P04,CH-P08", dependency: dependencies/chisel/chisel_listener_with_tunnel_egress.yml, canonical_sha256: b6f1bac510d08dfd1035a4f291e25cb28f2d93fe7b987461ab7df93165a9833e }
+  - { name: chisel_proxy_destination_fanout, severity: high, procedures: "CH-P05,CH-P07", dependency: dependencies/chisel/chisel_proxy_destination_fanout.yml, canonical_sha256: 976e0625147149cf8b04c75cfe6e2af38c82f671fad5e32690cc55174ccc3a86 }
+  - { name: chisel_recurrent_encrypted_process_egress, severity: medium, procedures: "CH-P01,CH-P10", dependency: dependencies/chisel/chisel_recurrent_encrypted_process_egress.yml, canonical_sha256: 20efdb9b2dbe6a6657d0b280315f335a9138cd7bded894df1fe7f5bdd659636f }
+  - { name: chisel_stdio_network_bridge, severity: medium, procedures: "CH-P06", dependency: dependencies/chisel/chisel_stdio_network_bridge.yml, canonical_sha256: b4f112443fcfdf6d26a4e78bb8c3df23f9694aeb31dd96592ee90577d289ea3b }
+  - { name: chisel_udp_bind_with_tunnel_egress, severity: high, procedures: "CH-P03,CH-P04", dependency: dependencies/chisel/chisel_udp_bind_with_tunnel_egress.yml, canonical_sha256: 4856af8c870ab8cba41190e8458496931e9ee6ee20d663c8a2a192ceffaf652e }
 unresolved:
   source_blockers: 0

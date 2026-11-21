@@ -2,19 +2,19 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_sensitive_file_or_replication_access
 canonical_path: detections/impacket/yaral/impacket_sensitive_file_or_replication_access.yaral
-canonical_sha256: a3fc4b235440d6416cb25958d0d474ab341c4fdccfd8dd9568a8b40ac0e68e14
-description: "Detects directory replication access or sensitive remote credential-store reads."
+canonical_sha256: 3f63a43e5e1a825f4a623bb36e8f4c2e692b5cef45382b64989155a94448ea94
+description: "Detects sensitive remote credential-store file or registry reads (SAM/SECURITY hive access, NTDS.dit) via SMB or object events. Split from directory-replication-rights use on 2026-08-16 because the two signals are materially different security effects with different actors, prerequisites and false-positive profiles; see reviews/impacket/detection-review.md and public-rules/comparisons/impacket/impacket_sensitive_file_or_replication_access.md."
 severity: critical
 procedure_ids: ["IMP-13"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "DC 4662 and SMB/object events with access GUID, actor, source and path."
-atomic_event_types: ["4662", "4663", "5145"]
+telemetry_prerequisites: "SMB/object events 5145/4663 with access description and path."
+atomic_event_types: ["4663", "5145"]
 required_udm_fields: ["metadata.product_event_type", "security_result.description"]
 correlation_window: ""
 uses_multi_event_correlation: false
 uses_aggregation: false
 uses_absence_logic: false
-false_positives: "Domain controllers, approved replication, backup and recovery."
+false_positives: "Backup, migration, domain administration and security scanning that legitimately reads hive-adjacent paths."
 references: "reports/impacket/source-analysis.md"
 translations:
   spl: { path: "detections/impacket/spl/impacket_sensitive_file_or_replication_access.spl", sha256: da2914c0db9e8e876f63e4e56a193822d86fd95a26223881364e5809cf3d926b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

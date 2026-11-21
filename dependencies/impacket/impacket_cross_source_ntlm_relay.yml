@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_cross_source_ntlm_relay
 canonical_path: detections/impacket/yaral/impacket_cross_source_ntlm_relay.yaral
-canonical_sha256: 0018e80b82a43728146e9e8640dc1b86b2899b58b520564138f57884a88b76c7
+canonical_sha256: e73d159dda1a495d4775f00fa5b0909d16374e4b88a3f8334f3bcd9c811a14e9
 description: "Correlates NTLM authentication for one account across different sources and a target effect."
 severity: high
 procedure_ids: ["IMP-21"]

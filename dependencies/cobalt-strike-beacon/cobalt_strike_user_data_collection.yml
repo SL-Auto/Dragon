@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_user_data_collection
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_user_data_collection.yaral
-canonical_sha256: 0db696c12dab3a143bceee934714761c005927813579e66b0856d84a195ae36a
+canonical_sha256: 19b41e4474f3662af85d97cc7b25deb65087a4594f51e61c152d23c68bbdc3ea
 description: "Surfaces vendor collection telemetry for screen, clipboard, input or browser-secret access by an uncommon process."
 severity: high
 procedure_ids: ["CSB-027"]

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_recurrent_process_egress
 canonical_path: detections/havoc/yaral/havoc_recurrent_process_egress.yaral
-canonical_sha256: 3940ecdc051be03fa38cd9143e8eebfa35d3a34b896a13b93e4925606a809fc0
+canonical_sha256: 2048dde0314e1e8017cb4deb5c38f8484eadb380563c8f618b616fc19fb1786b
 description: "A process produces recurrent outbound network activity consistent with a long-lived task channel"
 severity: medium
 procedure_ids: ["HV-P01", "HV-P03"]

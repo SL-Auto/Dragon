@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_remote_service_sequence_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_service_sequence_compensating_signal.yaral
-canonical_sha256: bcd57de25e496e1656f7ff74459db1ec9a1119596fc4c59726c70111508183e0
-description: "Correlates a staged file write to a remote target with a subsequent System 7045 service-install event on that same target whose service image path equals the staged path, tightening the base rule's looser source/account/host proximity join with an exact-path match."
+canonical_sha256: 4d2fd342e2da40eeb332b0c8a7a2b947355e78e3b29a7315bc8fbdac6987846d
+description: "Correlates a file staged to a remote target with a subsequent System 7045 service install on that target whose service image file name equals the staged file name, tightening the base rule's looser source/account/host proximity join; file-name matching tolerates UNC versus local path forms."
 severity: high
 procedure_ids: ["CSB-030"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "Normalize FILE_WRITE to a remote target host with full path, and System 7045 on that target with the installed service image path, joined on source host, target host, and path within 10 minutes."
-atomic_event_types: ["7045", "FILE_WRITE"]
-required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "principal.hostname", "target.file.full_path", "target.hostname", "target.process.file.full_path"]
+telemetry_prerequisites: "Normalize FILE_CREATION/FILE_MODIFICATION written to a remote target host (SMB/admin-share write with source and target host and full path), and System 7045 on that target with the installed service image path, joined on source host, target host and image file name within 10 minutes, write first."
+atomic_event_types: ["7045", "FILE_MODIFICATION"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "metadata.product_event_type", "principal.hostname", "target.file.full_path", "target.hostname", "target.process.file.full_path"]
 correlation_window: "10m"
 uses_multi_event_correlation: true
-uses_aggregation: false
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Software distribution and endpoint-management tools that stage an installer to a share and then register it as a service using the identical path."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_remote_service_sequence.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_remote_service_sequence_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_remote_service_sequence_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_remote_service_sequence_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_remote_service_sequence_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_remote_service_sequence_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_remote_service_sequence_compensating_signal.spl", sha256: a46bac3dac9cd6e366c1448057ddef75b9f1967ee33888c7a3f2effed5e320d3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_remote_service_sequence_compensating_signal.kql", sha256: 39c0d60614cfd45206577d152ff56f9fe2e9a4dd778f69333249452f463f7fac, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_remote_service_sequence_compensating_signal.sql", sha256: cd43fc04da1f886afc558b1a8426cc89f02c14b168bc376396ecf1fa75744cbc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_remote_service_sequence_compensating_signal.eql", sha256: c63bf90c2f97cb6a733de633769158ac73350e6b32adbf2db5c018219d212136, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_remote_service_sequence_compensating_signal.yml", sha256: 6417dab22c4ff86a2bd196130eefe71a71832e794f4f48e2edaa6d5b9a184e20, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

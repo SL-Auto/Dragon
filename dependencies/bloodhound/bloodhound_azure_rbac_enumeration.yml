@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_azure_rbac_enumeration
 canonical_path: detections/bloodhound/yaral/bloodhound_azure_rbac_enumeration.yaral
-canonical_sha256: 877d622705c870548b10e8145bde9e49da542413e9258cb73b674e92c5118189
+canonical_sha256: 004a0c5a8377812d3092aa9922aad705a48de8059147c9560e6edc143d05cde7
 description: "Detects high-cardinality Azure RBAC, owner, access-policy or role-eligibility reads."
 severity: high
 procedure_ids: ["BH-019"]

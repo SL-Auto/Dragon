@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_clipboard_device_access
 canonical_path: detections/mimikatz/yaral/mimikatz_clipboard_device_access.yaral
-canonical_sha256: ad4933fcfd4caf8b8714edf38d3469a4651e1f9b221d13c7f65e210513375683
+canonical_sha256: de5ad4f6567bf56eda7162fd81685734e04cf7585481b96bf78c5f77f9e11f3a
 description: "Surfaces vendor-reported clipboard or smartcard HID RF device access."
 severity: low
 procedure_ids: ["P34", "P42"]

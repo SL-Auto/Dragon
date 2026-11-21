@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_sensitive_registry_read_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_registry_read_compensating_signal.yaral
-canonical_sha256: 291d845da0f1e309ebc1b5d2ea24d59fb115101647d1bc8ea7594b8d18ff1cca
+canonical_sha256: b5f4c1148237af5eb6158cca199596ca6c862aee58ed302f0822656f69c7950b
 description: "Detects a single process reading several distinct sensitive-registry-family keys within a short window, surfacing multi-family enumeration bursts that the base single-event sensitivity check does not aggregate."
 severity: medium
 procedure_ids: ["CSB-023"]
@@ -12,13 +12,13 @@ atomic_event_types: ["REGISTRY_READ"]
 required_udm_fields: ["additional.fields", "metadata.event_type", "principal.hostname", "principal.process.file.sha256"]
 correlation_window: "15m"
 uses_multi_event_correlation: true
-uses_aggregation: false
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Inventory, compliance, EDR, backup, and forensics tooling that legitimately reads across many sensitive registry families; the approved-inventory-process enrichment is required to keep this usable."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_sensitive_registry_read_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_sensitive_registry_read_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_sensitive_registry_read_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_sensitive_registry_read_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_sensitive_registry_read_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_sensitive_registry_read_compensating_signal.spl", sha256: 39511224bba514c857c79b671e9ee6fbfc5f085f484d8ad5373a74819df17c6f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_sensitive_registry_read_compensating_signal.kql", sha256: 69aaae37fa0b3a1c8f28b678100c63b9790777fcd2a565a2b7fefee21cd2c412, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_sensitive_registry_read_compensating_signal.sql", sha256: edb16ef70ceacde662353f5f3689d37ecfa3090b4eafcf195a1056e8552e301a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_sensitive_registry_read_compensating_signal.eql", sha256: 343377f6830eb914f0e12b1a2e6f960a8e361eb7b14192042eca1716b2b8b75b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_sensitive_registry_read_compensating_signal.yml", sha256: ac8469564794cb5cc8179c25dc7afd146a9cc15ae0188579870d51ed063203d7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

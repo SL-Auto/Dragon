@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/_deprecated/defense_evasion_process_termination_followed_by_deletion.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/_deprecated/defense_evasion_process_termination_followed_by_deletion.toml) - SHA-256 `eab762b96d2f08524ec4dd0d914c3e4acde49967f4bf437a729c8b5e2318caf3`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/_deprecated/defense_evasion_process_termination_followed_by_deletion.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/_deprecated/defense_evasion_process_termination_followed_by_deletion.toml) - SHA-256 `eab762b96d2f08524ec4dd0d914c3e4acde49967f4bf437a729c8b5e2318caf3`
 
 ## Procedure and detection-branch matrix
 
@@ -48,12 +48,15 @@ The canonical rule has broader tool-independent intent, but deletion of a recent
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
-
+- Candidate improvement: independently add the missing procedure branch shown in the proposal; no public predicate is copied.
+- Independent verification (2026-11-21): checked against source analysis, provider field semantics and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: the proposal was copied into canonical YARA-L on 2026-08-16 while this trail read `deferred_pending_rule_improvement_run`, a non-terminal state the workflow prohibits. It is re-decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real, but adversarial review found defects in the proposal as written; the adopted rule diverges as follows:
+  - Event type `FILE_DELETE` replaced by inventory `FILE_DELETION` (legacy alias kept) (DR-13).
+  - Enforced first-event-before-second ordering (DR-15).
+- Canonical result: `detections/cobalt-strike-beacon/yaral/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.yaral`, SHA-256 `61cc3d7b10379489cda96b84599406042a239c4cf489f6e2f54af66047d38d55`. The original proposal is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration completed in the same run: detection review, coverage ledger, tool telemetry file, `telemetry/MASTER.md` counts, all five translations, translation review, dependency/manifest hashes, and the re-comparison below.
 ## Unmatched scope
 
 The public candidate does not cover all branches in `CSB-026,CSB-034`. Conversely, the canonical rule is not evidence of Cobalt Strike attribution and may detect other tooling with equivalent effects.
@@ -89,3 +92,53 @@ rule cobalt_strike_file_cleanup_or_timestomp_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Revised rule SHA-256 `61cc3d7b10379489cda96b84599406042a239c4cf489f6e2f54af66047d38d55`, compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- All public candidates were re-pinned to the refreshed snapshots with no content change in the referenced files.
+- The pinned candidate lives under Elastic `_deprecated/` and is a weak comparator for this branch; a stronger public counterpart should be sought when this comparison is next refreshed.
+
+| Procedure branch / observable effect | Revised ours | Public | Primary signal and strength | Compensating signal | Coverage conclusion | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| Executed file deleted shortly afterwards by an unsigned or rare process | covered, execute then delete | `defense_evasion_process_termination_followed_by_deletion.toml`: narrower implementation-specific context (original matrix); candidate not re-assessed beyond re-pinning | execute-then-delete same path - moderate | base rarity rule - weak | complementary | Revised canonical rule, re-pinned candidate, `reviews/cobalt-strike-beacon/detection-review.md`. |
+
+- Final adopted YARA-L (canonical, `experimental` / `needs_validation`):
+
+```yaral
+rule cobalt_strike_file_cleanup_or_timestomp_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Execution followed by self-deletion from an unsigned/rare process is a meaningful cleanup signal, but installers and updaters routinely delete their own temporary files; the rarity/signer gate is required to keep benign volume down."
+    procedure_ids = "CSB-026,CSB-034"
+    log_source_prerequisites = "Normalize PROCESS_LAUNCH and FILE_DELETE with matching full path, host, and process signer/prevalence on the deleting process, joined within 15 minutes."
+    false_positives = "Installers, updaters, and self-extracting archives remain a false-positive source when they are unsigned or rare; the signer/prevalence gate narrows but does not eliminate this overlap."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay benign execute-then-self-delete fixtures from both signed and unsigned installers to confirm the gate suppresses the signed case."
+    review_status = "reviewed"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_file_cleanup_or_timestomp"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp.md"
+    modification_note = "Proposal accepted with a required change: added an unsigned/rare-process gate on the deleting process, matching the base rule's convention, because the original proposal had no gating at all and would match nearly every self-deleting installer or updater."
+  events:
+    $exec.metadata.event_type = "PROCESS_LAUNCH"
+    $exec.principal.hostname = $host
+    $exec.target.process.file.full_path = $path
+    $del.metadata.event_type = /^(FILE_DELETION|FILE_DELETE)$/
+    $del.principal.hostname = $host
+    $del.target.file.full_path = $path
+    ($del.principal.process.file.is_signed = false or $del.principal.process.file.prevalence = "RARE")
+    $exec.metadata.event_timestamp.seconds <= $del.metadata.event_timestamp.seconds
+  match:
+    $host, $path over 15m
+  condition:
+    $exec and $del
+}
+```
+
+- Re-comparison outcome: the revised rule closes the branch the proposal targeted, within its declared telemetry. Remaining limits are the accepted gaps in `reviews/cobalt-strike-beacon/detection-review.md`, each with a named compensating rule.

@@ -2,7 +2,7 @@ rule cobalt_strike_file_cleanup_or_timestomp_compensating_signal {
   meta:
     author = "Detection Research Agent"
     description = "Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "MEDIUM"
     severity_rationale = "Execution followed by self-deletion from an unsigned/rare process is a meaningful cleanup signal, but installers and updaters routinely delete their own temporary files; the rarity/signer gate is required to keep benign volume down."
@@ -12,7 +12,7 @@ rule cobalt_strike_file_cleanup_or_timestomp_compensating_signal {
     references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp.md"
     validation_status = "needs_validation"
     validation_method = "Replay benign execute-then-self-delete fixtures from both signed and unsigned installers to confirm the gate suppresses the signed case."
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
     compensates_for = "cobalt_strike_file_cleanup_or_timestomp"
     source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp.md"
@@ -21,10 +21,11 @@ rule cobalt_strike_file_cleanup_or_timestomp_compensating_signal {
     $exec.metadata.event_type = "PROCESS_LAUNCH"
     $exec.principal.hostname = $host
     $exec.target.process.file.full_path = $path
-    $del.metadata.event_type = "FILE_DELETE"
+    $del.metadata.event_type = /^(FILE_DELETION|FILE_DELETE)$/
     $del.principal.hostname = $host
     $del.target.file.full_path = $path
     ($del.principal.process.file.is_signed = false or $del.principal.process.file.prevalence = "RARE")
+    $exec.metadata.event_timestamp.seconds <= $del.metadata.event_timestamp.seconds
   match:
     $host, $path over 15m
   condition:

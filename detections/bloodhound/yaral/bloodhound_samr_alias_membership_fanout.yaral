@@ -1,29 +1,32 @@
 rule bloodhound_samr_alias_membership_fanout {
   meta:
     author = "Detection Research Agent"
-    description = "Detects SAMR alias-membership or account enumeration operations resolved to the SAMR interface against multiple remote hosts, compensating for parser/vendor differences that separate SAMR from LSA policy telemetry inside the combined bloodhound_samr_local_group_enumeration regex."
-    date = "2026-08-16"
+    description = "Detects SAMR alias enumeration or alias-membership reads, resolved either by SAMR operation name or by SAMR interface UUID plus opnum, against multiple remote hosts from one source, compensating for parser/vendor differences that separate SAMR from LSA policy telemetry inside the combined bloodhound_samr_local_group_enumeration regex."
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "A resolved SAMR interface/operation match is more specific than the combined SAMR-or-LSA regex and reduces reliance on a single normalized label covering two distinct RPC interfaces."
     procedure_ids = "BH-009"
-    log_source_prerequisites = "NDR or EDR RPC telemetry that separately resolves the SAMR interface and operation name (for example GetMembersInAlias or EnumerateAliases), plus source and target host identity."
-    false_positives = "Asset inventory, compliance scanners and endpoint-management systems that enumerate local group membership."
-    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_samr_local_group_enumeration.md"
+    log_source_prerequisites = "NDR or EDR RPC telemetry that resolves the SAMR interface (name or UUID 12345778-1234-abcd-ef00-0123456789ac) and the operation (name such as SamrEnumerateAliasesInDomain/SamrGetMembersInAlias, or opnum 15/33), plus source and target host identity."
+    false_positives = "Asset inventory, compliance scanners, privileged-access management and endpoint-management systems that enumerate local group membership across hosts."
+    references = "reports/bloodhound/source-analysis.md#bh-009, https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-samr/, public-rules/comparisons/bloodhound/bloodhound_samr_local_group_enumeration.md, reviews/bloodhound/detection-review.md#bh-dr-22"
     validation_status = "needs_validation"
-    validation_method = "Use sanitized SAMR alias-membership call fixtures and approved inventory negatives; verify the vendor-specific interface/operation label format before enabling."
+    validation_method = "Use sanitized SAMR alias-membership call fixtures in both name-resolved and opnum-only form, plus approved inventory negatives; verify the vendor-specific interface/operation label format before enabling."
     review_status = "reviewed_with_gaps"
     review_reference = "reviews/bloodhound/detection-review.md"
   events:
     $e.metadata.product_event_type = "RPC_CALL"
     $e.principal.hostname = $source
     $e.target.hostname = $target
-    $e.target.resource.attribute.labels["rpc_interface"] = /(?i)SAMR/
-    re.regex($e.target.resource.attribute.labels["rpc_operation"], `(?i)(GetMembersInAlias|EnumerateAliases)`)
+    (
+      (re.regex($e.target.resource.attribute.labels["rpc_interface"], `(?i)SAMR`) and re.regex($e.target.resource.attribute.labels["rpc_operation"], `(?i)(GetMembersInAlias|EnumerateAliases)`)) or
+      (re.regex($e.target.resource.attribute.labels["rpc_interface"], `(?i)^12345778-1234-abcd-ef00-0123456789ac$`) and re.regex($e.target.resource.attribute.labels["rpc_opnum"], `^(15|33)$`))
+    )
   match:
     $source over 30m
   outcome:
     $targets = count_distinct($target)
+    $accounts = array_distinct($e.principal.user.userid)
   condition:
     $e and $targets >= 3
 }

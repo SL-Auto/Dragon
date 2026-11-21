@@ -1,0 +1,15 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_discovery_fanout_compensating_signal.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: cobalt_strike_discovery_fanout_compensating_signal
+// severity: medium
+// procedure_ids: CSB-021
+// description: Aggregates attempted network connections by user and host over a wider window at a lower per-process threshold to surface slow or distributed port/network discovery that falls under the single-process fan-out rule's threshold.
+// log_source_prerequisites: Normalize process-attributed NETWORK_CONNECTION attempts with destination IP/port, account, hostname, and an allowlist enrichment identifying approved scanners.
+// false_positives: Vulnerability scanners, monitoring, software distribution, service discovery and network management tools not present in the approved-scanner enrichment.
+// references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_discovery_fanout.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (event_type, user_id, hostname, target_ip, target_port, approved_scanner); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule. The canonical rule also requires >=4 distinct ports; SPL/KQL/SQL add that second threshold below the generated one.
+any where event.action == "NETWORK_CONNECTION"
+  and (labels.approved_scanner == null or labels.approved_scanner == false)

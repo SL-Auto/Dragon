@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_service_ticket_or_renewal_anomaly
 canonical_path: detections/rubeus/yaral/rubeus_service_ticket_or_renewal_anomaly.yaral
-canonical_sha256: d05d50852c7d957e25314551f171a72818f5b3577dba75b1e865e9cffed054c6
+canonical_sha256: 54cb207aa111ac266e97d3ebdb87128c1a060a7a7879788b0cddcb5a54f28654
 description: "Detects unusual service-ticket (4769) acquisition volume by one source and identity. Split from ticket renewal, which is a separately scored signal covered by rubeus_ticket_renewal_anomaly, and complemented by the ticket-property-specific rubeus_rc4_service_ticket_fanout."
 severity: medium
 procedure_ids: ["PROC-002"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "SSO, service accounts, application servers, and scanners generating broad service-ticket fan-out."
 references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_service_ticket_or_renewal_anomaly.md"
 translations:
-  spl: { path: "detections/rubeus/spl/rubeus_service_ticket_or_renewal_anomaly.spl", sha256: 37204a28d47d4ccc845ec2cc2b72022cb0a686ae2b4a45f52c37c72a304f03db, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/rubeus/kql/rubeus_service_ticket_or_renewal_anomaly.kql", sha256: bd132fb23988364496e5265a27b2be8487e1926bb7d6340f26fbd4336538060a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/rubeus/sql/rubeus_service_ticket_or_renewal_anomaly.sql", sha256: 5a74ed73dfb3393e400ce749bf870e2b0beb93b0d5dd443390c1e2c29d96b0d1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/rubeus/eql/rubeus_service_ticket_or_renewal_anomaly.eql", sha256: 251866c18703e8a12e9579fdc2e776ee551fbe4a7965d859c3c20c61b31aa93f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/rubeus/sigma/rubeus_service_ticket_or_renewal_anomaly.yml", sha256: 8128d9930bf5413e2e533cba3806723846f0752a6ae7eb18afacae3169b4b9f0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/rubeus/spl/rubeus_service_ticket_or_renewal_anomaly.spl", sha256: 093db30349c82de4f5ff58e4a34642b4539845672ee7182eaa47be8ae01adfef, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_service_ticket_or_renewal_anomaly.kql", sha256: fd0a5f511df22b73f6c155ff125dfd922226f710b0c7ba85413ce7d1f33553f3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_service_ticket_or_renewal_anomaly.sql", sha256: 52aa145e3f73f6dfac66541b8765edc1bdb234689556821528ba2e4cc3ee2536, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_service_ticket_or_renewal_anomaly.eql", sha256: 6ff87ce60e31fee8db67c5d8390fc60bab4feec80487b091e46805ef95d3ff22, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_service_ticket_or_renewal_anomaly.yml", sha256: 32fa4faf0c2b36b89c98c57e277c2f052f09624ea83f5d41ea3949be004dbd7c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

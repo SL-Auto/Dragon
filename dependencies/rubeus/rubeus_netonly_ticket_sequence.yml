@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_netonly_ticket_sequence
 canonical_path: detections/rubeus/yaral/rubeus_netonly_ticket_sequence.yaral
-canonical_sha256: f11263a04941a655998465f56374367b5336e64b02adf129bf2a7d26665f6a19
+canonical_sha256: 22307a4d5897bf5d4cd07c681a74751c1dfbe10eccb963c10030d66e611b7f6f
 description: "Correlates a Type 9 logon session with ticket submission into the same LUID."
 severity: high
 procedure_ids: ["PROC-007"]

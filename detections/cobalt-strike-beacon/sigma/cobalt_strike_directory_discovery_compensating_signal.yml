@@ -1,0 +1,44 @@
+title: "Aggregates multi-class LDAP directory queries by user and host, independent of any single process, to surface discovery distributed across multiple short-lived processes in the same session."
+name: cobalt_strike_directory_discovery_compensating_signal_base
+status: experimental
+description: "Aggregates multi-class LDAP directory queries by user and host, independent of any single process, to surface discovery distributed across multiple short-lived processes in the same session."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_directory_discovery_compensating_signal.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, user_id, hostname, object_class, approved_directory_scanner); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_directory_discovery.md"
+procedure_ids: "CSB-022"
+log_source_prerequisites: "Normalize LDAP_QUERY with client account, hostname, and object-class field, plus an allowlist enrichment identifying approved directory-scanning software."
+logsource:
+  category: ldap_query
+  product: windows
+detection:
+  sel:
+    event_type:
+      - "LDAP_SEARCH"
+      - "LDAP_QUERY"
+  filter0:
+    approved_directory_scanner: true
+  condition: sel and not filter0
+falsepositives:
+  - "Identity governance, endpoint inventory, directory health, administration and vulnerability-assessment tooling that legitimately queries many object classes."
+level: medium
+---
+title: "Aggregates multi-class LDAP directory queries by user and host, independent of any single process, to surface discovery distributed across multiple short-lived processes in the same session."
+name: cobalt_strike_directory_discovery_compensating_signal
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - cobalt_strike_directory_discovery_compensating_signal_base
+  group-by:
+    - user_id
+    - hostname
+  timespan: 30m
+  condition:
+    field: object_class
+    gte: 4
+level: medium

@@ -1,0 +1,42 @@
+title: "Detects a single process reading several distinct sensitive-registry-family keys within a short window, surfacing multi-family enumeration bursts that the base single-event sensitivity check does not aggregate."
+name: cobalt_strike_sensitive_registry_read_compensating_signal_base
+status: experimental
+description: "Detects a single process reading several distinct sensitive-registry-family keys within a short window, surfacing multi-family enumeration bursts that the base single-event sensitivity check does not aggregate."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_registry_read_compensating_signal.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, process_sha256, registry_security_family, approved_inventory_process); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read.md"
+procedure_ids: "CSB-023"
+log_source_prerequisites: "Normalize REGISTRY_READ with process hash, hostname, a registry-security-family classification field, and an approved-inventory-process enrichment, joined on host and process hash within 15 minutes."
+logsource:
+  category: registry_event
+  product: windows
+detection:
+  sel:
+    event_type: "REGISTRY_READ"
+  filter0:
+    approved_inventory_process: true
+  condition: sel and not filter0
+falsepositives:
+  - "Inventory, compliance, EDR, backup, and forensics tooling that legitimately reads across many sensitive registry families; the approved-inventory-process enrichment is required to keep this usable."
+level: medium
+---
+title: "Detects a single process reading several distinct sensitive-registry-family keys within a short window, surfacing multi-family enumeration bursts that the base single-event sensitivity check does not aggregate."
+name: cobalt_strike_sensitive_registry_read_compensating_signal
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - cobalt_strike_sensitive_registry_read_compensating_signal_base
+  group-by:
+    - hostname
+    - process_sha256
+  timespan: 15m
+  condition:
+    field: registry_security_family
+    gte: 3
+level: medium

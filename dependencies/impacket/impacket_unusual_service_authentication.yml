@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_unusual_service_authentication
 canonical_path: detections/impacket/yaral/impacket_unusual_service_authentication.yaral
-canonical_sha256: e7acc902acfabcc541a59d0911bb78b549b914195ecf3ec0c17c4e37293dec5b
+canonical_sha256: c7d235aeb98a36a5e2f97ef73149f02cc33b7c72b86ff2b9e7bfad5eea505256
 description: "Detects failed or unusual authentication to SQL, MQTT, RDP or SMB services."
 severity: medium
 procedure_ids: ["IMP-15"]

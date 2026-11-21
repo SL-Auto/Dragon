@@ -2,13 +2,13 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_terminal_services_control
 canonical_path: detections/impacket/yaral/impacket_terminal_services_control.yaral
-canonical_sha256: 23db18c5d1914e2cc062d7ff5c48a12a5528f51f76375dafa328d6803200ceeb
+canonical_sha256: 60bbc59d9f72f780557a5609d5da0202fcf24683a20d0dd972658b622353a4d3
 description: "Detects unusual Terminal Services session connect, disconnect or logoff activity."
 severity: medium
 procedure_ids: ["IMP-18"]
 validation_status: "needs_validation"
 telemetry_prerequisites: "Terminal Services Operational and Security session events with actor and session."
-atomic_event_types: ["23", "24", "25", "4778", "4779"]
+atomic_event_types: ["23", "24", "4779"]
 required_udm_fields: ["metadata.product_event_type"]
 correlation_window: ""
 uses_multi_event_correlation: false
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Helpdesk and session administration."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_terminal_services_control.spl", sha256: ce937b954e229985ba83a8278de5adcfcfe05d4af921a66abc6ac7e5e0ebb7b0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_terminal_services_control.kql", sha256: e357002ca5b7ce779c64b03c4fd1c8af14c0999c9b47d24f0581138726baf899, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_terminal_services_control.sql", sha256: ab0b2f633daa74906e62cae219ae7372e59a6e34eac3c91dbd03e20b167ea3a7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_terminal_services_control.eql", sha256: ca29ade53d33a34d86dcca4783065cb476f998ccb705ef83daa2c4956e88b0da, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_terminal_services_control.yml", sha256: 74c2bfa929a94e021d4691c2a43f225bdaf525a982826e5ea7f750da438c248e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_terminal_services_control.spl", sha256: f0b9be2157c594c73d6ff7fdefba9da52046e517571c51980451f647fca3e322, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_terminal_services_control.kql", sha256: 72826be914235c4700a88cc26e2eb6e46643c67c67e6a08c015747c764159658, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_terminal_services_control.sql", sha256: 299e67efc52d66aa961f5d7b609398d448cd5f34fe8db747d25a8958326a3592, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_terminal_services_control.eql", sha256: e0510670acb933ed0af1645f2c37745cade80e1ed2fca0c57b09d76d45ee35dd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_terminal_services_control.yml", sha256: 58e2784d26f4fc2833ad42b98fc061914f9969cfc1351b8d200b96838f15acb0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -10,7 +10,7 @@
 - Scope mapping rationale: ordered Rubeus procedure behavior and observable security effects; public candidates were selected by procedure and telemetry, not rule names.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/credential_access_posh_kerb_ticket_dump.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/credential_access_posh_kerb_ticket_dump.toml) - SHA-256 `e16587e2ac4f262ae22672c81f6acb76c6e66cc0af6ab59c0bdc036d64e300a9`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/credential_access_posh_kerb_ticket_dump.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/credential_access_posh_kerb_ticket_dump.toml) - SHA-256 `c7aa4e8158b8ff85b9652e1a5d31baf2a8381ac30b2e840fb1e8fb027f9eedd3`
 
 ## Procedure and detection-branch matrix
 
@@ -48,12 +48,15 @@ Treats one query like bulk extraction and does not use caller trust, result, tic
 
 ## Decision trail
 
-- Candidate improvement: Split query from retrieval severity; add caller trust and cross-LUID/repetition branches. Use PowerShell content only as a complementary implementation-specific signal.
-- Independent verification: `Required against Rubeus source analysis, concrete telemetry schemas, and sanitized fixtures before changing canonical logic.`
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The comparison identifies a detection-engineering gap; no public predicate is copied automatically.`
-- Required regeneration: `YARA-L adversarial review, telemetry reconciliation, five translations, and this comparison.`
-
+- Candidate improvement: independently add the missing procedure branch shown in the proposal; no public predicate is copied.
+- Independent verification (2026-11-21): checked against source analysis, provider field semantics and `reviews/rubeus/detection-review.md`.
+- Prior state: the proposal was copied into canonical YARA-L on 2026-08-16 while this trail read `deferred_pending_rule_improvement_run`, a non-terminal state the workflow prohibits. It is re-decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real, but adversarial review found defects in the proposal as written; the adopted rule diverges as follows:
+  - Replaced the invalid `re.regex(...) nocase` with inline `(?i)` and anchored the message-type pattern (REVIEW-006).
+  - Aggregated per host and caller process with target-LUID outcomes, so many-session extraction is distinguishable from self-retrieval (REVIEW-007).
+- Canonical result: `detections/rubeus/yaral/rubeus_lsa_encoded_ticket_retrieval.yaral`, SHA-256 `4ee967578b7bdd513ad75b4f56be10c8d8c9c8fa8f700140caee0e75b8a25baf`. The original proposal is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration completed in the same run: detection review, coverage ledger, tool telemetry file, `telemetry/MASTER.md` counts, all five translations, translation review, dependency/manifest hashes, and the re-comparison below.
 ## Unmatched scope
 
 Public candidates do not cover the full `PROC-006` procedure. Unmatched branches are recorded above; unrelated public Kerberos rules were excluded rather than treated as equivalents.
@@ -85,3 +88,53 @@ rule rubeus_lsa_encoded_ticket_retrieval {
 A separate retrieval rule preserves a strong causal signal without assigning the same severity to ordinary cache queries. A second lower-severity query/triage rule should add cross-LUID breadth and caller-trust context.
 
 If adopted, update the canonical YARA-L, adversarial detection review, Rubeus telemetry matrix and master counts, all five translations, dependency hashes, and this comparison.
+
+## Re-comparison against revised canonical rule
+
+- Revised rule SHA-256 `4ee967578b7bdd513ad75b4f56be10c8d8c9c8fa8f700140caee0e75b8a25baf`, compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/credential_access_posh_kerb_ticket_dump.toml` differs from the prior revision only in tag metadata or line endings; its detection logic is unchanged.
+
+| Procedure branch / observable effect | Revised ours | Public | Primary signal and strength | Compensating signal | Coverage conclusion | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| Encoded TGT/TGS retrieval through the LSA Kerberos package | covered per caller process, with LUID breadth | `credential_access_posh_kerb_ticket_dump.toml`: PowerShell script content naming the API/message families | successful KerbRetrieveEncodedTicket API call - strong | PowerShell 4104 content - moderate | complementary | Revised canonical rule, re-pinned candidate, `reviews/rubeus/detection-review.md`. |
+| Retrieval implemented outside PowerShell (compiled tool) | covered | not covered (script-content dependent) | API telemetry - strong | none | ours_stronger | Revised canonical rule, re-pinned candidate, `reviews/rubeus/detection-review.md`. |
+
+- Final adopted YARA-L (canonical, `experimental` / `needs_validation`):
+
+```yaral
+rule rubeus_lsa_encoded_ticket_retrieval {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a successful Kerberos encoded-ticket retrieval call through LsaCallAuthenticationPackage, separated from lower-confidence cache enumeration/query activity."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "A successful retrieve-encoded-ticket call is the closest observable step to extracting reusable ticket material from the LSA cache; it is a stronger causal signal than a bare query and is kept as its own high-confidence rule rather than combined with query activity."
+    procedure_ids = "PROC-006"
+    log_source_prerequisites = "EDR must expose LsaCallAuthenticationPackage API calls with Kerberos message type and a success/failure result; process, user, host, and target LUID are required for triage."
+    false_positives = "Klist, SSO components, credential-isolation and IR tooling that legitimately retrieve encoded tickets."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_cache_operations.md"
+    validation_status = "needs_validation"
+    validation_method = "Use benign API-call fixtures from approved ticket tooling (klist, SSO retrieval) to confirm expected volume before enabling at high severity; never execute Rubeus."
+    review_status = "reviewed"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "EDR_API_CALL"
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $process
+    $e.additional.fields["api_name"].value.string_value = "LsaCallAuthenticationPackage"
+    re.regex($e.additional.fields["kerberos_message_type"].value.string_value, `(?i)^Kerb(RetrieveEncodedTicket|RetrieveTicket)(Message)?$`)
+    $e.security_result.action = "ALLOW"
+  match:
+    $host, $process over 10m
+  outcome:
+    $target_luids = array_distinct($e.additional.fields["target_luid"].value.string_value)
+    $luid_count = count_distinct($e.additional.fields["target_luid"].value.string_value)
+    $caller_paths = array_distinct($e.principal.process.file.full_path)
+    $accounts = array_distinct($e.principal.user.userid)
+  condition:
+    $e
+}
+```
+
+- Re-comparison outcome: the revised rule closes the branch the proposal targeted, within its declared telemetry. Remaining limits are the accepted gaps in `reviews/rubeus/detection-review.md`, each with a named compensating rule.

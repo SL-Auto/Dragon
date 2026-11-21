@@ -2,7 +2,7 @@ rule cobalt_strike_sensitive_registry_read_compensating_signal {
   meta:
     author = "Detection Research Agent"
     description = "Detects a single process reading several distinct sensitive-registry-family keys within a short window, surfacing multi-family enumeration bursts that the base single-event sensitivity check does not aggregate."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "MEDIUM"
     severity_rationale = "A burst of reads across several distinct sensitive registry families by one process is a moderate discovery signal, but inventory and compliance scanners legitimately read these keys in bulk."
@@ -12,7 +12,7 @@ rule cobalt_strike_sensitive_registry_read_compensating_signal {
     references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read.md"
     validation_status = "needs_validation"
     validation_method = "Use benign reads of non-secret test keys spanning several classification families from both approved and unapproved inventory tooling."
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
     compensates_for = "cobalt_strike_sensitive_registry_read"
     source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read.md"
@@ -22,9 +22,11 @@ rule cobalt_strike_sensitive_registry_read_compensating_signal {
     $e.principal.hostname = $host
     $e.principal.process.file.sha256 = $hash
     $e.additional.fields["registry_security_family"].value.string_value = $family
-    $e.additional.fields["approved_inventory_process"].value.bool_value = false
+    $e.additional.fields["approved_inventory_process"].value.bool_value != true
   match:
     $host, $hash over 15m
+  outcome:
+    $families = count_distinct($family)
   condition:
-    $e and #family >= 3
+    $e and $families >= 3
 }

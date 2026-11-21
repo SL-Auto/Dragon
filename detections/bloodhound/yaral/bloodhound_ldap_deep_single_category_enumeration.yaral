@@ -1,29 +1,30 @@
 rule bloodhound_ldap_deep_single_category_enumeration {
   meta:
     author = "Detection Research Agent"
-    description = "Detects a single identity performing deep-pagination LDAP enumeration within one directory naming context, compensating for collection that stays under the multi-category fanout threshold of bloodhound_ldap_directory_discovery_fanout."
-    date = "2026-08-16"
+    description = "Detects a single identity on one client host retrieving a high volume of distinct directory objects within one naming context over a four-hour window, compensating for single-category or throttled collection that stays under the multi-category fanout threshold of bloodhound_ldap_directory_discovery_fanout."
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "High-volume single-category object enumeration still exposes bulk directory data suitable for attack-path analysis even without category diversity."
     procedure_ids = "BH-002,BH-004"
-    log_source_prerequisites = "Directory-side or EDR LDAP_SEARCH/1644 events with source process/account, naming context and resolved per-result object identity."
+    log_source_prerequisites = "Directory-side or EDR LDAP_SEARCH/1644 events expanded to per-result object identity (result_object_id label), with client host, account and naming context; summary-only query events cannot satisfy this rule (see reviews/bloodhound/detection-review.md#bh-dr-10)."
     false_positives = "Identity governance, directory synchronization, migration tooling and authorized security assessment performing bulk single-category export."
-    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_ldap_directory_discovery_fanout.md"
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_ldap_directory_discovery_fanout.md, reviews/bloodhound/detection-review.md#bh-dr-10"
     validation_status = "needs_validation"
-    validation_method = "Test single-purpose bulk-export tooling and sanitized deep single-category enumeration fixtures."
+    validation_method = "Test single-purpose bulk-export tooling and sanitized deep single-category enumeration fixtures, including throttled delivery spread across four hours and across multiple domain controllers."
     review_status = "reviewed_with_gaps"
     review_reference = "reviews/bloodhound/detection-review.md"
   events:
-    $e.metadata.product_event_type = /(LDAP_SEARCH|1644)/
+    $e.metadata.product_event_type = /^(LDAP_SEARCH|1644)$/
     $e.principal.user.userid = $user
     $e.principal.hostname = $host
     $e.target.resource.attribute.labels["naming_context"] = $nc
     $e.target.resource.attribute.labels["result_object_id"] = $object
   match:
-    $host, $user, $nc over 30m
+    $host, $user, $nc over 4h
   outcome:
     $objects = count_distinct($object)
+    $domain_controllers = array_distinct($e.target.hostname)
   condition:
     $e and $objects >= 500
 }

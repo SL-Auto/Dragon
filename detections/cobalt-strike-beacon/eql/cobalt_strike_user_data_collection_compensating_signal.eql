@@ -1,0 +1,16 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_user_data_collection_compensating_signal.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: cobalt_strike_user_data_collection_compensating_signal
+// severity: high
+// procedure_ids: CSB-027
+// description: Correlates a user-data collection effect (screen, clipboard, input, or browser-secret) with an outbound network connection from the same process shortly afterward, distinguishing collection-then-egress from a single benign access that the base standalone-effect rule cannot separate.
+// log_source_prerequisites: Normalize vendor SCREEN_CAPTURE/CLIPBOARD_READ/INPUT_CAPTURE/BROWSER_SECRET_READ and outbound NETWORK_CONNECTION with a stable vendor process identifier (product_specific_process_id), joined on host and process within 15 minutes, collection first.
+// false_positives: Assistive technology, conferencing, remote support, password managers, browsers, and approved monitoring software that both collect and transmit data as part of normal operation.
+// references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_user_data_collection.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (event_type, hostname, process_id, direction); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native EQL sequence with per-event join keys and maxspan=15m.
+sequence with maxspan=15m
+  [any where event.action in ("SCREEN_CAPTURE", "CLIPBOARD_READ", "INPUT_CAPTURE", "BROWSER_SECRET_READ")] by host.name, process.entity_id
+  [any where event.action == "NETWORK_CONNECTION" and network.direction == "OUTBOUND"] by host.name, process.entity_id

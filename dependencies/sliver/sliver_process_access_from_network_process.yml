@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_process_access_from_network_process
 canonical_path: detections/sliver/yaral/sliver_process_access_from_network_process.yaral
-canonical_sha256: c05041c234b395b7a9ea6bbf7775a876ae726e1cac8821c7c1a1bf6f79109aaa
+canonical_sha256: ff8160d9687d0e63c777243d44d89cda93c2d97e9155a5f50f13187bde584e92
 description: "Outbound-network process performs sensitive process access, injection, dump, or memory load"
 severity: high
 procedure_ids: ["PROC-011", "PROC-012", "PROC-015"]

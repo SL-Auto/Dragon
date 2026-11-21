@@ -1,0 +1,60 @@
+title: "Correlates a remote SMB connection to IPC$ with a subsequent rare local pipe connect on the same host, closing the ordered remote-peer branch that the standalone pipe-rarity base rule does not capture."
+name: cobalt_strike_named_pipe_peer_activity_compensating_signal_first
+status: experimental
+description: "Correlates a remote SMB connection to IPC$ with a subsequent rare local pipe connect on the same host, closing the ordered remote-peer branch that the standalone pipe-rarity base rule does not capture."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_named_pipe_peer_activity_compensating_signal.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, target_host, target_port, pipe_prevalence, pipe_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Two base rules plus a Sigma temporal_ordered correlation."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_named_pipe_peer_activity.md"
+procedure_ids: "CSB-007"
+log_source_prerequisites: "Normalize NETWORK_CONNECTION to TCP/445 with source/target hostname, plus NAMED_PIPE_CONNECTION (Sysmon 18 or EDR pipe connect) with a pipe-rarity enrichment field, joined on source-to-target host within 5 minutes, SMB connection first."
+logsource:
+  category: pipe_created
+  product: windows
+detection:
+  sel:
+    event_type: "NETWORK_CONNECTION"
+    target_port: 445
+  condition: sel
+falsepositives:
+  - "Remote administration frameworks, backup/replication agents, and clustered service frameworks that legitimately combine SMB sessions with rare local pipes."
+level: high
+---
+title: "Correlates a remote SMB connection to IPC$ with a subsequent rare local pipe connect on the same host, closing the ordered remote-peer branch that the standalone pipe-rarity base rule does not capture."
+name: cobalt_strike_named_pipe_peer_activity_compensating_signal_second
+status: experimental
+description: "Correlates a remote SMB connection to IPC$ with a subsequent rare local pipe connect on the same host, closing the ordered remote-peer branch that the standalone pipe-rarity base rule does not capture."
+logsource:
+  category: pipe_created
+  product: windows
+detection:
+  sel:
+    event_type:
+      - "NAMED_PIPE_CONNECTION"
+      - "PIPE_CONNECT"
+    pipe_prevalence: "RARE"
+  condition: sel
+falsepositives:
+  - "Remote administration frameworks, backup/replication agents, and clustered service frameworks that legitimately combine SMB sessions with rare local pipes."
+level: high
+---
+title: "Correlates a remote SMB connection to IPC$ with a subsequent rare local pipe connect on the same host, closing the ordered remote-peer branch that the standalone pipe-rarity base rule does not capture."
+name: cobalt_strike_named_pipe_peer_activity_compensating_signal
+status: experimental
+correlation:
+  type: temporal_ordered
+  rules:
+    - cobalt_strike_named_pipe_peer_activity_compensating_signal_first
+    - cobalt_strike_named_pipe_peer_activity_compensating_signal_second
+  group-by:
+    - peer_host
+  timespan: 5m
+  aliases:
+    peer_host:
+      cobalt_strike_named_pipe_peer_activity_compensating_signal_first: target_host
+      cobalt_strike_named_pipe_peer_activity_compensating_signal_second: hostname
+level: high

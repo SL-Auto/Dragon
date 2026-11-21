@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_service_or_integrity_transition_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_service_or_integrity_transition_compensating_signal.yaral
-canonical_sha256: 129a0233edf6bd7ea462f3b7ceebdbbefde01f7afe6c0854d6f39f0c1e0f058b
+canonical_sha256: ac432f5971b73b3b8629fb8f80027a15a6a8019dcb5cbd5b91a83eecc79d465b
 description: "Detects a process launch reaching SYSTEM integrity whose parent process is unsigned or rare and is not an approved elevation broker, providing the causal parent/child relationship that the base rule's standalone 4697/7045/integrity-transition signal does not require."
 severity: high
 procedure_ids: ["CSB-020"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Installers, driver-installation flows, and approved elevation-broker components not reflected in the enrichment allowlist."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_service_or_integrity_transition.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_service_or_integrity_transition_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_service_or_integrity_transition_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_service_or_integrity_transition_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_service_or_integrity_transition_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_service_or_integrity_transition_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_service_or_integrity_transition_compensating_signal.spl", sha256: b81902291d7f58fdb66158ea5ac5d3b461558ecb67eef5564b7556f7f3f8ab05, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_service_or_integrity_transition_compensating_signal.kql", sha256: 02f7c8413273b7b2871a238616c84a6f255b804876a4483a59b9a7ba4708f20d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_service_or_integrity_transition_compensating_signal.sql", sha256: 5039648d4ae306b5e5472b323726ea53e6e50809d19417bc95daf9e4c76c73c7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_service_or_integrity_transition_compensating_signal.eql", sha256: 80e7317203374d1a10ce982febb5592a078de3a49ad1972fd6560e1dc3bdfcdf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_service_or_integrity_transition_compensating_signal.yml", sha256: 516f1323bfc0e960cdbd52305a536f008693685265a470bd3183e2acdd6e91b7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

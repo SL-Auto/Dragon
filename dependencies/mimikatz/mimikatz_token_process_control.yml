@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_token_process_control
 canonical_path: detections/mimikatz/yaral/mimikatz_token_process_control.yaral
-canonical_sha256: 1f2f3c41afee357bd18c39bbc527887fed47a0d148b4264aaf5057ad52938086
+canonical_sha256: 5b00a49a1a649d33d06aea737017ba9a4a1b8e6cccd807fe3a02caf5abb780d6
 description: "Detects endpoint-reported token manipulation, parent override or sensitive process control."
 severity: medium
 procedure_ids: ["P02", "P03", "P04", "P05"]

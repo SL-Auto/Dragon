@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/recon_environment_enumeration_network_cisa_report.yaral`](../../snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/recon_environment_enumeration_network_cisa_report.yaral) - SHA-256 `0f078d23411336ac984a8467863b0ed8ad8a8b040de657941d5014f6ae158587`
+- [`public-rules/snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/recon_environment_enumeration_network_cisa_report.yaral`](../../snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/recon_environment_enumeration_network_cisa_report.yaral) - SHA-256 `0f078d23411336ac984a8467863b0ed8ad8a8b040de657941d5014f6ae158587`
 
 ## Procedure and detection-branch matrix
 
@@ -48,12 +48,15 @@ The canonical rule has broader tool-independent intent, but slow or distributed 
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
-
+- Candidate improvement: independently add the missing procedure branch shown in the proposal; no public predicate is copied.
+- Independent verification (2026-11-21): checked against source analysis, provider field semantics and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: the proposal was copied into canonical YARA-L on 2026-08-16 while this trail read `deferred_pending_rule_improvement_run`, a non-terminal state the workflow prohibits. It is re-decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real, but adversarial review found defects in the proposal as written; the adopted rule diverges as follows:
+  - Approval enrichment now fails open with `!= true`, so missing enrichment cannot silently suppress (DR-16).
+  - Distinct IP/port counts moved to `outcome`.
+- Canonical result: `detections/cobalt-strike-beacon/yaral/cobalt_strike_discovery_fanout_compensating_signal.yaral`, SHA-256 `21802ffed35a72cabcb273832f37a7663a5d0079a9ced3fc26d18754697a8295`. The original proposal is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration completed in the same run: detection review, coverage ledger, tool telemetry file, `telemetry/MASTER.md` counts, all five translations, translation review, dependency/manifest hashes, and the re-comparison below.
 ## Unmatched scope
 
 The public candidate does not cover all branches in `CSB-021`. Conversely, the canonical rule is not evidence of Cobalt Strike attribution and may detect other tooling with equivalent effects.
@@ -89,3 +92,52 @@ rule cobalt_strike_discovery_fanout_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Revised rule SHA-256 `21802ffed35a72cabcb273832f37a7663a5d0079a9ced3fc26d18754697a8295`, compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/community/microsoft/windows/recon_environment_enumeration_network_cisa_report.yaral` differs from the prior revision only in tag metadata or line endings; its detection logic is unchanged.
+
+| Procedure branch / observable effect | Revised ours | Public | Primary signal and strength | Compensating signal | Coverage conclusion | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| Slow or distributed port/network discovery | covered per user/host over 60m | `recon_environment_enumeration_network_cisa_report.yaral`: narrower implementation-specific context (original matrix); candidate not re-assessed beyond re-pinning | user/host IP and port breadth - moderate | base fan-out rule - moderate | complementary | Revised canonical rule, re-pinned candidate, `reviews/cobalt-strike-beacon/detection-review.md`. |
+
+- Final adopted YARA-L (canonical, `experimental` / `needs_validation`):
+
+```yaral
+rule cobalt_strike_discovery_fanout_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Aggregates attempted network connections by user and host over a wider window at a lower per-process threshold to surface slow or distributed port/network discovery that falls under the single-process fan-out rule's threshold."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Session-scoped low-and-slow discovery is useful reconnaissance context, but vulnerability scanners and management agents produce identical fan-out."
+    procedure_ids = "CSB-021"
+    log_source_prerequisites = "Normalize process-attributed NETWORK_CONNECTION attempts with destination IP/port, account, hostname, and an allowlist enrichment identifying approved scanners."
+    false_positives = "Vulnerability scanners, monitoring, software distribution, service discovery and network management tools not present in the approved-scanner enrichment."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_discovery_fanout.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay authorized scanner baselines spread across many hosts and processes; confirm the allowlist enrichment suppresses them."
+    review_status = "reviewed"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_discovery_fanout"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_discovery_fanout.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.principal.user.userid = $user
+    $e.principal.hostname = $host
+    $e.target.ip = $ip
+    $e.target.port = $port
+    $e.additional.fields["approved_scanner"].value.bool_value != true
+  match:
+    $user, $host over 60m
+  outcome:
+    $ips = count_distinct($ip)
+    $ports = count_distinct($port)
+  condition:
+    $e and $ips >= 10 and $ports >= 4
+}
+```
+
+- Re-comparison outcome: the revised rule closes the branch the proposal targeted, within its declared telemetry. Remaining limits are the accepted gaps in `reviews/cobalt-strike-beacon/detection-review.md`, each with a named compensating rule.

@@ -2,13 +2,13 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_file_cleanup_or_timestomp
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_file_cleanup_or_timestomp.yaral
-canonical_sha256: be19fc74fda1d95ee4d18ca9047f04533e13933cbc06f14114573392f2639694
+canonical_sha256: a9fd3c67a1b34b29b8863da906074b49026ca80b6cdcb9dd6712e63c9fd28f57
 description: "Detects deletion or timestamp modification by a rare/unsigned process and covers observable teardown artifacts."
 severity: medium
 procedure_ids: ["CSB-026", "CSB-034"]
 validation_status: "needs_validation"
 telemetry_prerequisites: "Normalize Sysmon 2/23/26 or EDR FILE_DELETE/FILE_TIMESTAMP_CHANGE with process, path, old/new timestamps, signer/prevalence and user."
-atomic_event_types: ["2", "23", "26", "FILE_DELETE", "FILE_TIMESTAMP_CHANGE"]
+atomic_event_types: ["2", "23", "26", "FILE_DELETE", "FILE_DELETION", "FILE_TIMESTAMP_CHANGE"]
 required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "principal.process.file.is_signed", "principal.process.file.prevalence"]
 correlation_window: ""
 uses_multi_event_correlation: false
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Installers, updaters, cleanup utilities, browsers, temporary-file frameworks and backup restore."
 references: "reports/cobalt-strike-beacon/source-analysis.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_file_cleanup_or_timestomp.spl", sha256: 2c8e0fa415b2d2fa5be0ab453213055ae19e52aace9ef002c74c71b1d7b77148, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_file_cleanup_or_timestomp.kql", sha256: 271a2e578b266efb5d8562f577dc88c832791f366cc156dc43b9b026b46c6a5b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_file_cleanup_or_timestomp.sql", sha256: 0bf4d1c702d18b29a674bfa53e9ff0b8cccadc8bcf9b2355e78b9d45723ab082, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_file_cleanup_or_timestomp.eql", sha256: 39fc98413f3dcf182f01f7842557d9a87e5c365a38dd0475da83b65482c5983f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_file_cleanup_or_timestomp.yml", sha256: 3d48f0b6f2161909f70b21933e70d93a1b673b28c9a71a9ddf705fa098211833, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_file_cleanup_or_timestomp.spl", sha256: 8194ae607a7fbf5b3fc3625f269db364670dc13ad29c3d11e9ee49de85f5eb31, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_file_cleanup_or_timestomp.kql", sha256: 1a4ebcabc9f896ddf1f77e9969a6605d4e904af4aae19c9d393f13b50f8e3360, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_file_cleanup_or_timestomp.sql", sha256: 8538dab9e3a6420ad5e35af104b5cf88b37b2b9fe0013df75f9b25a0fbaa7c23, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_file_cleanup_or_timestomp.eql", sha256: e8cb2a5ba9e5ff600076f20c68dd943783c040d7587d1a99dcd566f63ee11304, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_file_cleanup_or_timestomp.yml", sha256: 438f5383743fc94cc4b3b830a495fb982ef3009f70b9623cc78b332185c7e0e3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

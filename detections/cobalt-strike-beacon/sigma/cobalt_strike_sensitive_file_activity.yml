@@ -15,7 +15,7 @@ logsource:
   category: generic
 detection:
   selection_event_type:
-    event.code: ["FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION"]
+    event.code: ["FILE_CREATION", "FILE_MODIFICATION", "FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION"]
   condition: selection_event_type
 falsepositives:
   - "Backup, synchronization, DLP, indexing, document management and approved transfer tools."

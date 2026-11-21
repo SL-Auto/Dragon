@@ -1,0 +1,20 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_service_or_integrity_transition_compensating_signal.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: cobalt_strike_service_or_integrity_transition_compensating_signal
+// severity: high
+// procedure_ids: CSB-020
+// description: Detects a process launch reaching SYSTEM integrity whose parent process is unsigned or rare and is not an approved elevation broker, providing the causal parent/child relationship that the base rule's standalone 4697/7045/integrity-transition signal does not require.
+// log_source_prerequisites: Normalize PROCESS_LAUNCH with target integrity level, parent process signer and prevalence, and an approved-elevation-broker enrichment.
+// false_positives: Installers, driver-installation flows, and approved elevation-broker components not reflected in the enrichment allowlist.
+// references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_service_or_integrity_transition.md
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (event_type, integrity_level, process_signed, process_prevalence, approved_elevation_broker); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native filter. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+NormalizedEvents
+| where TimeGenerated > ago(10m)
+| where event_type == "PROCESS_LAUNCH"
+    and integrity_level == "SYSTEM"
+    and ((tobool(process_signed) == false) or (process_prevalence == "RARE"))
+    and coalesce(tobool(approved_elevation_broker), false) == false
+| extend CanonicalRule = "cobalt_strike_service_or_integrity_transition_compensating_signal"

@@ -15,14 +15,14 @@ rule bloodhound_cloud_collection_output {
     review_status = "reviewed_with_gaps"
     review_reference = "reviews/bloodhound/detection-review.md"
   events:
-    $n.metadata.product_event_type = /(MicrosoftGraphActivityLogs|AzureActivity|AZURE_RESOURCE_READ)/
+    $n.metadata.product_event_type = /^(MicrosoftGraphActivityLogs|AzureActivity|AZURE_RESOURCE_READ)$/
     $n.principal.hostname = $host
     $n.principal.user.userid = $user
     $n.target.resource.attribute.labels["resource_family"] = $family
-    $f.metadata.product_event_type = /(11|FILE_CREATION|4697|7045)/
+    $f.metadata.product_event_type = /^(11|FILE_CREATION|4697|7045)$/
     $f.principal.hostname = $host
     $f.principal.user.userid = $user
-    (re.regex($f.target.file.full_path, `(?i)\.json$`) or $f.metadata.product_event_type = /(4697|7045)/)
+    (re.regex($f.target.file.full_path, `(?i)\.json$`) or $f.metadata.product_event_type = /^(4697|7045)$/)
   match:
     $host, $user over 30m
   outcome:

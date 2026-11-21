@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_suspicious_kerberos_requests
 canonical_path: detections/impacket/yaral/impacket_suspicious_kerberos_requests.yaral
-canonical_sha256: fd694c6c9ac3071d9dc5098bc06ded27202e96e15c97d6b458aba380672750e9
+canonical_sha256: 7eb95c55cd773db7cb8d9b93006a852bccd1561b9c44cf8e1ff1737376b6fabb
 description: "Detects high-volume or uncommon Kerberos ticket-request patterns requiring investigation."
 severity: medium
 procedure_ids: ["IMP-11"]

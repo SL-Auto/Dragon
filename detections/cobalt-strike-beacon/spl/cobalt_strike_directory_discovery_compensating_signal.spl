@@ -1,0 +1,18 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_directory_discovery_compensating_signal.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: cobalt_strike_directory_discovery_compensating_signal
+# severity: medium
+# procedure_ids: CSB-022
+# description: Aggregates multi-class LDAP directory queries by user and host, independent of any single process, to surface discovery distributed across multiple short-lived processes in the same session.
+# log_source_prerequisites: Normalize LDAP_QUERY with client account, hostname, and object-class field, plus an allowlist enrichment identifying approved directory-scanning software.
+# false_positives: Identity governance, endpoint inventory, directory health, administration and vulnerability-assessment tooling that legitimately queries many object classes.
+# references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_directory_discovery.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, user_id, hostname, object_class, approved_directory_scanner); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by user_id, hostname and threshold. Hop window approximated by scheduling every 10 minutes over the trailing 30 minutes.
+| search index=<configured_index> earliest=-30m@m latest=now
+| where in(event_type, "LDAP_SEARCH", "LDAP_QUERY") AND (isnull(approved_directory_scanner) OR approved_directory_scanner!="true")
+| stats dc(object_class) as matched_count  by user_id hostname
+| where matched_count >= 4
+| eval canonical_rule="cobalt_strike_directory_discovery_compensating_signal"

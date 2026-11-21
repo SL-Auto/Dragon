@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/collection_posh_clipboard_capture.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/collection_posh_clipboard_capture.toml) - SHA-256 `76133bc1359dba0b7e893e9184de788a08691d078a12888ed5ddf312bfdac393`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/collection_posh_clipboard_capture.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/collection_posh_clipboard_capture.toml) - SHA-256 `d4ecdde65ee34eb3b44b3c83b77b1278d81a396978568451e215cc068dd90251`
 
 ## Procedure and detection-branch matrix
 
@@ -48,12 +48,15 @@ The canonical rule has broader tool-independent intent, but repeated collection 
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
-
+- Candidate improvement: independently add the missing procedure branch shown in the proposal; no public predicate is copied.
+- Independent verification (2026-11-21): checked against source analysis, provider field semantics and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: the proposal was copied into canonical YARA-L on 2026-08-16 while this trail read `deferred_pending_rule_improvement_run`, a non-terminal state the workflow prohibits. It is re-decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real, but adversarial review found defects in the proposal as written; the adopted rule diverges as follows:
+  - Joins on `product_specific_process_id` with host on every event, replacing the non-UDM `entity_id` (DR-20).
+  - Enforced first-event-before-second ordering (DR-15).
+- Canonical result: `detections/cobalt-strike-beacon/yaral/cobalt_strike_user_data_collection_compensating_signal.yaral`, SHA-256 `78676c2198e4944fbd3315aee5d8655dc08843a2b569613ede13577f0fcfca74`. The original proposal is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration completed in the same run: detection review, coverage ledger, tool telemetry file, `telemetry/MASTER.md` counts, all five translations, translation review, dependency/manifest hashes, and the re-comparison below.
 ## Unmatched scope
 
 The public candidate does not cover all branches in `CSB-027`. Conversely, the canonical rule is not evidence of Cobalt Strike attribution and may detect other tooling with equivalent effects.
@@ -89,3 +92,54 @@ rule cobalt_strike_user_data_collection_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Revised rule SHA-256 `78676c2198e4944fbd3315aee5d8655dc08843a2b569613ede13577f0fcfca74`, compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/collection_posh_clipboard_capture.toml` differs from the prior revision only in tag metadata or line endings; its detection logic is unchanged.
+
+| Procedure branch / observable effect | Revised ours | Public | Primary signal and strength | Compensating signal | Coverage conclusion | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| Screen/clipboard/input/browser collection then egress by the same process | covered, ordered | `collection_posh_clipboard_capture.toml`: narrower implementation-specific context (original matrix); candidate not re-assessed beyond re-pinning | collection-then-egress - moderate | base standalone effect - weak | complementary | Revised canonical rule, re-pinned candidate, `reviews/cobalt-strike-beacon/detection-review.md`. |
+
+- Final adopted YARA-L (canonical, `experimental` / `needs_validation`):
+
+```yaral
+rule cobalt_strike_user_data_collection_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates a user-data collection effect (screen, clipboard, input, or browser-secret) with an outbound network connection from the same process shortly afterward, distinguishing collection-then-egress from a single benign access that the base standalone-effect rule cannot separate."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Collection followed by egress from the same process is a stronger exfiltration-oriented signal than collection alone, though assistive technology, conferencing, and password-manager software can still match."
+    procedure_ids = "CSB-027"
+    log_source_prerequisites = "Normalize vendor SCREEN_CAPTURE/CLIPBOARD_READ/INPUT_CAPTURE/BROWSER_SECRET_READ and outbound NETWORK_CONNECTION with a stable vendor process identifier (product_specific_process_id), joined on host and process within 15 minutes, collection first."
+    false_positives = "Assistive technology, conferencing, remote support, password managers, browsers, and approved monitoring software that both collect and transmit data as part of normal operation."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_user_data_collection.md"
+    validation_status = "needs_validation"
+    validation_method = "Use product-provided benign test telemetry for collection-plus-egress sequences without collecting real user data."
+    review_status = "reviewed"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_user_data_collection"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_user_data_collection.md"
+    modification_note = "Proposal accepted with a required change: replaced the PID-based join with the stable process entity_id field, consistent with the sensitive_file_activity rule in this same procedure family and detection-review finding DR-02 on PID-reuse risk."
+  events:
+    $collect.metadata.event_type = /^(SCREEN_CAPTURE|CLIPBOARD_READ|INPUT_CAPTURE|BROWSER_SECRET_READ)$/
+    $collect.principal.hostname = $host
+    $collect.principal.process.product_specific_process_id = $process
+    $effect.metadata.event_type = "NETWORK_CONNECTION"
+    $effect.principal.hostname = $host
+    $effect.principal.process.product_specific_process_id = $process
+    $effect.network.direction = "OUTBOUND"
+    $collect.metadata.event_timestamp.seconds <= $effect.metadata.event_timestamp.seconds
+  match:
+    $host, $process over 15m
+  outcome:
+    $collection_types = array_distinct($collect.metadata.event_type)
+  condition:
+    $collect and $effect
+}
+```
+
+- Re-comparison outcome: the revised rule closes the branch the proposal targeted, within its declared telemetry. Remaining limits are the accepted gaps in `reviews/cobalt-strike-beacon/detection-review.md`, each with a named compensating rule.

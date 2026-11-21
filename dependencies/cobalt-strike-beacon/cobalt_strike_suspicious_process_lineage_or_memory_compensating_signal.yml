@@ -2,14 +2,14 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.yaral
-canonical_sha256: 38a665bb2e53c78b6c05ce51982a0eb11569a7b001df32a33e12a6c920a495ae
+canonical_sha256: 6a0acf338f0601f8a1f8a5628b5fc209d2338e8f8832b2ebcea1c5b4ee25e04a
 description: "Correlates a private executable-memory region without a backing file with a subsequent thread start whose start address falls in that private region, on the same process, providing execution evidence that the base rule's standalone memory-allocation signal cannot express."
 severity: high
 procedure_ids: ["CSB-004", "CSB-014", "CSB-016"]
 validation_status: "needs_validation"
 telemetry_prerequisites: "Normalize EXECUTABLE_MEMORY with private/backing-file attributes and THREAD_START with start-address-in-region and expected-JIT-host enrichment, joined on host and PID within 5 minutes."
 atomic_event_types: ["EXECUTABLE_MEMORY", "THREAD_START"]
-required_udm_fields: ["additional.fields", "metadata.event_type", "principal.hostname", "principal.process.pid"]
+required_udm_fields: ["additional.fields", "metadata.event_timestamp.seconds", "metadata.event_type", "principal.hostname", "principal.process.product_specific_process_id"]
 correlation_window: "5m"
 uses_multi_event_correlation: true
 uses_aggregation: false
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "JIT runtimes (browsers, .NET, JVM), application virtualization, and approved dynamic-code frameworks not reflected in the JIT-host enrichment."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_suspicious_process_lineage_or_memory.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.spl", sha256: e9874304df5a15dcf2b48e33b15bc33502f61f6a108700930e3845d2993913f4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.kql", sha256: d673ba738877f60b9994d1cf09579fa7e6e446b7b0fe002aceca9b53ed00948f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.sql", sha256: c85788cdf8b6dcf4c81f7844710dec9034757c210913f06150e849dfe8d64006, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.eql", sha256: 2d10e558b0a2994fb08221596c7df45ce84e0b2cdd7302cb33f0658c0ab2784b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.yml", sha256: 089a827892ef259c299a71e743804da8b99e9d24fdcf765fe9d64651df86f99b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

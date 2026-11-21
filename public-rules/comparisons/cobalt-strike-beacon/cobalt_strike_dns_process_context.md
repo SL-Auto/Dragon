@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/ml/command_and_control_ml_dns_tunneling.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/ml/command_and_control_ml_dns_tunneling.toml) - SHA-256 `e4c4a1d045b18317b512b979e727e95c19767208db6ec180ed1368e6142db6e1`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/ml/command_and_control_ml_dns_tunneling.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/ml/command_and_control_ml_dns_tunneling.toml) - SHA-256 `eaa66978039f203084f832a39b78947d13becee680f3ecbfd6bb21bedbd782ea`
 
 ## Procedure and detection-branch matrix
 
@@ -48,12 +48,15 @@ The canonical rule has broader tool-independent intent, but low-volume TXT/NULL-
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
-
+- Candidate improvement: independently add the missing procedure branch shown in the proposal; no public predicate is copied.
+- Independent verification (2026-11-21): checked against source analysis, provider field semantics and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: the proposal was copied into canonical YARA-L on 2026-08-16 while this trail read `deferred_pending_rule_improvement_run`, a non-terminal state the workflow prohibits. It is re-decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real, but adversarial review found defects in the proposal as written; the adopted rule diverges as follows:
+  - Invalid placeholder comparison in `condition` moved into `events` (DR-17, blocker).
+  - Event type `DNS_QUERY` replaced by inventory `NETWORK_DNS` (legacy alias kept) (DR-13).
+- Canonical result: `detections/cobalt-strike-beacon/yaral/cobalt_strike_dns_process_context_compensating_signal.yaral`, SHA-256 `ed53f55d149827c21fdb860c810989367b1eaa9a45eb440e7adfe2a83719fd82`. The original proposal is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration completed in the same run: detection review, coverage ledger, tool telemetry file, `telemetry/MASTER.md` counts, all five translations, translation review, dependency/manifest hashes, and the re-comparison below.
 ## Unmatched scope
 
 The public candidate does not cover all branches in `CSB-006`. Conversely, the canonical rule is not evidence of Cobalt Strike attribution and may detect other tooling with equivalent effects.
@@ -89,3 +92,51 @@ rule cobalt_strike_dns_process_context_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Revised rule SHA-256 `ed53f55d149827c21fdb860c810989367b1eaa9a45eb440e7adfe2a83719fd82`, compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/ml/command_and_control_ml_dns_tunneling.toml` differs from the prior revision only in tag metadata or line endings; its detection logic is unchanged.
+
+| Procedure branch / observable effect | Revised ours | Public | Primary signal and strength | Compensating signal | Coverage conclusion | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| Low-volume TXT/MX DNS exchange to rare domains | covered per host/process | `command_and_control_ml_dns_tunneling.toml`: narrower implementation-specific context (original matrix); candidate not re-assessed beyond re-pinning | process-attributed rare-domain TXT/MX queries - moderate | base length/entropy rule - moderate | complementary | Revised canonical rule, re-pinned candidate, `reviews/cobalt-strike-beacon/detection-review.md`. |
+
+- Final adopted YARA-L (canonical, `experimental` / `needs_validation`):
+
+```yaral
+rule cobalt_strike_dns_process_context_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects repeated process-attributed TXT/NULL-type DNS queries to domains flagged as rare by baseline enrichment, covering low-volume record-type-specific tunneling exchanges that the length/entropy-based base rule does not filter by record type."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "TXT/NULL queries to rare domains are a classic DNS-tunneling record-type signature, but security/email products issue high volumes of legitimate TXT lookups (SPF/DKIM/DMARC); the rarity enrichment is required to keep this usable."
+    procedure_ids = "CSB-006"
+    log_source_prerequisites = "Normalize process-attributed NETWORK_DNS (for example Sysmon 22 or EDR DNS events; DNS Client service-attributed resolver logs cannot attribute the requesting process) with host, process ID, query name/type, and a domain-rarity baseline enrichment field."
+    false_positives = "Mail-security appliances and anti-abuse services performing bulk legitimate TXT lookups against rare or newly observed domains; the rarity enrichment must be tenant-tuned before enabling."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_dns_process_context.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay fabricated DNS records mixing benign bulk TXT lookups against rare domains with synthetic tunneling-style query bursts."
+    review_status = "reviewed"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_dns_process_context"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_dns_process_context.md"
+  events:
+    $e.metadata.event_type = /^(NETWORK_DNS|DNS_QUERY)$/
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $pid
+    $e.network.dns.questions.name = $query
+    ($e.network.dns.questions.type = 16 or $e.network.dns.questions.type = 10)
+    $e.additional.fields["domain_baseline_rarity"].value.string_value = "RARE"
+  match:
+    $host, $pid over 30m
+  outcome:
+    $queries = count_distinct($query)
+  condition:
+    $e and $queries >= 8
+}
+```
+
+- Re-comparison outcome: the revised rule closes the branch the proposal targeted, within its declared telemetry. Remaining limits are the accepted gaps in `reviews/cobalt-strike-beacon/detection-review.md`, each with a named compensating rule.

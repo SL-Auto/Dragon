@@ -208,3 +208,57 @@ tools:
     first_seen: unknown
     last_reviewed: 2026-08-15
     evidence: [{ path: EMERGING_ATTACKER_TOOLING_2026-08-15.md }]
+  - id: mayabot
+    name: MayaBot
+    aliases: [BengalSEO malware]
+    category: malware
+    status: blocked_source
+    source_code: { availability: unavailable, repository: null, analyzed_revision: unknown }
+    first_seen: 2022
+    last_reviewed: 2026-08-24
+    evidence: [{ path: research/emerging-attacker-tooling-2026-08-24.md }]
+  - id: revstealer
+    name: REVSTEALER
+    aliases: [REF2859]
+    category: malware
+    status: blocked_source
+    source_code: { availability: unavailable, repository: null, analyzed_revision: unknown }
+    first_seen: 2026-02
+    last_reviewed: 2026-09-07
+    evidence: [{ path: research/emerging-attacker-tooling-2026-09-07.md }]
+  - id: hookedge
+    name: HOOKEDGE
+    aliases: [HEADLACE successor]
+    category: malware
+    status: blocked_source
+    source_code: { availability: unavailable, repository: null, analyzed_revision: unknown }
+    first_seen: 2025-09-26
+    last_reviewed: 2026-10-22
+    evidence: [{ path: research/emerging-attacker-tooling-2026-10-22.md }]
+  - id: darkcore-rat
+    name: DarkCore RAT
+    aliases: [DarkCoreRAT]
+    category: malware
+    status: blocked_source
+    source_code: { availability: unavailable, repository: null, analyzed_revision: unknown }
+    first_seen: 2026-09
+    last_reviewed: 2026-10-22
+    evidence: [{ path: research/emerging-attacker-tooling-2026-10-22.md }]
+  - id: lindnor
+    name: Lindnor
+    aliases: [Backdoor.Lindnor]
+    category: malware
+    status: blocked_source
+    source_code: { availability: unavailable, repository: null, analyzed_revision: unknown }
+    first_seen: 2026-10
+    last_reviewed: 2026-11-09
+    evidence: [{ path: research/emerging-attacker-tooling-2026-11-09.md }]
+  - id: unc6671-browser-implant
+    name: UNC6671 Browser Implant
+    aliases: [Google Chrome malicious extension, CL-CRI-1192 browser extension]
+    category: browser-malware
+    status: blocked_source
+    source_code: { availability: unavailable, repository: null, analyzed_revision: unknown }
+    first_seen: 2026-09
+    last_reviewed: 2026-11-21
+    evidence: [{ path: research/emerging-attacker-tooling-2026-11-21.md }]

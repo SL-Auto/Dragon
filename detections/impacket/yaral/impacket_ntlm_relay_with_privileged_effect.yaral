@@ -2,31 +2,34 @@ rule impacket_ntlm_relay_with_privileged_effect {
   meta:
     author = "Detection Research Agent"
     description = "Correlates NTLM authentication (4624/4776) with a privileged target-side effect (service install, account/group change, or AD authorization change) by the same account on the same host, requiring the target-side effect that the base cross-source relay rule does not."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "CRITICAL"
     severity_rationale = "A privileged change immediately following NTLM authentication is a stronger relay/abuse indicator than source inconsistency alone, and it narrows the base rule's proxy and NAT false-positive class by requiring proof of causal effect."
     procedure_ids = "IMP-21"
-    log_source_prerequisites = "Normalized NTLM authentication (4624/4776) with target host and target account, correlated with service (4697/7045), account/group (4720-4757 family), or AD-authorization change (5136/5137) events on the same host and acting account."
+    log_source_prerequisites = "Normalized Windows Security 4624 network logons (LogonType 3) with AuthenticationPackageName, target host, target account and source IP, correlated on the same host and acting account with service (4697/7045), account/group (4720-4757 family) or AD-authorization change (5136/5137) events. 4776 is DC-side credential validation and is not used because its host is the validating DC, not the relay target."
     false_positives = "Administrators who authenticate and then immediately perform routine privileged administration on the same host within the correlation window."
     references = "reports/impacket/source-analysis.md"
     validation_status = "needs_validation"
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/impacket/detection-review.md"
     source_comparison = "public-rules/comparisons/impacket/impacket_cross_source_ntlm_relay.md"
     comparison_decision = "modify"
   events:
-    $auth.metadata.product_event_type = /(4624|4776)/
+    $auth.metadata.product_event_type = "4624"
+    $auth.additional.fields["LogonType"].value.string_value = "3"
+    re.regex($auth.additional.fields["AuthenticationPackageName"].value.string_value, `(?i)^NTLM$`)
     $auth.target.hostname = $host
     $auth.target.user.userid = $user
-
-    $effect.metadata.product_event_type = /(4697|7045|4720|4722|4723|4724|4725|4726|4738|4741|4742|4743|4728|4729|4732|4733|4756|4757|5136|5137)/
+    $effect.metadata.product_event_type = /^(4697|7045|4720|4722|4723|4724|4725|4726|4738|4741|4742|4743|4728|4729|4732|4733|4756|4757|5136|5137)$/
     $effect.target.hostname = $host
     $effect.principal.user.userid = $user
-
+    $auth.metadata.event_timestamp.seconds <= $effect.metadata.event_timestamp.seconds
   match:
     $host, $user over 5m
-
+  outcome:
+    $source_ips = array_distinct($auth.principal.ip)
+    $effect_events = array_distinct($effect.metadata.product_event_type)
   condition:
     $auth and $effect
 }

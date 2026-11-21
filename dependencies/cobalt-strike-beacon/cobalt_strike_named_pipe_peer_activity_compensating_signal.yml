@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_named_pipe_peer_activity_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_named_pipe_peer_activity_compensating_signal.yaral
-canonical_sha256: 6b38f31481c512da42515251fd3d83a18b6a8bd13fbf36684f25435c806980d1
+canonical_sha256: d80f4931f7b6e274d98366a911dfaa51a586a785a1fefceb523a189d252f0538
 description: "Correlates a remote SMB connection to IPC$ with a subsequent rare local pipe connect on the same host, closing the ordered remote-peer branch that the standalone pipe-rarity base rule does not capture."
 severity: high
 procedure_ids: ["CSB-007"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "Normalize NETWORK_CONNECTION to TCP/445 with source/target hostname, plus PIPE_CONNECT with a pipe-rarity enrichment field, joined on source-to-target host within 5 minutes."
-atomic_event_types: ["NETWORK_CONNECTION", "PIPE_CONNECT"]
-required_udm_fields: ["additional.fields", "metadata.event_type", "principal.hostname", "target.hostname", "target.port"]
+telemetry_prerequisites: "Normalize NETWORK_CONNECTION to TCP/445 with source/target hostname, plus NAMED_PIPE_CONNECTION (Sysmon 18 or EDR pipe connect) with a pipe-rarity enrichment field, joined on source-to-target host within 5 minutes, SMB connection first."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["additional.fields", "metadata.event_timestamp.seconds", "metadata.event_type", "principal.hostname", "target.hostname", "target.port", "target.resource.name"]
 correlation_window: "5m"
 uses_multi_event_correlation: true
-uses_aggregation: false
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Remote administration frameworks, backup/replication agents, and clustered service frameworks that legitimately combine SMB sessions with rare local pipes."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_named_pipe_peer_activity.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_named_pipe_peer_activity_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_named_pipe_peer_activity_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_named_pipe_peer_activity_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_named_pipe_peer_activity_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_named_pipe_peer_activity_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_named_pipe_peer_activity_compensating_signal.spl", sha256: 3cdbae3fd8a3a301e4e9b1165c13ec09e47bd01f1ab173622aff5e2673d1dbef, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_named_pipe_peer_activity_compensating_signal.kql", sha256: 7b1f3a59acc8e32ad9db13675cb89da62970c9b01be3bbe028e88b7040a62f07, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_named_pipe_peer_activity_compensating_signal.sql", sha256: 7d4eb5f5ca7a663b917e6c428b86b99cc1e5347e7b156ed53a872806bbb447ef, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_named_pipe_peer_activity_compensating_signal.eql", sha256: f79090f3849c7bbc67eba91d0be9d7dee76f1d1c330d9a268eef342141d05542, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_named_pipe_peer_activity_compensating_signal.yml", sha256: 86e78d7f2b3e0d9aaf87b8243682f8419fad5e4f07af75f25c42f7199d5b11d4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

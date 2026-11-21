@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_discovery_fanout
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_discovery_fanout.yaral
-canonical_sha256: 7868c485d52f83087d38e03a214bd53cd71c5dea728ff92e8d0f485418d51882
+canonical_sha256: 1e54ad0e4e75204f0b47756a9c4f461cbd20908edac84bc4c63c0c1e5faaf980
 description: "Detects port/network discovery fan-out from one process without relying on Beacon command names."
 severity: medium
 procedure_ids: ["CSB-021"]

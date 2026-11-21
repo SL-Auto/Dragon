@@ -2,29 +2,31 @@ rule cobalt_strike_dns_process_context_compensating_signal {
   meta:
     author = "Detection Research Agent"
     description = "Detects repeated process-attributed TXT/NULL-type DNS queries to domains flagged as rare by baseline enrichment, covering low-volume record-type-specific tunneling exchanges that the length/entropy-based base rule does not filter by record type."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "MEDIUM"
     severity_rationale = "TXT/NULL queries to rare domains are a classic DNS-tunneling record-type signature, but security/email products issue high volumes of legitimate TXT lookups (SPF/DKIM/DMARC); the rarity enrichment is required to keep this usable."
     procedure_ids = "CSB-006"
-    log_source_prerequisites = "Normalize DNS_QUERY with process, host, query name/type, and a domain-rarity baseline enrichment field."
+    log_source_prerequisites = "Normalize process-attributed NETWORK_DNS (for example Sysmon 22 or EDR DNS events; DNS Client service-attributed resolver logs cannot attribute the requesting process) with host, process ID, query name/type, and a domain-rarity baseline enrichment field."
     false_positives = "Mail-security appliances and anti-abuse services performing bulk legitimate TXT lookups against rare or newly observed domains; the rarity enrichment must be tenant-tuned before enabling."
     references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_dns_process_context.md"
     validation_status = "needs_validation"
     validation_method = "Replay fabricated DNS records mixing benign bulk TXT lookups against rare domains with synthetic tunneling-style query bursts."
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
     compensates_for = "cobalt_strike_dns_process_context"
     source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_dns_process_context.md"
   events:
-    $e.metadata.event_type = "DNS_QUERY"
+    $e.metadata.event_type = /^(NETWORK_DNS|DNS_QUERY)$/
     $e.principal.hostname = $host
-    $e.principal.process.pid = $pid
+    $e.principal.process.product_specific_process_id = $pid
     $e.network.dns.questions.name = $query
-    $e.network.dns.questions.type = $rtype
+    ($e.network.dns.questions.type = 16 or $e.network.dns.questions.type = 10)
     $e.additional.fields["domain_baseline_rarity"].value.string_value = "RARE"
   match:
     $host, $pid over 30m
+  outcome:
+    $queries = count_distinct($query)
   condition:
-    $e and #query >= 8 and ($rtype = 16 or $rtype = 10)
+    $e and $queries >= 8
 }

@@ -1,0 +1,21 @@
+-- source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_registry_read_compensating_signal.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: high
+-- rule_name: cobalt_strike_sensitive_registry_read_compensating_signal
+-- severity: medium
+-- procedure_ids: CSB-023
+-- description: Detects a single process reading several distinct sensitive-registry-family keys within a short window, surfacing multi-family enumeration bursts that the base single-event sensitivity check does not aggregate.
+-- log_source_prerequisites: Normalize REGISTRY_READ with process hash, hostname, a registry-security-family classification field, and an approved-inventory-process enrichment, joined on host and process hash within 15 minutes.
+-- false_positives: Inventory, compliance, EDR, backup, and forensics tooling that legitimately reads across many sensitive registry families; the approved-inventory-process enrichment is required to keep this usable.
+-- references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_registry_read.md
+-- schema_profile: schemas/normalized-sql.yml
+-- field_mapping: normalized columns (event_type, hostname, process_sha256, registry_security_family, approved_inventory_process); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+-- assumptions_and_gaps: Native filter, grouping by hostname, process_sha256 and threshold. Hop window approximated by scheduling every 5 minutes over the trailing 15 minutes. Regex and interval syntax are dialect-specific.
+-- Schema assumption: normalized_events with columns event_time, event_type, hostname, process_sha256, registry_security_family, approved_inventory_process.
+SELECT hostname, process_sha256, COUNT(DISTINCT registry_security_family) AS matched_count, 'cobalt_strike_sensitive_registry_read_compensating_signal' AS canonical_rule
+FROM normalized_events
+WHERE event_time >= CURRENT_TIMESTAMP - INTERVAL '15' MINUTE
+  AND event_type = 'REGISTRY_READ'
+  AND COALESCE(approved_inventory_process, FALSE) = FALSE
+GROUP BY hostname, process_sha256
+HAVING COUNT(DISTINCT registry_security_family) >= 3;

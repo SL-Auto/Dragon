@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_cleanup_after_network_activity
 canonical_path: detections/havoc/yaral/havoc_cleanup_after_network_activity.yaral
-canonical_sha256: 0dcdcc6357d0cf099621fefbf9d8e2f214b18ebcc88f0513d12dbabff25bbc50
+canonical_sha256: ab3037a27b16808fc574fd3c2ba6264aa88a88c8fe0c7081f126e5cd1445c246
 description: "A process deletes a file or terminates shortly after outbound network activity"
 severity: medium
 procedure_ids: ["HV-P20"]

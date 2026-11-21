@@ -2,14 +2,14 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_file_cleanup_or_timestomp_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.yaral
-canonical_sha256: 4c826f873446a3d563ace83e1bbf1482822f5fb21e3d884dd683a201cabf447e
+canonical_sha256: 61cc3d7b10379489cda96b84599406042a239c4cf489f6e2f54af66047d38d55
 description: "Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution."
 severity: medium
 procedure_ids: ["CSB-026", "CSB-034"]
 validation_status: "needs_validation"
 telemetry_prerequisites: "Normalize PROCESS_LAUNCH and FILE_DELETE with matching full path, host, and process signer/prevalence on the deleting process, joined within 15 minutes."
-atomic_event_types: ["FILE_DELETE", "PROCESS_LAUNCH"]
-required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.file.is_signed", "principal.process.file.prevalence", "target.file.full_path", "target.process.file.full_path"]
+atomic_event_types: ["PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "principal.hostname", "principal.process.file.is_signed", "principal.process.file.prevalence", "target.file.full_path", "target.process.file.full_path"]
 correlation_window: "15m"
 uses_multi_event_correlation: true
 uses_aggregation: false
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Installers, updaters, and self-extracting archives remain a false-positive source when they are unsigned or rare; the signer/prevalence gate narrows but does not eliminate this overlap."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.spl", sha256: 2380bde790181aa2dc7f014841560f2b6982bac030bf4ac279a5c8cdedffdcee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.kql", sha256: 6c0db6047b7c01ad5be33a529a06d8def53fd25c20ef3a89e6d433a0bebba677, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.sql", sha256: 22c055c372ef19979b4482a1034d411b087665c3e320ebdaf5df487a74a1f8a6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.eql", sha256: 073f2192c2bc00dd73ee284b02597c2f4728c3b60ba9b47a6da0e847b30c343c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.yml", sha256: 17a463e794375cf2924ff6cc0b4bca79992cd1d4e92ef712821c1020452e056f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

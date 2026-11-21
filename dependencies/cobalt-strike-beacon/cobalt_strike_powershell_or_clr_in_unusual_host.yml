@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_powershell_or_clr_in_unusual_host
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_powershell_or_clr_in_unusual_host.yaral
-canonical_sha256: f71d27760edbdf9e66752e21ce05e9640727f28252cec917b8d57249b6ac1962
+canonical_sha256: 8c16ed7706ad7662b4a660939b5a57b4408b608a42df42337898f07da86291dd
 description: "Detects PowerShell/CLR runtime initialization or script telemetry in a process not normally hosting that runtime."
 severity: high
 procedure_ids: ["CSB-015", "CSB-017"]

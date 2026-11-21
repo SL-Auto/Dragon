@@ -1,0 +1,42 @@
+title: "Detects SAMR alias enumeration or alias-membership reads, resolved either by SAMR operation name or by SAMR interface UUID plus opnum, against multiple remote hosts from one source, compensating for parser/vendor differences that separate SAMR from LSA policy telemetry inside the combined bloodhound_samr_local_group_enumeration regex."
+name: bloodhound_samr_alias_membership_fanout_base
+status: experimental
+description: "Detects SAMR alias enumeration or alias-membership reads, resolved either by SAMR operation name or by SAMR interface UUID plus opnum, against multiple remote hosts from one source, compensating for parser/vendor differences that separate SAMR from LSA policy telemetry inside the combined bloodhound_samr_local_group_enumeration regex."
+source_yaral: "detections/bloodhound/yaral/bloodhound_samr_alias_membership_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "principal.hostname->src/id.orig_h/source_host/source.ip; target.hostname->dest/id.resp_h/target_host/destination.ip; labels.rpc_interface->endpoint/zeek.dce_rpc.endpoint; labels.rpc_operation->operation/zeek.dce_rpc.operation; labels.rpc_opnum->opnum (vendor NDR only)"
+assumptions_and_gaps: "Base rule uses the Sigma Zeek dce_rpc logsource; value_count correlation expresses >=3 distinct responders per originator. The opnum-only branch is not representable in the Zeek logsource and needs a vendor NDR rule."
+references:
+  - "reports/bloodhound/source-analysis.md#bh-009, https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-samr/, public-rules/comparisons/bloodhound/bloodhound_samr_local_group_enumeration.md, reviews/bloodhound/detection-review.md#bh-dr-22"
+procedure_ids: "BH-009"
+log_source_prerequisites: "NDR or EDR RPC telemetry that resolves the SAMR interface (name or UUID 12345778-1234-abcd-ef00-0123456789ac) and the operation (name such as SamrEnumerateAliasesInDomain/SamrGetMembersInAlias, or opnum 15/33), plus source and target host identity."
+logsource:
+  product: zeek
+  service: dce_rpc
+detection:
+  selection:
+    endpoint: samr
+    operation:
+      - SamrGetMembersInAlias
+      - SamrEnumerateAliasesInDomain
+  condition: selection
+falsepositives:
+  - "Asset inventory, compliance scanners, privileged-access management and endpoint-management systems that enumerate local group membership across hosts."
+level: high
+---
+title: "Detects SAMR alias enumeration or alias-membership reads, resolved either by SAMR operation name or by SAMR interface UUID plus opnum, against multiple remote hosts from one source, compensating for parser/vendor differences that separate SAMR from LSA policy telemetry inside the combined bloodhound_samr_local_group_enumeration regex."
+name: bloodhound_samr_alias_membership_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - bloodhound_samr_alias_membership_fanout_base
+  group-by:
+    - id.orig_h
+  timespan: 30m
+  condition:
+    field: id.resp_h
+    gte: 3
+level: high

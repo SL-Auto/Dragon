@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_ticket_artifact_access_or_creation
 canonical_path: detections/rubeus/yaral/rubeus_ticket_artifact_access_or_creation.yaral
-canonical_sha256: f74d0b80dc62f1517c8c11b2c4a7ff776b4167ee4258866ec5350561d3f69f43
+canonical_sha256: 6c9d80e53b15f4b44f87a64e8ab52a45b65dd5222a70a3dc81d4c20264501eaa
 description: "Detects an unapproved process accessing or creating a Kerberos ticket-cache artifact file by extension."
 severity: medium
 procedure_ids: ["PROC-008", "PROC-009", "PROC-010", "PROC-013"]

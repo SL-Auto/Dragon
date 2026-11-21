@@ -3,7 +3,7 @@
 ## Scope
 
 - Tool revision: `c23b3d55bc846a2460a459437601a94bfd25a269`
-- Detection files: 20 one-rule-per-file detections under `detections/impacket/yaral/`
+- Detection files: 23 one-rule-per-file detections under `detections/impacket/yaral/`
 - Generated/reviewed: 2026-08-15
 - Status: `complete_for_experimental_rules`
 
@@ -42,6 +42,9 @@
 | `impacket_unusual_protocol_listener` | IMP-02 | See consolidated plan by event/provider | EDR network-listen events with process, host, port and direction. | signer, prevalence, asset role, approved source/account and maintenance window | Rule cannot match or loses causal/contextual strength when required fields are absent |
 | `impacket_unusual_service_authentication` | IMP-15 | See consolidated plan by event/provider | Application authentication and network logs with service, source, account and result. | signer, prevalence, asset role, approved source/account and maintenance window | Rule cannot match or loses causal/contextual strength when required fields are absent |
 | `impacket_wmi_subscription_change` | IMP-06 | See consolidated plan by event/provider | Sysmon 19-21 or equivalent WMI repository events. | signer, prevalence, asset role, approved source/account and maintenance window | Rule cannot match or loses causal/contextual strength when required fields are absent |
+| `impacket_ntlm_relay_with_privileged_effect` | IMP-21 | TEL-001,003 | Security 4624 LogonType 3 with AuthenticationPackageName and source IP, plus 4697/7045, 4720–4757 family or DC 5136/5137 on the same host and account | relay-origin context from `impacket_cross_source_ntlm_relay` | without AuthenticationPackageName the NTLM constraint cannot apply; 4776 is not used |
+| `impacket_terminal_services_session_control_by_other_actor` | IMP-18 | TEL-005 | session events 4778/4779 or LocalSessionManager 23/24/25 with both acting and session-owning identities | RPC/EDR enrichment supplying the acting identity | native events carry only the session user, so the rule is silent without enrichment (REVIEW-011) |
+| `impacket_wmi_activity_operational_class_signal` | IMP-05 | TEL-002 | WMI-Activity Operational 5857/5858/5860/5861 with operation text parsed to a class label and caller host | ClientMachine normalization | successful Win32_Process.Create is not logged by this provider (REVIEW-012) |
 
 ## Deployment order
 
@@ -61,6 +64,8 @@
 - [ ] Collection volume, privacy, and access controls were reviewed.
 
 ## Unresolved telemetry gaps
+
+- 2026-11-21: acting identity for session control and successful WMI method execution are not present in native provider events (REVIEW-011, REVIEW-012).
 
 - Rules remain experimental until tenant-specific parser mappings and representative fixtures are validated.
 - Vendor-specific EDR events must not be assumed present; disable dependent rules when the mapping is unavailable.

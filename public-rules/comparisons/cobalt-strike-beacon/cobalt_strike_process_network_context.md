@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/microsoft-sentinel/5f947544657288586559c41b218eaaf182636728/Detections/MultipleDataSources/Solorigate-Network-Beacon.yaml`](../../snapshots/microsoft-sentinel/5f947544657288586559c41b218eaaf182636728/Detections/MultipleDataSources/Solorigate-Network-Beacon.yaml) - SHA-256 `34841670a57349b35c89f48e9c46e0a146c6f2472f487ed46c9cba6565e85eea`
+- [`public-rules/snapshots/microsoft-sentinel/c3361d9ff34320e7fe3314d5f9063e15470ca53e/Detections/MultipleDataSources/Solorigate-Network-Beacon.yaml`](../../snapshots/microsoft-sentinel/c3361d9ff34320e7fe3314d5f9063e15470ca53e/Detections/MultipleDataSources/Solorigate-Network-Beacon.yaml) - SHA-256 `34841670a57349b35c89f48e9c46e0a146c6f2472f487ed46c9cba6565e85eea`
 
 ## Procedure and detection-branch matrix
 
@@ -48,12 +48,14 @@ The canonical rule has broader tool-independent intent, but regular callback tim
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
-
+- Candidate improvement: independently add the missing procedure branch shown in the proposal; no public predicate is copied.
+- Independent verification (2026-11-21): checked against source analysis, provider field semantics and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: the proposal was copied into canonical YARA-L on 2026-08-16 while this trail read `deferred_pending_rule_improvement_run`, a non-terminal state the workflow prohibits. It is re-decided here with the evidence in hand.
+- Decision: `accept`.
+- Reason: the proposal closes a real branch and was adopted without logic changes after adversarial review.
+  - None: the adopted canonical logic equals the proposal; only review metadata changed.
+- Canonical result: `detections/cobalt-strike-beacon/yaral/cobalt_strike_process_network_context_compensating_signal.yaral`, SHA-256 `3c8926bcc837a997e750e6ff84fd33e311049e6336a53bd720b1a9e7d13d72e4`. The original proposal is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration completed in the same run: detection review, coverage ledger, tool telemetry file, `telemetry/MASTER.md` counts, all five translations, translation review, dependency/manifest hashes, and the re-comparison below.
 ## Unmatched scope
 
 The public candidate does not cover all branches in `CSB-001,CSB-002,CSB-005`. Conversely, the canonical rule is not evidence of Cobalt Strike attribution and may detect other tooling with equivalent effects.
@@ -89,3 +91,50 @@ rule cobalt_strike_process_network_context_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Revised rule SHA-256 `3c8926bcc837a997e750e6ff84fd33e311049e6336a53bd720b1a9e7d13d72e4`, compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- All public candidates were re-pinned to the refreshed snapshots with no content change in the referenced files.
+
+| Procedure branch / observable effect | Revised ours | Public | Primary signal and strength | Compensating signal | Coverage conclusion | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| Low-variance periodic egress from rare process to rare destination | covered with periodicity enrichment | `Solorigate-Network-Beacon.yaml`: narrower implementation-specific context (original matrix); candidate not re-assessed beyond re-pinning | periodicity plus dual rarity - moderate | base rarity fan-in rule - moderate | complementary | Revised canonical rule, re-pinned candidate, `reviews/cobalt-strike-beacon/detection-review.md`. |
+
+- Final adopted YARA-L (canonical, `experimental` / `needs_validation`):
+
+```yaral
+rule cobalt_strike_process_network_context_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects low-variance periodic outbound connections from a rare-prevalence process to a rare destination, adding the classic beacon-interval and destination-novelty dimensions that the base rarity-only fan-in rule does not measure."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Low-variance periodic egress from a rare process to a rare destination is one of the most iconic Beacon behaviors, though software updaters and telemetry agents also exhibit periodic egress."
+    procedure_ids = "CSB-001,CSB-002,CSB-005"
+    log_source_prerequisites = "Normalize NETWORK_CONNECTION with process hash and prevalence, destination hostname and a destination-prevalence enrichment, and an interval-variance-bucket enrichment derived from inter-connection timing."
+    false_positives = "Software updaters, telemetry/monitoring agents, and any low-jitter scheduled task that also happens to run from a rare process against a rare destination."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_process_network_context.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized process-network fixtures with jitter and host rotation, plus known-benign low-jitter updater timing, to tune the interval-variance-bucket enrichment before enabling."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_process_network_context"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_process_network_context.md"
+    modification_note = "Proposal accepted with a required change: replaced the invented additional.fields['process_prevalence'] with the native principal.process.file.prevalence field already used by the base rule and every other prevalence check in this rule family, keeping the genuinely novel interval-variance and destination-prevalence enrichments."
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.principal.process.file.sha256 = $hash
+    $e.principal.process.file.prevalence = "RARE"
+    $e.target.hostname = $domain
+    $e.additional.fields["interval_variance_bucket"].value.string_value = "LOW"
+    $e.additional.fields["destination_prevalence"].value.string_value = "RARE"
+  match:
+    $hash, $domain over 2h
+  condition:
+    $e and #e >= 8
+}
+```
+
+- Re-comparison outcome: the revised rule closes the branch the proposal targeted, within its declared telemetry. Remaining limits are the accepted gaps in `reviews/cobalt-strike-beacon/detection-review.md`, each with a named compensating rule.

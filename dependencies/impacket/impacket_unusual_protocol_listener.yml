@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_unusual_protocol_listener
 canonical_path: detections/impacket/yaral/impacket_unusual_protocol_listener.yaral
-canonical_sha256: 8a1f1fc24a55ac90dff442de06a550516902798cbafb8b72b6bcd527da762f5e
+canonical_sha256: 3a2e0770f7f8351babe1c5a4868c43e1a23836438a2c576cc5ea039bd2b0b56c
 description: "Detects non-server processes listening on SMB or relay-associated service ports."
 severity: medium
 procedure_ids: ["IMP-02"]

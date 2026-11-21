@@ -11,4 +11,4 @@
 // assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
 // schema_profile: schemas/elastic-ecs.yml
 // ECS assumption: event.code carries product IDs and event.action carries normalized event types.
-any where event.code in ("17", "18", "PIPE_CONNECT", "PIPE_CREATE") or event.action in ("17", "18", "PIPE_CONNECT", "PIPE_CREATE")
+any where event.code in ("17", "18", "NAMED_PIPE_CONNECTION", "NAMED_PIPE_CREATION", "PIPE_CONNECT", "PIPE_CREATE") or event.action in ("17", "18", "NAMED_PIPE_CONNECTION", "NAMED_PIPE_CREATION", "PIPE_CONNECT", "PIPE_CREATE")

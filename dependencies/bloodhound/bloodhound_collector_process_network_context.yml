@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_collector_process_network_context
 canonical_path: detections/bloodhound/yaral/bloodhound_collector_process_network_context.yaral
-canonical_sha256: 41b68e8a22f6baba8eb54e87f010ef0a83a130c44ab9267f6ac1bc5e7b962dd5
+canonical_sha256: 0602cfba47cc32b953052fa28619990ebe492780907d14fa34fb9aab120b77cd
 description: "Detects a low-prevalence process establishing sustained directory or cloud management network context."
 severity: medium
 procedure_ids: ["BH-001"]

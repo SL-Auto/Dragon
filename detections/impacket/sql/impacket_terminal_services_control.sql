@@ -14,6 +14,6 @@
 SELECT hostname, user_id, COUNT(*) AS event_count,
        'impacket_terminal_services_control' AS canonical_rule
 FROM normalized_events
-WHERE product_event_type IN ('23', '24', '25', '4778', '4779') OR event_type IN ('23', '24', '25', '4778', '4779')
+WHERE product_event_type IN ('23', '24', '4779') OR event_type IN ('23', '24', '4779')
 GROUP BY hostname, user_id
 HAVING COUNT(*) > 0;

@@ -3,8 +3,8 @@
 ## Scope
 
 - Tool revision: `bloodhound-v9.5.1_sharphound-a2f8435_common-fcb6cb9_azurehound-23735c8`
-- Detection files: 16 one-rule-per-file canonical detections under `detections/bloodhound/yaral/`
-- Generated/reviewed: 2026-08-15
+- Detection files: 21 one-rule-per-file canonical detections under `detections/bloodhound/yaral/`
+- Generated/reviewed: 2026-08-15; five compensating rules added and reconciled 2026-11-21
 - Status: `complete_for_experimental_rules`
 
 ## Consolidated collection plan
@@ -12,15 +12,15 @@
 | Capability ID | Provider / product | Events / IDs | Required fields | Enablement / configuration | Retention / correlation | Known gaps | Supports |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | BH-TEL-01 | Windows Security, Sysmon and EDR | 4688, Sysmon 1, PROCESS_LAUNCH | host, user, process entity/path, parent, signer, prevalence | Enable process creation and command line; retain stable process IDs | 7 days; correlate process/network for 4 hours | in-process execution and weak prevalence mapping | BH-001,014,020 |
-| BH-TEL-02 | AD DS diagnostic, directory audit and EDR/NDR | Directory Service 1644, LDAP_SEARCH, scoped 4662 | source process/account/IP, DC, base DN, scope, filter, requested attributes/controls, object category, result count | Enable LDAP query telemetry; use expensive/inefficient query logging only after capacity review; configure narrow SACLs where justified | 14 days; preserve source and event time | 4662 is not general query logging; LDAPS blocks passive inspection | BH-002–005 |
+| BH-TEL-02 | AD DS diagnostic, directory audit and EDR/NDR | Directory Service 1644, LDAP_SEARCH, scoped 4662 | source process/account/IP, stable process entity, DC, naming context, base DN, scope, filter, requested attributes/controls, object category, result count, per-result object identity where the parser expands results | Enable LDAP query telemetry; use expensive/inefficient query logging only after capacity review; configure narrow SACLs where justified | 14 days; preserve source and event time | 4662 is not general query logging; LDAPS blocks passive inspection; 1644 and most EDR events summarise results rather than listing objects | BH-001–005 |
 | BH-TEL-03 | DNS, EDR, firewall and NDR | NETWORK_DNS, NETWORK_CONNECTION, Security 5156 | source process/host, user, target IP/host/port, protocol, result | Enable process-attributed network and central DNS; collect east-west flows | 14 days; cardinality windows 10–30 minutes | perimeter sensors often lack process identity | BH-001,006,013,014 |
-| BH-TEL-04 | EDR/NDR RPC telemetry | RPC_CALL for SRVSVC, SAMR, LSA policy and Remote Registry | source/target, account, process, interface UUID, opnum/operation, result | Enable east-west RPC metadata and endpoint attribution | 14 days; source-to-target joins 15–20 minutes | standard Windows logs usually omit read operation detail | BH-007–010,012,014 |
+| BH-TEL-04 | EDR/NDR RPC telemetry | RPC_CALL for SRVSVC, SAMR, LSA policy and Remote Registry | source/target, account, process, interface name and UUID, operation name or opnum (SAMR 15/33), result | Enable east-west RPC metadata and endpoint attribution | 14 days; source-to-target joins 15–20 minutes | standard Windows logs usually omit read operation detail | BH-007–010,012,014 |
 | BH-TEL-05 | Windows Security and SMB telemetry | 5140, 5145 | source IP/host, account/logon ID, share, relative path, access mask, target | Enable File Share and scoped Detailed File Share auditing on DC/SYSVOL and managed targets | 14 days; correlate to source process/RPC | 5140 lacks file path; 5145 can be high volume | BH-006–008,011,013 |
-| BH-TEL-06 | EDR and scoped Windows Object Access | REGISTRY_READ, 4656, 4663 | source process/account, target host, complete key/value, access mask/result | Enable verified registry-read mapping or narrow registry SACLs; forward RemoteRegistry service events | 14 days | Sysmon records registry changes, not reads; remote initiator may be absent | BH-008,012 |
+| BH-TEL-06 | EDR and scoped Windows Object Access | REGISTRY_READ, 4656, 4663 | source process/account, reading process path, target host, complete key path and value name, access mask/result | Enable verified registry-read mapping or narrow Read-value SACLs on Services\Kdc, Control\SecurityProviders\Schannel, Control\Lsa, Control\Lsa\MSV1_0 and CertSvc\Configuration; forward RemoteRegistry service events | 14 days | Sysmon records registry changes, not reads; 4656/4663 record key and access mask but not value name; remote initiator may be absent | BH-008,012 |
 | BH-TEL-07 | Sysmon and EDR file lifecycle | Sysmon 11, 23, 26; FILE_CREATION, FILE_READ, FILE_DELETION | stable process entity, user, full path, extension, operation, hash | Enable file create/read/delete for collector output and SYSVOL paths | 7 days; correlate create/archive/delete within 10 minutes | file reads and rapid temporary files may be missing | BH-001,011,015,020 |
 | BH-TEL-08 | Windows Security and Service Control Manager | 4697, System 7045, 7036 | actor, host, service, image path, account, state | Enable Security System Extension and forward System log | 30 days | service events do not prove collector identity | BH-020 |
 | BH-TEL-09 | Microsoft Entra ID | SigninLogs, AADServicePrincipalSignInLogs | tenant, principal/app/service principal, source IP, auth method, result, correlation ID, resource | Route interactive and workload identity sign-ins to the SIEM | 30 days; correlate to API activity within 30 minutes | managed identity and service-principal schemas differ | BH-016 |
-| BH-TEL-10 | Microsoft Graph activity logs | MicrosoftGraphActivityLogs | tenant, app/principal, source IP, method, request URI, resource family, status, request/correlation ID | Enable and route Microsoft Graph activity logs; normalize resource family from URI | 30 days; distinct-family and pagination baselines | availability/licensing and field population vary | BH-016,017,019,020 |
+| BH-TEL-10 | Microsoft Graph activity logs | MicrosoftGraphActivityLogs | tenant, AppId, UserId and ServicePrincipalId (both normalized), source IP, method, full request URI, resource family, status, request/correlation ID | Enable and route Microsoft Graph activity logs; normalize resource family from URI | 30 days; distinct-family and pagination baselines | availability/licensing and field population vary | BH-016,017,019,020 |
 | BH-TEL-11 | Azure control/read-plane audit or gateway | AzureActivity, AZURE_RESOURCE_READ | tenant/subscription, principal/app, source IP, operation, provider family, scope, status, correlation ID | Route AzureActivity and any available read-plane/gateway audit; document uncovered GET operations | 30 days; distinct-provider/scope baselines | AzureActivity does not guarantee every successful resource GET | BH-016,018–020 |
 
 ## Rule-by-rule requirements
@@ -43,6 +43,11 @@
 | `bloodhound_azure_resource_enumeration_fanout` | BH-018 | BH-TEL-11 | ARM provider-family and scope reads | CSPM inventory | AzureActivity alone may omit successful GETs |
 | `bloodhound_azure_rbac_enumeration` | BH-019 | BH-TEL-10,11 | normalized RBAC/owner/access-policy operation and scope | role criticality | product event type alone is insufficient |
 | `bloodhound_cloud_collection_output` | BH-020 | BH-TEL-01,07–11 | same user/host cloud reads plus JSON or service effect | stable process and cloud correlation ID | host/user join can still overlap on shared systems |
+| `bloodhound_process_to_directory_effect` | BH-001 | BH-TEL-02 | endpoint-attributed LDAP_SEARCH with host, stable process entity and search base DN or result object | process path, signer, account | cloud audit cannot join to a process; without EDR LDAP attribution the rule is silent |
+| `bloodhound_ldap_deep_single_category_enumeration` | BH-002,004 | BH-TEL-02 | LDAP_SEARCH/1644 expanded to per-result object identity plus naming context, client host and account; 4-hour retention | DC identity for distribution context | summary-only query events never reach the distinct-object threshold (accepted gap BH-DR-10) |
+| `bloodhound_samr_alias_membership_fanout` | BH-009 | BH-TEL-04 | RPC_CALL resolving SAMR interface and alias operation by name or UUID+opnum, with source and target host | account and process attribution | unavailable in native Windows events; opnum-only sensors require UUID normalization |
+| `bloodhound_remote_security_configuration_value_reads` | BH-012 | BH-TEL-06 | EDR REGISTRY_READ with full key path, value name, subject account, reading process and target host | RemoteRegistry service state, logon type | 4656/4663 omit the value name and Sysmon records changes not reads; without EDR value-level read telemetry the rule is silent (BH-DR-25) |
+| `bloodhound_graph_deep_relationship_enumeration` | BH-017 | BH-TEL-10 | Graph activity GETs with full request URI, AppId and UserId or ServicePrincipalId | source IP, response status | without Graph activity logs, or with an unnormalized ServicePrincipalId, app-only collection is missed |
 
 ## Deployment order
 
@@ -66,3 +71,5 @@
 - NetSessionEnum, SAMR and LSA read operations require vendor/NDR RPC visibility for specific detection.
 - LDAP requested-attribute and object-category fields require directory/EDR enrichment beyond default Security logs.
 - Microsoft Graph activity and Azure read-plane coverage must be confirmed; AzureActivity is not assumed complete for GET enumeration.
+- Per-result LDAP object identity is an uncommon parser capability; `bloodhound_ldap_deep_single_category_enumeration` remains dependent on it (BH-DR-10, accepted gap).
+- Cloud audit logs carry no endpoint process identity, so process-to-directory attribution is endpoint-LDAP only (BH-DR-17).

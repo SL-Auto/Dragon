@@ -2,7 +2,7 @@ rule impacket_terminal_services_session_control_by_other_actor {
   meta:
     author = "Detection Research Agent"
     description = "Detects a Terminal Services session connect, disconnect, reconnect or logoff control action performed by a principal different from the session's own target user, consistent with remote session hijack or tscon-style session takeover."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "Controlling another user's interactive session can expose that user's authenticated desktop context and is a known RDP session-hijack primitive."
@@ -11,15 +11,21 @@ rule impacket_terminal_services_session_control_by_other_actor {
     false_positives = "Helpdesk-initiated session shadowing/takeover, session broker or load-balancer service accounts, and RDS farm reconnection performed under a management service identity."
     references = "reports/impacket/source-analysis.md"
     validation_status = "needs_validation"
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/impacket/detection-review.md"
     source_comparison = "public-rules/comparisons/impacket/impacket_terminal_services_control.md"
     comparison_decision = "modify"
   events:
-    $e.metadata.product_event_type = /(4778|4779|23|24|25)/
-    $e.principal.user.userid = $actor
-    $e.target.user.userid = $target
-    $actor != $target
+    $e.metadata.product_event_type = /^(4778|4779|23|24|25)$/
+    $e.principal.user.userid != ""
+    $e.target.user.userid != ""
+    $e.principal.user.userid != $e.target.user.userid
+    $e.principal.hostname = $host
+  match:
+    $host over 10m
+  outcome:
+    $actors = array_distinct($e.principal.user.userid)
+    $session_owners = array_distinct($e.target.user.userid)
   condition:
     $e
 }

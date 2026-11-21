@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_directory_network_discovery
 canonical_path: detections/mimikatz/yaral/mimikatz_directory_network_discovery.yaral
-canonical_sha256: 18b03eab891413987e552affeb5241884a989f6e6e1d1ffb169462f1ad8a9346
+canonical_sha256: 911e94333d5e9f1dff6e621bf54bdc140e147d469d3693721fc08d2c57186ad8
 description: "Surfaces high-volume LDAP or RPC discovery reported by network or endpoint sensors."
 severity: low
 procedure_ids: ["P30"]

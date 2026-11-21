@@ -14,6 +14,6 @@
 SELECT hostname, user_id, COUNT(*) AS event_count,
        'cobalt_strike_named_pipe_peer_activity' AS canonical_rule
 FROM normalized_events
-WHERE product_event_type IN ('17', '18', 'PIPE_CONNECT', 'PIPE_CREATE') OR event_type IN ('17', '18', 'PIPE_CONNECT', 'PIPE_CREATE')
+WHERE product_event_type IN ('17', '18', 'NAMED_PIPE_CONNECTION', 'NAMED_PIPE_CREATION', 'PIPE_CONNECT', 'PIPE_CREATE') OR event_type IN ('17', '18', 'NAMED_PIPE_CONNECTION', 'NAMED_PIPE_CREATION', 'PIPE_CONNECT', 'PIPE_CREATE')
 GROUP BY hostname, user_id
 HAVING COUNT(*) > 0;

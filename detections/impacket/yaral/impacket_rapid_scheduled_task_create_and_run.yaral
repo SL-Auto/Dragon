@@ -16,11 +16,11 @@ rule impacket_rapid_scheduled_task_create_and_run {
     review_reference = "reviews/impacket/detection-review.md"
 
   events:
-    $create.metadata.product_event_type = /(106|4698)/
+    $create.metadata.product_event_type = /^(106|4698)$/
     $create.target.hostname = $host
     $create.target.resource.name = $task
 
-    $run.metadata.product_event_type = /(100|200)/
+    $run.metadata.product_event_type = /^(100|200)$/
     $run.target.hostname = $host
     $run.target.resource.name = $task
 

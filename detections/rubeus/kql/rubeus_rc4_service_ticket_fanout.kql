@@ -1,17 +1,23 @@
 // source_yaral: detections/rubeus/yaral/rubeus_rc4_service_ticket_fanout.yaral
 // translation_status: experimental_needs_backend_mapping_and_validation
-// fidelity: partial
+// fidelity: high
 // rule_name: rubeus_rc4_service_ticket_fanout
 // severity: high
 // procedure_ids: PROC-002,PROC-004
 // description: Detects a single requester obtaining RC4-encrypted service tickets for three or more distinct unapproved-legacy services within a 15-minute window, independent of LDAP SPN-discovery visibility.
-// log_source_prerequisites: Normalize DC Security 4769 with source IP, requesting user, target service, and TicketEncryptionType, plus an approved-legacy-RC4-service enrichment keyed by target service.
+// log_source_prerequisites: Normalize DC Security 4769 with source IP, requesting user, target service, TicketEncryptionType and Status, plus an approved-legacy-RC4-service enrichment keyed by target service (missing enrichment fails open).
 // false_positives: Approved legacy RC4 services and application servers that have not yet been migrated to AES; environments where the legacy-RC4-service enrichment is stale, incomplete, or absent (an unpopulated enrichment field defaults to unapproved and will over-alert until the allowlist is built).
 // references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_kerberoast_sequence.md; public-rules/comparisons/rubeus/rubeus_service_ticket_or_renewal_anomaly.md
-// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, cardinality, and the TicketEncryptionType/approved_legacy_rc4_service filters must be implemented and tested in the target backend. This rule consolidates two independently proposed comparison improvements into one canonical rule serving both PROC-002 and PROC-004; do not create a second near-duplicate rule from either comparison.
 // schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (product_event_type, source_ip, user_id, service_name, TicketEncryptionType, Status, approved_legacy_rc4_service); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native filter, grouping by source_ip, user_id and threshold. Hop window approximated by scheduling every 5 minutes over the trailing 15 minutes. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
 NormalizedEvents
-| where (ProductEventType in ("4769") or EventType in ("4769")) and TicketEncryptionType == "0x17" and ApprovedLegacyRc4Service == false
-| summarize ServiceCount=dcount(TargetResourceName) by SourceIp, TargetUserId
-| where ServiceCount >= 3
-| extend CanonicalRule="rubeus_rc4_service_ticket_fanout"
+| where TimeGenerated > ago(15m)
+| where product_event_type == "4769"
+    and TicketEncryptionType == "0x17"
+    and Status == "0x0"
+    and coalesce(tobool(approved_legacy_rc4_service), false) == false
+    and not(coalesce(service_name, "") matches regex @"(?i)(\$$|^krbtgt$)")
+| summarize MatchedCount = count_distinct(service_name) by source_ip, user_id
+| where MatchedCount >= 3
+| extend CanonicalRule = "rubeus_rc4_service_ticket_fanout"

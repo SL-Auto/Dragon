@@ -1,0 +1,63 @@
+title: "Correlates a rare-process socket listen with an accepted inbound connection on the same port and process, closing the gap between merely listening and actually receiving a connection that the base standalone-listen rule leaves open."
+name: cobalt_strike_socket_listen_or_rare_egress_compensating_signal_first
+status: experimental
+description: "Correlates a rare-process socket listen with an accepted inbound connection on the same port and process, closing the gap between merely listening and actually receiving a connection that the base standalone-listen rule leaves open."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, direction, process_id, target_process_id, target_port, process_signed, process_prevalence); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Two base rules plus a Sigma temporal_ordered correlation."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_socket_listen_or_rare_egress.md"
+procedure_ids: "CSB-008"
+log_source_prerequisites: "Normalize SOCKET_LISTEN and inbound NETWORK_CONNECTION with a stable vendor process identifier (product_specific_process_id), process signer/prevalence, and port, joined on host, process and port within 30 minutes, listen first."
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  sel:
+    event_type: "SOCKET_LISTEN"
+  alt0_0:
+    process_signed: false
+  alt0_1:
+    process_prevalence: "RARE"
+  condition: sel and 1 of alt0_*
+falsepositives:
+  - "Development tools and local services that legitimately listen from rare binaries and receive local or authorized connections."
+level: high
+---
+title: "Correlates a rare-process socket listen with an accepted inbound connection on the same port and process, closing the gap between merely listening and actually receiving a connection that the base standalone-listen rule leaves open."
+name: cobalt_strike_socket_listen_or_rare_egress_compensating_signal_second
+status: experimental
+description: "Correlates a rare-process socket listen with an accepted inbound connection on the same port and process, closing the gap between merely listening and actually receiving a connection that the base standalone-listen rule leaves open."
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  sel:
+    event_type: "NETWORK_CONNECTION"
+    direction: "INBOUND"
+  condition: sel
+falsepositives:
+  - "Development tools and local services that legitimately listen from rare binaries and receive local or authorized connections."
+level: high
+---
+title: "Correlates a rare-process socket listen with an accepted inbound connection on the same port and process, closing the gap between merely listening and actually receiving a connection that the base standalone-listen rule leaves open."
+name: cobalt_strike_socket_listen_or_rare_egress_compensating_signal
+status: experimental
+correlation:
+  type: temporal_ordered
+  rules:
+    - cobalt_strike_socket_listen_or_rare_egress_compensating_signal_first
+    - cobalt_strike_socket_listen_or_rare_egress_compensating_signal_second
+  group-by:
+    - hostname
+    - listen_process
+    - target_port
+  timespan: 30m
+  aliases:
+    listen_process:
+      cobalt_strike_socket_listen_or_rare_egress_compensating_signal_first: process_id
+      cobalt_strike_socket_listen_or_rare_egress_compensating_signal_second: target_process_id
+level: high

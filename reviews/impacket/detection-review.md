@@ -105,6 +105,59 @@
 - Preserved offline-only procedures as `not_observable` and inaccessible Exchange behavior as `blocked_source`.
 - Re-reviewed all conditions: no mutable tool filename is required; no broad allowlist suppresses signals; all multi-event rules use at least one contextual join; all rules remain experimental and need tenant validation.
 
+## 2026-11-21 delta review — three rules added 2026-08-16, plus repository-wide ID anchoring
+
+Scope:
+
+- `impacket_ntlm_relay_with_privileged_effect`, `impacket_terminal_services_session_control_by_other_actor` and `impacket_wmi_activity_operational_class_signal`. They carried review metadata, but no finding existed for them.
+- Base rules sharing REVIEW-009.
+
+### REVIEW-009 — unanchored short event-ID alternations
+
+- Severity: `high`
+- Rules:
+  - Base rules: `impacket_terminal_services_control`, `impacket_remote_registry_activity`, `impacket_wmi_subscription_change`, `impacket_rapid_scheduled_task_create_and_run`.
+  - Compensating rule: `impacket_terminal_services_session_control_by_other_actor`.
+- Gap or failure mode: patterns such as `/(4778|4779|23|24|25)/`, `/(4657|12|13|14|7036)/`, `/(19|20|21|5861)/` and `/(100|200)/` match any ID containing those digits. That includes 4625 (failed logon), 4723 (password change), 4720 (account created), 1102 (log cleared) and 5140 (share access). The result was false-positive storms and wrong semantics.
+- Resolution: `fixed`. Every alternation is anchored `^(...)$`. The same defect was fixed in BloodHound (BH-DR-26). A repository-wide search now finds no remaining unanchored short-ID alternation.
+
+### REVIEW-010 — relay rule matched any logon followed by administration
+
+- Severity: `high`
+- Rule: `impacket_ntlm_relay_with_privileged_effect`
+- Gap or failure mode:
+  - With no authentication-package or logon-type constraint, any network logon followed by a service, account or AD change by the same user on that host matched. That is ordinary administration, under a CRITICAL rule.
+  - 4776 is credential validation logged on the DC, so its host is the validating DC, not the relay target, and it joined on the wrong host.
+  - The order of events was not enforced.
+- Resolution: `fixed`. The rule requires 4624 LogonType 3 with AuthenticationPackageName `NTLM`, drops 4776, anchors the effect IDs, and requires authentication before effect. Source IPs are kept as an outcome. Relay origin is still established by the base `impacket_cross_source_ntlm_relay`.
+
+### REVIEW-011 — actor identity rarely present in session events
+
+- Severity: `medium`
+- Rule: `impacket_terminal_services_session_control_by_other_actor`
+- Gap or failure mode: 4778/4779 and LocalSessionManager 23/24/25 natively record the session user. The acting user who issued a connect, disconnect or logoff against another session is normally absent. Placeholder inequality also let empty identities count as "different".
+- Resolution:
+  - `fixed`: both identities must be non-empty and are compared field to field; results aggregate per host.
+  - `accepted_gap`: native logs do not carry the acting identity; only EDR- or RPC-enriched sources satisfy this rule. Compensating signal: base `impacket_terminal_services_control`.
+
+### REVIEW-012 — WMI-Activity does not log successful method execution
+
+- Severity: `medium`
+- Rule: `impacket_wmi_activity_operational_class_signal`
+- Gap or failure mode: WMI-Activity Operational records provider loads (5857), operation errors (5858) and subscriptions (5860/5861). It does not record successful `Win32_Process.Create` calls, so the rule sees mainly failures and subscriptions.
+- Resolution:
+  - `fixed`: IDs are anchored and results aggregate per host.
+  - `accepted_gap`: the limit is inherent to the provider. Compensating signal: `impacket_remote_wmi_activity` (WmiPrvSE process lineage and network context).
+
+### Re-review
+
+All three rules and the four anchored base rules were re-traced:
+
+- No blocker remains.
+- No unanchored short-ID alternation remains.
+- Sequences are ordered.
+- Accepted gaps name compensating rules.
+
 ## Required follow-up
 
 - Compile against the tenant YARA-L version and validate every UDM field using positive, negative, missing-event and reordered-event fixtures.

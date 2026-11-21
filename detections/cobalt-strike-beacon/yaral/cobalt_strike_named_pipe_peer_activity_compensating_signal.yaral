@@ -2,17 +2,17 @@ rule cobalt_strike_named_pipe_peer_activity_compensating_signal {
   meta:
     author = "Detection Research Agent"
     description = "Correlates a remote SMB connection to IPC$ with a subsequent rare local pipe connect on the same host, closing the ordered remote-peer branch that the standalone pipe-rarity base rule does not capture."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "A remote IPC$ session immediately followed by a rare pipe connect is a strong SMB-peer-channel signal, though software agents and service frameworks also open rare pipes after remote sessions."
     procedure_ids = "CSB-007"
-    log_source_prerequisites = "Normalize NETWORK_CONNECTION to TCP/445 with source/target hostname, plus PIPE_CONNECT with a pipe-rarity enrichment field, joined on source-to-target host within 5 minutes."
+    log_source_prerequisites = "Normalize NETWORK_CONNECTION to TCP/445 with source/target hostname, plus NAMED_PIPE_CONNECTION (Sysmon 18 or EDR pipe connect) with a pipe-rarity enrichment field, joined on source-to-target host within 5 minutes, SMB connection first."
     false_positives = "Remote administration frameworks, backup/replication agents, and clustered service frameworks that legitimately combine SMB sessions with rare local pipes."
     references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_named_pipe_peer_activity.md"
     validation_status = "needs_validation"
     validation_method = "Replay sanitized SMB-session-plus-pipe-connect fixtures from approved remote-administration and backup tooling; confirm rarity enrichment suppresses known-benign pipes."
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
     compensates_for = "cobalt_strike_named_pipe_peer_activity"
     source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_named_pipe_peer_activity.md"
@@ -21,11 +21,14 @@ rule cobalt_strike_named_pipe_peer_activity_compensating_signal {
     $smb.target.port = 445
     $smb.principal.hostname = $source
     $smb.target.hostname = $host
-    $pipe.metadata.event_type = "PIPE_CONNECT"
+    $pipe.metadata.event_type = /^(NAMED_PIPE_CONNECTION|PIPE_CONNECT)$/
     $pipe.principal.hostname = $host
     $pipe.additional.fields["pipe_prevalence"].value.string_value = "RARE"
+    $smb.metadata.event_timestamp.seconds <= $pipe.metadata.event_timestamp.seconds
   match:
     $source, $host over 5m
+  outcome:
+    $pipes = array_distinct($pipe.target.resource.name)
   condition:
     $smb and $pipe
 }

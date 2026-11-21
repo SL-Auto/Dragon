@@ -11,7 +11,7 @@
 # assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 # schema_profile: schemas/splunk-cim.yml
 index=<configured_index>
-| where in(coalesce('metadata.product_event_type','metadata.event_type'), "DNS_QUERY")
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "DNS_QUERY", "NETWORK_DNS")
 | eval canonical_rule="cobalt_strike_dns_process_context"
 | stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
 | where count > 0

@@ -15,7 +15,7 @@ logsource:
   category: generic
 detection:
   selection_event_type:
-    event.code: ["19", "20", "21", "5861"]
+    event.code: ["20", "21"]
   condition: selection_event_type
 falsepositives:
   - "Approved monitoring and management products."

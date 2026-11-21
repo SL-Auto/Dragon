@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_certificate_key_operation
 canonical_path: detections/mimikatz/yaral/mimikatz_certificate_key_operation.yaral
-canonical_sha256: 39296843f310966618927031ca6d63dee34b643600e1f101d4dc7f08ecfdc28c
+canonical_sha256: 829922260b60bfd26bfb02a74a801a808a4592ae056730d62eb6ddb1fa742ab5
 description: "Surfaces certificate enrollment, private-key export or Hello key operations."
 severity: medium
 procedure_ids: ["P21", "P24"]

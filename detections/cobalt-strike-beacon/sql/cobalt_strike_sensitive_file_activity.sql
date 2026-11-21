@@ -14,6 +14,6 @@
 SELECT hostname, user_id, COUNT(*) AS event_count,
        'cobalt_strike_sensitive_file_activity' AS canonical_rule
 FROM normalized_events
-WHERE product_event_type IN ('FILE_READ', 'FILE_RENAME', 'FILE_WRITE', 'NETWORK_CONNECTION') OR event_type IN ('FILE_READ', 'FILE_RENAME', 'FILE_WRITE', 'NETWORK_CONNECTION')
+WHERE product_event_type IN ('FILE_CREATION', 'FILE_MODIFICATION', 'FILE_READ', 'FILE_RENAME', 'FILE_WRITE', 'NETWORK_CONNECTION') OR event_type IN ('FILE_CREATION', 'FILE_MODIFICATION', 'FILE_READ', 'FILE_RENAME', 'FILE_WRITE', 'NETWORK_CONNECTION')
 GROUP BY hostname, user_id
 HAVING COUNT(*) > 0;

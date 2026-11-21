@@ -14,6 +14,6 @@
 SELECT hostname, user_id, COUNT(*) AS event_count,
        'impacket_rapid_scheduled_task_create_and_run' AS canonical_rule
 FROM normalized_events
-WHERE product_event_type IN ('100', '106', '200', '4698') OR event_type IN ('100', '106', '200', '4698')
+WHERE product_event_type IN ('*') OR event_type IN ('*')
 GROUP BY hostname, user_id
 HAVING COUNT(*) > 0;

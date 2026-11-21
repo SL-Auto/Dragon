@@ -11,7 +11,7 @@
 // assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 // schema_profile: schemas/sentinel-asim.yml
 NormalizedEvents
-| where ProductEventType in ("DNS_QUERY") or EventType in ("DNS_QUERY")
+| where ProductEventType in ("DNS_QUERY", "NETWORK_DNS") or EventType in ("DNS_QUERY", "NETWORK_DNS")
 | summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
 | where EventCount > 0
 | extend CanonicalRule="cobalt_strike_dns_process_context"

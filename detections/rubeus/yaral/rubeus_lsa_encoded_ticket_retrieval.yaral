@@ -2,7 +2,7 @@ rule rubeus_lsa_encoded_ticket_retrieval {
   meta:
     author = "Detection Research Agent"
     description = "Detects a successful Kerberos encoded-ticket retrieval call through LsaCallAuthenticationPackage, separated from lower-confidence cache enumeration/query activity."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "A successful retrieve-encoded-ticket call is the closest observable step to extracting reusable ticket material from the LSA cache; it is a stronger causal signal than a bare query and is kept as its own high-confidence rule rather than combined with query activity."
@@ -12,13 +12,22 @@ rule rubeus_lsa_encoded_ticket_retrieval {
     references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_cache_operations.md"
     validation_status = "needs_validation"
     validation_method = "Use benign API-call fixtures from approved ticket tooling (klist, SSO retrieval) to confirm expected volume before enabling at high severity; never execute Rubeus."
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/rubeus/detection-review.md"
   events:
     $e.metadata.product_event_type = "EDR_API_CALL"
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $process
     $e.additional.fields["api_name"].value.string_value = "LsaCallAuthenticationPackage"
-    re.regex($e.additional.fields["kerberos_message_type"].value.string_value, `Kerb(RetrieveEncodedTicket|RetrieveTicket)`) nocase
+    re.regex($e.additional.fields["kerberos_message_type"].value.string_value, `(?i)^Kerb(RetrieveEncodedTicket|RetrieveTicket)(Message)?$`)
     $e.security_result.action = "ALLOW"
+  match:
+    $host, $process over 10m
+  outcome:
+    $target_luids = array_distinct($e.additional.fields["target_luid"].value.string_value)
+    $luid_count = count_distinct($e.additional.fields["target_luid"].value.string_value)
+    $caller_paths = array_distinct($e.principal.process.file.full_path)
+    $accounts = array_distinct($e.principal.user.userid)
   condition:
     $e
 }

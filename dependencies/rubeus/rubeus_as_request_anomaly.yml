@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_as_request_anomaly
 canonical_path: detections/rubeus/yaral/rubeus_as_request_anomaly.yaral
-canonical_sha256: 729c1bcd9139583935f6c96e78cc35b0ea7a8a52d8e2518bd02cf9bd4dafc3cf
+canonical_sha256: f0dd81bd806fe2289cdb753eb284a797732e2f5ec01dac4b32dbac999b5d2491
 description: "Detects one source making AS requests for multiple principals or atypical preauthentication patterns."
 severity: high
 procedure_ids: ["PROC-001"]

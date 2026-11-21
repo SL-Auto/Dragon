@@ -14,6 +14,6 @@
 SELECT hostname, user_id, COUNT(*) AS event_count,
        'cobalt_strike_file_cleanup_or_timestomp' AS canonical_rule
 FROM normalized_events
-WHERE product_event_type IN ('2', '23', '26', 'FILE_DELETE', 'FILE_TIMESTAMP_CHANGE') OR event_type IN ('2', '23', '26', 'FILE_DELETE', 'FILE_TIMESTAMP_CHANGE')
+WHERE product_event_type IN ('2', '23', '26', 'FILE_DELETE', 'FILE_DELETION', 'FILE_TIMESTAMP_CHANGE') OR event_type IN ('2', '23', '26', 'FILE_DELETE', 'FILE_DELETION', 'FILE_TIMESTAMP_CHANGE')
 GROUP BY hostname, user_id
 HAVING COUNT(*) > 0;

@@ -1,0 +1,42 @@
+title: "Aggregates attempted network connections by user and host over a wider window at a lower per-process threshold to surface slow or distributed port/network discovery that falls under the single-process fan-out rule's threshold."
+name: cobalt_strike_discovery_fanout_compensating_signal_base
+status: experimental
+description: "Aggregates attempted network connections by user and host over a wider window at a lower per-process threshold to surface slow or distributed port/network discovery that falls under the single-process fan-out rule's threshold."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_discovery_fanout_compensating_signal.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, user_id, hostname, target_ip, target_port, approved_scanner); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. The canonical rule also requires >=4 distinct ports; SPL/KQL/SQL add that second threshold below the generated one."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_discovery_fanout.md"
+procedure_ids: "CSB-021"
+log_source_prerequisites: "Normalize process-attributed NETWORK_CONNECTION attempts with destination IP/port, account, hostname, and an allowlist enrichment identifying approved scanners."
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  sel:
+    event_type: "NETWORK_CONNECTION"
+  filter0:
+    approved_scanner: true
+  condition: sel and not filter0
+falsepositives:
+  - "Vulnerability scanners, monitoring, software distribution, service discovery and network management tools not present in the approved-scanner enrichment."
+level: medium
+---
+title: "Aggregates attempted network connections by user and host over a wider window at a lower per-process threshold to surface slow or distributed port/network discovery that falls under the single-process fan-out rule's threshold."
+name: cobalt_strike_discovery_fanout_compensating_signal
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - cobalt_strike_discovery_fanout_compensating_signal_base
+  group-by:
+    - user_id
+    - hostname
+  timespan: 60m
+  condition:
+    field: target_ip
+    gte: 10
+level: medium

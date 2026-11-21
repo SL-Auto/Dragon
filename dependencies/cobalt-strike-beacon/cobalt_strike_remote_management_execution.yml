@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_remote_management_execution
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_management_execution.yaral
-canonical_sha256: 70a7a94468b3a41641d89393c9c9881ceb59f71737efdf33de505f2bfdd671cd
+canonical_sha256: d1ed45ff088141537f5201883e50607991c1aea1084b179632bd38d5258c5daf
 description: "Detects WinRM, WMI or SSH remote-management session activity followed by a child process on the target."
 severity: medium
 procedure_ids: ["CSB-031", "CSB-032", "CSB-033"]

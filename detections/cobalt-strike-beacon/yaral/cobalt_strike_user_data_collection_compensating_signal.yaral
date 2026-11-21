@@ -2,30 +2,34 @@ rule cobalt_strike_user_data_collection_compensating_signal {
   meta:
     author = "Detection Research Agent"
     description = "Correlates a user-data collection effect (screen, clipboard, input, or browser-secret) with an outbound network connection from the same process shortly afterward, distinguishing collection-then-egress from a single benign access that the base standalone-effect rule cannot separate."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "Collection followed by egress from the same process is a stronger exfiltration-oriented signal than collection alone, though assistive technology, conferencing, and password-manager software can still match."
     procedure_ids = "CSB-027"
-    log_source_prerequisites = "Normalize vendor SCREEN_CAPTURE/CLIPBOARD_READ/INPUT_CAPTURE/BROWSER_SECRET_READ and outbound NETWORK_CONNECTION with a stable process entity identifier, joined on host and process entity within 15 minutes."
+    log_source_prerequisites = "Normalize vendor SCREEN_CAPTURE/CLIPBOARD_READ/INPUT_CAPTURE/BROWSER_SECRET_READ and outbound NETWORK_CONNECTION with a stable vendor process identifier (product_specific_process_id), joined on host and process within 15 minutes, collection first."
     false_positives = "Assistive technology, conferencing, remote support, password managers, browsers, and approved monitoring software that both collect and transmit data as part of normal operation."
     references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_user_data_collection.md"
     validation_status = "needs_validation"
     validation_method = "Use product-provided benign test telemetry for collection-plus-egress sequences without collecting real user data."
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
     compensates_for = "cobalt_strike_user_data_collection"
     source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_user_data_collection.md"
     modification_note = "Proposal accepted with a required change: replaced the PID-based join with the stable process entity_id field, consistent with the sensitive_file_activity rule in this same procedure family and detection-review finding DR-02 on PID-reuse risk."
   events:
-    ($collect.metadata.event_type = "SCREEN_CAPTURE" or $collect.metadata.event_type = "CLIPBOARD_READ" or $collect.metadata.event_type = "INPUT_CAPTURE" or $collect.metadata.event_type = "BROWSER_SECRET_READ")
+    $collect.metadata.event_type = /^(SCREEN_CAPTURE|CLIPBOARD_READ|INPUT_CAPTURE|BROWSER_SECRET_READ)$/
     $collect.principal.hostname = $host
-    $collect.principal.process.entity_id = $process
+    $collect.principal.process.product_specific_process_id = $process
     $effect.metadata.event_type = "NETWORK_CONNECTION"
-    $effect.principal.process.entity_id = $process
+    $effect.principal.hostname = $host
+    $effect.principal.process.product_specific_process_id = $process
     $effect.network.direction = "OUTBOUND"
+    $collect.metadata.event_timestamp.seconds <= $effect.metadata.event_timestamp.seconds
   match:
     $host, $process over 15m
+  outcome:
+    $collection_types = array_distinct($collect.metadata.event_type)
   condition:
     $collect and $effect
 }

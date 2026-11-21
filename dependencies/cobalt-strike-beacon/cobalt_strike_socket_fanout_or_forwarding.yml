@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_socket_fanout_or_forwarding
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_fanout_or_forwarding.yaral
-canonical_sha256: 460c62b248514121434ee905ccd18767f08240fc77c0ef651f5b2ade21efb844
+canonical_sha256: f4306d22e89f8d278c2297348e33e03596efe44541a4a67b0fbc2e9e1b3c2660
 description: "Detects a single uncommon process connecting to many distinct destinations as a SOCKS/forwarding/pivot hypothesis."
 severity: medium
 procedure_ids: ["CSB-009"]

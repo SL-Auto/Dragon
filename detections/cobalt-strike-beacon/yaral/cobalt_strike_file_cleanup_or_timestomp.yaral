@@ -15,7 +15,7 @@ rule cobalt_strike_file_cleanup_or_timestomp {
     review_status = "reviewed_with_gaps"
     review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
   events:
-    ($e.metadata.event_type = "FILE_DELETE" or $e.metadata.event_type = "FILE_TIMESTAMP_CHANGE" or $e.metadata.product_event_type = "2" or $e.metadata.product_event_type = "23" or $e.metadata.product_event_type = "26")
+    ($e.metadata.event_type = "FILE_DELETION" or $e.metadata.event_type = "FILE_DELETE" or $e.metadata.event_type = "FILE_TIMESTAMP_CHANGE" or $e.metadata.product_event_type = "2" or $e.metadata.product_event_type = "23" or $e.metadata.product_event_type = "26")
     ($e.principal.process.file.is_signed = false or $e.principal.process.file.prevalence = "RARE")
   condition:
     $e

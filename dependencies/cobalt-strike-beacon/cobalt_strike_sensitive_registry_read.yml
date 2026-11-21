@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_sensitive_registry_read
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_registry_read.yaral
-canonical_sha256: a76d3807c31c0247e77123714f6ab09408f0ccfc7e149776f96951d5cb62b6ee
+canonical_sha256: 6834c01adaf74ea210168172f6e62c49778292acd179e36111c3cc2eaada17fd
 description: "Surfaces registry read/enumeration of security-sensitive configuration by an uncommon process."
 severity: medium
 procedure_ids: ["CSB-023"]

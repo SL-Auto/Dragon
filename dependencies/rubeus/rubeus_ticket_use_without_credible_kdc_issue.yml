@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_ticket_use_without_credible_kdc_issue
 canonical_path: detections/rubeus/yaral/rubeus_ticket_use_without_credible_kdc_issue.yaral
-canonical_sha256: b86e32320bf2c240bc4747a1f1162ed63cf032a2d011fffa1cfae3a6162a851e
+canonical_sha256: 5ea01170f1b7b635a5b21a30407104c92c36208fb3557544240ad5e3a80496fc
 description: "Detects anomalous Kerberos-authenticated service use without a corresponding observed service-ticket issue, gated on an explicit domain-controller collection-health signal so absence-based logic never fires during known incomplete DC coverage."
 severity: high
 procedure_ids: ["PROC-008", "PROC-009"]

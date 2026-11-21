@@ -1,0 +1,16 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_file_activity_compensating_signal.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: cobalt_strike_sensitive_file_activity_compensating_signal
+// severity: high
+// procedure_ids: CSB-024,CSB-025
+// description: Aggregates sensitive-file reads by user and host across processes and correlates them with archive creation by the same user/host, covering multi-process collection where one process stages files and another compresses or transmits them.
+// log_source_prerequisites: Normalize FILE_READ with sensitivity classification, and FILE_CREATION/FILE_MODIFICATION for archive-extension targets, joined on host and user within 30 minutes, at least one read before the archive write.
+// false_positives: Backup, synchronization, DLP, indexing, and document-management tools that read multiple sensitive files and then write compressed archives.
+// references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_file_activity.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (event_type, hostname, user_id, target_path, file_sensitivity); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native EQL sequence with per-event join keys and maxspan=30m. Distinct-count threshold must be applied in ES|QL over sequence results.
+sequence with maxspan=30m
+  [any where event.action == "FILE_READ" and labels.file_sensitivity == "HIGH"] by host.name, user.id
+  [any where event.action in ("FILE_CREATION", "FILE_MODIFICATION", "FILE_WRITE") and file.path regex~ "\\.(zip|7z|rar)$"] by host.name, user.id

@@ -11,7 +11,7 @@
 // assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 // schema_profile: schemas/sentinel-asim.yml
 NormalizedEvents
-| where ProductEventType in ("FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION") or EventType in ("FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION")
+| where ProductEventType in ("FILE_CREATION", "FILE_MODIFICATION", "FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION") or EventType in ("FILE_CREATION", "FILE_MODIFICATION", "FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION")
 | summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
 | where EventCount > 0
 | extend CanonicalRule="cobalt_strike_sensitive_file_activity"

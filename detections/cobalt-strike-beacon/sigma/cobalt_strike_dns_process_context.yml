@@ -15,7 +15,7 @@ logsource:
   category: generic
 detection:
   selection_event_type:
-    event.code: ["DNS_QUERY"]
+    event.code: ["DNS_QUERY", "NETWORK_DNS"]
   condition: selection_event_type
 falsepositives:
   - "CDNs, endpoint security, telemetry agents, anti-abuse services and DNS-based service discovery."

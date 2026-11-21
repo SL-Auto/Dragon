@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_sensitive_store_multi_family_access
 canonical_path: detections/mimikatz/yaral/mimikatz_sensitive_store_multi_family_access.yaral
-canonical_sha256: c95d984e8ba1b873442375b4d9f00de8a16a2a45360e356a7fa541abdd7b37a8
+canonical_sha256: 69425346059ca4891843ef1772ff67d42b29f4e9622d341bdf43e55dda72edba
 description: "Correlates one process reading two independent sensitive-store families (credential manager/Vault versus crypto/certificate/Hello, IIS, SCCM/Citrix or RDM stores) as a stronger compensating signal for broad single-path store access."
 severity: high
 procedure_ids: ["P18", "P19", "P20", "P23", "P25", "P37", "P41", "P46"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Backup, migration, credential-manager, endpoint-security and IT-provisioning tools that legitimately enumerate more than one store family in a session."
 references: "reports/mimikatz/source-analysis.md; public-rules/comparisons/mimikatz/mimikatz_sensitive_store_access.md"
 translations:
-  spl: { path: "detections/mimikatz/spl/mimikatz_sensitive_store_multi_family_access.spl", sha256: eb926d46e2eb84988d1cab8da1f2a4094a2478e0a45f4e3c1452edba531681d7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/mimikatz/kql/mimikatz_sensitive_store_multi_family_access.kql", sha256: 0d11c5bd62560a82fee9d13a438fee6ccbb6fd3832fa14bca0879a29f2039f82, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/mimikatz/sql/mimikatz_sensitive_store_multi_family_access.sql", sha256: 8b6dc4c19a601bdd011fd0add2e81b14730a58f4421c7da2d36992c50c67b402, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/mimikatz/eql/mimikatz_sensitive_store_multi_family_access.eql", sha256: 4880a871ceee91315c84d062c7c84b571f06f054923e1812cc96e5700e827ac0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/mimikatz/sigma/mimikatz_sensitive_store_multi_family_access.yml", sha256: 72947fcda8072cb3e06508b5d85a364b82c81e097fc9844a905c1fd40d38aeca, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/mimikatz/spl/mimikatz_sensitive_store_multi_family_access.spl", sha256: 952fe58f8f2afc4a2dc5e96c2e8d2ff511e5b229c03d42bc6c039d26fd7c9846, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_sensitive_store_multi_family_access.kql", sha256: a0eb5447e87bd97bc877494802bd925feaddda3e3e02d6b4fec95ec25a1d8b6e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_sensitive_store_multi_family_access.sql", sha256: a6af88e40cb44f72c66fe2ad40682e122f606b0ed43c964c2acdcc47d053408c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_sensitive_store_multi_family_access.eql", sha256: c9ce48664d0a2b2c752a1591aa5d234e73b0c61855b972f9aa8432bbcfcc4f03, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_sensitive_store_multi_family_access.yml", sha256: 07f870c70301be8d17bbd51609bed8bda8e19bc42a848382c367a075fd7a0cf0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

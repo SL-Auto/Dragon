@@ -15,7 +15,7 @@ logsource:
   category: generic
 detection:
   selection_event_type:
-    event.code: ["17", "18", "PIPE_CONNECT", "PIPE_CREATE"]
+    event.code: ["17", "18", "NAMED_PIPE_CONNECTION", "NAMED_PIPE_CREATION", "PIPE_CONNECT", "PIPE_CREATE"]
   condition: selection_event_type
 falsepositives:
   - "Browsers, management agents, database clients, service frameworks and endpoint security."

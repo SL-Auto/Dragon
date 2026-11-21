@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_listener_and_forwarding
 canonical_path: detections/havoc/yaral/havoc_listener_and_forwarding.yaral
-canonical_sha256: 4473caf91fece20f52071a7ee5c408ee310c53a935be05f2c3f5f8377c604942
+canonical_sha256: 5b350d9c8dfae8dc456062c9e47a52b5d37434cfc9a754f8603f842291afd7af
 description: "A process listens locally and also establishes outbound connections consistent with forwarding"
 severity: high
 procedure_ids: ["HV-P16"]

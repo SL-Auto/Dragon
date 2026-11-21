@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_suspicious_service_control
 canonical_path: detections/impacket/yaral/impacket_suspicious_service_control.yaral
-canonical_sha256: 2de5824c92741e143d3a7cbff5a7d25200095146a4c1a431a6e1beed70d4440e
+canonical_sha256: bd713d1f5d98416dd97e62e20e2f83ae8d8e72b0cebee41a12cb34715a3d7018
 description: "Detects service creation or configuration following a remote logon."
 severity: high
 procedure_ids: ["IMP-03"]

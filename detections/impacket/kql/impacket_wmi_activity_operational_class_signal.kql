@@ -1,0 +1,20 @@
+// source_yaral: detections/impacket/yaral/impacket_wmi_activity_operational_class_signal.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: impacket_wmi_activity_operational_class_signal
+// severity: medium
+// procedure_ids: IMP-05
+// description: Detects a remote WMI method invocation against the Win32_Process class observed directly in the WMI-Activity Operational log, independent of whether a WmiPrvSE child process was collected.
+// log_source_prerequisites: WMI-Activity Operational 5857/5858/5860/5861 with the operation text parsed into a class label and the caller (ClientMachine) normalized to principal.hostname. Successful Win32_Process.Create calls are not logged by WMI-Activity; this rule sees mainly 5858 failures and 5860/5861 subscription records (review REVIEW-012).
+// false_positives: Endpoint management, inventory, remediation, monitoring agents and any authorized WMI administration that creates or queries Win32_Process; this event family is high-volume and requires tenant baselining before enforcement.
+// references: reports/impacket/source-analysis.md
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (product_event_type, hostname, source_ip, wmi_class); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native filter, grouping by hostname and threshold. Hop window approximated by scheduling every 5 minutes over the trailing 10 minutes. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+NormalizedEvents
+| where TimeGenerated > ago(10m)
+| where product_event_type in ("5857", "5858", "5860", "5861")
+    and wmi_class matches regex @"(?i)Win32_Process"
+| summarize MatchedCount = count(), source_ip_values = make_set(source_ip, 20), product_event_type_values = make_set(product_event_type, 20) by hostname
+| where MatchedCount >= 1
+| extend CanonicalRule = "impacket_wmi_activity_operational_class_signal"

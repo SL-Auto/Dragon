@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_terminal_services_session_control_by_other_actor
 canonical_path: detections/impacket/yaral/impacket_terminal_services_session_control_by_other_actor.yaral
-canonical_sha256: a5f22d7277786a4bcf51fe9abbe68ed4ece02a90bd8bb8f55dd756d2bd118da9
+canonical_sha256: 92d0a4bd4849fe08c77dff4872faa57a3d3eaebe3b004d0121c23a790894a7f5
 description: "Detects a Terminal Services session connect, disconnect, reconnect or logoff control action performed by a principal different from the session's own target user, consistent with remote session hijack or tscon-style session takeover."
 severity: high
 procedure_ids: ["IMP-18"]
 validation_status: "needs_validation"
 telemetry_prerequisites: "Terminal Services Operational and Security session events (4778/4779/23/24/25) with both a populated principal (acting) and target (session-owning) user identity."
-atomic_event_types: ["23", "24", "25", "4778", "4779"]
-required_udm_fields: ["metadata.product_event_type", "principal.user.userid", "target.user.userid"]
-correlation_window: ""
-uses_multi_event_correlation: false
-uses_aggregation: false
+atomic_event_types: ["23", "24", "4779"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.user.userid", "target.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Helpdesk-initiated session shadowing/takeover, session broker or load-balancer service accounts, and RDS farm reconnection performed under a management service identity."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_terminal_services_session_control_by_other_actor.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/impacket/kql/impacket_terminal_services_session_control_by_other_actor.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/impacket/sql/impacket_terminal_services_session_control_by_other_actor.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/impacket/eql/impacket_terminal_services_session_control_by_other_actor.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/impacket/sigma/impacket_terminal_services_session_control_by_other_actor.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/impacket/spl/impacket_terminal_services_session_control_by_other_actor.spl", sha256: 5bc5a7523d771899592e78491640b29c4f271e4880ad142029a44092069c4be8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/impacket/kql/impacket_terminal_services_session_control_by_other_actor.kql", sha256: b21ce96a4f5fb82ccb30a0d3a9e971647f0499c482e9ca025307233f82b73af9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/impacket/sql/impacket_terminal_services_session_control_by_other_actor.sql", sha256: f3325fd0806a3981c169d5d4d73cade0ec132ae1de4ab4f6aa67c3bce7d2d19b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/impacket/eql/impacket_terminal_services_session_control_by_other_actor.eql", sha256: e805d1e4e2bd75be31daefb33018b444f39bb3b5415988b06f80c743e68e2c8c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_terminal_services_session_control_by_other_actor.yml", sha256: af0d52571b8eea8d10ff509348cf6635339574b297894fbc1804c61806b0cb77, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

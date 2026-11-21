@@ -1,0 +1,59 @@
+title: "Correlates an inbound connection to a process with that same process subsequently creating multiple distinct outbound connections, detecting the relay/forwarding topology that the base outbound-only fan-out rule cannot express."
+name: cobalt_strike_socket_fanout_or_forwarding_compensating_signal_first
+status: experimental
+description: "Correlates an inbound connection to a process with that same process subsequently creating multiple distinct outbound connections, detecting the relay/forwarding topology that the base outbound-only fan-out rule cannot express."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, direction, process_id, target_process_id, target_ip); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Two base rules plus a Sigma temporal_ordered correlation. The distinct-count threshold is not expressible in a temporal correlation and must be applied by the backend."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_socket_fanout_or_forwarding.md"
+procedure_ids: "CSB-009"
+log_source_prerequisites: "Normalize NETWORK_CONNECTION for both inbound and outbound direction with a stable vendor process identifier (product_specific_process_id), joined on host and process within 15 minutes, inbound first."
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  sel:
+    event_type: "NETWORK_CONNECTION"
+    direction: "INBOUND"
+  condition: sel
+falsepositives:
+  - "Browsers, approved proxies, EDR, backup, and orchestration agents that legitimately combine inbound acceptance with outbound fan-out."
+level: high
+---
+title: "Correlates an inbound connection to a process with that same process subsequently creating multiple distinct outbound connections, detecting the relay/forwarding topology that the base outbound-only fan-out rule cannot express."
+name: cobalt_strike_socket_fanout_or_forwarding_compensating_signal_second
+status: experimental
+description: "Correlates an inbound connection to a process with that same process subsequently creating multiple distinct outbound connections, detecting the relay/forwarding topology that the base outbound-only fan-out rule cannot express."
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  sel:
+    event_type: "NETWORK_CONNECTION"
+    direction: "OUTBOUND"
+  condition: sel
+falsepositives:
+  - "Browsers, approved proxies, EDR, backup, and orchestration agents that legitimately combine inbound acceptance with outbound fan-out."
+level: high
+---
+title: "Correlates an inbound connection to a process with that same process subsequently creating multiple distinct outbound connections, detecting the relay/forwarding topology that the base outbound-only fan-out rule cannot express."
+name: cobalt_strike_socket_fanout_or_forwarding_compensating_signal
+status: experimental
+correlation:
+  type: temporal_ordered
+  rules:
+    - cobalt_strike_socket_fanout_or_forwarding_compensating_signal_first
+    - cobalt_strike_socket_fanout_or_forwarding_compensating_signal_second
+  group-by:
+    - hostname
+    - relay_process
+  timespan: 15m
+  aliases:
+    relay_process:
+      cobalt_strike_socket_fanout_or_forwarding_compensating_signal_first: target_process_id
+      cobalt_strike_socket_fanout_or_forwarding_compensating_signal_second: process_id
+level: high

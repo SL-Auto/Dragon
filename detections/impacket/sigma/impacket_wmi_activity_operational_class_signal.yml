@@ -1,0 +1,43 @@
+title: "Detects a remote WMI method invocation against the Win32_Process class observed directly in the WMI-Activity Operational log, independent of whether a WmiPrvSE child process was collected."
+name: impacket_wmi_activity_operational_class_signal_base
+status: experimental
+description: "Detects a remote WMI method invocation against the Win32_Process class observed directly in the WMI-Activity Operational log, independent of whether a WmiPrvSE child process was collected."
+source_yaral: "detections/impacket/yaral/impacket_wmi_activity_operational_class_signal.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, hostname, source_ip, wmi_class); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/impacket/source-analysis.md"
+procedure_ids: "IMP-05"
+log_source_prerequisites: "WMI-Activity Operational 5857/5858/5860/5861 with the operation text parsed into a class label and the caller (ClientMachine) normalized to principal.hostname. Successful Win32_Process.Create calls are not logged by WMI-Activity; this rule sees mainly 5858 failures and 5860/5861 subscription records (review REVIEW-012)."
+logsource:
+  service: wmi
+  product: windows
+detection:
+  sel:
+    product_event_type:
+      - "5857"
+      - "5858"
+      - "5860"
+      - "5861"
+    wmi_class|re: "(?i)Win32_Process"
+  condition: sel
+falsepositives:
+  - "Endpoint management, inventory, remediation, monitoring agents and any authorized WMI administration that creates or queries Win32_Process; this event family is high-volume and requires tenant baselining before enforcement."
+level: medium
+---
+title: "Detects a remote WMI method invocation against the Win32_Process class observed directly in the WMI-Activity Operational log, independent of whether a WmiPrvSE child process was collected."
+name: impacket_wmi_activity_operational_class_signal
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - impacket_wmi_activity_operational_class_signal_base
+  group-by:
+    - hostname
+  timespan: 10m
+  condition:
+    gte: 1
+level: medium

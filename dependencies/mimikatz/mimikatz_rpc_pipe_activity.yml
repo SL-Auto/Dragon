@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_rpc_pipe_activity
 canonical_path: detections/mimikatz/yaral/mimikatz_rpc_pipe_activity.yaral
-canonical_sha256: e4cebbd18de3614394a0b9f48df377f4a36dde4b5cf070297ad091e384956887
+canonical_sha256: 072afb5588b98f2279b9366583af01c67e1fa065b3cb4ed5558e9b4266e6e785
 description: "Surfaces named-pipe or RPC activity associated with authentication coercion or remote control context."
 severity: medium
 procedure_ids: ["P35", "P38"]

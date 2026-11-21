@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_process_network_context
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_process_network_context.yaral
-canonical_sha256: b255f3a0bfc3a3b322da2599c59439e3665f56ee7e027d5d3d57638296eefd6d
+canonical_sha256: ba6eb079aaf958fec640ea257f3658a503a5339c9082c190e80f0bc78fb4e51a
 description: "Surfaces process-attributed repeated outbound network activity from an unsigned or uncommon executable; intended as Beacon-compatible C2 context, not attribution."
 severity: medium
 procedure_ids: ["CSB-001", "CSB-002", "CSB-005"]

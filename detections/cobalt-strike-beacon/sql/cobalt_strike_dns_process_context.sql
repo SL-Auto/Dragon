@@ -14,6 +14,6 @@
 SELECT hostname, user_id, COUNT(*) AS event_count,
        'cobalt_strike_dns_process_context' AS canonical_rule
 FROM normalized_events
-WHERE product_event_type IN ('DNS_QUERY') OR event_type IN ('DNS_QUERY')
+WHERE product_event_type IN ('DNS_QUERY', 'NETWORK_DNS') OR event_type IN ('DNS_QUERY', 'NETWORK_DNS')
 GROUP BY hostname, user_id
 HAVING COUNT(*) > 0;

@@ -1,0 +1,20 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_file_cleanup_or_timestomp_compensating_signal
+# severity: medium
+# procedure_ids: CSB-026,CSB-034
+# description: Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution.
+# log_source_prerequisites: Normalize PROCESS_LAUNCH and FILE_DELETE with matching full path, host, and process signer/prevalence on the deleting process, joined within 15 minutes.
+# false_positives: Installers, updaters, and self-extracting archives remain a false-positive source when they are unsigned or rare; the signer/prevalence gate narrows but does not eliminate this overlap.
+# references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, target_process_path, target_path, process_signed, process_prevalence); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native ordered two-event correlation on hostname, file_path within 15 minutes (first event before second). Scheduled every 5 minutes over the trailing 30 minutes. SPL compares the earliest first-leg and latest second-leg time per key, which is weaker than per-pair ordering.
+| search index=<configured_index> earliest=-30m@m latest=now
+| eval leg=case(event_type=="PROCESS_LAUNCH", "a", in(event_type, "FILE_DELETION", "FILE_DELETE") AND ((process_signed=="false") OR (process_prevalence=="RARE")), "b")
+| where isnotnull(leg)
+| eval file_path=case(leg="a", target_process_path, leg="b", target_path)
+| stats min(eval(if(leg="a", _time, null()))) as first_a max(eval(if(leg="b", _time, null()))) as last_b by hostname file_path
+| where isnotnull(first_a) AND isnotnull(last_b) AND first_a <= last_b AND last_b - first_a <= 900
+| eval canonical_rule="cobalt_strike_file_cleanup_or_timestomp_compensating_signal"

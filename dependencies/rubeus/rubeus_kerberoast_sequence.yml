@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_kerberoast_sequence
 canonical_path: detections/rubeus/yaral/rubeus_kerberoast_sequence.yaral
-canonical_sha256: f70f549433ef69b82d59788dab687605fb3903ada30efd3490751bfea5d593b7
+canonical_sha256: 242312257dee590edae6f82fb918b82b266227e881b413bc9c0bc6520346fd7a
 description: "Correlates LDAP SPN discovery with service-ticket fan-out by the same host and user."
 severity: high
 procedure_ids: ["PROC-004"]

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_listener_with_egress
 canonical_path: detections/sliver/yaral/sliver_listener_with_egress.yaral
-canonical_sha256: ec9389fe0c604f0f67a767c4038ab7bde6405c2d7f0cb42789fe17b31ceba101
+canonical_sha256: c9d97ddc6f775b766b84294e250406f4cd4ea62043a8e169f19f646d977f580e
 description: "One process both listens and makes outbound connections"
 severity: high
 procedure_ids: ["PROC-005", "PROC-021"]

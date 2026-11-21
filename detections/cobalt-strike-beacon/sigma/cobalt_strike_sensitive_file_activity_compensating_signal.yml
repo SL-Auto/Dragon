@@ -1,0 +1,58 @@
+title: "Aggregates sensitive-file reads by user and host across processes and correlates them with archive creation by the same user/host, covering multi-process collection where one process stages files and another compresses or transmits them."
+name: cobalt_strike_sensitive_file_activity_compensating_signal_first
+status: experimental
+description: "Aggregates sensitive-file reads by user and host across processes and correlates them with archive creation by the same user/host, covering multi-process collection where one process stages files and another compresses or transmits them."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_file_activity_compensating_signal.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, user_id, target_path, file_sensitivity); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Two base rules plus a Sigma temporal_ordered correlation. The distinct-count threshold is not expressible in a temporal correlation and must be applied by the backend."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_file_activity.md"
+procedure_ids: "CSB-024,CSB-025"
+log_source_prerequisites: "Normalize FILE_READ with sensitivity classification, and FILE_CREATION/FILE_MODIFICATION for archive-extension targets, joined on host and user within 30 minutes, at least one read before the archive write."
+logsource:
+  category: file_event
+  product: windows
+detection:
+  sel:
+    event_type: "FILE_READ"
+    file_sensitivity: "HIGH"
+  condition: sel
+falsepositives:
+  - "Backup, synchronization, DLP, indexing, and document-management tools that read multiple sensitive files and then write compressed archives."
+level: high
+---
+title: "Aggregates sensitive-file reads by user and host across processes and correlates them with archive creation by the same user/host, covering multi-process collection where one process stages files and another compresses or transmits them."
+name: cobalt_strike_sensitive_file_activity_compensating_signal_second
+status: experimental
+description: "Aggregates sensitive-file reads by user and host across processes and correlates them with archive creation by the same user/host, covering multi-process collection where one process stages files and another compresses or transmits them."
+logsource:
+  category: file_event
+  product: windows
+detection:
+  sel:
+    event_type:
+      - "FILE_CREATION"
+      - "FILE_MODIFICATION"
+      - "FILE_WRITE"
+    target_path|re: "(?i)\\.(zip|7z|rar)$"
+  condition: sel
+falsepositives:
+  - "Backup, synchronization, DLP, indexing, and document-management tools that read multiple sensitive files and then write compressed archives."
+level: high
+---
+title: "Aggregates sensitive-file reads by user and host across processes and correlates them with archive creation by the same user/host, covering multi-process collection where one process stages files and another compresses or transmits them."
+name: cobalt_strike_sensitive_file_activity_compensating_signal
+status: experimental
+correlation:
+  type: temporal_ordered
+  rules:
+    - cobalt_strike_sensitive_file_activity_compensating_signal_first
+    - cobalt_strike_sensitive_file_activity_compensating_signal_second
+  group-by:
+    - hostname
+    - user_id
+  timespan: 30m
+level: high

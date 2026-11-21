@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_suspicious_process_lineage_or_memory
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_suspicious_process_lineage_or_memory.yaral
-canonical_sha256: 2739595c7cb1ee3f9152d7c9c9aa2a0c1dde413d380aa8e1c0d37f9ebaecbf45
+canonical_sha256: 6f3201b983b50d2dc26b20e083024db6f738014dc8068a2c98c97e335e942ff0
 description: "Detects parent/creator mismatch, private executable memory, or unusual in-process execution telemetry without requiring default Beacon spawn targets."
 severity: high
 procedure_ids: ["CSB-004", "CSB-014", "CSB-016"]

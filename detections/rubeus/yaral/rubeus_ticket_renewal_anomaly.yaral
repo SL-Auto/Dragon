@@ -1,27 +1,29 @@
 rule rubeus_ticket_renewal_anomaly {
   meta:
     author = "Detection Research Agent"
-    description = "Detects unusual Kerberos ticket-renewal (4770) volume by one source and identity, separated from service-ticket (4769) acquisition volume."
-    date = "2026-08-16"
+    description = "Detects a burst of Kerberos ticket renewals (4770) by one source and identity, a scripted or looping renewal anomaly separated from service-ticket (4769) acquisition volume. It does not identify low-rate automatic renewal, which is indistinguishable from native LSA renewal."
+    date = "2026-11-21"
     status = "experimental"
-    severity = "MEDIUM"
-    severity_rationale = "Renewal fan-out is a weaker generic-volume lead than a ticket-property-specific acquisition signal; splitting it from 4769 acquisition avoids conflating two different Kerberos operations under one combined threshold."
+    severity = "LOW"
+    severity_rationale = "A renewal burst is anomalous but weakly attributable: native clients renew automatically, and tool-driven auto-renewal near expiry produces low-rate events identical to the operating system's. Severity lowered from MEDIUM after review REVIEW-009."
     procedure_ids = "PROC-002"
     log_source_prerequisites = "Normalize DC Security 4770 with account, source IP, service, and result."
     false_positives = "Long-running services, SSO session-renewal components, and scheduled tasks that legitimately renew tickets repeatedly."
     references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_service_ticket_or_renewal_anomaly.md"
     validation_status = "needs_validation"
     validation_method = "Measure per-account/source renewal baselines and replay near-threshold fixtures before enabling; the 15-event/10-minute threshold is a starting point and requires tenant-specific tuning."
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/rubeus/detection-review.md"
   events:
     $e.metadata.product_event_type = "4770"
     $e.principal.ip = $source
     $e.target.user.userid = $user
+    $e.target.resource.name = $service
   match:
     $source, $user over 10m
   outcome:
     $event_count = count($e.metadata.id)
+    $services = array_distinct($service)
   condition:
     $e and $event_count >= 15
 }

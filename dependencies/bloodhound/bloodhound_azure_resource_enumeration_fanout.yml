@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_azure_resource_enumeration_fanout
 canonical_path: detections/bloodhound/yaral/bloodhound_azure_resource_enumeration_fanout.yaral
-canonical_sha256: 814078b86947bc3d4f045a333b6eca8a540ffec4465137f17b7871aef4542590
+canonical_sha256: ff28bf2e17d48169d1d409bfb35730160532762959888a6ae15a65fef3df5d1d
 description: "Detects one principal/application reading many Azure Resource Manager provider families, independent of source IP, with subscription breadth recorded as compensating context."
 severity: high
 procedure_ids: ["BH-018"]

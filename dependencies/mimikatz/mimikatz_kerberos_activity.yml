@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_kerberos_activity
 canonical_path: detections/mimikatz/yaral/mimikatz_kerberos_activity.yaral
-canonical_sha256: b9713ec360f243b84beccaff1303475e73258cdf600d3ca0ea6b56a133201886
+canonical_sha256: 712a17e3db3e1ad97e9fcd05bc34b8b4dadcc40cd12186e1399aa0ec4e0900a3
 description: "Surfaces Kerberos ticket issuance or endpoint LSA ticket-cache operations for contextual analytics."
 severity: low
 procedure_ids: ["P10"]

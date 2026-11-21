@@ -1,0 +1,21 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_socket_fanout_or_forwarding_compensating_signal
+# severity: high
+# procedure_ids: CSB-009
+# description: Correlates an inbound connection to a process with that same process subsequently creating multiple distinct outbound connections, detecting the relay/forwarding topology that the base outbound-only fan-out rule cannot express.
+# log_source_prerequisites: Normalize NETWORK_CONNECTION for both inbound and outbound direction with a stable vendor process identifier (product_specific_process_id), joined on host and process within 15 minutes, inbound first.
+# false_positives: Browsers, approved proxies, EDR, backup, and orchestration agents that legitimately combine inbound acceptance with outbound fan-out.
+# references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_socket_fanout_or_forwarding.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, direction, process_id, target_process_id, target_ip); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native ordered two-event correlation on hostname, relay_process within 15 minutes (first event before second). Scheduled every 5 minutes over the trailing 30 minutes. SPL compares the earliest first-leg and latest second-leg time per key, which is weaker than per-pair ordering.
+| search index=<configured_index> earliest=-30m@m latest=now
+| eval leg=case(event_type=="NETWORK_CONNECTION" AND direction=="INBOUND", "a", event_type=="NETWORK_CONNECTION" AND direction=="OUTBOUND", "b")
+| where isnotnull(leg)
+| eval relay_process=case(leg="a", target_process_id, leg="b", process_id)
+| stats min(eval(if(leg="a", _time, null()))) as first_a max(eval(if(leg="b", _time, null()))) as last_b dc(eval(if(leg="b", target_ip, null()))) as matched_count by hostname relay_process
+| where isnotnull(first_a) AND isnotnull(last_b) AND first_a <= last_b AND last_b - first_a <= 900
+| where matched_count >= 5
+| eval canonical_rule="cobalt_strike_socket_fanout_or_forwarding_compensating_signal"

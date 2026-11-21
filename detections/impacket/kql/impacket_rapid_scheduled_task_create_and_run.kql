@@ -11,7 +11,7 @@
 // assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 // schema_profile: schemas/sentinel-asim.yml
 NormalizedEvents
-| where ProductEventType in ("100", "106", "200", "4698") or EventType in ("100", "106", "200", "4698")
+| where ProductEventType in ("*") or EventType in ("*")
 | summarize EventCount=count(), ObservedEventTypes=make_set(ProductEventType) by Hostname, UserId
 | where EventCount > 0
 | extend CanonicalRule="impacket_rapid_scheduled_task_create_and_run"

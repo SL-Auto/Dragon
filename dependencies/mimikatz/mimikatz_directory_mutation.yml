@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_directory_mutation
 canonical_path: detections/mimikatz/yaral/mimikatz_directory_mutation.yaral
-canonical_sha256: c886cd424273d029f50c6310783977485f84448a146038e960ea889d86463fb3
+canonical_sha256: a757f81d55b727f8e6e3cb9a3cca0cd1741532890b4baf53a9f774635cee9c9d
 description: "Detects directory replication, SIDHistory or identity-attribute mutation requiring source-host triage."
 severity: high
 procedure_ids: ["P15", "P29"]

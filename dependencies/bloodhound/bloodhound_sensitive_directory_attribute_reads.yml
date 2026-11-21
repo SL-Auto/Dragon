@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_sensitive_directory_attribute_reads
 canonical_path: detections/bloodhound/yaral/bloodhound_sensitive_directory_attribute_reads.yaral
-canonical_sha256: 360c4cc902c4251d92038c4fb53a080a4b29a5ed166eef32fbf7657df83834d9
+canonical_sha256: 22731dca59be7028bbe691704f90c62cf9c699ad7538e560ca2fc71fd15d4355
 description: "Detects LDAP searches requesting security descriptors (by named attribute or SD_FLAGS control) or AD CS relationship attributes."
 severity: high
 procedure_ids: ["BH-003", "BH-005"]

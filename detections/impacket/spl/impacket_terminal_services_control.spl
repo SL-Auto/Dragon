@@ -11,7 +11,7 @@
 # assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
 # schema_profile: schemas/splunk-cim.yml
 index=<configured_index>
-| where in(coalesce('metadata.product_event_type','metadata.event_type'), "23", "24", "25", "4778", "4779")
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "23", "24", "4779")
 | eval canonical_rule="impacket_terminal_services_control"
 | stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
 | where count > 0

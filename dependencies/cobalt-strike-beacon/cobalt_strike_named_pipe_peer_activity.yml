@@ -2,13 +2,13 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_named_pipe_peer_activity
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_named_pipe_peer_activity.yaral
-canonical_sha256: 5d8dd04225288eba55e28ed5ebf75eff4a0207f095c377d72755231caee04b25
+canonical_sha256: aade85bc70f6045c962ec1d713ba190c81c32b343feb72c3e4ac791427faf0b6
 description: "Surfaces named-pipe create/connect activity from an unsigned or rare process, including SMB peer-channel hypotheses without relying on mutable pipe names."
 severity: medium
 procedure_ids: ["CSB-007"]
 validation_status: "needs_validation"
 telemetry_prerequisites: "Normalize Sysmon 17/18 or EDR PIPE_CREATE/PIPE_CONNECT with process path, signer/prevalence, host, pipe and peer when networked."
-atomic_event_types: ["17", "18", "PIPE_CONNECT", "PIPE_CREATE"]
+atomic_event_types: ["17", "18", "NAMED_PIPE_CONNECTION", "NAMED_PIPE_CREATION", "PIPE_CONNECT", "PIPE_CREATE"]
 required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "principal.process.file.is_signed", "principal.process.file.prevalence"]
 correlation_window: ""
 uses_multi_event_correlation: false
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Browsers, management agents, database clients, service frameworks and endpoint security."
 references: "reports/cobalt-strike-beacon/source-analysis.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_named_pipe_peer_activity.spl", sha256: abe5f1c45ba23e826b8f45725aba99d11e938e4c3ff10c82871d52a4da7d1320, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_named_pipe_peer_activity.kql", sha256: 3c5a1e49d98a61d937fe0e7bedd25712e3e5018622142ef9bc2e207f3ba99125, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_named_pipe_peer_activity.sql", sha256: b703b3351813d6b568c37b06c7709c16080807b7d2a14a79317d58fdb30d3d4e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_named_pipe_peer_activity.eql", sha256: 812f9b478f9c287c4d647faa0421216a9062b80ea57e13549adff4712b1e45f4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_named_pipe_peer_activity.yml", sha256: d4500b8e86f24490b7dd33c4aaafced441bca556a7e52d5083ab7ddd05896a9c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_named_pipe_peer_activity.spl", sha256: 5e5a39395452735005c612621f452153ae0ed069665e2bd9f4d5e553a4d78ad6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_named_pipe_peer_activity.kql", sha256: 2a9a6cf6afd2259452be89829173dfece0eac97638e36c37f35595d0e55da89c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_named_pipe_peer_activity.sql", sha256: de03ceb488a85402c6661239a80cb6fd3ba734f1a9db5194d3ca9ac0fd782fed, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_named_pipe_peer_activity.eql", sha256: 0a78a62b4ba6cea08ae4556b28f041574918ed6b8f52a7f56a82de4d97b636a8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_named_pipe_peer_activity.yml", sha256: ecc8e256da4205a1edc782b43fdef9de341c83a6ef401ef389796ffabc06e4aa, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

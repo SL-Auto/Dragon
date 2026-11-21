@@ -17,7 +17,7 @@ procedures:
   - { id: IMP-02, name: SMB listener, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_unusual_protocol_listener] }
   - { id: IMP-03, name: service execution and control, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_service_binary_sequence, impacket_suspicious_service_control] }
   - { id: IMP-04, name: scheduled task execution, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_rapid_scheduled_task_create_and_run] }
-  - { id: IMP-05, name: WMI and DCOM execution or query, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_wmi_activity] }
+  - { id: IMP-05, name: WMI and DCOM execution or query, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_wmi_activity, impacket_wmi_activity_operational_class_signal] }
   - { id: IMP-06, name: WMI persistence, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_wmi_subscription_change] }
   - { id: IMP-07, name: account and group change, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_account_or_group_change] }
   - { id: IMP-08, name: account and system discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_rpc_discovery] }
@@ -30,9 +30,9 @@ procedures:
   - { id: IMP-15, name: service authentication and query, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_unusual_service_authentication] }
   - { id: IMP-16, name: RPC discovery and specialized interfaces, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_rpc_discovery] }
   - { id: IMP-17, name: Exchange operations, telemetry_status: assessed, detection_status: blocked_source, detection_rules: [] }
-  - { id: IMP-18, name: Terminal Services control, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_terminal_services_control] }
+  - { id: IMP-18, name: Terminal Services control, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_terminal_services_control, impacket_terminal_services_session_control_by_other_actor] }
   - { id: IMP-19, name: packet construction and capture, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_packet_capture_or_raw_socket] }
   - { id: IMP-20, name: local parsing and conversion, telemetry_status: assessed, detection_status: not_observable, detection_rules: [] }
-  - { id: IMP-21, name: authentication relay, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_cross_source_ntlm_relay] }
+  - { id: IMP-21, name: authentication relay, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_cross_source_ntlm_relay, impacket_ntlm_relay_with_privileged_effect] }
   - { id: IMP-22, name: special exploit and privilege paths, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_privilege_path_effects] }
 completion: { total_procedures: 22, detected: 19, not_observable: 2, blocked_source: 1, unassessed: 0, comprehensive_for_revision: true }

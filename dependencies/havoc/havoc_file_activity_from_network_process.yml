@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_file_activity_from_network_process
 canonical_path: detections/havoc/yaral/havoc_file_activity_from_network_process.yaral
-canonical_sha256: ad641045eb768c3981522af3392a313c1e526c3119e42901ca1df99b77e84c9d
+canonical_sha256: 289873c36c7929dc36544981dfede181d23fd4406b480aed951f46f733083c8c
 description: "A network-active process performs file collection, staging, mutation or deletion"
 severity: medium
 procedure_ids: ["HV-P06", "HV-P07", "HV-P08"]

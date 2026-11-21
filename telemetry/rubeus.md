@@ -3,7 +3,7 @@
 ## Scope
 
 - Tool revision: `74215f68ea70bd6a66c008da91bf5fe21d20b154`
-- Detection files: 13 one-rule-per-file detections under `detections/rubeus/yaral/`
+- Detection files: 17 one-rule-per-file detections under `detections/rubeus/yaral/`
 - Generated/reviewed: 2026-08-15
 - Status: `complete_for_experimental_rules`
 
@@ -34,6 +34,10 @@
 | `rubeus_ticket_artifact_access_or_creation` | PROC-008,PROC-009,PROC-010,PROC-013 | See consolidated plan by event/provider | Normalize EDR file read/create events with process, user, path, extension, and signer. | signer, prevalence, asset role, approved source/account and maintenance window | Rule cannot match or loses causal/contextual strength when required fields are absent |
 | `rubeus_ticket_use_without_credible_kdc_issue` | PROC-008,PROC-009 | See consolidated plan by event/provider | Centralize complete 4769 telemetry and resource-side Kerberos service-use/PAC anomaly data with normalized user, source, and service. | signer, prevalence, asset role, approved source/account and maintenance window | Rule cannot match or loses causal/contextual strength when required fields are absent |
 | `rubeus_unusual_kerberos_password_change` | PROC-012 | See consolidated plan by event/provider | Normalize account-management password-change events and process-attributed network connections to Kerberos password-change service where available. | signer, prevalence, asset role, approved source/account and maintenance window | Rule cannot match or loses causal/contextual strength when required fields are absent |
+| `rubeus_lsa_encoded_ticket_retrieval` | PROC-006 | TEL-002 | EDR LsaCallAuthenticationPackage events with Kerberos message type, result, caller process ID, host and target LUID | caller logon LUID for cross-session comparison | standard Windows logs do not expose LSA package calls; no EDR API telemetry means no detection |
+| `rubeus_lsa_ticket_submission` | PROC-007 | TEL-002 | EDR LsaCallAuthenticationPackage KerbSubmitTicket events with result, caller process ID, host and target LUID | approved ticket-broker inventory | same as above |
+| `rubeus_rc4_service_ticket_fanout` | PROC-002,004 | TEL-001 | DC Security 4769 with TicketEncryptionType, Status, source IP, requesting account and service name from every DC | approved legacy-RC4 service enrichment (fails open) | missing DCs undercount fan-out; AES-only environments make RC4 requests rare and higher-signal |
+| `rubeus_ticket_renewal_anomaly` | PROC-002 | TEL-001 | DC Security 4770 with source IP, account and service from every DC | renewal baseline per account | low-rate automatic renewal is indistinguishable from native LSA renewal (REVIEW-009) |
 
 ## Deployment order
 
@@ -53,6 +57,8 @@
 - [ ] Collection volume, privacy, and access controls were reviewed.
 
 ## Unresolved telemetry gaps
+
+- 2026-11-21: LSA package-call rules depend on vendor EDR API telemetry (REVIEW-003). Low-rate tool auto-renewal is not separable from native renewal in 4770 (REVIEW-009).
 
 - Rules remain experimental until tenant-specific parser mappings and representative fixtures are validated.
 - Vendor-specific EDR events must not be assumed present; disable dependent rules when the mapping is unavailable.

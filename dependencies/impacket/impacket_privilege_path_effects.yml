@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_privilege_path_effects
 canonical_path: detections/impacket/yaral/impacket_privilege_path_effects.yaral
-canonical_sha256: aa2f8752c5d35ad62810ac6e41a89d1ff0dcff2e269d9ba447aa67e73afce627
+canonical_sha256: 608b408e1c73496bc9dfc5e2d5f25b57d5520b26c269eeadb921797cff3c4ac6
 description: "Detects correlated directory privilege changes and anomalous Kerberos ticket use."
 severity: high
 procedure_ids: ["IMP-22"]

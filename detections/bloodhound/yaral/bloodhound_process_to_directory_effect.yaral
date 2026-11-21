@@ -1,31 +1,30 @@
 rule bloodhound_process_to_directory_effect {
   meta:
     author = "Detection Research Agent"
-    description = "Detects a process launch followed by confirmed multi-object LDAP, Graph or ARM enumeration from the same process entity, independent of process prevalence, signer status or executable path, compensating for bloodhound_collector_process_network_context's dependence on rarity and connection count."
-    date = "2026-08-16"
+    description = "Detects one endpoint process entity issuing LDAP searches against many distinct directory objects or search bases, independent of process prevalence, signer, executable path or a preceding launch event, compensating for bloodhound_collector_process_network_context's dependence on rarity and connection count."
+    date = "2026-11-21"
     status = "experimental"
     severity = "MEDIUM"
-    severity_rationale = "Confirmed object-level enumeration from a launched process is a stronger effect signal than connection count alone but still overlaps legitimate identity tooling."
+    severity_rationale = "Process-attributed object-level directory enumeration is a stronger effect signal than connection count and survives signed, prevalent or long-lived host processes, but overlaps legitimate identity and management tooling."
     procedure_ids = "BH-001"
-    log_source_prerequisites = "EDR process launch with stable process entity ID plus process-attributed LDAP_SEARCH, MicrosoftGraphActivityLogs or AZURE_RESOURCE_READ events carrying resolved object/resource identity."
-    false_positives = "Identity inventory, endpoint management, directory administration and cloud governance tooling, including signed and prevalent software."
-    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_collector_process_network_context.md"
+    log_source_prerequisites = "Endpoint-attributed LDAP_SEARCH telemetry (EDR LDAP query events) with host, stable process entity identifier, process path, account, and search base DN or per-result object identity normalized to target.resource.name. Cloud audit logs are not process-attributed and are out of scope for this rule."
+    false_positives = "Identity inventory, endpoint management, directory administration consoles, backup and migration tooling, including signed and prevalent software; domain-joined services resolving many group or SID references."
+    references = "reports/bloodhound/source-analysis.md#bh-001, public-rules/comparisons/bloodhound/bloodhound_collector_process_network_context.md, reviews/bloodhound/detection-review.md#bh-dr-16"
     validation_status = "needs_validation"
-    validation_method = "Use sanitized process/query fixtures for approved identity inventory software including signed and newly seen executables."
-    review_status = "reviewed_with_gaps"
+    validation_method = "Replay sanitized EDR LDAP fixtures for a newly launched process, a long-running process, and approved directory tooling at the 25-object boundary; confirm PID-reuse handling with the vendor's stable process entity identifier."
+    review_status = "reviewed"
     review_reference = "reviews/bloodhound/detection-review.md"
   events:
-    $p.metadata.event_type = "PROCESS_LAUNCH"
-    $p.principal.hostname = $host
-    $p.target.process.product_specific_process_id = $pid
-    $q.metadata.product_event_type = /(LDAP_SEARCH|MicrosoftGraphActivityLogs|AZURE_RESOURCE_READ)/
+    $q.metadata.product_event_type = /^LDAP_SEARCH$/
     $q.principal.hostname = $host
-    $q.principal.process.product_specific_process_id = $pid
+    $q.principal.process.product_specific_process_id = $process
     $q.target.resource.name = $object
   match:
-    $host, $pid over 20m
+    $host, $process over 30m
   outcome:
     $objects = count_distinct($object)
+    $process_paths = array_distinct($q.principal.process.file.full_path)
+    $accounts = array_distinct($q.principal.user.userid)
   condition:
-    $p and $objects >= 25
+    $q and $objects >= 25
 }

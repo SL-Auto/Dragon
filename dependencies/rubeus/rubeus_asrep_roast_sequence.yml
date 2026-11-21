@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_asrep_roast_sequence
 canonical_path: detections/rubeus/yaral/rubeus_asrep_roast_sequence.yaral
-canonical_sha256: a61074793e9cd077527eb94cab74d29e00008a858ebdca4747b5512dfe52eca3
+canonical_sha256: c083b11b86d7df5571ad9071069c797b9fb9cd7d8733c37e0c314fadd928f338
 description: "Detects one source requesting no-preauthentication AS responses for multiple accounts."
 severity: high
 procedure_ids: ["PROC-003"]

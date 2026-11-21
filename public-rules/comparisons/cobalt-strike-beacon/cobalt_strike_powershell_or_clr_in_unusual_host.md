@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/base64_encoded_powershell_command_detected.yaral`](../../snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/base64_encoded_powershell_command_detected.yaral) - SHA-256 `9d5911d5aa2803b1ee3765ac1e2ba7c3a84591b6473b3a6c6d7d97aeadf25529`
+- [`public-rules/snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/base64_encoded_powershell_command_detected.yaral`](../../snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/base64_encoded_powershell_command_detected.yaral) - SHA-256 `9d5911d5aa2803b1ee3765ac1e2ba7c3a84591b6473b3a6c6d7d97aeadf25529`
 
 ## Procedure and detection-branch matrix
 
@@ -48,12 +48,15 @@ The canonical rule has broader tool-independent intent, but CLR initialization i
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
-
+- Candidate improvement: independently add the missing procedure branch shown in the proposal; no public predicate is copied.
+- Independent verification (2026-11-21): checked against source analysis, provider field semantics and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: the proposal was copied into canonical YARA-L on 2026-08-16 while this trail read `deferred_pending_rule_improvement_run`, a non-terminal state the workflow prohibits. It is re-decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real, but adversarial review found defects in the proposal as written; the adopted rule diverges as follows:
+  - Added a native Windows host-binary branch for the sacrificial-process pattern; the unsigned/rare OR became AND (DR-18).
+  - `msiexec` excluded because managed installer custom actions load the CLR.
+- Canonical result: `detections/cobalt-strike-beacon/yaral/cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal.yaral`, SHA-256 `dca5a4ce3836fd4bcc4aeb8422c302d23205749e37aa763427fb84494a3d0515`. The original proposal is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration completed in the same run: detection review, coverage ledger, tool telemetry file, `telemetry/MASTER.md` counts, all five translations, translation review, dependency/manifest hashes, and the re-comparison below.
 ## Unmatched scope
 
 The public candidate does not cover all branches in `CSB-015,CSB-017`. Conversely, the canonical rule is not evidence of Cobalt Strike attribution and may detect other tooling with equivalent effects.
@@ -88,3 +91,54 @@ rule cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Revised rule SHA-256 `dca5a4ce3836fd4bcc4aeb8422c302d23205749e37aa763427fb84494a3d0515`, compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/community/microsoft/windows/base64_encoded_powershell_command_detected.yaral` differs from the prior revision only in tag metadata or line endings; its detection logic is unchanged.
+
+| Procedure branch / observable effect | Revised ours | Public | Primary signal and strength | Compensating signal | Coverage conclusion | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| CLR loaded into a spawned native signed host binary | covered by host-binary branch | `base64_encoded_powershell_command_detected.yaral`: narrower implementation-specific context (original matrix); candidate not re-assessed beyond re-pinning | CLR in non-.NET native host - strong | runtime telemetry base rule - moderate | complementary | Revised canonical rule, re-pinned candidate, `reviews/cobalt-strike-beacon/detection-review.md`. |
+| CLR loaded into an unsigned, rare custom host | covered when both enrichments agree | `base64_encoded_powershell_command_detected.yaral`: narrower implementation-specific context (original matrix); candidate not re-assessed beyond re-pinning | unsigned and rare CLR host - moderate | base rule - moderate | complementary | Revised canonical rule, re-pinned candidate, `reviews/cobalt-strike-beacon/detection-review.md`. |
+
+- Final adopted YARA-L (canonical, `experimental` / `needs_validation`):
+
+```yaral
+rule cobalt_strike_powershell_or_clr_in_unusual_host_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects CLR/CoreCLR module load either into a native Windows host binary that is not a .NET application (the sacrificial-process pattern used for in-memory assembly execution) or into a process that is both unsigned and rare, providing an alternate detection path when runtime-expected/CLR_RUNTIME_LOAD telemetry is unavailable."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "CLR loading into an unsigned or rare host process is a strong unmanaged-assembly-execution signal, though legitimate custom .NET hosts and management agents can match."
+    procedure_ids = "CSB-015,CSB-017"
+    log_source_prerequisites = "Normalize MODULE_LOAD (Sysmon 7 or EDR image load) for clr.dll/coreclr.dll with loading process image path, signer and prevalence."
+    false_positives = "Custom .NET hosts, IDEs, installers, and management agents that legitimately embed the CLR in an uncommon or unsigned process."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_powershell_or_clr_in_unusual_host.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized approved custom-CLR-host fixtures to confirm the signer/prevalence gate against known-legitimate embedders."
+    review_status = "reviewed"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_powershell_or_clr_in_unusual_host"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_powershell_or_clr_in_unusual_host.md"
+    modification_note = "Proposal accepted with required changes: replaced the invented additional.fields['process_signed']/['process_prevalence'] pair with the native principal.process.file.is_signed/prevalence fields already used by every other signer/rarity check in this rule family, and dropped an unused process_hash match window that had no aggregation function referencing it in the condition."
+  events:
+    $e.metadata.event_type = "MODULE_LOAD"
+    $e.principal.hostname = $host
+    re.regex($e.target.file.full_path, `(?i)\\(clr|coreclr)\.dll$`)
+    (
+      re.regex($e.principal.process.file.full_path, `(?i)\\(rundll32|dllhost|regsvr32|werfault|searchprotocolhost|gpupdate|spoolsv|notepad|svchost|wuauclt|mstsc)\.exe$`) or
+      ($e.principal.process.file.is_signed = false and $e.principal.process.file.prevalence = "RARE")
+    )
+  match:
+    $host over 10m
+  outcome:
+    $host_processes = array_distinct($e.principal.process.file.full_path)
+  condition:
+    $e
+}
+```
+
+- Re-comparison outcome: the revised rule closes the branch the proposal targeted, within its declared telemetry. Remaining limits are the accepted gaps in `reviews/cobalt-strike-beacon/detection-review.md`, each with a named compensating rule.

@@ -1,0 +1,22 @@
+// source_yaral: detections/rubeus/yaral/rubeus_lsa_ticket_submission.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: rubeus_lsa_ticket_submission
+// severity: high
+// procedure_ids: PROC-007
+// description: Detects a successful Kerberos ticket submission into an LSA logon session through LsaCallAuthenticationPackage, separated from lower-confidence cache-purge activity.
+// log_source_prerequisites: EDR must expose LsaCallAuthenticationPackage API calls with Kerberos message type, a success/failure result, and the target LUID; caller process, user, and host are required for triage.
+// false_positives: SSO and identity middleware, credential-isolation software, and authorized red-team/IR tooling that submits tickets into a logon session.
+// references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_mutation.md
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (product_event_type, hostname, process_id, process_path, api_name, kerberos_message_type, result, target_luid); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native filter, grouping by hostname, process_id and threshold. Hop window approximated by scheduling every 5 minutes over the trailing 10 minutes. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+NormalizedEvents
+| where TimeGenerated > ago(10m)
+| where product_event_type == "EDR_API_CALL"
+    and api_name == "LsaCallAuthenticationPackage"
+    and kerberos_message_type matches regex @"(?i)^KerbSubmitTicket(Message)?$"
+    and result == "ALLOW"
+| summarize MatchedCount = count(), target_luid_values = make_set(target_luid, 20), process_path_values = make_set(process_path, 20) by hostname, process_id
+| where MatchedCount >= 1
+| extend CanonicalRule = "rubeus_lsa_ticket_submission"

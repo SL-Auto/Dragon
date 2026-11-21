@@ -2,17 +2,17 @@ rule cobalt_strike_sensitive_file_activity_compensating_signal {
   meta:
     author = "Detection Research Agent"
     description = "Aggregates sensitive-file reads by user and host across processes and correlates them with archive creation by the same user/host, covering multi-process collection where one process stages files and another compresses or transmits them."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "Several sensitive-file reads followed by an archive-file write from the same user/host is a strong staging-for-exfiltration signal, though backup, indexing and synchronization tools produce legitimate collection-to-archive sequences."
     procedure_ids = "CSB-024,CSB-025"
-    log_source_prerequisites = "Normalize FILE_READ with sensitivity classification, and FILE_WRITE for archive-extension targets, joined on host and user within 30 minutes."
+    log_source_prerequisites = "Normalize FILE_READ with sensitivity classification, and FILE_CREATION/FILE_MODIFICATION for archive-extension targets, joined on host and user within 30 minutes, at least one read before the archive write."
     false_positives = "Backup, synchronization, DLP, indexing, and document-management tools that read multiple sensitive files and then write compressed archives."
     references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_file_activity.md"
     validation_status = "needs_validation"
     validation_method = "Use non-sensitive test documents labelled as sensitive plus fabricated archive-write events representative of backup/sync tooling."
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
     compensates_for = "cobalt_strike_sensitive_file_activity"
     source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_file_activity.md"
@@ -23,12 +23,15 @@ rule cobalt_strike_sensitive_file_activity_compensating_signal {
     $read.principal.user.userid = $user
     $read.target.file.full_path = $source_file
     $read.target.file.sensitivity = "HIGH"
-    $archive.metadata.event_type = "FILE_WRITE"
+    $archive.metadata.event_type = /^(FILE_CREATION|FILE_MODIFICATION|FILE_WRITE)$/
     $archive.principal.hostname = $host
     $archive.principal.user.userid = $user
     re.regex($archive.target.file.full_path, `(?i)\.(zip|7z|rar)$`)
+    $read.metadata.event_timestamp.seconds <= $archive.metadata.event_timestamp.seconds
   match:
     $host, $user over 30m
+  outcome:
+    $files = count_distinct($source_file)
   condition:
-    $read and $archive and #source_file >= 5
+    $read and $archive and $files >= 5
 }

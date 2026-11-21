@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_socket_fanout_or_forwarding_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.yaral
-canonical_sha256: e3ba110d2a6eef3cbd778e21f9cca0904c064ad74694c53e85d9ba5abebb0e04
+canonical_sha256: 0c20a1438e4bb0b750868e630545a3c15c21307c02b53553d7d8f1d9586d4787
 description: "Correlates an inbound connection to a process with that same process subsequently creating multiple distinct outbound connections, detecting the relay/forwarding topology that the base outbound-only fan-out rule cannot express."
 severity: high
 procedure_ids: ["CSB-009"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "Normalize NETWORK_CONNECTION for both inbound and outbound direction with a stable process entity identifier, joined on host and process entity within 15 minutes."
+telemetry_prerequisites: "Normalize NETWORK_CONNECTION for both inbound and outbound direction with a stable vendor process identifier (product_specific_process_id), joined on host and process within 15 minutes, inbound first."
 atomic_event_types: ["NETWORK_CONNECTION"]
-required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.entity_id", "target.ip", "target.process.entity_id"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id", "target.ip", "target.process.product_specific_process_id"]
 correlation_window: "15m"
 uses_multi_event_correlation: true
-uses_aggregation: false
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Browsers, approved proxies, EDR, backup, and orchestration agents that legitimately combine inbound acceptance with outbound fan-out."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_socket_fanout_or_forwarding.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.spl", sha256: e861eb01d2450eb364b0f05a7eb9d3dd7a84d3c57570d9d011e86cef663a6c69, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.kql", sha256: 98ab8c2f44af084fb10bf9420c78460bacbecbb672d4677770b1a2c6a96e3a89, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.sql", sha256: dd03f86831b07295e0ee685dd526eaead598724aae204c7385d039e59fa54ff1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.eql", sha256: 8043bc9e16954efd82a88665b319bad8ef93a6041609b9ee744b93926692717c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.yml", sha256: 4848f711e1a5c31a7330d6505b86f873ff0172e538a9cd429ca0d3af387d4b26, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

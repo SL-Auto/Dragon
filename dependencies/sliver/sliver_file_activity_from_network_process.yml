@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_file_activity_from_network_process
 canonical_path: detections/sliver/yaral/sliver_file_activity_from_network_process.yaral
-canonical_sha256: 7bc97d7f36f98463ce7c984c4203a230eefa7b45e0b835c336042b7e2797ff9c
+canonical_sha256: d7aef3488a738edc1852067a77cbb6afcafcccf543e6534ba055f248154a2b54
 description: "File read or mutation by an outbound-network process"
 severity: medium
 procedure_ids: ["PROC-007", "PROC-008", "PROC-009"]

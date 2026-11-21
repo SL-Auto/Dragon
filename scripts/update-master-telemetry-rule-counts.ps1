@@ -39,13 +39,20 @@ $aliases = @{
 }
 
 function Test-RuleDependency([string]$text, [string]$provider, [string]$eventType) {
+    # A telemetry dependency is expressed by the rule's events-section predicates or by its
+    # documented normalized aliases in log_source_prerequisites. Other meta prose (description,
+    # false positives, validation notes) must not create one, and event identifiers are matched
+    # case-sensitively so ordinary words such as "path" cannot match an event type such as PATH.
+    $events = [regex]::Match($text, '(?ms)^\s*events:[^\n]*\n(.*?)^\s*(match|outcome|condition|options):').Groups[1].Value
+    $prerequisites = [regex]::Match($text, '(?m)^\s*log_source_prerequisites\s*=\s*"([^"]*)"').Groups[1].Value
+    $text = $events + "`n" + $prerequisites
     $tokens = @($eventType)
     $key = "$provider|$eventType"
     if ($aliases.ContainsKey($key)) { $tokens += $aliases[$key] }
     foreach ($token in ($tokens | Select-Object -Unique)) {
         if ($token -match '^\d{1,2}$') { continue }
-        $pattern = if ($token -match '^\d+$') { '(?<!\d)' + [regex]::Escape($token) + '(?!\d)' } else { '(?i)(?<![A-Za-z0-9_])' + [regex]::Escape($token) + '(?![A-Za-z0-9_])' }
-        if ($text -match $pattern) { return $true }
+        $pattern = if ($token -match '^\d+$') { '(?<!\d)' + [regex]::Escape($token) + '(?!\d)' } else { '(?<![A-Za-z0-9_])' + [regex]::Escape($token) + '(?![A-Za-z0-9_])' }
+        if ($text -cmatch $pattern) { return $true }
     }
     return $false
 }

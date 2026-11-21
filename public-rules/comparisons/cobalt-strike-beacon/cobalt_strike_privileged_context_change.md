@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/privilege_escalation_tokenmanip_sedebugpriv_enabled.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/privilege_escalation_tokenmanip_sedebugpriv_enabled.toml) - SHA-256 `66429a12ee26c63892341e2f91d2b7c171da9ad9f30fabd2ac613e5a069d5b6d`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/privilege_escalation_tokenmanip_sedebugpriv_enabled.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/privilege_escalation_tokenmanip_sedebugpriv_enabled.toml) - SHA-256 `6e8f7a7fb4ce7a4c2dd84b21d8be310b5dfb5a8c3c216bb4d4458e6f9f946735`
 
 ## Procedure and detection-branch matrix
 
@@ -48,12 +48,15 @@ The canonical rule has broader tool-independent intent, but specific dangerous p
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
-
+- Candidate improvement: independently add the missing procedure branch shown in the proposal; no public predicate is copied.
+- Independent verification (2026-11-21): checked against source analysis, provider field semantics and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: the proposal was copied into canonical YARA-L on 2026-08-16 while this trail read `deferred_pending_rule_improvement_run`, a non-terminal state the workflow prohibits. It is re-decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real, but adversarial review found defects in the proposal as written; the adopted rule diverges as follows:
+  - Enforced first-event-before-second ordering (DR-15).
+  - Host added to the second event.
+- Canonical result: `detections/cobalt-strike-beacon/yaral/cobalt_strike_privileged_context_change_compensating_signal.yaral`, SHA-256 `4e90d6b451b096ac717a0fe97556b3411e33463da11095b2b44e0b08e731012a`. The original proposal is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration completed in the same run: detection review, coverage ledger, tool telemetry file, `telemetry/MASTER.md` counts, all five translations, translation review, dependency/manifest hashes, and the re-comparison below.
 ## Unmatched scope
 
 The public candidate does not cover all branches in `CSB-011`. Conversely, the canonical rule is not evidence of Cobalt Strike attribution and may detect other tooling with equivalent effects.
@@ -90,3 +93,52 @@ rule cobalt_strike_privileged_context_change_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Revised rule SHA-256 `4e90d6b451b096ac717a0fe97556b3411e33463da11095b2b44e0b08e731012a`, compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- Between 7e91c15 and 9d792a8 the candidate added 12 process exclusions (dllhost, w3wp, netsh, netstat, RuntimeBroker, taskkill, tasklist; System32 and SysWOW64). This narrows the public rule's coverage of the privilege-enable branch and does not affect our decision.
+
+| Procedure branch / observable effect | Revised ours | Public | Primary signal and strength | Compensating signal | Coverage conclusion | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| SeDebugPrivilege enable then open of lsass/winlogon | covered, ordered | `privilege_escalation_tokenmanip_sedebugpriv_enabled.toml`: narrower implementation-specific context (original matrix); candidate not re-assessed beyond re-pinning | privilege-to-protected-process sequence - strong | base 4672/token rule - weak | complementary | Revised canonical rule, re-pinned candidate, `reviews/cobalt-strike-beacon/detection-review.md`. |
+
+- Final adopted YARA-L (canonical, `experimental` / `needs_validation`):
+
+```yaral
+rule cobalt_strike_privileged_context_change_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates SeDebugPrivilege enablement on a process with that same process subsequently opening a protected process (lsass.exe or winlogon.exe), closing the causal gap left by the base rule's standalone 4672/token-change signal."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Enabling SeDebugPrivilege and then opening a protected process is a specific, dangerous, ordered sequence, though EDR, backup and diagnostic tools legitimately do the same."
+    procedure_ids = "CSB-011"
+    log_source_prerequisites = "Normalize TOKEN_PRIVILEGE_CHANGE with the enabled privilege name, and PROCESS_OPEN with target image path, joined on host and PID within 10 minutes."
+    false_positives = "EDR, debuggers, backup/VSS tooling, and administrative diagnostic utilities that enable SeDebugPrivilege before inspecting system processes."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_privileged_context_change.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized privilege-enablement events from legitimate EDR/backup tooling paired with protected-process opens to confirm expected benign matches are understood before enabling."
+    review_status = "reviewed"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_privileged_context_change"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_privileged_context_change.md"
+  events:
+    $priv.metadata.event_type = "TOKEN_PRIVILEGE_CHANGE"
+    $priv.principal.hostname = $host
+    $priv.additional.fields["privilege_name"].value.string_value = "SeDebugPrivilege"
+    $priv.principal.process.product_specific_process_id = $pid
+    $open.metadata.event_type = "PROCESS_OPEN"
+    $open.principal.hostname = $host
+    $open.principal.process.product_specific_process_id = $pid
+    re.regex($open.target.process.file.full_path, `(?i)\\(lsass|winlogon)\.exe$`)
+    $priv.metadata.event_timestamp.seconds <= $open.metadata.event_timestamp.seconds
+  match:
+    $host, $pid over 10m
+  condition:
+    $priv and $open
+}
+```
+
+- Re-comparison outcome: the revised rule closes the branch the proposal targeted, within its declared telemetry. Remaining limits are the accepted gaps in `reviews/cobalt-strike-beacon/detection-review.md`, each with a named compensating rule.

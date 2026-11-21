@@ -4,12 +4,20 @@ All notable agent capabilities and workflow changes are recorded here. The struc
 
 ## Unreleased
 
+- Include historical daily run narratives and the root-level 2026-08-22 findings report in knowledge retrieval.
+
 ### Fixed
 
+- Anchored unanchored short event-ID alternations in canonical YARA-L (for example `/(4778|4779|23|24|25)/`), which matched any ID containing those digits, such as 4625, 4720 and 1102. A repository-wide search now finds none remaining.
 - Removed two invented, structurally unresolvable workflow states that had stalled 100% of the translation backlog and 87% of public-rule comparisons: `backend_validation: pending_external_mapping` (waited on a human analyst who never validates output in this pipeline) and comparison `Decision: deferred_pending_rule_improvement_run` (waited on a future run that was never scheduled to sweep it). `scripts/update-context-index.ps1` no longer fabricates these into `state/work-items.yml` and manifests; it instead reports the real per-rule `validation_status` labels already present in each rule's metadata. AGENTS.md step 17 and the quality gates now explicitly prohibit deferred/non-terminal comparison decisions and state that `experimental`/`needs_validation` is a legitimate, permanent terminal label for this pipeline rather than an incomplete state pending human sign-off.
+- `scripts/update-master-telemetry-rule-counts.ps1` no longer counts a rule as depending on an event type because the type's name appears in meta prose. Dependencies are now taken only from the rule's `events:` section and its `log_source_prerequisites` (documented normalized aliases), with case-sensitive identifier matching. This removes false `telemetry/MASTER.md` dependencies such as every rule mentioning "path" under Linux auditd `PATH`, or "authentication" under Exchange `AUTHENTICATION`.
+- Moved the one-off Cobalt Strike compensating-translation generator from `detections/cobalt-strike-beacon/` to `scripts/generate-cobalt-strike-compensating-translations.ps1` (path roots adjusted). Its location outside a recognized format directory had failed repository validation since 2026-08-23.
 - Prevented telemetry card labels from growing on repeated filter clicks by removing a non-idempotent wording substitution and adding a regression test for repeated renders.
 
 ### Added
+
+- `scripts/native_translations/`: a deterministic renderer and per-rule correlation specs that regenerate native secondary translations. KQL/SQL get exact ordered joins, SPL a stats correlation, EQL `sequence ... by` with per-event keys, and Sigma `temporal_ordered`/`value_count` correlations with aliases. Covers 29 rules that previously had no translations.
+- Historical run logs and action journals were migrated to the validated format at the owner's request. Originals are preserved in `runs/_pre-migration-20261121/`; receipts were cited only where the local receipt store holds them.
 
 - Replaced the telemetry workflow with two direct, sortable work queues: log data priorities ranked by dependent rule count with explicit Have/Missing state, and the reverse rule-readiness view ranked by missing required event types. Both views support search, state, tool, severity, log-source, and ordering controls as applicable.
 - Reduced telemetry workspace complexity with progressive-disclosure views: a decision-focused requirements overview, a separate searchable atomic inventory, and a two-step availability lab separating collection inputs from coverage impact while preserving scenario state.

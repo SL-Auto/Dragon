@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_sensitive_store_access
 canonical_path: detections/mimikatz/yaral/mimikatz_sensitive_store_access.yaral
-canonical_sha256: e1f61851fd7cdaf8a7a1c774e8869901322a43f4e86232cc8c45974e1f7e3aa3
+canonical_sha256: 42178bad29b53d23cdabb1efdc6876757736e118f66f3dc868218dcfbc8679b7
 description: "Detects one process reading credential, key, DPAPI, IIS, SCCM, Citrix, browser or RDM stores."
 severity: medium
 procedure_ids: ["P18", "P19", "P20", "P23", "P25", "P37", "P41", "P46"]

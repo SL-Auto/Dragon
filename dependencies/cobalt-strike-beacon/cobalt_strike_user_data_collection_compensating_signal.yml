@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_user_data_collection_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_user_data_collection_compensating_signal.yaral
-canonical_sha256: 5b887a179aa3f4c56d3ce9e93611f286d4e963a80ec72bfbc4de943bf2ec416d
+canonical_sha256: 78676c2198e4944fbd3315aee5d8655dc08843a2b569613ede13577f0fcfca74
 description: "Correlates a user-data collection effect (screen, clipboard, input, or browser-secret) with an outbound network connection from the same process shortly afterward, distinguishing collection-then-egress from a single benign access that the base standalone-effect rule cannot separate."
 severity: high
 procedure_ids: ["CSB-027"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "Normalize vendor SCREEN_CAPTURE/CLIPBOARD_READ/INPUT_CAPTURE/BROWSER_SECRET_READ and outbound NETWORK_CONNECTION with a stable process entity identifier, joined on host and process entity within 15 minutes."
-atomic_event_types: ["BROWSER_SECRET_READ", "CLIPBOARD_READ", "INPUT_CAPTURE", "NETWORK_CONNECTION", "SCREEN_CAPTURE"]
-required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.entity_id"]
+telemetry_prerequisites: "Normalize vendor SCREEN_CAPTURE/CLIPBOARD_READ/INPUT_CAPTURE/BROWSER_SECRET_READ and outbound NETWORK_CONNECTION with a stable vendor process identifier (product_specific_process_id), joined on host and process within 15 minutes, collection first."
+atomic_event_types: ["CLIPBOARD_READ", "INPUT_CAPTURE", "NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "network.direction", "principal.hostname", "principal.process.product_specific_process_id"]
 correlation_window: "15m"
 uses_multi_event_correlation: true
-uses_aggregation: false
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Assistive technology, conferencing, remote support, password managers, browsers, and approved monitoring software that both collect and transmit data as part of normal operation."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_user_data_collection.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_user_data_collection_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_user_data_collection_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_user_data_collection_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_user_data_collection_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_user_data_collection_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_user_data_collection_compensating_signal.spl", sha256: d31bfcac89fbb2f1adaacd68018b15c69143c2e993f3c89f4b835a696baf3c76, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_user_data_collection_compensating_signal.kql", sha256: 36aebbba4da8079fb39d9331a39035b1e4fbc206961fdb8c6da6faa11418797c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_user_data_collection_compensating_signal.sql", sha256: de876985dfe20b5ba9347a581efce597955d0cdd1d0f95cefebdc7a4f4fde7f3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_user_data_collection_compensating_signal.eql", sha256: b01a8e382c1c92b3f8c3deacdb7f99835476107f7560e1b34e66f94addb44fe9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_user_data_collection_compensating_signal.yml", sha256: 14aa94ca2892c16ae1f10ea523cf1c9200fbefbb268da9c053164ae319ae9769, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

@@ -1,0 +1,45 @@
+title: "Detects a single identity on one client host retrieving a high volume of distinct directory objects within one naming context over a four-hour window, compensating for single-category or throttled collection that stays under the multi-category fanout threshold of bloodhound_ldap_directory_discovery_fanout."
+name: bloodhound_ldap_deep_single_category_enumeration_base
+status: experimental
+description: "Detects a single identity on one client host retrieving a high volume of distinct directory objects within one naming context over a four-hour window, compensating for single-category or throttled collection that stays under the multi-category fanout threshold of bloodhound_ldap_directory_discovery_fanout."
+source_yaral: "detections/bloodhound/yaral/bloodhound_ldap_deep_single_category_enumeration.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "principal.hostname->src_host/SrcHostname/hostname/source.address; principal.user.userid->user/ActorUsername/user_id/user.id; labels.naming_context->naming_context/NamingContext; labels.result_object_id->result_object_id/ResultObjectId; target.hostname->dest/DvcHostname"
+assumptions_and_gaps: "Base rule selects LDAP result events; the Sigma value_count correlation expresses the distinct-object threshold. Requires a backend that supports Sigma correlations and per-result expansion (BH-DR-10)."
+references:
+  - "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_ldap_directory_discovery_fanout.md, reviews/bloodhound/detection-review.md#bh-dr-10"
+procedure_ids: "BH-002,BH-004"
+log_source_prerequisites: "Directory-side or EDR LDAP_SEARCH/1644 events expanded to per-result object identity (result_object_id label), with client host, account and naming context; summary-only query events cannot satisfy this rule (see reviews/bloodhound/detection-review.md#bh-dr-10)."
+logsource:
+  category: ldap_query
+  product: windows
+detection:
+  selection:
+    EventID|contains:
+      - '1644'
+      - 'LDAP_SEARCH'
+  filter_missing:
+    ResultObjectId: null
+  condition: selection and not filter_missing
+falsepositives:
+  - "Identity governance, directory synchronization, migration tooling and authorized security assessment performing bulk single-category export."
+level: high
+---
+title: "Detects a single identity on one client host retrieving a high volume of distinct directory objects within one naming context over a four-hour window, compensating for single-category or throttled collection that stays under the multi-category fanout threshold of bloodhound_ldap_directory_discovery_fanout."
+name: bloodhound_ldap_deep_single_category_enumeration
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - bloodhound_ldap_deep_single_category_enumeration_base
+  group-by:
+    - SourceHostname
+    - User
+    - NamingContext
+  timespan: 4h
+  condition:
+    field: ResultObjectId
+    gte: 500
+level: high

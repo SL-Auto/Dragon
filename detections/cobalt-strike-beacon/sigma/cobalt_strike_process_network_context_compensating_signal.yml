@@ -1,0 +1,42 @@
+title: "Detects low-variance periodic outbound connections from a rare-prevalence process to a rare destination, adding the classic beacon-interval and destination-novelty dimensions that the base rarity-only fan-in rule does not measure."
+name: cobalt_strike_process_network_context_compensating_signal_base
+status: experimental
+description: "Detects low-variance periodic outbound connections from a rare-prevalence process to a rare destination, adding the classic beacon-interval and destination-novelty dimensions that the base rarity-only fan-in rule does not measure."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_process_network_context_compensating_signal.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, process_sha256, process_prevalence, target_host, interval_variance_bucket, destination_prevalence); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_process_network_context.md"
+procedure_ids: "CSB-001,CSB-002,CSB-005"
+log_source_prerequisites: "Normalize NETWORK_CONNECTION with process hash and prevalence, destination hostname and a destination-prevalence enrichment, and an interval-variance-bucket enrichment derived from inter-connection timing."
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  sel:
+    event_type: "NETWORK_CONNECTION"
+    process_prevalence: "RARE"
+    interval_variance_bucket: "LOW"
+    destination_prevalence: "RARE"
+  condition: sel
+falsepositives:
+  - "Software updaters, telemetry/monitoring agents, and any low-jitter scheduled task that also happens to run from a rare process against a rare destination."
+level: high
+---
+title: "Detects low-variance periodic outbound connections from a rare-prevalence process to a rare destination, adding the classic beacon-interval and destination-novelty dimensions that the base rarity-only fan-in rule does not measure."
+name: cobalt_strike_process_network_context_compensating_signal
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - cobalt_strike_process_network_context_compensating_signal_base
+  group-by:
+    - process_sha256
+    - target_host
+  timespan: 120m
+  condition:
+    gte: 8
+level: high

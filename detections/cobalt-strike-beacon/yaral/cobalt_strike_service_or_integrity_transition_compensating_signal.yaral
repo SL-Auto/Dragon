@@ -2,7 +2,7 @@ rule cobalt_strike_service_or_integrity_transition_compensating_signal {
   meta:
     author = "Detection Research Agent"
     description = "Detects a process launch reaching SYSTEM integrity whose parent process is unsigned or rare and is not an approved elevation broker, providing the causal parent/child relationship that the base rule's standalone 4697/7045/integrity-transition signal does not require."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "An unsigned or rare parent causing a child process at SYSTEM integrity is a specific, dangerous elevation pattern, though installers and approved elevation brokers can legitimately do the same absent the enrichment gate."
@@ -12,7 +12,7 @@ rule cobalt_strike_service_or_integrity_transition_compensating_signal {
     references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_service_or_integrity_transition.md"
     validation_status = "needs_validation"
     validation_method = "Replay sanitized UAC/elevation-broker and installer fixtures to confirm the allowlist enrichment suppresses expected benign elevation paths."
-    review_status = "reviewed_with_gaps"
+    review_status = "reviewed"
     review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
     compensates_for = "cobalt_strike_service_or_integrity_transition"
     source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_service_or_integrity_transition.md"
@@ -21,7 +21,7 @@ rule cobalt_strike_service_or_integrity_transition_compensating_signal {
     $e.metadata.event_type = "PROCESS_LAUNCH"
     $e.target.process.integrity_level = "SYSTEM"
     ($e.principal.process.file.is_signed = false or $e.principal.process.file.prevalence = "RARE")
-    $e.additional.fields["approved_elevation_broker"].value.bool_value = false
+    $e.additional.fields["approved_elevation_broker"].value.bool_value != true
   condition:
     $e
 }

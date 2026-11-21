@@ -1,21 +1,21 @@
-title: "Correlates sustained Graph or ARM reads with local JSON output or service lifecycle effects."
+title: "Correlates sustained, resource-family-diverse Graph or ARM reads with local JSON output or service lifecycle effects on the same host/user."
 name: bloodhound_cloud_collection_output
 status: experimental
-description: "Correlates sustained Graph or ARM reads with local JSON output or service lifecycle effects."
+description: "Correlates sustained, resource-family-diverse Graph or ARM reads with local JSON output or service lifecycle effects on the same host/user."
 source_yaral: "detections/bloodhound/yaral/bloodhound_cloud_collection_output.yaral"
 translation_status: experimental_needs_backend_mapping_and_validation
 fidelity: partial
 schema_profile: schemas/sigma.yml
 assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
 references:
-  - "reports/bloodhound/source-analysis.md"
+  - "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_cloud_collection_output.md"
 procedure_ids: "BH-020"
-log_source_prerequisites: "Process-attributed cloud egress plus file creation or Windows service events joined by host/process."
+log_source_prerequisites: "Process-attributed cloud egress with resource-family enrichment, plus file creation or Windows service events joined by host/user."
 logsource:
   category: generic
 detection:
   selection_event_type:
-    event.code: ["11", "4697", "7045", "AZURE_RESOURCE_READ", "AzureActivity", "FILE_CREATION", "MicrosoftGraphActivityLogs"]
+    event.code: ["4697", "AzureActivity", "FILE_CREATION"]
   condition: selection_event_type
 falsepositives:
   - "Cloud inventory exporters, scheduled governance jobs and authorized AzureHound deployments."

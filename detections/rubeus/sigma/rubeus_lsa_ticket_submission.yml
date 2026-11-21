@@ -1,0 +1,42 @@
+title: "Detects a successful Kerberos ticket submission into an LSA logon session through LsaCallAuthenticationPackage, separated from lower-confidence cache-purge activity."
+name: rubeus_lsa_ticket_submission_base
+status: experimental
+description: "Detects a successful Kerberos ticket submission into an LSA logon session through LsaCallAuthenticationPackage, separated from lower-confidence cache-purge activity."
+source_yaral: "detections/rubeus/yaral/rubeus_lsa_ticket_submission.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, hostname, process_id, process_path, api_name, kerberos_message_type, result, target_luid); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_mutation.md"
+procedure_ids: "PROC-007"
+log_source_prerequisites: "EDR must expose LsaCallAuthenticationPackage API calls with Kerberos message type, a success/failure result, and the target LUID; caller process, user, and host are required for triage."
+logsource:
+  category: api_call
+  product: windows
+detection:
+  sel:
+    product_event_type: "EDR_API_CALL"
+    api_name: "LsaCallAuthenticationPackage"
+    kerberos_message_type|re: "(?i)^KerbSubmitTicket(Message)?$"
+    result: "ALLOW"
+  condition: sel
+falsepositives:
+  - "SSO and identity middleware, credential-isolation software, and authorized red-team/IR tooling that submits tickets into a logon session."
+level: high
+---
+title: "Detects a successful Kerberos ticket submission into an LSA logon session through LsaCallAuthenticationPackage, separated from lower-confidence cache-purge activity."
+name: rubeus_lsa_ticket_submission
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - rubeus_lsa_ticket_submission_base
+  group-by:
+    - hostname
+    - process_id
+  timespan: 10m
+  condition:
+    gte: 1
+level: high

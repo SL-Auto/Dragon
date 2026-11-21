@@ -1,0 +1,17 @@
+// source_yaral: detections/rubeus/yaral/rubeus_lsa_encoded_ticket_retrieval.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: rubeus_lsa_encoded_ticket_retrieval
+// severity: high
+// procedure_ids: PROC-006
+// description: Detects a successful Kerberos encoded-ticket retrieval call through LsaCallAuthenticationPackage, separated from lower-confidence cache enumeration/query activity.
+// log_source_prerequisites: EDR must expose LsaCallAuthenticationPackage API calls with Kerberos message type and a success/failure result; process, user, host, and target LUID are required for triage.
+// false_positives: Klist, SSO components, credential-isolation and IR tooling that legitimately retrieve encoded tickets.
+// references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_cache_operations.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_event_type, hostname, process_id, process_path, api_name, kerberos_message_type, result, target_luid); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where event.code == "EDR_API_CALL"
+  and labels.api_name == "LsaCallAuthenticationPackage"
+  and labels.kerberos_message_type regex~ "^Kerb(RetrieveEncodedTicket|RetrieveTicket)(Message)?$"
+  and labels.result == "ALLOW"

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_protected_sam_system_access_sequence
 canonical_path: detections/mimikatz/yaral/mimikatz_protected_sam_system_access_sequence.yaral
-canonical_sha256: f6a856e4c453840e4c5534b7ceacd6ea86083692c42f13006d7c07e1117a23c7
+canonical_sha256: 3ccb68efc488e04938d08d9ad8080e9eff10bd398c13dabba02fa16990a46850
 description: "Correlates one process accessing protected SYSTEM/LSA and SAM account data."
 severity: high
 procedure_ids: ["P12"]

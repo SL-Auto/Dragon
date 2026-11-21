@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_self_delete_after_egress
 canonical_path: detections/sliver/yaral/sliver_self_delete_after_egress.yaral
-canonical_sha256: 48672c1d40fe2f51cf8acac07ed0199ae9889c4680bc2af27dc3a246bd140e72
+canonical_sha256: d1e9ba00923a48f8a54ff2be52cc9d52b8e056000ba53fb1eb29a43197e77470
 description: "A process with outbound network activity deletes a file matching its own executable hash"
 severity: high
 procedure_ids: ["PROC-002", "PROC-026"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Self-updating software and installers that replace or remove their own binary after execution"
 references: "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_cleanup_after_egress.md"
 translations:
-  spl: { path: "detections/sliver/spl/sliver_self_delete_after_egress.spl", sha256: 038874f154acb1a3e989d9f9481335e7a588978390b74950cce832aa85c97e6d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/sliver/kql/sliver_self_delete_after_egress.kql", sha256: 480b7cbf216fe6f639196b755935d9639cda193dd9e9ebd144208046cf82089a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/sliver/sql/sliver_self_delete_after_egress.sql", sha256: 68e95c0cb336859008682a682fd121d7e6036004ddc9e87859cff60893d71ab4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/sliver/eql/sliver_self_delete_after_egress.eql", sha256: f62a3f4366e00a001ed0869f76b89a1d8e76e42c2d6fa600775e5539d82b5904, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/sliver/sigma/sliver_self_delete_after_egress.yml", sha256: 70ec81cd571695852ff1c0da1babb79334b651d41a131858ae1d63df6f60c558, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/sliver/spl/sliver_self_delete_after_egress.spl", sha256: 36e08ac8c41e09ad744db7ec4f9dbf468bd2241a3eb5d3f6caf57e3c8550eba9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_self_delete_after_egress.kql", sha256: e6c5a728bbae4b4299d748b5ae3366833916d4ddfca8f4e6f235af3fa7b8c3e6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_self_delete_after_egress.sql", sha256: 25f04c0b25f782de82bd6117c566642ceff46acb6a2e66010b0d48657a6f1bd2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_self_delete_after_egress.eql", sha256: 6b736a8a5e7e60ba124bdbec0eba4765d0a964f230c959ebbd4982846e3d14e1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_self_delete_after_egress.yml", sha256: 8f7aecbc6ed8bf40396258eeca771057436eb2b634357794b1fdd5ee13dbc786, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

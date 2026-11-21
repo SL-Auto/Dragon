@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_lsa_ticket_mutation
 canonical_path: detections/rubeus/yaral/rubeus_lsa_ticket_mutation.yaral
-canonical_sha256: 001c34a6b24a5f41704fa2520a31facecca797d5011b50c215116f3c2c732b0d
+canonical_sha256: 453c9126214edc6ca1520c984b58b95659405074d6fad74684a6cef8d80da4a6
 description: "Detects Kerberos ticket-cache purge operations from EDR API telemetry. Split from ticket submission, which is a stronger, separately severity-scored signal covered by rubeus_lsa_ticket_submission."
 severity: medium
 procedure_ids: ["PROC-007"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Klist purge, SSO, identity middleware, and incident response routinely purge cached tickets."
 references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_mutation.md"
 translations:
-  spl: { path: "detections/rubeus/spl/rubeus_lsa_ticket_mutation.spl", sha256: 1e2761a65b5b445fae660c02bf9c694e2cd4bb7bc1d905fe5dbc6778d1be1843, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/rubeus/kql/rubeus_lsa_ticket_mutation.kql", sha256: 7db1f22414d908bfa7f02b8e1936e3bc43bc8e1bc6e362499a720dadcbb9bef7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/rubeus/sql/rubeus_lsa_ticket_mutation.sql", sha256: ace967a44ccf1226148579c419fe48e9174d1385e817c00ee192268ffb197efd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/rubeus/eql/rubeus_lsa_ticket_mutation.eql", sha256: 36132e0429b5beff283deac9f8d025625ef09db7a4301fecc8fe2e1f37f0f095, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/rubeus/sigma/rubeus_lsa_ticket_mutation.yml", sha256: d1e606c02c10d8b5eddc8ee864a62bd2a6c1b3ecc7337d3c5111b795393b7e71, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/rubeus/spl/rubeus_lsa_ticket_mutation.spl", sha256: a5dfb798413fa67f5087713cb407258f9e6eaa54d6d43e0e590fb43daccd8499, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_lsa_ticket_mutation.kql", sha256: 6a086380f39d6307d755a39c52b06565b4d148ea4ae0bf32d5d45fc271bcad8b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_lsa_ticket_mutation.sql", sha256: 1eb4036e29fe7b8a6f4334c5852dce8462f86e77653a4b97ef6b9e903347cddf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_lsa_ticket_mutation.eql", sha256: 456cc7fcf3820d7f9628c798c1770ca0a767bef3edead06a392b1f539c755ede, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_lsa_ticket_mutation.yml", sha256: dfb884c0ff517778fc847b44347f2ffc7acad462aadffd2dac5ef0bb95a72ff0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

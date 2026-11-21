@@ -11,4 +11,4 @@
 // assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 // schema_profile: schemas/elastic-ecs.yml
 // ECS assumption: event.code carries product IDs and event.action carries normalized event types.
-any where event.code in ("FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION") or event.action in ("FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION")
+any where event.code in ("FILE_CREATION", "FILE_MODIFICATION", "FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION") or event.action in ("FILE_CREATION", "FILE_MODIFICATION", "FILE_READ", "FILE_RENAME", "FILE_WRITE", "NETWORK_CONNECTION")

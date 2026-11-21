@@ -1,0 +1,39 @@
+title: "Detects a burst of Kerberos ticket renewals (4770) by one source and identity, a scripted or looping renewal anomaly separated from service-ticket (4769) acquisition volume. It does not identify low-rate automatic renewal, which is indistinguishable from native LSA renewal."
+name: rubeus_ticket_renewal_anomaly_base
+status: experimental
+description: "Detects a burst of Kerberos ticket renewals (4770) by one source and identity, a scripted or looping renewal anomaly separated from service-ticket (4769) acquisition volume. It does not identify low-rate automatic renewal, which is indistinguishable from native LSA renewal."
+source_yaral: "detections/rubeus/yaral/rubeus_ticket_renewal_anomaly.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, source_ip, user_id, service_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_service_ticket_or_renewal_anomaly.md"
+procedure_ids: "PROC-002"
+log_source_prerequisites: "Normalize DC Security 4770 with account, source IP, service, and result."
+logsource:
+  service: security
+  product: windows
+detection:
+  sel:
+    product_event_type: "4770"
+  condition: sel
+falsepositives:
+  - "Long-running services, SSO session-renewal components, and scheduled tasks that legitimately renew tickets repeatedly."
+level: low
+---
+title: "Detects a burst of Kerberos ticket renewals (4770) by one source and identity, a scripted or looping renewal anomaly separated from service-ticket (4769) acquisition volume. It does not identify low-rate automatic renewal, which is indistinguishable from native LSA renewal."
+name: rubeus_ticket_renewal_anomaly
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - rubeus_ticket_renewal_anomaly_base
+  group-by:
+    - source_ip
+    - user_id
+  timespan: 10m
+  condition:
+    gte: 15
+level: low

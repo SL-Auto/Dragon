@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_process_behavior_cluster
 canonical_path: detections/sliver/yaral/sliver_process_behavior_cluster.yaral
-canonical_sha256: 1b5565b05952d918e04a5edc3fc7772e9d7886daa12b88771fe79e574e62f7d8
+canonical_sha256: d2df6f1775a8747c9aa6dd1c1774ec0f30b2c732463f34770f649e76aab6d983
 description: "New process followed by outbound activity"
 severity: medium
 procedure_ids: ["PROC-001"]

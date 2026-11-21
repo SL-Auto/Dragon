@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/recon_successful_logon_enumeration_powershell_T1033_cisa_report.yaral`](../../snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/recon_successful_logon_enumeration_powershell_T1033_cisa_report.yaral) - SHA-256 `f389319b9b9338ae14c60de28995cbad5c21be1d07ea78c804bc13381443fedd`
+- [`public-rules/snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/recon_successful_logon_enumeration_powershell_T1033_cisa_report.yaral`](../../snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/recon_successful_logon_enumeration_powershell_T1033_cisa_report.yaral) - SHA-256 `f389319b9b9338ae14c60de28995cbad5c21be1d07ea78c804bc13381443fedd`
 
 ## Procedure and detection-branch matrix
 
@@ -48,12 +48,16 @@ The canonical rule has broader tool-independent intent, but distributed discover
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
-
+- Candidate improvement: independently add the missing procedure branch shown in the proposal; no public predicate is copied.
+- Independent verification (2026-11-21): checked against source analysis, provider field semantics and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: the proposal was copied into canonical YARA-L on 2026-08-16 while this trail read `deferred_pending_rule_improvement_run`, a non-terminal state the workflow prohibits. It is re-decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real, but adversarial review found defects in the proposal as written; the adopted rule diverges as follows:
+  - Event type `LDAP_QUERY` replaced by inventory `LDAP_SEARCH` (legacy alias kept) (DR-13).
+  - Approval enrichment now fails open with `!= true`, so missing enrichment cannot silently suppress (DR-16).
+  - Distinct-class count moved to `outcome`.
+- Canonical result: `detections/cobalt-strike-beacon/yaral/cobalt_strike_directory_discovery_compensating_signal.yaral`, SHA-256 `8724b7c5d9e11283629cc714dcd7de4b33cd1493621fa7de0c67250563830efe`. The original proposal is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration completed in the same run: detection review, coverage ledger, tool telemetry file, `telemetry/MASTER.md` counts, all five translations, translation review, dependency/manifest hashes, and the re-comparison below.
 ## Unmatched scope
 
 The public candidate does not cover all branches in `CSB-022`. Conversely, the canonical rule is not evidence of Cobalt Strike attribution and may detect other tooling with equivalent effects.
@@ -88,3 +92,50 @@ rule cobalt_strike_directory_discovery_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Revised rule SHA-256 `8724b7c5d9e11283629cc714dcd7de4b33cd1493621fa7de0c67250563830efe`, compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/community/microsoft/windows/recon_successful_logon_enumeration_powershell_T1033_cisa_report.yaral` differs from the prior revision only in tag metadata or line endings; its detection logic is unchanged.
+
+| Procedure branch / observable effect | Revised ours | Public | Primary signal and strength | Compensating signal | Coverage conclusion | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| Multi-class LDAP discovery split across short-lived processes | covered per user/host | `recon_successful_logon_enumeration_powershell_T1033_cisa_report.yaral`: narrower implementation-specific context (original matrix); candidate not re-assessed beyond re-pinning | user/host object-class breadth - moderate | base directory rule - moderate | complementary | Revised canonical rule, re-pinned candidate, `reviews/cobalt-strike-beacon/detection-review.md`. |
+
+- Final adopted YARA-L (canonical, `experimental` / `needs_validation`):
+
+```yaral
+rule cobalt_strike_directory_discovery_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Aggregates multi-class LDAP directory queries by user and host, independent of any single process, to surface discovery distributed across multiple short-lived processes in the same session."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Session-scoped multi-class directory enumeration is useful reconnaissance context but directory-management and inventory agents legitimately enumerate many classes."
+    procedure_ids = "CSB-022"
+    log_source_prerequisites = "Normalize LDAP_QUERY with client account, hostname, and object-class field, plus an allowlist enrichment identifying approved directory-scanning software."
+    false_positives = "Identity governance, endpoint inventory, directory health, administration and vulnerability-assessment tooling that legitimately queries many object classes."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_directory_discovery.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized domain-inventory logs spanning several object classes from approved scanners; confirm the allowlist enrichment suppresses them."
+    review_status = "reviewed"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_directory_discovery"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_directory_discovery.md"
+  events:
+    $e.metadata.event_type = /^(LDAP_SEARCH|LDAP_QUERY)$/
+    $e.principal.user.userid = $user
+    $e.principal.hostname = $host
+    $e.additional.fields["object_class"].value.string_value = $class
+    $e.additional.fields["approved_directory_scanner"].value.bool_value != true
+  match:
+    $user, $host over 30m
+  outcome:
+    $classes = count_distinct($class)
+  condition:
+    $e and $classes >= 4
+}
+```
+
+- Re-comparison outcome: the revised rule closes the branch the proposal targeted, within its declared telemetry. Remaining limits are the accepted gaps in `reviews/cobalt-strike-beacon/detection-review.md`, each with a named compensating rule.

@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_sensitive_file_activity_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_file_activity_compensating_signal.yaral
-canonical_sha256: d7a9a29eebdc8b36abca17f3b6c74b757dae7a5dc32a086c8f7fef3600ec0680
+canonical_sha256: 9f1e9c1545f0d539b625d3ebd0d789c272bcf09c0f8d02f4e7c87ad5c872d6ed
 description: "Aggregates sensitive-file reads by user and host across processes and correlates them with archive creation by the same user/host, covering multi-process collection where one process stages files and another compresses or transmits them."
 severity: high
 procedure_ids: ["CSB-024", "CSB-025"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "Normalize FILE_READ with sensitivity classification, and FILE_WRITE for archive-extension targets, joined on host and user within 30 minutes."
-atomic_event_types: ["FILE_READ", "FILE_WRITE"]
-required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.user.userid", "target.file.full_path", "target.file.sensitivity"]
+telemetry_prerequisites: "Normalize FILE_READ with sensitivity classification, and FILE_CREATION/FILE_MODIFICATION for archive-extension targets, joined on host and user within 30 minutes, at least one read before the archive write."
+atomic_event_types: ["FILE_MODIFICATION", "FILE_READ"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "principal.hostname", "principal.user.userid", "target.file.full_path", "target.file.sensitivity"]
 correlation_window: "30m"
 uses_multi_event_correlation: true
-uses_aggregation: false
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Backup, synchronization, DLP, indexing, and document-management tools that read multiple sensitive files and then write compressed archives."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_sensitive_file_activity.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_sensitive_file_activity_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_sensitive_file_activity_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_sensitive_file_activity_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_sensitive_file_activity_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_sensitive_file_activity_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_sensitive_file_activity_compensating_signal.spl", sha256: 09dc02055918cc30e95aa61ab987e9165eac010f950612f6d023a41ff847fabd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_sensitive_file_activity_compensating_signal.kql", sha256: faf8f2817af5730bf4b53023b052b86162a8b9bad30da51cc627f38350b41713, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_sensitive_file_activity_compensating_signal.sql", sha256: 9c704a7e99be2dbd6cfc2a7efbc6aa4b512af93591a8b77ceedd74c4ce902d86, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_sensitive_file_activity_compensating_signal.eql", sha256: 62ae26144f6b663ff4c5c8f2031762bdbde22ee24b7ded0fc08a59c4e5adac39, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_sensitive_file_activity_compensating_signal.yml", sha256: eeaedacefb3d7d93b1b7638eaae1ce8119e8154a9c9b3d626cdcc22fd4c7f611, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -14,6 +14,6 @@
 SELECT hostname, user_id, COUNT(*) AS event_count,
        'impacket_wmi_subscription_change' AS canonical_rule
 FROM normalized_events
-WHERE product_event_type IN ('19', '20', '21', '5861') OR event_type IN ('19', '20', '21', '5861')
+WHERE product_event_type IN ('20', '21') OR event_type IN ('20', '21')
 GROUP BY hostname, user_id
 HAVING COUNT(*) > 0;

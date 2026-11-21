@@ -1,0 +1,15 @@
+// source_yaral: detections/bloodhound/yaral/bloodhound_ldap_deep_single_category_enumeration.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: bloodhound_ldap_deep_single_category_enumeration
+// severity: high
+// procedure_ids: BH-002,BH-004
+// description: Detects a single identity on one client host retrieving a high volume of distinct directory objects within one naming context over a four-hour window, compensating for single-category or throttled collection that stays under the multi-category fanout threshold of bloodhound_ldap_directory_discovery_fanout.
+// log_source_prerequisites: Directory-side or EDR LDAP_SEARCH/1644 events expanded to per-result object identity (result_object_id label), with client host, account and naming context; summary-only query events cannot satisfy this rule (see reviews/bloodhound/detection-review.md#bh-dr-10).
+// false_positives: Identity governance, directory synchronization, migration tooling and authorized security assessment performing bulk single-category export.
+// references: reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_ldap_directory_discovery_fanout.md, reviews/bloodhound/detection-review.md#bh-dr-10
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: principal.hostname->src_host/SrcHostname/hostname/source.address; principal.user.userid->user/ActorUsername/user_id/user.id; labels.naming_context->naming_context/NamingContext; labels.result_object_id->result_object_id/ResultObjectId; target.hostname->dest/DvcHostname
+// assumptions_and_gaps: EQL cannot compute distinct counts; this selects candidate events only. Implement the >=500 distinct result-object threshold per source.address/user.id/naming context over 4h in an ES|QL or threshold rule.
+any where (event.code == "1644" or event.action == "LDAP_SEARCH") and
+  ldap.naming_context != null and ldap.result_object_id != null

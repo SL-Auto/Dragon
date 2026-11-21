@@ -1,0 +1,32 @@
+// source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: cobalt_strike_socket_fanout_or_forwarding_compensating_signal
+// severity: high
+// procedure_ids: CSB-009
+// description: Correlates an inbound connection to a process with that same process subsequently creating multiple distinct outbound connections, detecting the relay/forwarding topology that the base outbound-only fan-out rule cannot express.
+// log_source_prerequisites: Normalize NETWORK_CONNECTION for both inbound and outbound direction with a stable vendor process identifier (product_specific_process_id), joined on host and process within 15 minutes, inbound first.
+// false_positives: Browsers, approved proxies, EDR, backup, and orchestration agents that legitimately combine inbound acceptance with outbound fan-out.
+// references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_socket_fanout_or_forwarding.md
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (event_type, hostname, direction, process_id, target_process_id, target_ip); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native ordered two-event correlation on hostname, relay_process within 15 minutes (first event before second). Exact per-pair join; KQL suffixes duplicate right-side columns with 1. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+let window = 15m;
+let first_leg = NormalizedEvents
+    | where TimeGenerated > ago(30m)
+    | where event_type == "NETWORK_CONNECTION"
+    and direction == "INBOUND"
+    | extend relay_process = target_process_id
+    | project-rename FirstTime = TimeGenerated;
+let second_leg = NormalizedEvents
+    | where TimeGenerated > ago(30m)
+    | where event_type == "NETWORK_CONNECTION"
+    and direction == "OUTBOUND"
+    | extend relay_process = process_id
+    | project-rename SecondTime = TimeGenerated;
+first_leg
+| join kind=inner second_leg on hostname, relay_process
+| where SecondTime between (FirstTime .. FirstTime + window)
+| summarize MatchedCount = count_distinct(target_ip1), FirstTime = min(FirstTime), LastTime = max(SecondTime) by hostname, relay_process
+| where MatchedCount >= 5
+| extend CanonicalRule = "cobalt_strike_socket_fanout_or_forwarding_compensating_signal"

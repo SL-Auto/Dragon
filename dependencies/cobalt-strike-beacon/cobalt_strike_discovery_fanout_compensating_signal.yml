@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_discovery_fanout_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_discovery_fanout_compensating_signal.yaral
-canonical_sha256: 4458ff1349e042482e28129f0cb84817a60cc6b4338c3b1839374ee704e05ea3
+canonical_sha256: 21802ffed35a72cabcb273832f37a7663a5d0079a9ced3fc26d18754697a8295
 description: "Aggregates attempted network connections by user and host over a wider window at a lower per-process threshold to surface slow or distributed port/network discovery that falls under the single-process fan-out rule's threshold."
 severity: medium
 procedure_ids: ["CSB-021"]
@@ -12,13 +12,13 @@ atomic_event_types: ["NETWORK_CONNECTION"]
 required_udm_fields: ["additional.fields", "metadata.event_type", "principal.hostname", "principal.user.userid", "target.ip", "target.port"]
 correlation_window: "60m"
 uses_multi_event_correlation: true
-uses_aggregation: false
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Vulnerability scanners, monitoring, software distribution, service discovery and network management tools not present in the approved-scanner enrichment."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_discovery_fanout.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_discovery_fanout_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_discovery_fanout_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_discovery_fanout_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_discovery_fanout_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_discovery_fanout_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_discovery_fanout_compensating_signal.spl", sha256: 1f2ed0b44a8701c33f07fa44503e0be4f23c0e4eaf79cff7e4eb28de78056e84, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_discovery_fanout_compensating_signal.kql", sha256: 4a8dc2a04717ebb2eda29774de177eff45c7f3bf2783a2bde1b92d1838ddd772, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_discovery_fanout_compensating_signal.sql", sha256: 751f42e10f3b9063185765daedecc57b80659aeb62465787aefc0cfbc2025824, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_discovery_fanout_compensating_signal.eql", sha256: 35f4d763747cd6cd356feec7ec28237c8f2cff1e7d6c394eb7705404de36aebb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_discovery_fanout_compensating_signal.yml", sha256: 51018ab7eb92c7df13ca6541ee4d942fa33e9ad910b00c6f5b18591603e5dd5f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

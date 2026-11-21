@@ -1,0 +1,20 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_named_pipe_peer_activity_compensating_signal.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_named_pipe_peer_activity_compensating_signal
+# severity: high
+# procedure_ids: CSB-007
+# description: Correlates a remote SMB connection to IPC$ with a subsequent rare local pipe connect on the same host, closing the ordered remote-peer branch that the standalone pipe-rarity base rule does not capture.
+# log_source_prerequisites: Normalize NETWORK_CONNECTION to TCP/445 with source/target hostname, plus NAMED_PIPE_CONNECTION (Sysmon 18 or EDR pipe connect) with a pipe-rarity enrichment field, joined on source-to-target host within 5 minutes, SMB connection first.
+# false_positives: Remote administration frameworks, backup/replication agents, and clustered service frameworks that legitimately combine SMB sessions with rare local pipes.
+# references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_named_pipe_peer_activity.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, target_host, target_port, pipe_prevalence, pipe_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native ordered two-event correlation on peer_host within 5 minutes (first event before second). Scheduled every 5 minutes over the trailing 10 minutes. SPL compares the earliest first-leg and latest second-leg time per key, which is weaker than per-pair ordering.
+| search index=<configured_index> earliest=-10m@m latest=now
+| eval leg=case(event_type=="NETWORK_CONNECTION" AND target_port==445, "a", in(event_type, "NAMED_PIPE_CONNECTION", "PIPE_CONNECT") AND pipe_prevalence=="RARE", "b")
+| where isnotnull(leg)
+| eval peer_host=case(leg="a", target_host, leg="b", hostname)
+| stats min(eval(if(leg="a", _time, null()))) as first_a max(eval(if(leg="b", _time, null()))) as last_b by peer_host
+| where isnotnull(first_a) AND isnotnull(last_b) AND first_a <= last_b AND last_b - first_a <= 300
+| eval canonical_rule="cobalt_strike_named_pipe_peer_activity_compensating_signal"

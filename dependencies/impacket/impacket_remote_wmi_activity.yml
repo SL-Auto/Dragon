@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_remote_wmi_activity
 canonical_path: detections/impacket/yaral/impacket_remote_wmi_activity.yaral
-canonical_sha256: 7ba7192d0f9f6e80d27035b32e27e51357ba5c77a51b1a4ea8e547fb27e0f4bd
+canonical_sha256: db22f6407666dabf6b1499636be53a5e64102c8907ce56f9fdc7d11fd2380f5f
 description: "Detects a command interpreter created by the WMI provider; SMB output activity is optional enrichment rather than a required event."
 severity: high
 procedure_ids: ["IMP-05"]

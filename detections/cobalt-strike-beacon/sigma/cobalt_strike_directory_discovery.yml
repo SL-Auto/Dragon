@@ -15,7 +15,7 @@ logsource:
   category: generic
 detection:
   selection_event_type:
-    event.code: ["LDAP_QUERY", "RPC_CALL"]
+    event.code: ["LDAP_QUERY", "LDAP_SEARCH", "RPC_CALL"]
   condition: selection_event_type
 falsepositives:
   - "Identity governance, endpoint inventory, directory health, administration and vulnerability assessment."

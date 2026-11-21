@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_socket_listen_or_rare_egress
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_listen_or_rare_egress.yaral
-canonical_sha256: 6b28f7860160c99d956c9dd303ab671d26940329b71f3ba18b33a8b391f843c8
+canonical_sha256: 7c3f60ced608b97ef5365a730d8b9759939952f41179da0224391e6f4d666959
 description: "Detects socket listen or egress from a rare unsigned process as coverage for bind TCP, External C2 and user-defined transports."
 severity: medium
 procedure_ids: ["CSB-008"]

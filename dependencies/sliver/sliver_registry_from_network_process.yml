@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_registry_from_network_process
 canonical_path: detections/sliver/yaral/sliver_registry_from_network_process.yaral
-canonical_sha256: 9985462cab2ae7c6771504d3ad3a03b219c47e96dca66a7a1a17cf0d17458210
+canonical_sha256: 4e9f074d85e05c9c6e2a2e332d6738c60c045900bb29ce0b668e759cd1466173
 description: "Registry mutation by a process with outbound network activity"
 severity: medium
 procedure_ids: ["PROC-018"]

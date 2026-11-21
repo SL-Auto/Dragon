@@ -11,4 +11,4 @@
 // assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 // schema_profile: schemas/elastic-ecs.yml
 // ECS assumption: event.code carries product IDs and event.action carries normalized event types.
-any where event.code in ("LDAP_QUERY", "RPC_CALL") or event.action in ("LDAP_QUERY", "RPC_CALL")
+any where event.code in ("LDAP_QUERY", "LDAP_SEARCH", "RPC_CALL") or event.action in ("LDAP_QUERY", "LDAP_SEARCH", "RPC_CALL")

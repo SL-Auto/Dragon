@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_directory_replication_right_access
 canonical_path: detections/mimikatz/yaral/mimikatz_directory_replication_right_access.yaral
-canonical_sha256: 77d4fc4adee33ff07a0756420f757b723ed24a1da630c2eead4c34743c8c077c
+canonical_sha256: 6297573cc3d1cb2a4c4fc2315dd0e3b3340441439ad135f716c3505c8fe31a9b
 description: "Detects directory replication extended-right access for contextual triage; approved DC and sync context must be applied as narrow downstream enrichment."
 severity: high
 procedure_ids: ["P14"]

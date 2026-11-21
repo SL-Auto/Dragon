@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_spawned_command_execution
 canonical_path: detections/havoc/yaral/havoc_spawned_command_execution.yaral
-canonical_sha256: 4a237eff5ac3921ab218accbe7de529572d2b679713ca7df325bff547ba1763b
+canonical_sha256: e469852e0b345de30cef40952830897856ac9af3c7eb3b9b0f0c095c5b84b67e
 description: "A recurrently networked process spawns a command or script interpreter"
 severity: high
 procedure_ids: ["HV-P05"]

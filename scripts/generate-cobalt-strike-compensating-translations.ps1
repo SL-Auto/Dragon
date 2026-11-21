@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
-$repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$det = $PSScriptRoot
+$repo = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$det = Join-Path $repo 'detections\cobalt-strike-beacon'
 
 $items = @(
   @{n='cobalt_strike_credential_access_effect_compensating_signal';sev='high';p='CSB-028';desc='Correlates dangerous-rights LSASS process access with creation of a memory-dump artifact by the same process, narrowing the broad LSASS/store/replication effect rule to an ordered access-plus-artifact sequence.';lsp='Normalize EDR PROCESS_OPEN against lsass.exe with a granted-access/dangerous-rights enrichment field, plus FILE_CREATION for .dmp/.mdmp targets, joined on process PID within a 5-minute window.';fp='EDR/AV LSASS scanners, Procdump-based support workflows, Windows Error Reporting crash dumps, and forensic acquisition tools that also create .dmp files.';evts=@('PROCESS_OPEN','FILE_CREATION')},

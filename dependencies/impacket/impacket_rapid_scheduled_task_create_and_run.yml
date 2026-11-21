@@ -2,13 +2,13 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_rapid_scheduled_task_create_and_run
 canonical_path: detections/impacket/yaral/impacket_rapid_scheduled_task_create_and_run.yaral
-canonical_sha256: 24636e3eb5743ab5f3b52231dedc9feadd049974e2ac86e1a9da6a95306c4ad3
+canonical_sha256: 85a2350d047f8269b0055592070a103d1e36062ed8fb2a76e1b10e8734836e76
 description: "Correlates rapid scheduled-task registration and execution; deletion is not required because cleanup may fail or telemetry may be missing."
 severity: high
 procedure_ids: ["IMP-04"]
 validation_status: "needs_validation"
 telemetry_prerequisites: "Normalize Task Scheduler Operational or Security 4698/4699 events with task name, host, action, user, and timestamp."
-atomic_event_types: ["100", "106", "200", "4698"]
+atomic_event_types: []
 required_udm_fields: ["metadata.product_event_type", "target.hostname", "target.resource.name"]
 correlation_window: "5m"
 uses_multi_event_correlation: true
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Installers, enterprise schedulers, deployment systems, and ephemeral maintenance tasks."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_rapid_scheduled_task_create_and_run.spl", sha256: d8081289cf4f5b640be9b9457a75b57f3009c95e7b77dc6a94039980ad910110, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_rapid_scheduled_task_create_and_run.kql", sha256: 2e8700762733fc020571f1852ec36c4d958fcf2d182fbe1c64368588e0186ec4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_rapid_scheduled_task_create_and_run.sql", sha256: cffa163dac5aeae577d55c06aea37684881e3de3850bee483aaa64e4a28a6970, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_rapid_scheduled_task_create_and_run.eql", sha256: 926c55933a086335159eedb0d29fecb0ec0dd4899fbbda9b52c2105ead4465ab, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_rapid_scheduled_task_create_and_run.yml", sha256: 607104b336e7ae4c3d99879c36fe86c3faf1b2772650ef4d2b772953980f6983, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_rapid_scheduled_task_create_and_run.spl", sha256: ec8a9f063827772e624da3a976725fa2fe344bc93a93a3f8ff2cf9a51940f816, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_rapid_scheduled_task_create_and_run.kql", sha256: c40d82db511a92ea73eae29c4e0fc41abe137cd4ff05ae0e051ce209bf227cf2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_rapid_scheduled_task_create_and_run.sql", sha256: 818f1c8b77c7ae1dd9612b16eb3c4aa79b861de83852aeddfe0dacd5c898e65c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_rapid_scheduled_task_create_and_run.eql", sha256: 12578b7f959cf9f36f9303a04b661dc270dad3e34f29dd3fc5b76efa1293f7ba, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_rapid_scheduled_task_create_and_run.yml", sha256: 73f4735dfe6c830a1820ea82f8aa98228d46c9026e8cf9043d2ad8067ce8780c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

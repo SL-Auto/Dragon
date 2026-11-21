@@ -1,0 +1,43 @@
+title: "Detects one endpoint process entity issuing LDAP searches against many distinct directory objects or search bases, independent of process prevalence, signer, executable path or a preceding launch event, compensating for bloodhound_collector_process_network_context's dependence on rarity and connection count."
+name: bloodhound_process_to_directory_effect_base
+status: experimental
+description: "Detects one endpoint process entity issuing LDAP searches against many distinct directory objects or search bases, independent of process prevalence, signer, executable path or a preceding launch event, compensating for bloodhound_collector_process_network_context's dependence on rarity and connection count."
+source_yaral: "detections/bloodhound/yaral/bloodhound_process_to_directory_effect.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "principal.hostname->dest/DeviceName/hostname/host.name; principal.process.product_specific_process_id->process_guid/InitiatingProcessId+InitiatingProcessCreationTime/process_id/process.entity_id; target.resource.name->ldap_search_base/DistinguishedName/object_name; principal.process.file.full_path->process_path/InitiatingProcessFolderPath"
+assumptions_and_gaps: "Base rule selects process-attributed LDAP searches; value_count correlation expresses the distinct search-base threshold per host and process GUID. Requires Sigma correlation support and a stable process GUID field."
+references:
+  - "reports/bloodhound/source-analysis.md#bh-001, public-rules/comparisons/bloodhound/bloodhound_collector_process_network_context.md, reviews/bloodhound/detection-review.md#bh-dr-16"
+procedure_ids: "BH-001"
+log_source_prerequisites: "Endpoint-attributed LDAP_SEARCH telemetry (EDR LDAP query events) with host, stable process entity identifier, process path, account, and search base DN or per-result object identity normalized to target.resource.name. Cloud audit logs are not process-attributed and are out of scope for this rule."
+logsource:
+  category: ldap_query
+  product: windows
+detection:
+  selection:
+    EventType: LDAP_SEARCH
+  filter_missing:
+    - ProcessGuid: null
+    - SearchBase: null
+  condition: selection and not filter_missing
+falsepositives:
+  - "Identity inventory, endpoint management, directory administration consoles, backup and migration tooling, including signed and prevalent software; domain-joined services resolving many group or SID references."
+level: medium
+---
+title: "Detects one endpoint process entity issuing LDAP searches against many distinct directory objects or search bases, independent of process prevalence, signer, executable path or a preceding launch event, compensating for bloodhound_collector_process_network_context's dependence on rarity and connection count."
+name: bloodhound_process_to_directory_effect
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - bloodhound_process_to_directory_effect_base
+  group-by:
+    - Computer
+    - ProcessGuid
+  timespan: 30m
+  condition:
+    field: SearchBase
+    gte: 25
+level: medium

@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_remote_security_configuration_value_reads
 canonical_path: detections/bloodhound/yaral/bloodhound_remote_security_configuration_value_reads.yaral
-canonical_sha256: 13a070661c07358f6384d99dddc7987668b56ce755e4e98afa52f740f310e6dc
-description: "Detects reads of two or more named security-relevant registry values (certificate binding, NTLM restriction, LDAP channel binding/signing, certificate mapping) from a single source, compensating for single-target reads that stay below bloodhound_remote_security_configuration_reads's multi-host threshold."
+canonical_sha256: 510a95cb769fb67eb29497acf18ca81c6743faf49b72e8eb154413cdaa2ff8d8
+description: "Detects one account reading two or more collector-relevant security-configuration registry values (KDC certificate binding, Schannel certificate mapping, LSA/MSV1_0 NTLM restriction and compatibility values, or CA security/enrollment-agent/edit-flag values) on a single target, compensating for single-target reads below bloodhound_remote_security_configuration_reads's multi-host threshold."
 severity: high
 procedure_ids: ["BH-012"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "EDR REGISTRY_READ or scoped 4656/4663 with full registry key AND value name, source and target host."
-atomic_event_types: ["4656", "4663", "REGISTRY_READ"]
-required_udm_fields: ["metadata.product_event_type", "principal.hostname", "target.hostname", "target.registry.registry_key", "target.registry.registry_value_name"]
+telemetry_prerequisites: "EDR REGISTRY_READ telemetry exposing full registry key path, value name, subject account, reading process path and target host. Windows Security 4656/4663 record the key and access mask but not the value name, so they cannot satisfy this rule (reviews/bloodhound/detection-review.md#bh-dr-25)."
+atomic_event_types: ["REGISTRY_READ"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.process.file.full_path", "principal.user.userid", "target.hostname", "target.registry.registry_key", "target.registry.registry_value_name"]
 correlation_window: "30m"
 uses_multi_event_correlation: true
 uses_aggregation: true
 uses_absence_logic: false
-false_positives: "Security posture assessment, PKI administration and domain-controller compliance tools reading multiple settings on one host."
-references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_remote_security_configuration_reads.md"
+false_positives: "Security posture assessment, PKI administration, vulnerability management and domain-controller compliance tooling reading several of these values on one host; administrators inspecting values with regedit or reg.exe."
+references: "reports/bloodhound/source-analysis.md#bh-012, sources/bloodhound-ce-src packages/go/ein/ad.go#L121-L146 (5e8e78e), public-rules/comparisons/bloodhound/bloodhound_remote_security_configuration_reads.md, reviews/bloodhound/detection-review.md#bh-dr-20"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_remote_security_configuration_value_reads.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_remote_security_configuration_value_reads.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_remote_security_configuration_value_reads.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_remote_security_configuration_value_reads.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_remote_security_configuration_value_reads.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_remote_security_configuration_value_reads.spl", sha256: 3c6c398b968fdf18194561846d07ebad7aff6808597bde934fcece654b923b63, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_remote_security_configuration_value_reads.kql", sha256: 0ed714e330808b64bdf092cf61918f7f3b4b019b188c0b0d32cbea5c20a55b4d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_remote_security_configuration_value_reads.sql", sha256: ca6f218da2cf433ffebfb097b35bfa0f96420e32558a76ac1b3101a5085dbd05, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_remote_security_configuration_value_reads.eql", sha256: d81975a225e64e9fcde60336fdb883f668d83efe0d5569c13dfccd69b6ff57b1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_remote_security_configuration_value_reads.yml", sha256: af214bedac138a065934acdc6cd0c781a298229a46628dcf3f8d587c354dc239, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_directory_discovery_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_directory_discovery_compensating_signal.yaral
-canonical_sha256: 73d3698033a79910cda25a7c5677d6a923ddf99dae0e7df1650658f8f345d848
+canonical_sha256: 8724b7c5d9e11283629cc714dcd7de4b33cd1493621fa7de0c67250563830efe
 description: "Aggregates multi-class LDAP directory queries by user and host, independent of any single process, to surface discovery distributed across multiple short-lived processes in the same session."
 severity: medium
 procedure_ids: ["CSB-022"]
 validation_status: "needs_validation"
 telemetry_prerequisites: "Normalize LDAP_QUERY with client account, hostname, and object-class field, plus an allowlist enrichment identifying approved directory-scanning software."
-atomic_event_types: ["LDAP_QUERY"]
+atomic_event_types: []
 required_udm_fields: ["additional.fields", "metadata.event_type", "principal.hostname", "principal.user.userid"]
 correlation_window: "30m"
 uses_multi_event_correlation: true
-uses_aggregation: false
+uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Identity governance, endpoint inventory, directory health, administration and vulnerability-assessment tooling that legitimately queries many object classes."
 references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_directory_discovery.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_directory_discovery_compensating_signal.spl", sha256: missing, status: "", fidelity: "" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_directory_discovery_compensating_signal.kql", sha256: missing, status: "", fidelity: "" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_directory_discovery_compensating_signal.sql", sha256: missing, status: "", fidelity: "" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_directory_discovery_compensating_signal.eql", sha256: missing, status: "", fidelity: "" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_directory_discovery_compensating_signal.yml", sha256: missing, status: "", fidelity: "" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_directory_discovery_compensating_signal.spl", sha256: 15d8f4aea6af160ae26a2eea1631d44d38bf1468e955e0d6d8cbc4ad7c1bb2d5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_directory_discovery_compensating_signal.kql", sha256: eccc497cf2196a0358472b3873f66211ccb0b67179711dd332d8ad23ba3ea369, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_directory_discovery_compensating_signal.sql", sha256: 24e7e2d012845ba1829afc65d5272e9fba632e05f6632e9bf4585d445d2967c8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_directory_discovery_compensating_signal.eql", sha256: 4031492ea731125a930f8614edbddd8f794bfe2f2ce4665f6fe806ba7add93be, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_directory_discovery_compensating_signal.yml", sha256: 255d6b5607cda2f66c360f20b5cfdf7a8825101af1c3aae02d16607485e49125, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

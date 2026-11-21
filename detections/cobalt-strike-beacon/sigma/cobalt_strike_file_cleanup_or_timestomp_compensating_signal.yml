@@ -1,0 +1,63 @@
+title: "Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution."
+name: cobalt_strike_file_cleanup_or_timestomp_compensating_signal_first
+status: experimental
+description: "Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution."
+source_yaral: "detections/cobalt-strike-beacon/yaral/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, target_process_path, target_path, process_signed, process_prevalence); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Two base rules plus a Sigma temporal_ordered correlation."
+references:
+  - "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_file_cleanup_or_timestomp.md"
+procedure_ids: "CSB-026,CSB-034"
+log_source_prerequisites: "Normalize PROCESS_LAUNCH and FILE_DELETE with matching full path, host, and process signer/prevalence on the deleting process, joined within 15 minutes."
+logsource:
+  category: file_delete
+  product: windows
+detection:
+  sel:
+    event_type: "PROCESS_LAUNCH"
+  condition: sel
+falsepositives:
+  - "Installers, updaters, and self-extracting archives remain a false-positive source when they are unsigned or rare; the signer/prevalence gate narrows but does not eliminate this overlap."
+level: medium
+---
+title: "Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution."
+name: cobalt_strike_file_cleanup_or_timestomp_compensating_signal_second
+status: experimental
+description: "Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution."
+logsource:
+  category: file_delete
+  product: windows
+detection:
+  sel:
+    event_type:
+      - "FILE_DELETION"
+      - "FILE_DELETE"
+  alt0_0:
+    process_signed: false
+  alt0_1:
+    process_prevalence: "RARE"
+  condition: sel and 1 of alt0_*
+falsepositives:
+  - "Installers, updaters, and self-extracting archives remain a false-positive source when they are unsigned or rare; the signer/prevalence gate narrows but does not eliminate this overlap."
+level: medium
+---
+title: "Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution."
+name: cobalt_strike_file_cleanup_or_timestomp_compensating_signal
+status: experimental
+correlation:
+  type: temporal_ordered
+  rules:
+    - cobalt_strike_file_cleanup_or_timestomp_compensating_signal_first
+    - cobalt_strike_file_cleanup_or_timestomp_compensating_signal_second
+  group-by:
+    - hostname
+    - file_path
+  timespan: 15m
+  aliases:
+    file_path:
+      cobalt_strike_file_cleanup_or_timestomp_compensating_signal_first: target_process_path
+      cobalt_strike_file_cleanup_or_timestomp_compensating_signal_second: target_path
+level: medium

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_alternate_identity_process
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_alternate_identity_process.yaral
-canonical_sha256: 6f8ab791f0538b46d0f34f125cd8d09211f06d6801c45f1e99bbb07eb0017305
+canonical_sha256: b4438034a87f02bcba3678f1c4517d78f9fefe3b85b275cfc7cb0316622efc5f
 description: "Correlates explicit-credential or alternate-logon use with a new process under the resulting account."
 severity: medium
 procedure_ids: ["CSB-012"]

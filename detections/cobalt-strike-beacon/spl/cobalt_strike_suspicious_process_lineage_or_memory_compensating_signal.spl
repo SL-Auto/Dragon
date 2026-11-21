@@ -1,0 +1,19 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal
+# severity: high
+# procedure_ids: CSB-004,CSB-014,CSB-016
+# description: Correlates a private executable-memory region without a backing file with a subsequent thread start whose start address falls in that private region, on the same process, providing execution evidence that the base rule's standalone memory-allocation signal cannot express.
+# log_source_prerequisites: Normalize EXECUTABLE_MEMORY with private/backing-file attributes and THREAD_START with start-address-in-region and expected-JIT-host enrichment, joined on host and PID within 5 minutes.
+# false_positives: JIT runtimes (browsers, .NET, JVM), application virtualization, and approved dynamic-code frameworks not reflected in the JIT-host enrichment.
+# references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_suspicious_process_lineage_or_memory.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, process_id, memory_is_private, memory_has_backing_file, start_address_in_private_rx, approved_jit_host); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native ordered two-event correlation on hostname, process_id within 5 minutes (first event before second). Scheduled every 5 minutes over the trailing 10 minutes. SPL compares the earliest first-leg and latest second-leg time per key, which is weaker than per-pair ordering.
+| search index=<configured_index> earliest=-10m@m latest=now
+| eval leg=case(event_type=="EXECUTABLE_MEMORY" AND memory_is_private=="true" AND memory_has_backing_file=="false", "a", event_type=="THREAD_START" AND start_address_in_private_rx=="true" AND (isnull(approved_jit_host) OR approved_jit_host!="true"), "b")
+| where isnotnull(leg)
+| stats min(eval(if(leg="a", _time, null()))) as first_a max(eval(if(leg="b", _time, null()))) as last_b by hostname process_id
+| where isnotnull(first_a) AND isnotnull(last_b) AND first_a <= last_b AND last_b - first_a <= 300
+| eval canonical_rule="cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal"

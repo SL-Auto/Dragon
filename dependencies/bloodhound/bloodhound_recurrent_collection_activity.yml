@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_recurrent_collection_activity
 canonical_path: detections/bloodhound/yaral/bloodhound_recurrent_collection_activity.yaral
-canonical_sha256: 2bbaf30528c1bf35b6f43ee4463b29864f79f0dc0071e1656ffaf75d4d41185e
+canonical_sha256: 28583958bd0e50c5690962f2063335bc2b18f59c4c88ea530838f0403f35e8ab
 description: "Detects repeated directory or remote-host collection bursts from the same process entity."
 severity: medium
 procedure_ids: ["BH-014"]

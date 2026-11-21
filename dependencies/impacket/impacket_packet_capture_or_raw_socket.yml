@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_packet_capture_or_raw_socket
 canonical_path: detections/impacket/yaral/impacket_packet_capture_or_raw_socket.yaral
-canonical_sha256: c2d9e461b861cbaecbcb721cf3b9944d7428797aace64c37fc0f2dcdeac44cfc
+canonical_sha256: a8aa2aa24451fae5d46eb7495fce2b70ef623bfae8e4e7c78d224fee22f57eed
 description: "Detects unexpected packet capture driver or raw socket use."
 severity: medium
 procedure_ids: ["IMP-19"]

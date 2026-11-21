@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_s4u_ticket_sequence
 canonical_path: detections/rubeus/yaral/rubeus_s4u_ticket_sequence.yaral
-canonical_sha256: 96f21b9975d346dc078d9c5350f857190b8c91a49a9593b7cbf0582bb2e7279b
+canonical_sha256: e65967cab0a8ae0090d2c37d23e98f86bf2a04de1afb7be0db64927cfa5cfab9
 description: "Detects a service identity making S4U requests against an authoritatively unapproved delegation edge, or requesting S4U tickets across multiple distinct target services when edge-approval enrichment is unavailable."
 severity: high
 procedure_ids: ["PROC-005"]

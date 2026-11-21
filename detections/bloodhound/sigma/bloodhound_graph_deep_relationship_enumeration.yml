@@ -1,0 +1,42 @@
+title: "Detects one Graph user or service principal, per client application, reading relationship endpoints (members, transitiveMembers, memberOf, owners, registeredOwners, registeredUsers, appRoleAssignedTo, appRoleAssignments) for many distinct directory objects, compensating for collection that avoids the multi-family fanout captured by bloodhound_azure_graph_enumeration_fanout."
+name: bloodhound_graph_deep_relationship_enumeration_base
+status: experimental
+description: "Detects one Graph user or service principal, per client application, reading relationship endpoints (members, transitiveMembers, memberOf, owners, registeredOwners, registeredUsers, appRoleAssignedTo, appRoleAssignments) for many distinct directory objects, compensating for collection that avoids the multi-family fanout captured by bloodhound_azure_graph_enumeration_fanout."
+source_yaral: "detections/bloodhound/yaral/bloodhound_graph_deep_relationship_enumeration.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+field_mapping: "metadata.product_event_type->MicrosoftGraphActivityLogs table/sourcetype; network.http.method->RequestMethod/http.request.method; target.url->RequestUri/url.original; principal.user.userid->UserId; principal.user.product_object_id->ServicePrincipalId; principal.application->AppId; principal.ip->IPAddress"
+assumptions_and_gaps: "Sigma cannot capture the object ID from the URI or coalesce principal fields; the correlation counts distinct RequestUri per UserId/ServicePrincipalId and AppId, which over-counts paged requests for the same object. Backend must split delegated and app-only identities."
+references:
+  - "reports/bloodhound/source-analysis.md#bh-017, sources/azurehound-src client/groups.go#L50-L66, client/apps.go#L51, client/service_principals.go#L50, client/app_role_assignments.go#L33, client/devices.go#L50, config/config.go#L144-L158 (23735c8), public-rules/comparisons/bloodhound/bloodhound_azure_graph_enumeration_fanout.md, reviews/bloodhound/detection-review.md#bh-dr-13"
+procedure_ids: "BH-017"
+log_source_prerequisites: "MicrosoftGraphActivityLogs with HTTP method, full request URI, AppId, and UserId or ServicePrincipalId normalized to principal.user.userid / principal.user.product_object_id."
+logsource:
+  product: azure
+  service: graphactivitylogs
+detection:
+  selection:
+    RequestMethod: GET
+    RequestUri|re: '(?i)/(users|groups|servicePrincipals|applications|devices)/[^/?]+/(members|transitiveMembers|memberOf|transitiveMemberOf|owners|registeredOwners|registeredUsers|appRoleAssignedTo|appRoleAssignments)([/?]|$)'
+  condition: selection
+falsepositives:
+  - "Identity governance, HR/identity synchronization, access reviews, compliance and cloud security posture tools performing legitimate per-object relationship enumeration."
+level: high
+---
+title: "Detects one Graph user or service principal, per client application, reading relationship endpoints (members, transitiveMembers, memberOf, owners, registeredOwners, registeredUsers, appRoleAssignedTo, appRoleAssignments) for many distinct directory objects, compensating for collection that avoids the multi-family fanout captured by bloodhound_azure_graph_enumeration_fanout."
+name: bloodhound_graph_deep_relationship_enumeration
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - bloodhound_graph_deep_relationship_enumeration_base
+  group-by:
+    - UserId
+    - ServicePrincipalId
+    - AppId
+  timespan: 30m
+  condition:
+    field: RequestUri
+    gte: 100
+level: high

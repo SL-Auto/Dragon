@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_named_pipe_network_context
 canonical_path: detections/havoc/yaral/havoc_named_pipe_network_context.yaral
-canonical_sha256: dc178ad4a086091edcc460ce421b7387a0f42ffd22068da6a6c815d8dd8151d4
+canonical_sha256: 5fc6b8f248abe1bf920046d3449213c3a9003ddf282a7dba7ff0e0029b147809
 description: "A network-active process creates or connects to a named pipe"
 severity: high
 procedure_ids: ["HV-P02", "HV-P15"]

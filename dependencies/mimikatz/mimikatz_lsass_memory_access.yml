@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_lsass_memory_access
 canonical_path: detections/mimikatz/yaral/mimikatz_lsass_memory_access.yaral
-canonical_sha256: 377dd7ac7c08e3bf0e66bb0b28149eab7f36f4cc5141035c98321396f048ab67
+canonical_sha256: 8a784cedc1b519e4d425ececbcfaae0d5dde1a446fbec808f5ae386c7b0d6b30
 description: "Detects process access to LSASS with memory-read-capable rights; tuning is applied downstream rather than with broad process-name exclusions."
 severity: high
 procedure_ids: ["P07", "P09", "P13"]

@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/privilege_escalation_windows_service_via_unusual_client.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/privilege_escalation_windows_service_via_unusual_client.toml) - SHA-256 `69a85c757c1a8c637f46cc9cbae2a67e7cf26c83f09464c32d61c06ff408551b`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/privilege_escalation_windows_service_via_unusual_client.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/privilege_escalation_windows_service_via_unusual_client.toml) - SHA-256 `b0ada81d946f4a8e38cf7e33c004eb3323acad26e960a6ce5852647c9bda2ef9`
 
 ## Procedure and detection-branch matrix
 
@@ -48,12 +48,14 @@ The canonical rule has broader tool-independent intent, but causal parent/token 
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
-
+- Candidate improvement: independently add the missing procedure branch shown in the proposal; no public predicate is copied.
+- Independent verification (2026-11-21): checked against source analysis, provider field semantics and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: the proposal was copied into canonical YARA-L on 2026-08-16 while this trail read `deferred_pending_rule_improvement_run`, a non-terminal state the workflow prohibits. It is re-decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real, but adversarial review found defects in the proposal as written; the adopted rule diverges as follows:
+  - Approval enrichment now fails open with `!= true`, so missing enrichment cannot silently suppress (DR-16).
+- Canonical result: `detections/cobalt-strike-beacon/yaral/cobalt_strike_service_or_integrity_transition_compensating_signal.yaral`, SHA-256 `ac432f5971b73b3b8629fb8f80027a15a6a8019dcb5cbd5b91a83eecc79d465b`. The original proposal is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration completed in the same run: detection review, coverage ledger, tool telemetry file, `telemetry/MASTER.md` counts, all five translations, translation review, dependency/manifest hashes, and the re-comparison below.
 ## Unmatched scope
 
 The public candidate does not cover all branches in `CSB-020`. Conversely, the canonical rule is not evidence of Cobalt Strike attribution and may detect other tooling with equivalent effects.
@@ -89,3 +91,46 @@ rule cobalt_strike_service_or_integrity_transition_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Revised rule SHA-256 `ac432f5971b73b3b8629fb8f80027a15a6a8019dcb5cbd5b91a83eecc79d465b`, compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/privilege_escalation_windows_service_via_unusual_client.toml` differs from the prior revision only in tag metadata or line endings; its detection logic is unchanged.
+
+| Procedure branch / observable effect | Revised ours | Public | Primary signal and strength | Compensating signal | Coverage conclusion | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| SYSTEM-integrity child of unsigned or rare parent | covered | `privilege_escalation_windows_service_via_unusual_client.toml`: narrower implementation-specific context (original matrix); candidate not re-assessed beyond re-pinning | unapproved parent to SYSTEM child - moderate | base 4697/7045 rule - moderate | complementary | Revised canonical rule, re-pinned candidate, `reviews/cobalt-strike-beacon/detection-review.md`. |
+
+- Final adopted YARA-L (canonical, `experimental` / `needs_validation`):
+
+```yaral
+rule cobalt_strike_service_or_integrity_transition_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a process launch reaching SYSTEM integrity whose parent process is unsigned or rare and is not an approved elevation broker, providing the causal parent/child relationship that the base rule's standalone 4697/7045/integrity-transition signal does not require."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "An unsigned or rare parent causing a child process at SYSTEM integrity is a specific, dangerous elevation pattern, though installers and approved elevation brokers can legitimately do the same absent the enrichment gate."
+    procedure_ids = "CSB-020"
+    log_source_prerequisites = "Normalize PROCESS_LAUNCH with target integrity level, parent process signer and prevalence, and an approved-elevation-broker enrichment."
+    false_positives = "Installers, driver-installation flows, and approved elevation-broker components not reflected in the enrichment allowlist."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_service_or_integrity_transition.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized UAC/elevation-broker and installer fixtures to confirm the allowlist enrichment suppresses expected benign elevation paths."
+    review_status = "reviewed"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_service_or_integrity_transition"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_service_or_integrity_transition.md"
+    modification_note = "Proposal accepted with required changes: replaced the invented additional.fields['parent_prevalence']/['parent_signed'] with the native principal.process.file.prevalence/is_signed fields already used elsewhere in this rule family, and removed an unused parent_hash match window — the proposal declared a match clause with no aggregation function referencing it in the condition, which is dead configuration."
+  events:
+    $e.metadata.event_type = "PROCESS_LAUNCH"
+    $e.target.process.integrity_level = "SYSTEM"
+    ($e.principal.process.file.is_signed = false or $e.principal.process.file.prevalence = "RARE")
+    $e.additional.fields["approved_elevation_broker"].value.bool_value != true
+  condition:
+    $e
+}
+```
+
+- Re-comparison outcome: the revised rule closes the branch the proposal targeted, within its declared telemetry. Remaining limits are the accepted gaps in `reviews/cobalt-strike-beacon/detection-review.md`, each with a named compensating rule.
