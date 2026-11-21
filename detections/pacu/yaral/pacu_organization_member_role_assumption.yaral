@@ -1,0 +1,29 @@
+rule pacu_organization_member_role_assumption {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one principal assuming the OrganizationAccountAccessRole in two or more member accounts within 1 hour."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Pivoting through the default organization administration role across accounts is lateral movement with administrator rights."
+    procedure_ids = "PA-P09"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; the assumed role ARN in target.resource.name and the member account in target.cloud.project.name."
+    false_positives = "Organization administrators and landing-zone automation."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized AssumeRole events into two member accounts."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    $e.metadata.product_event_type = "AssumeRole"
+    re.regex($e.target.resource.name, `(?i):role/OrganizationAccountAccessRole$`)
+    $e.principal.user.userid = $principal
+    $e.target.cloud.project.name = $account
+  match:
+    $principal over 1h
+  outcome:
+    $accounts = count_distinct($account)
+  condition:
+    $e and $accounts >= 2
+}

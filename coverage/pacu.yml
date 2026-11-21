@@ -1,0 +1,31 @@
+schema_version: 1
+tool_id: pacu
+analyzed_revision: 7dd34aa0856b2a964763a70be9dc9d78abc08a81
+inventory_method: all 77 modules mapped to their boto3 and Kubernetes API calls; victim-side CloudTrail and service-log effects analyzed
+inventory_complete: true
+inventory_evidence: [reports/pacu/source-analysis.md]
+excluded_paths:
+  - { path: "pacu/main.py pacu/core", reason: "operator shell, session database and loader; the user-agent effect is covered as PA-P01" }
+  - { path: pacu/modules/iam__decode_accesskey_id, reason: offline decoding with no API call }
+  - { path: pacu/modules/ebs__enum_snapshots_unauth, reason: public-snapshot discovery from the attacker account }
+  - { path: "iam__enum_roles and iam__enum_users principal probing", reason: "trust-policy updates in the attacker account; follow-on AssumeRole into the victim is PA-P09" }
+  - { path: "lambda.zip and empty.zip in iam__privesc_scan", reason: bundled payload archives deleted unopened under the sample-safety policy }
+  - { path: "tests Dockerfile docker_stack.yml", reason: non-deployed }
+procedures:
+  - { id: PA-P01, name: session identity and user agent, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_user_agent_session_suffix] }
+  - { id: PA-P02, name: IAM and permission enumeration, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_access_denied_permission_bruteforce, pacu_credential_report_generation, pacu_multi_service_enumeration_fanout] }
+  - { id: PA-P03, name: IAM privilege escalation, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_iam_privilege_modification_burst, pacu_iam_credential_backdoor_other_user] }
+  - { id: PA-P04, name: IAM credential and trust backdoors, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_iam_credential_backdoor_other_user, pacu_iam_privilege_modification_burst] }
+  - { id: PA-P05, name: event-driven Lambda and template backdoors, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_eventbridge_lambda_backdoor_chain, pacu_cfn_template_bucket_injection] }
+  - { id: PA-P06, name: network and service access backdoors, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_security_group_open_ingress, pacu_service_credential_issuance] }
+  - { id: PA-P07, name: detection and logging impairment, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_detection_service_impairment] }
+  - { id: PA-P08, name: secret and credential retrieval, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_secret_value_bulk_retrieval, pacu_multi_service_enumeration_fanout] }
+  - { id: PA-P09, name: remote execution and lateral movement, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_ssm_instance_profile_rce_chain, pacu_ecs_task_definition_run, pacu_instance_userdata_modify_restart, pacu_organization_member_role_assumption] }
+  - { id: PA-P10, name: snapshot and database takeover, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_snapshot_and_database_takeover] }
+  - { id: PA-P11, name: bulk data download, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_s3_bulk_object_download, pacu_multi_service_enumeration_fanout] }
+  - { id: PA-P12, name: SNS topic subscription, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_sns_topic_subscription_fanout] }
+  - { id: PA-P13, name: CloudTrail log formula injection, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_log_formula_injection] }
+  - { id: PA-P14, name: Cognito abuse, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_cognito_pool_abuse] }
+  - { id: PA-P15, name: EKS service-account token collection, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_eks_service_account_token_collection] }
+  - { id: PA-P16, name: multi-service enumeration, telemetry_status: assessed, detection_status: detected, detection_rules: [pacu_multi_service_enumeration_fanout] }
+completion: { total_procedures: 16, detected: 16, not_observable: 0, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

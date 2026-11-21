@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_log_formula_injection
+canonical_path: detections/pacu/yaral/pacu_log_formula_injection.yaral
+canonical_sha256: be83fcb1f1b0f846c97f4392d893671a0090ab452d2e5c0fcc9e7167f671f4e3
+description: "Detects CreateTrail or RunInstances requests whose name or tag value begins with a spreadsheet formula character (=, +, -, @), used to inject formulas into exported CloudTrail logs."
+severity: medium
+procedure_ids: ["PA-P13"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; trail name or tag values in additional.fields['name']."
+atomic_event_types: []
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "metadata.product_name", "principal.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "None expected; a leading hyphen in names is occasionally used."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_log_formula_injection.spl", sha256: b1d7d772d303134859824b34065fa0a873f4a3f9a6bd21d12b4c363d27bde130, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_log_formula_injection.kql", sha256: d753a8db82cb1f20f30d8c79cc58108bb7e43f0a848f6e7f2518ed13afb0fca8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_log_formula_injection.sql", sha256: 5e9b5b5263257da7a722dff056d2179abc81a381781b478f2fc2e274fca4824c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_log_formula_injection.eql", sha256: 6b2687501c01451e4674f938ccab81d9964efcf147810014db933e4eb6221ce7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_log_formula_injection.yml", sha256: efc50dcd16f94ab69ad43f4589a52ee6c7a7c4b062ac2e099d778f6e373bb1b5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

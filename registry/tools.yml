@@ -144,11 +144,12 @@ tools:
     name: Pacu
     aliases: []
     category: cloud
-    status: triaged
-    source_code: { availability: public, repository: https://github.com/RhinoSecurityLabs/pacu, analyzed_revision: unknown }
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/RhinoSecurityLabs/pacu, analyzed_revision: 7dd34aa0856b2a964763a70be9dc9d78abc08a81 }
     first_seen: unknown
-    last_reviewed: 2026-08-15
-    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+    last_reviewed: 2026-11-21
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: reports/pacu/source-analysis.md }, { path: coverage/pacu.yml }, { path: detections/pacu/ }, { path: reviews/pacu/detection-review.md }, { path: telemetry/pacu.md }, { path: public-rules/comparisons/pacu/ }]
+    notes: "Comprehensive for the pinned revision: all 77 modules mapped to API calls; victim-side CloudTrail, data-event and EKS audit effects analyzed. Bundled payload archives were deleted unopened. Rules are experimental."
   - id: cloudfox
     name: CloudFox
     aliases: []

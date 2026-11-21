@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_access_denied_permission_bruteforce
+canonical_path: detections/pacu/yaral/pacu_access_denied_permission_bruteforce.yaral
+canonical_sha256: e12a39340194379e99563864733ff9b45221d41d7a2d64837380e30069824bfb
+description: "Detects one principal receiving AccessDenied or UnauthorizedOperation errors on ten or more distinct API actions within 10 minutes, the signature of permission brute-forcing."
+severity: high
+procedure_ids: ["PA-P02"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; errorCode in additional.fields['errorCode']."
+atomic_event_types: []
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "metadata.product_name", "principal.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Misconfigured automation after a policy change; security scanners with partial permissions."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_access_denied_permission_bruteforce.spl", sha256: 455654e6a153a9cef624549c24c7cc58dcb0cbe9cb735d0165bfb93951608ad9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_access_denied_permission_bruteforce.kql", sha256: 0414bc74ad112f92f0c8534d52fba5d4c81381d4b6e91c6a69a42b945562c235, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_access_denied_permission_bruteforce.sql", sha256: 5b974f194c81d5a8d0665fd9b8e4f22a2dd9280750db7957a4a10ca7f8517756, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_access_denied_permission_bruteforce.eql", sha256: 8c79c4e2c774a2646793c1bb4013502e1a19c1c48ace154c1f103c5efe2cff8c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_access_denied_permission_bruteforce.yml", sha256: 600f0f3c2b57157b722a782944460b10f1cbcc15d4a51f56df01913262a925c9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

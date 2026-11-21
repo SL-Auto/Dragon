@@ -1,0 +1,16 @@
+// source_yaral: detections/pacu/yaral/pacu_ssm_instance_profile_rce_chain.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: pacu_ssm_instance_profile_rce_chain
+// severity: high
+// procedure_ids: PA-P09
+// description: Detects one principal attaching an IAM instance profile to an instance (AssociateIamInstanceProfile or ReplaceIamInstanceProfileAssociation) and sending an SSM command within 30 minutes.
+// log_source_prerequisites: AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields.
+// false_positives: Fleet-onboarding automation that attaches profiles and runs bootstrap commands.
+// references: reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native EQL sequence with per-event join keys and maxspan=30m.
+sequence with maxspan=30m
+  [any where labels.product_name == "AWS CloudTrail" and event.code in ("AssociateIamInstanceProfile", "ReplaceIamInstanceProfileAssociation")] by labels.principal_arn
+  [any where labels.product_name == "AWS CloudTrail" and event.code == "SendCommand"] by labels.principal_arn

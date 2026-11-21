@@ -1,0 +1,28 @@
+rule pacu_cfn_template_bucket_injection {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects S3 event-notification configuration being written on a CloudFormation template bucket (cf-templates-*), used to trigger code that tampers with templates before deployment."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Template buckets rarely need new notifications; injection there enables persistent infrastructure tampering."
+    procedure_ids = "PA-P05"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters.bucketName in target.resource.name."
+    false_positives = "Platform teams adding monitoring notifications to template buckets."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay a sanitized PutBucketNotificationConfiguration event on a cf-templates bucket."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    re.regex($e.metadata.product_event_type, `^PutBucketNotification`)
+    re.regex($e.target.resource.name, `(?i)^cf-templates-`)
+    $e.principal.user.userid = $principal
+  match:
+    $principal over 1h
+  outcome:
+    $buckets = array_distinct($e.target.resource.name)
+  condition:
+    $e
+}

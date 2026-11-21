@@ -1,0 +1,50 @@
+title: "Detects one principal resetting an RDS master password (ModifyDBInstance with MasterUserPassword), or performing two or more snapshot-access steps (RDS snapshot creation or restore, EBS volume creation from snapshot, volume attachment, EBS direct snapshot reads) within 30 minutes."
+name: pacu_snapshot_and_database_takeover_base
+status: experimental
+description: "Detects one principal resetting an RDS master password (ModifyDBInstance with MasterUserPassword), or performing two or more snapshot-access steps (RDS snapshot creation or restore, EBS volume creation from snapshot, volume attachment, EBS direct snapshot reads) within 30 minutes."
+source_yaral: "detections/pacu/yaral/pacu_snapshot_and_database_takeover.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name, request_parameter_keys); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+procedure_ids: "PA-P10"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters keys in additional.fields; EBS direct API data events enabled for ListSnapshotBlocks and GetSnapshotBlock."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+  alt0_0:
+    product_event_type: "ModifyDBInstance"
+    request_parameter_keys|re: "(?i)masterUserPassword"
+  alt0_1:
+    product_event_type:
+      - "CreateDBSnapshot"
+      - "RestoreDBInstanceFromDBSnapshot"
+      - "CreateVolume"
+      - "AttachVolume"
+      - "ListSnapshotBlocks"
+      - "GetSnapshotBlock"
+  condition: sel and 1 of alt0_*
+falsepositives:
+  - "Database administrators and backup or disaster-recovery automation."
+level: high
+---
+title: "Detects one principal resetting an RDS master password (ModifyDBInstance with MasterUserPassword), or performing two or more snapshot-access steps (RDS snapshot creation or restore, EBS volume creation from snapshot, volume attachment, EBS direct snapshot reads) within 30 minutes."
+name: pacu_snapshot_and_database_takeover
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - pacu_snapshot_and_database_takeover_base
+  group-by:
+    - principal_arn
+  timespan: 30m
+  condition:
+    field: product_event_type
+    gte: 2
+level: high

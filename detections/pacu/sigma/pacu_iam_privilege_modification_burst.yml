@@ -1,0 +1,50 @@
+title: "Detects one principal performing two or more distinct IAM privilege-modifying actions within 30 minutes: policy attachment, inline policy, default policy version, group membership or trust-policy change."
+name: pacu_iam_privilege_modification_burst_base
+status: experimental
+description: "Detects one principal performing two or more distinct IAM privilege-modifying actions within 30 minutes: policy attachment, inline policy, default policy version, group membership or trust-policy change."
+source_yaral: "detections/pacu/yaral/pacu_iam_privilege_modification_burst.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+procedure_ids: "PA-P03,PA-P04"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    product_event_type:
+      - "AttachUserPolicy"
+      - "AttachRolePolicy"
+      - "AttachGroupPolicy"
+      - "PutUserPolicy"
+      - "PutRolePolicy"
+      - "PutGroupPolicy"
+      - "CreatePolicyVersion"
+      - "SetDefaultPolicyVersion"
+      - "AddUserToGroup"
+      - "UpdateAssumeRolePolicy"
+  condition: sel
+falsepositives:
+  - "Infrastructure-as-code pipelines and identity administrators applying multi-step changes; approve deployment role ARNs."
+level: high
+---
+title: "Detects one principal performing two or more distinct IAM privilege-modifying actions within 30 minutes: policy attachment, inline policy, default policy version, group membership or trust-policy change."
+name: pacu_iam_privilege_modification_burst
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - pacu_iam_privilege_modification_burst_base
+  group-by:
+    - principal_arn
+  timespan: 30m
+  condition:
+    field: product_event_type
+    gte: 2
+level: high

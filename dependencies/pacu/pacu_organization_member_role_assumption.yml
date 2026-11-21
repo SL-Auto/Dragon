@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_organization_member_role_assumption
+canonical_path: detections/pacu/yaral/pacu_organization_member_role_assumption.yaral
+canonical_sha256: d269898db44d72b4250aef9739eb9cd9ba13f6c0c7eb0e663e4b86b9e45c74cc
+description: "Detects one principal assuming the OrganizationAccountAccessRole in two or more member accounts within 1 hour."
+severity: high
+procedure_ids: ["PA-P09"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; the assumed role ARN in target.resource.name and the member account in target.cloud.project.name."
+atomic_event_types: ["AssumeRole"]
+required_udm_fields: ["metadata.product_event_type", "metadata.product_name", "principal.user.userid", "target.cloud.project.name", "target.resource.name"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Organization administrators and landing-zone automation."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_organization_member_role_assumption.spl", sha256: 707a623048b687ad4b07e814780c3578b89277a02301aff654c83f5185a39ad8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_organization_member_role_assumption.kql", sha256: 6bdfcd9adb421191853974f0d470822e42465ff57868e39ec586a2044ca0f044, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_organization_member_role_assumption.sql", sha256: 3897d6bf28d5991866cba67212c5626f68d6bd767fdf5f40d819c4e2dd5dfc14, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_organization_member_role_assumption.eql", sha256: 9c1c85a41c8b19917ca981a221cfb879d0fefdae17d4e807875d91d19d5b2897, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_organization_member_role_assumption.yml", sha256: 6fc67ab3998b331b90648ea1ea9988eb9d98d6c132bc883b126677a1d59862e3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

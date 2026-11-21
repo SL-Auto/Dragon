@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_eventbridge_lambda_backdoor_chain
+canonical_path: detections/pacu/yaral/pacu_eventbridge_lambda_backdoor_chain.yaral
+canonical_sha256: 90b1f1e2da7e6bdb38c679641aed0b365ac5a7fe475927783739e7b9648b88a7
+description: "Detects one principal creating a Lambda function and an EventBridge rule whose event pattern matches IAM or EC2 API events within 30 minutes (PA-DR-04), the event-driven backdoor that reacts to new users, roles or security groups."
+severity: high
+procedure_ids: ["PA-P05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; PutRule eventPattern in additional.fields['eventPattern']."
+atomic_event_types: ["CreateFunction", "PutRule"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "metadata.product_name", "principal.user.userid"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Serverless deployment pipelines (CloudFormation, SAM, CDK) that create functions and rules together; approve their role ARNs."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_eventbridge_lambda_backdoor_chain.spl", sha256: 5df117e05a1d32e831417d00ddabde791a5719c840a286b4a07427b44cc7d912, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/pacu/kql/pacu_eventbridge_lambda_backdoor_chain.kql", sha256: ad8857aba9c5a16a3b50dd94ea8dbbb435ffd4bb192bf15f4eafe32599fa2d3a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/pacu/sql/pacu_eventbridge_lambda_backdoor_chain.sql", sha256: 31028c96496391f06550d05a301a986d1d74535bb4f5eff9c81d2acca49669ef, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/pacu/eql/pacu_eventbridge_lambda_backdoor_chain.eql", sha256: 2f8fa849963fc196ca1af14a509c5d5c95bc903108c22ab1dc1a436ac1c916f2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_eventbridge_lambda_backdoor_chain.yml", sha256: fd5cd2ab6e9d1c090e1c2aa561365269b49bf7398cf4d8dd49a897d0f85e6cb0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

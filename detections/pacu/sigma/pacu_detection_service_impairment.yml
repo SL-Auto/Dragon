@@ -1,0 +1,52 @@
+title: "Detects actions that stop or remove AWS monitoring: CloudTrail StopLogging, DeleteTrail or UpdateTrail; GuardDuty DeleteDetector, UpdateDetector, CreateIPSet or UpdateIPSet; Config DeleteConfigurationRecorder, StopConfigurationRecorder or DeleteConfigRule; DeleteFlowLogs; CloudWatch DeleteAlarms or DisableAlarmActions."
+name: pacu_detection_service_impairment_base
+status: experimental
+description: "Detects actions that stop or remove AWS monitoring: CloudTrail StopLogging, DeleteTrail or UpdateTrail; GuardDuty DeleteDetector, UpdateDetector, CreateIPSet or UpdateIPSet; Config DeleteConfigurationRecorder, StopConfigurationRecorder or DeleteConfigRule; DeleteFlowLogs; CloudWatch DeleteAlarms or DisableAlarmActions."
+source_yaral: "detections/pacu/yaral/pacu_detection_service_impairment.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+procedure_ids: "PA-P07"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    product_event_type:
+      - "StopLogging"
+      - "DeleteTrail"
+      - "UpdateTrail"
+      - "DeleteDetector"
+      - "UpdateDetector"
+      - "CreateIPSet"
+      - "UpdateIPSet"
+      - "DeleteConfigurationRecorder"
+      - "StopConfigurationRecorder"
+      - "DeleteConfigRule"
+      - "DeleteFlowLogs"
+      - "DeleteAlarms"
+      - "DisableAlarmActions"
+  condition: sel
+falsepositives:
+  - "Account decommissioning and approved logging reconfiguration."
+level: high
+---
+title: "Detects actions that stop or remove AWS monitoring: CloudTrail StopLogging, DeleteTrail or UpdateTrail; GuardDuty DeleteDetector, UpdateDetector, CreateIPSet or UpdateIPSet; Config DeleteConfigurationRecorder, StopConfigurationRecorder or DeleteConfigRule; DeleteFlowLogs; CloudWatch DeleteAlarms or DisableAlarmActions."
+name: pacu_detection_service_impairment
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - pacu_detection_service_impairment_base
+  group-by:
+    - principal_arn
+  timespan: 60m
+  condition:
+    gte: 1
+level: high

@@ -1,0 +1,29 @@
+rule pacu_sns_topic_subscription_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one principal subscribing endpoints to three or more SNS topics within 30 minutes."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Subscribing external endpoints across topics intercepts notifications and data."
+    procedure_ids = "PA-P12"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; topicArn in target.resource.name."
+    false_positives = "Monitoring onboarding that subscribes to many topics."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized Subscribe events on three topics."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    $e.metadata.product_event_type = "Subscribe"
+    $e.principal.user.userid = $principal
+    $e.target.resource.name = $topic
+  match:
+    $principal over 30m
+  outcome:
+    $topics = count_distinct($topic)
+    $protocols = array_distinct($e.additional.fields["protocol"])
+  condition:
+    $e and $topics >= 3
+}

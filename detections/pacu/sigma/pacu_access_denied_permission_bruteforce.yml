@@ -1,0 +1,40 @@
+title: "Detects one principal receiving AccessDenied or UnauthorizedOperation errors on ten or more distinct API actions within 10 minutes, the signature of permission brute-forcing."
+name: pacu_access_denied_permission_bruteforce_base
+status: experimental
+description: "Detects one principal receiving AccessDenied or UnauthorizedOperation errors on ten or more distinct API actions within 10 minutes, the signature of permission brute-forcing."
+source_yaral: "detections/pacu/yaral/pacu_access_denied_permission_bruteforce.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name, error_code); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+procedure_ids: "PA-P02"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; errorCode in additional.fields['errorCode']."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    error_code|re: "(?i)(AccessDenied|UnauthorizedOperation)"
+  condition: sel
+falsepositives:
+  - "Misconfigured automation after a policy change; security scanners with partial permissions."
+level: high
+---
+title: "Detects one principal receiving AccessDenied or UnauthorizedOperation errors on ten or more distinct API actions within 10 minutes, the signature of permission brute-forcing."
+name: pacu_access_denied_permission_bruteforce
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - pacu_access_denied_permission_bruteforce_base
+  group-by:
+    - principal_arn
+  timespan: 10m
+  condition:
+    field: product_event_type
+    gte: 10
+level: high

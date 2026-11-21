@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_sns_topic_subscription_fanout
+canonical_path: detections/pacu/yaral/pacu_sns_topic_subscription_fanout.yaral
+canonical_sha256: 02555bdd4fe0f64d769823df92d81030eb9030030381a052fc276044b7765aec
+description: "Detects one principal subscribing endpoints to three or more SNS topics within 30 minutes."
+severity: medium
+procedure_ids: ["PA-P12"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; topicArn in target.resource.name."
+atomic_event_types: ["Subscribe"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "metadata.product_name", "principal.user.userid", "target.resource.name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Monitoring onboarding that subscribes to many topics."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_sns_topic_subscription_fanout.spl", sha256: 0a1d1c2f94b0219bdbf493b8e5fedebe582e01549efb94145107d50ded611c57, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_sns_topic_subscription_fanout.kql", sha256: 3e0b04029a7a0b8a8b94e57ab65d963b201def8103dc10e7997f9ce09820ab9c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_sns_topic_subscription_fanout.sql", sha256: 3cd6a555238848eb89b00c2c7e04a58c91402015c38597b00617deb20d4f898e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_sns_topic_subscription_fanout.eql", sha256: 3cc72502a4970199b49215889f1b36440261275110be931727eba572942b01bd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_sns_topic_subscription_fanout.yml", sha256: 0f4fe3ed80226bbda1ecf37c301a9c05a3e8a24e79645994094098a40139b0c2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

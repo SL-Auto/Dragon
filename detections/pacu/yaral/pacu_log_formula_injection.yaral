@@ -1,0 +1,28 @@
+rule pacu_log_formula_injection {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects CreateTrail or RunInstances requests whose name or tag value begins with a spreadsheet formula character (=, +, -, @), used to inject formulas into exported CloudTrail logs."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Formula-leading names have no operational purpose and target analysts who open exported logs."
+    procedure_ids = "PA-P13"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; trail name or tag values in additional.fields['name']."
+    false_positives = "None expected; a leading hyphen in names is occasionally used."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized CreateTrail events with formula-leading names."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    $e.metadata.product_event_type = /^(CreateTrail|RunInstances)$/
+    re.regex($e.additional.fields["name"], `^\s*[=+@]|^\s*-[^-\s]`)
+    $e.principal.user.userid = $principal
+  match:
+    $principal over 1h
+  outcome:
+    $names = array_distinct($e.additional.fields["name"])
+  condition:
+    $e
+}

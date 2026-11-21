@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_multi_service_enumeration_fanout
+canonical_path: detections/pacu/yaral/pacu_multi_service_enumeration_fanout.yaral
+canonical_sha256: 496f28e7133980140c9e88d21789024b7e13025f6a0ad0c3586635c12a5a4408
+description: "Detects one non-console AWS principal issuing List, Describe or Get calls to fifteen or more distinct services within 30 minutes, the breadth of Pacu's enumeration modules."
+severity: medium
+procedure_ids: ["PA-P02", "PA-P11", "PA-P16"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; eventSource in target.application."
+atomic_event_types: ["Describe", "List"]
+required_udm_fields: ["metadata.product_event_type", "metadata.product_name", "network.http.user_agent", "principal.user.userid", "target.application"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "CSPM, inventory and governance roles."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_multi_service_enumeration_fanout.spl", sha256: 8bd560cf15ab07f79f0b3a6d3c1d917d92340eac83108584bca531368cf33932, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_multi_service_enumeration_fanout.kql", sha256: dc0b9955d3c50d6dc839ea165c9ed5e50d66aeca040dbf54ecec444d60da52a6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_multi_service_enumeration_fanout.sql", sha256: 7b45d58a706031c533f5527d30335a5b8411c35c8df131485cb490899200ddbc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_multi_service_enumeration_fanout.eql", sha256: 3d3db59b04e5b24c8e82eda41a3bdce3d788dfa440f2f44eef55884b2e8a5723, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_multi_service_enumeration_fanout.yml", sha256: 0605c09839f8c1e779d00fcd0a7ff5567fee4beb35a98a51a7e521fbe6845928, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

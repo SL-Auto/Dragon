@@ -1,0 +1,29 @@
+// source_yaral: detections/pacu/yaral/pacu_ssm_instance_profile_rce_chain.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: pacu_ssm_instance_profile_rce_chain
+// severity: high
+// procedure_ids: PA-P09
+// description: Detects one principal attaching an IAM instance profile to an instance (AssociateIamInstanceProfile or ReplaceIamInstanceProfileAssociation) and sending an SSM command within 30 minutes.
+// log_source_prerequisites: AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields.
+// false_positives: Fleet-onboarding automation that attaches profiles and runs bootstrap commands.
+// references: reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native ordered two-event correlation on principal_arn within 30 minutes (first event before second). Exact per-pair join; KQL suffixes duplicate right-side columns with 1. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+let window = 30m;
+let first_leg = NormalizedEvents
+    | where TimeGenerated > ago(60m)
+    | where product_name == "AWS CloudTrail"
+    and product_event_type in ("AssociateIamInstanceProfile", "ReplaceIamInstanceProfileAssociation")
+    | project-rename FirstTime = TimeGenerated;
+let second_leg = NormalizedEvents
+    | where TimeGenerated > ago(60m)
+    | where product_name == "AWS CloudTrail"
+    and product_event_type == "SendCommand"
+    | project-rename SecondTime = TimeGenerated;
+first_leg
+| join kind=inner second_leg on principal_arn
+| where SecondTime between (FirstTime .. FirstTime + window)
+| summarize FirstTime = min(FirstTime), LastTime = max(SecondTime), Pairs = count() by principal_arn
+| extend CanonicalRule = "pacu_ssm_instance_profile_rce_chain"

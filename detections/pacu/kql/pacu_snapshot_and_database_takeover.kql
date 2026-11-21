@@ -1,0 +1,20 @@
+// source_yaral: detections/pacu/yaral/pacu_snapshot_and_database_takeover.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: pacu_snapshot_and_database_takeover
+// severity: high
+// procedure_ids: PA-P10
+// description: Detects one principal resetting an RDS master password (ModifyDBInstance with MasterUserPassword), or performing two or more snapshot-access steps (RDS snapshot creation or restore, EBS volume creation from snapshot, volume attachment, EBS direct snapshot reads) within 30 minutes.
+// log_source_prerequisites: AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters keys in additional.fields; EBS direct API data events enabled for ListSnapshotBlocks and GetSnapshotBlock.
+// false_positives: Database administrators and backup or disaster-recovery automation.
+// references: reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name, request_parameter_keys); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native filter, grouping by principal_arn and threshold. Hop window approximated by scheduling every 10 minutes over the trailing 30 minutes. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+NormalizedEvents
+| where TimeGenerated > ago(30m)
+| where product_name == "AWS CloudTrail"
+    and ((product_event_type == "ModifyDBInstance" and request_parameter_keys matches regex @"(?i)masterUserPassword") or (product_event_type in ("CreateDBSnapshot", "RestoreDBInstanceFromDBSnapshot", "CreateVolume", "AttachVolume", "ListSnapshotBlocks", "GetSnapshotBlock")))
+| summarize MatchedCount = count_distinct(product_event_type) by principal_arn
+| where MatchedCount >= 2
+| extend CanonicalRule = "pacu_snapshot_and_database_takeover"

@@ -1,0 +1,18 @@
+# source_yaral: detections/pacu/yaral/pacu_log_formula_injection.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: pacu_log_formula_injection
+# severity: medium
+# procedure_ids: PA-P13
+# description: Detects CreateTrail or RunInstances requests whose name or tag value begins with a spreadsheet formula character (=, +, -, @), used to inject formulas into exported CloudTrail logs.
+# log_source_prerequisites: AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; trail name or tag values in additional.fields['name'].
+# false_positives: None expected; a leading hyphen in names is occasionally used.
+# references: reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name, request_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by principal_arn and threshold. Hop window approximated by scheduling every 20 minutes over the trailing 60 minutes.
+| search index=<configured_index> earliest=-60m@m latest=now
+| where product_name=="AWS CloudTrail" AND in(product_event_type, "CreateTrail", "RunInstances") AND match(request_name, "(?i)^\\s*[=+@]|^\\s*-[^-\\s]")
+| stats count as matched_count values(request_name) as request_name_values by principal_arn
+| where matched_count >= 1
+| eval canonical_rule="pacu_log_formula_injection"

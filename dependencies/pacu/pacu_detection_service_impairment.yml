@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_detection_service_impairment
+canonical_path: detections/pacu/yaral/pacu_detection_service_impairment.yaral
+canonical_sha256: c902976c197f0857f56c6f09d3927701fe921b7fab8661d60413f00deecfb389
+description: "Detects actions that stop or remove AWS monitoring: CloudTrail StopLogging, DeleteTrail or UpdateTrail; GuardDuty DeleteDetector, UpdateDetector, CreateIPSet or UpdateIPSet; Config DeleteConfigurationRecorder, StopConfigurationRecorder or DeleteConfigRule; DeleteFlowLogs; CloudWatch DeleteAlarms or DisableAlarmActions."
+severity: high
+procedure_ids: ["PA-P07"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields."
+atomic_event_types: ["CreateIPSet", "DeleteAlarms", "DeleteConfigRule", "DeleteConfigurationRecorder", "DeleteDetector", "DeleteFlowLogs", "DeleteTrail", "StopConfigurationRecorder", "UpdateDetector", "UpdateIPSet", "UpdateTrail"]
+required_udm_fields: ["metadata.product_event_type", "metadata.product_name", "principal.ip", "principal.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Account decommissioning and approved logging reconfiguration."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_detection_service_impairment.spl", sha256: 6ea69fc0c94de1979a93eab3fb61137783300722929174d5b99244a7289c8f87, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_detection_service_impairment.kql", sha256: 0c4fdb37d43f4e12a3f6a56d676339c7cd991bfc731b14ea5e409e48a1e10c9f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_detection_service_impairment.sql", sha256: c9bf682af41d436f9d4970441628340fe2e7a2ae36de25bd6d800b58ec33e414, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_detection_service_impairment.eql", sha256: 15d8c801af42dd98762b2aa4266f300ea228a33116dc6a5c975a91ee6e866f10, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_detection_service_impairment.yml", sha256: abb0ed0caf4a8a0fedb78f58aad397afc4b782d933160b4b17395c881fdd92b2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

@@ -1,0 +1,28 @@
+rule pacu_access_denied_permission_bruteforce {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one principal receiving AccessDenied or UnauthorizedOperation errors on ten or more distinct API actions within 10 minutes, the signature of permission brute-forcing."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Probing many APIs to map permissions produces dense, diverse authorization failures that normal workloads do not."
+    procedure_ids = "PA-P02"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; errorCode in additional.fields['errorCode']."
+    false_positives = "Misconfigured automation after a policy change; security scanners with partial permissions."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized AccessDenied events across ten event names."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    re.regex($e.additional.fields["errorCode"], `(?i)(AccessDenied|UnauthorizedOperation|Client\.UnauthorizedOperation)`)
+    $e.principal.user.userid = $principal
+    $e.metadata.product_event_type = $action
+  match:
+    $principal over 10m
+  outcome:
+    $actions = count_distinct($action)
+  condition:
+    $e and $actions >= 10
+}

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_iam_privilege_modification_burst
+canonical_path: detections/pacu/yaral/pacu_iam_privilege_modification_burst.yaral
+canonical_sha256: 4b4355ba277543e8fa2f4522bd89b218b54a520db29bce2e5993fd2c60aa2c6a
+description: "Detects one principal performing two or more distinct IAM privilege-modifying actions within 30 minutes: policy attachment, inline policy, default policy version, group membership or trust-policy change."
+severity: high
+procedure_ids: ["PA-P03", "PA-P04"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields."
+atomic_event_types: ["AddUserToGroup", "AttachGroupPolicy", "AttachRolePolicy", "CreatePolicyVersion", "PutGroupPolicy", "PutRolePolicy", "PutUserPolicy", "SetDefaultPolicyVersion"]
+required_udm_fields: ["metadata.product_event_type", "metadata.product_name", "principal.user.userid"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Infrastructure-as-code pipelines and identity administrators applying multi-step changes; approve deployment role ARNs."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_iam_privilege_modification_burst.spl", sha256: f010e13fb32964382d1cace1ac742368504b8d29b27d8a986312f957a6131fd1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_iam_privilege_modification_burst.kql", sha256: 7ef8f4792f9e73dc9fe40595261fa18b16fdc4136433a755f429e0b91ccd070e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_iam_privilege_modification_burst.sql", sha256: 1c2308f85d1f3316fdeb225015679e60c5c3c6f94c5b19d134941c9fb8cec022, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_iam_privilege_modification_burst.eql", sha256: d694422a2c710fd2a5c94b9d30df17cf909da982b63bfcba160821b4cbd47436, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_iam_privilege_modification_burst.yml", sha256: 89f9c22874e948db8532cf6cdd4b37dedc0f982e528ef26695f292feb1b6978c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

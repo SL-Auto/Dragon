@@ -1,0 +1,58 @@
+title: "Detects one principal modifying an EC2 instance's user data and starting that instance within 30 minutes, which executes the new user data at boot."
+name: pacu_instance_userdata_modify_restart_first
+status: experimental
+description: "Detects one principal modifying an EC2 instance's user data and starting that instance within 30 minutes, which executes the new user data at boot."
+source_yaral: "detections/pacu/yaral/pacu_instance_userdata_modify_restart.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name, request_attribute, invoked_by); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Two base rules plus a Sigma temporal_ordered correlation."
+references:
+  - "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md; public-rules/comparisons/pacu/pacu_instance_userdata_modify_restart.md"
+procedure_ids: "PA-P09"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters attribute in additional.fields['attribute'] and instanceId in target.resource.name; userIdentity.invokedBy in additional.fields (service-invoked changes excluded, PA-DR-10)."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    product_event_type: "ModifyInstanceAttribute"
+    request_attribute|re: "(?i)userData"
+  filter0:
+    invoked_by|re: "(?i)(AWS Internal|\\.amazonaws\\.com)$"
+  condition: sel and not filter0
+falsepositives:
+  - "Configuration changes during maintenance by instance owners."
+level: high
+---
+title: "Detects one principal modifying an EC2 instance's user data and starting that instance within 30 minutes, which executes the new user data at boot."
+name: pacu_instance_userdata_modify_restart_second
+status: experimental
+description: "Detects one principal modifying an EC2 instance's user data and starting that instance within 30 minutes, which executes the new user data at boot."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    product_event_type: "StartInstances"
+  condition: sel
+falsepositives:
+  - "Configuration changes during maintenance by instance owners."
+level: high
+---
+title: "Detects one principal modifying an EC2 instance's user data and starting that instance within 30 minutes, which executes the new user data at boot."
+name: pacu_instance_userdata_modify_restart
+status: experimental
+correlation:
+  type: temporal_ordered
+  rules:
+    - pacu_instance_userdata_modify_restart_first
+    - pacu_instance_userdata_modify_restart_second
+  group-by:
+    - principal_arn
+    - resource_name
+  timespan: 30m
+level: high

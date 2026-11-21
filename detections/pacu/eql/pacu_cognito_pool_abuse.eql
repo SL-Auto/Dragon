@@ -1,0 +1,15 @@
+// source_yaral: detections/pacu/yaral/pacu_cognito_pool_abuse.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: pacu_cognito_pool_abuse
+// severity: medium
+// procedure_ids: PA-P14
+// description: Detects one principal performing two or more kinds of Cognito identity-creation actions within 30 minutes: CreateUserPool, CreateUserPoolClient, CreateIdentityPool, AdminCreateUser or AdminUpdateUserAttributes.
+// log_source_prerequisites: AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields.
+// false_positives: Application deployment pipelines that provision Cognito resources.
+// references: reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where labels.product_name == "AWS CloudTrail"
+  and event.code in ("CreateUserPool", "CreateUserPoolClient", "CreateIdentityPool", "AdminCreateUser", "AdminUpdateUserAttributes")

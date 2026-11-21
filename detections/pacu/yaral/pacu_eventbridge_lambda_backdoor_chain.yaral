@@ -1,0 +1,32 @@
+rule pacu_eventbridge_lambda_backdoor_chain {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one principal creating a Lambda function and an EventBridge rule whose event pattern matches IAM or EC2 API events within 30 minutes (PA-DR-04), the event-driven backdoor that reacts to new users, roles or security groups."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Wiring a new function to IAM or EC2 creation events is uncommon outside platform automation and gives persistent, automatic access."
+    procedure_ids = "PA-P05"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; PutRule eventPattern in additional.fields['eventPattern']."
+    false_positives = "Serverless deployment pipelines (CloudFormation, SAM, CDK) that create functions and rules together; approve their role ARNs."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized CreateFunction, PutRule, PutTargets and AddPermission events from one ARN."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $f.metadata.product_name = "AWS CloudTrail"
+    re.regex($f.metadata.product_event_type, `^CreateFunction`)
+    $f.principal.user.userid = $principal
+
+    $k.metadata.product_name = "AWS CloudTrail"
+    $k.metadata.product_event_type = "PutRule"
+    re.regex($k.additional.fields["eventPattern"], `aws\.(iam|ec2)`)
+    $k.principal.user.userid = $principal
+  match:
+    $principal over 30m
+  outcome:
+    $rules = array_distinct($k.metadata.product_event_type)
+  condition:
+    $f and $k
+}

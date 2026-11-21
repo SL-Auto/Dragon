@@ -1,0 +1,41 @@
+title: "Detects one principal authorizing security-group ingress from any address (0.0.0.0/0 or ::/0) on three or more security groups within 30 minutes."
+name: pacu_security_group_open_ingress_base
+status: experimental
+description: "Detects one principal authorizing security-group ingress from any address (0.0.0.0/0 or ::/0) on three or more security groups within 30 minutes."
+source_yaral: "detections/pacu/yaral/pacu_security_group_open_ingress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name, ip_permissions); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+procedure_ids: "PA-P06"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters serialized in additional.fields['ipPermissions'] and groupId in target.resource.name."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    product_event_type: "AuthorizeSecurityGroupIngress"
+    ip_permissions|re: "(?i)(0\\.0\\.0\\.0/0|::/0)"
+  condition: sel
+falsepositives:
+  - "Development environments and load-balancer onboarding scripts."
+level: medium
+---
+title: "Detects one principal authorizing security-group ingress from any address (0.0.0.0/0 or ::/0) on three or more security groups within 30 minutes."
+name: pacu_security_group_open_ingress
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - pacu_security_group_open_ingress_base
+  group-by:
+    - principal_arn
+  timespan: 30m
+  condition:
+    field: resource_name
+    gte: 3
+level: medium

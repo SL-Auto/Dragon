@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_cfn_template_bucket_injection
+canonical_path: detections/pacu/yaral/pacu_cfn_template_bucket_injection.yaral
+canonical_sha256: bd941ae85d8084a0f128369195bcf60f063d1d8b5fb41db2dd6bb6b6d650b435
+description: "Detects S3 event-notification configuration being written on a CloudFormation template bucket (cf-templates-*), used to trigger code that tampers with templates before deployment."
+severity: high
+procedure_ids: ["PA-P05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters.bucketName in target.resource.name."
+atomic_event_types: ["PutBucketNotification"]
+required_udm_fields: ["metadata.product_event_type", "metadata.product_name", "principal.user.userid", "target.resource.name"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Platform teams adding monitoring notifications to template buckets."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_cfn_template_bucket_injection.spl", sha256: d4acde47d88edb1ed5c17d2a9cfc49c024f7b3cfa5d6ca83fe2e2debec6abced, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_cfn_template_bucket_injection.kql", sha256: e8a99c216403201c38e2eb6b36433ff59e24f46a6395a25891dfe50856c7fcc1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_cfn_template_bucket_injection.sql", sha256: 1cf815ef231de3f552591606b19443e6a8e691479f63180f99492277e0429335, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_cfn_template_bucket_injection.eql", sha256: f7ef07a46dd433cbed4032c14ce59fae695266076f611fbfd5374c5514aa91f7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_cfn_template_bucket_injection.yml", sha256: 3299b1dc484f4b6bf0a50a7619c5da1f9cec2e1b77d257b3d531f1c0022670dc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

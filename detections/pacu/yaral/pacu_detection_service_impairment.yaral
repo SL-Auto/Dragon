@@ -1,0 +1,28 @@
+rule pacu_detection_service_impairment {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects actions that stop or remove AWS monitoring: CloudTrail StopLogging, DeleteTrail or UpdateTrail; GuardDuty DeleteDetector, UpdateDetector, CreateIPSet or UpdateIPSet; Config DeleteConfigurationRecorder, StopConfigurationRecorder or DeleteConfigRule; DeleteFlowLogs; CloudWatch DeleteAlarms or DisableAlarmActions."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Each action reduces detection coverage. Trusted IP sets in GuardDuty suppress findings from attacker addresses."
+    procedure_ids = "PA-P07"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields."
+    false_positives = "Account decommissioning and approved logging reconfiguration."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized events for each action; confirm change-management approvals for negatives."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    $e.metadata.product_event_type = /^(StopLogging|DeleteTrail|UpdateTrail|DeleteDetector|UpdateDetector|CreateIPSet|UpdateIPSet|DeleteConfigurationRecorder|StopConfigurationRecorder|DeleteConfigRule|DeleteFlowLogs|DeleteAlarms|DisableAlarmActions)$/
+    $e.principal.user.userid = $principal
+  match:
+    $principal over 1h
+  outcome:
+    $actions = array_distinct($e.metadata.product_event_type)
+    $source_ips = array_distinct($e.principal.ip)
+  condition:
+    $e
+}

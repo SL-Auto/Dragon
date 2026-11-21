@@ -1,0 +1,40 @@
+title: "Detects one principal subscribing endpoints to three or more SNS topics within 30 minutes."
+name: pacu_sns_topic_subscription_fanout_base
+status: experimental
+description: "Detects one principal subscribing endpoints to three or more SNS topics within 30 minutes."
+source_yaral: "detections/pacu/yaral/pacu_sns_topic_subscription_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+procedure_ids: "PA-P12"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; topicArn in target.resource.name."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    product_event_type: "Subscribe"
+  condition: sel
+falsepositives:
+  - "Monitoring onboarding that subscribes to many topics."
+level: medium
+---
+title: "Detects one principal subscribing endpoints to three or more SNS topics within 30 minutes."
+name: pacu_sns_topic_subscription_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - pacu_sns_topic_subscription_fanout_base
+  group-by:
+    - principal_arn
+  timespan: 30m
+  condition:
+    field: resource_name
+    gte: 3
+level: medium

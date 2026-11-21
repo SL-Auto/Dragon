@@ -1,0 +1,16 @@
+// source_yaral: detections/pacu/yaral/pacu_ecs_task_definition_run.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: pacu_ecs_task_definition_run
+// severity: medium
+// procedure_ids: PA-P09
+// description: Detects one principal registering an ECS task definition and running a task within 30 minutes, used to execute attacker commands under the task role.
+// log_source_prerequisites: AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields.
+// false_positives: CI/CD pipelines that register and run tasks; approve their role ARNs.
+// references: reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native EQL sequence with per-event join keys and maxspan=30m.
+sequence with maxspan=30m
+  [any where labels.product_name == "AWS CloudTrail" and event.code == "RegisterTaskDefinition"] by labels.principal_arn
+  [any where labels.product_name == "AWS CloudTrail" and event.code == "RunTask"] by labels.principal_arn

@@ -1,0 +1,15 @@
+// source_yaral: detections/pacu/yaral/pacu_s3_bulk_object_download.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: pacu_s3_bulk_object_download
+// severity: medium
+// procedure_ids: PA-P11
+// description: Detects one principal reading one hundred or more distinct S3 objects within 30 minutes (GetObject data events).
+// log_source_prerequisites: CloudTrail S3 data events (GetObject) enabled, with bucket and key in target.resource.name.
+// false_positives: Backup, replication, analytics and CDN origin roles.
+// references: reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where labels.product_name == "AWS CloudTrail"
+  and event.code == "GetObject"

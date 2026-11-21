@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_ssm_instance_profile_rce_chain
+canonical_path: detections/pacu/yaral/pacu_ssm_instance_profile_rce_chain.yaral
+canonical_sha256: e4bef5499fcbc6f7ecd2c7a8ea037a1514a5206d781eab311f6458dbc80f898d
+description: "Detects one principal attaching an IAM instance profile to an instance (AssociateIamInstanceProfile or ReplaceIamInstanceProfileAssociation) and sending an SSM command within 30 minutes."
+severity: high
+procedure_ids: ["PA-P09"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields."
+atomic_event_types: ["SendCommand"]
+required_udm_fields: ["additional.fields", "metadata.event_timestamp.seconds", "metadata.product_event_type", "metadata.product_name", "principal.user.userid"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Fleet-onboarding automation that attaches profiles and runs bootstrap commands."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_ssm_instance_profile_rce_chain.spl", sha256: f8c9b43225b5ba1de8aeb4708334ab07b3c24fff5a78a1219aad08ecb55d1dcc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/pacu/kql/pacu_ssm_instance_profile_rce_chain.kql", sha256: 2711933149aeda74393d10f85bf9602c7db22ba0130753c585ee43763737b2f2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_ssm_instance_profile_rce_chain.sql", sha256: 4262c85542baa627732747607e273ab5635090dab336a0d442bc2dac0f83087e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_ssm_instance_profile_rce_chain.eql", sha256: ff2cfd377456e79faa31711dd9b58e14b22f29cf789353cc97f9dce24b245a7e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sigma: { path: "detections/pacu/sigma/pacu_ssm_instance_profile_rce_chain.yml", sha256: 7deb3ec8d2be7e6d9cf6d729598f8c6f12e7b665f0e679b5f9eb8e3fc52f5ef6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

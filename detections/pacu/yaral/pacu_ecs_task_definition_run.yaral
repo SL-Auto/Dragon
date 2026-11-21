@@ -1,0 +1,33 @@
+rule pacu_ecs_task_definition_run {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one principal registering an ECS task definition and running a task within 30 minutes, used to execute attacker commands under the task role."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Register-then-run by a human principal outside deployment pipelines indicates ad hoc execution with task-role credentials."
+    procedure_ids = "PA-P09"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields."
+    false_positives = "CI/CD pipelines that register and run tasks; approve their role ARNs."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized RegisterTaskDefinition and RunTask events from one ARN."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $d.metadata.product_name = "AWS CloudTrail"
+    $d.metadata.product_event_type = "RegisterTaskDefinition"
+    $d.principal.user.userid = $principal
+
+    $t.metadata.product_name = "AWS CloudTrail"
+    $t.metadata.product_event_type = "RunTask"
+    $t.principal.user.userid = $principal
+
+    $d.metadata.event_timestamp.seconds <= $t.metadata.event_timestamp.seconds
+  match:
+    $principal over 30m
+  outcome:
+    $tasks = array_distinct($t.target.resource.name)
+  condition:
+    $d and $t
+}

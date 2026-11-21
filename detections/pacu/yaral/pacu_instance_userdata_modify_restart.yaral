@@ -1,0 +1,37 @@
+rule pacu_instance_userdata_modify_restart {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one principal modifying an EC2 instance's user data and starting that instance within 30 minutes, which executes the new user data at boot."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Replacing user data and restarting is a direct code-execution path on the instance."
+    procedure_ids = "PA-P09"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters attribute in additional.fields['attribute'] and instanceId in target.resource.name; userIdentity.invokedBy in additional.fields (service-invoked changes excluded, PA-DR-10)."
+    false_positives = "Configuration changes during maintenance by instance owners."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md; public-rules/comparisons/pacu/pacu_instance_userdata_modify_restart.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized ModifyInstanceAttribute (userData) and StartInstances events for one instance."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $m.metadata.product_name = "AWS CloudTrail"
+    $m.metadata.product_event_type = "ModifyInstanceAttribute"
+    re.regex($m.additional.fields["attribute"], `(?i)userData`)
+    not re.regex($m.additional.fields["invokedBy"], `(?i)(AWS Internal|\.amazonaws\.com)$`)
+    $m.principal.user.userid = $principal
+    $m.target.resource.name = $instance
+
+    $s.metadata.product_name = "AWS CloudTrail"
+    $s.metadata.product_event_type = "StartInstances"
+    $s.principal.user.userid = $principal
+    $s.target.resource.name = $instance
+
+    $m.metadata.event_timestamp.seconds <= $s.metadata.event_timestamp.seconds
+  match:
+    $principal, $instance over 30m
+  outcome:
+    $source_ips = array_distinct($m.principal.ip)
+  condition:
+    $m and $s
+}

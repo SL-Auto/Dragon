@@ -1,0 +1,33 @@
+rule pacu_snapshot_and_database_takeover {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one principal resetting an RDS master password (ModifyDBInstance with MasterUserPassword), or performing two or more snapshot-access steps (RDS snapshot creation or restore, EBS volume creation from snapshot, volume attachment, EBS direct snapshot reads) within 30 minutes."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Password reset or snapshot restore and attach gives direct access to database and disk contents."
+    procedure_ids = "PA-P10"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters keys in additional.fields; EBS direct API data events enabled for ListSnapshotBlocks and GetSnapshotBlock."
+    false_positives = "Database administrators and backup or disaster-recovery automation."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized password-reset and snapshot restore-and-attach sequences."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    (
+      ($e.metadata.product_event_type = "ModifyDBInstance" and re.regex($e.additional.fields["requestParameterKeys"], `(?i)masterUserPassword`)) or
+      $e.metadata.product_event_type = /^(CreateDBSnapshot|RestoreDBInstanceFromDBSnapshot|CreateVolume|AttachVolume|ListSnapshotBlocks|GetSnapshotBlock)$/
+    )
+    $e.principal.user.userid = $principal
+    $e.metadata.product_event_type = $step
+  match:
+    $principal over 30m
+  outcome:
+    $steps = count_distinct($step)
+    $step_names = array_distinct($step)
+    $password_resets = max(if($e.metadata.product_event_type = "ModifyDBInstance", 1, 0))
+  condition:
+    $e and ($steps >= 2 or $password_resets > 0)
+}

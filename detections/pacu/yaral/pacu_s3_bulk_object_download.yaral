@@ -1,0 +1,28 @@
+rule pacu_s3_bulk_object_download {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one principal reading one hundred or more distinct S3 objects within 30 minutes (GetObject data events)."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Bulk object retrieval by an interactive principal indicates collection; data pipelines overlap."
+    procedure_ids = "PA-P11"
+    log_source_prerequisites = "CloudTrail S3 data events (GetObject) enabled, with bucket and key in target.resource.name."
+    false_positives = "Backup, replication, analytics and CDN origin roles."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized GetObject data events for 100 objects from one ARN."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $e.metadata.product_name = "AWS CloudTrail"
+    $e.metadata.product_event_type = "GetObject"
+    $e.principal.user.userid = $principal
+    $e.target.resource.name = $object
+  match:
+    $principal over 30m
+  outcome:
+    $objects = count_distinct($object)
+  condition:
+    $e and $objects >= 100
+}

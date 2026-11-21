@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_s3_bulk_object_download
+canonical_path: detections/pacu/yaral/pacu_s3_bulk_object_download.yaral
+canonical_sha256: 60a7437509db2cf56f5d31040a1101dae2eec3f2ca234766667eb5f3d5ae4456
+description: "Detects one principal reading one hundred or more distinct S3 objects within 30 minutes (GetObject data events)."
+severity: medium
+procedure_ids: ["PA-P11"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "CloudTrail S3 data events (GetObject) enabled, with bucket and key in target.resource.name."
+atomic_event_types: ["GetObject"]
+required_udm_fields: ["metadata.product_event_type", "metadata.product_name", "principal.user.userid", "target.resource.name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Backup, replication, analytics and CDN origin roles."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_s3_bulk_object_download.spl", sha256: 21e66627db19169cd583d88c85c32e676d2c8cb78f7eefd92e3717bd8f5f80c9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_s3_bulk_object_download.kql", sha256: a3561c218d2d630a433038b2cd9fb2fe948b76ed275cfe8a3a8621db3f06de85, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_s3_bulk_object_download.sql", sha256: d1891e495809839b4594d9b132ce34add3992e7388d6c5553abc9ab2545b8182, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_s3_bulk_object_download.eql", sha256: 36ed5b4f5927f2b134bcea10b2d0bf19756b744b79da784d20e5c6f39210c2f3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_s3_bulk_object_download.yml", sha256: 81ecb67e92001f0f2a53c990548dc9e1909bfbc6bbeb80da754c007954864acb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

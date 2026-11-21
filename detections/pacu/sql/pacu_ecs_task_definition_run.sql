@@ -1,0 +1,32 @@
+-- source_yaral: detections/pacu/yaral/pacu_ecs_task_definition_run.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: high
+-- rule_name: pacu_ecs_task_definition_run
+-- severity: medium
+-- procedure_ids: PA-P09
+-- description: Detects one principal registering an ECS task definition and running a task within 30 minutes, used to execute attacker commands under the task role.
+-- log_source_prerequisites: AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields.
+-- false_positives: CI/CD pipelines that register and run tasks; approve their role ARNs.
+-- references: reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md
+-- schema_profile: schemas/normalized-sql.yml
+-- field_mapping: normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+-- assumptions_and_gaps: Native ordered two-event correlation on principal_arn within 30 minutes (first event before second). Exact per-pair self-join; regex, REGEXP_SUBSTR and interval syntax are dialect-specific.
+-- Schema assumption: normalized_events with columns event_time, product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name.
+WITH first_leg AS (
+  SELECT * FROM normalized_events
+  WHERE event_time >= CURRENT_TIMESTAMP - INTERVAL '60' MINUTE
+    AND product_name = 'AWS CloudTrail'
+    AND product_event_type = 'RegisterTaskDefinition'
+ ),
+second_leg AS (
+  SELECT * FROM normalized_events
+  WHERE event_time >= CURRENT_TIMESTAMP - INTERVAL '60' MINUTE
+    AND product_name = 'AWS CloudTrail'
+    AND product_event_type = 'RunTask'
+)
+SELECT a.principal_arn, MIN(a.event_time) AS first_time, MAX(b.event_time) AS last_time, 'pacu_ecs_task_definition_run' AS canonical_rule
+FROM first_leg a
+JOIN second_leg b
+  ON a.principal_arn = b.principal_arn
+ AND b.event_time BETWEEN a.event_time AND a.event_time + INTERVAL '30' MINUTE
+GROUP BY a.principal_arn;

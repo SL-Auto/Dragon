@@ -1,0 +1,40 @@
+title: "Detects S3 event-notification configuration being written on a CloudFormation template bucket (cf-templates-*), used to trigger code that tampers with templates before deployment."
+name: pacu_cfn_template_bucket_injection_base
+status: experimental
+description: "Detects S3 event-notification configuration being written on a CloudFormation template bucket (cf-templates-*), used to trigger code that tampers with templates before deployment."
+source_yaral: "detections/pacu/yaral/pacu_cfn_template_bucket_injection.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+procedure_ids: "PA-P05"
+log_source_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters.bucketName in target.resource.name."
+logsource:
+  category: cloudtrail
+  product: aws
+detection:
+  sel:
+    product_name: "AWS CloudTrail"
+    product_event_type|re: "(?i)^PutBucketNotification"
+    resource_name|re: "(?i)^cf-templates-"
+  condition: sel
+falsepositives:
+  - "Platform teams adding monitoring notifications to template buckets."
+level: high
+---
+title: "Detects S3 event-notification configuration being written on a CloudFormation template bucket (cf-templates-*), used to trigger code that tampers with templates before deployment."
+name: pacu_cfn_template_bucket_injection
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - pacu_cfn_template_bucket_injection_base
+  group-by:
+    - principal_arn
+  timespan: 60m
+  condition:
+    gte: 1
+level: high

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_security_group_open_ingress
+canonical_path: detections/pacu/yaral/pacu_security_group_open_ingress.yaral
+canonical_sha256: 5f8f27745e40b7f2d30392c11bd8d1330ff62bcc804c8173e94dcca148c1ed5a
+description: "Detects one principal authorizing security-group ingress from any address (0.0.0.0/0 or ::/0) on three or more security groups within 30 minutes."
+severity: medium
+procedure_ids: ["PA-P06"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters serialized in additional.fields['ipPermissions'] and groupId in target.resource.name."
+atomic_event_types: ["AuthorizeSecurityGroupIngress"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "metadata.product_name", "principal.user.userid", "target.resource.name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Development environments and load-balancer onboarding scripts."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_security_group_open_ingress.spl", sha256: cb964316965a7f54837670ddd2c527f9c83a20799757675927fe5dea535d8a4f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_security_group_open_ingress.kql", sha256: 5edc6e9a5e76872d18460eb19f4c0cb95d8a59d194ce3ff38abe078a99f33d87, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_security_group_open_ingress.sql", sha256: 80dce508952083175c00711e2463db245fa1515dc0cb5175401035dc2459e3b9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_security_group_open_ingress.eql", sha256: 8e30dee13210dfa6b4fe7b0b73182b18c34bd49aa2e233ba2d251911fa7fef6a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_security_group_open_ingress.yml", sha256: 79b8717b4984e8c621c442ef7d03b7a432563573f413cdd0094a7f9a27fea751, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

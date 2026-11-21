@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_user_agent_session_suffix
+canonical_path: detections/pacu/yaral/pacu_user_agent_session_suffix.yaral
+canonical_sha256: 7811984363e728f756522c12299df0c45715591852d9ff9563f53798dbb569d9
+description: "Detects AWS API calls whose user agent carries Pacu's session suffix (Pacu-Session-<uuid>), appended by the set_ua_suffix command."
+severity: high
+procedure_ids: ["PA-P01"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields."
+atomic_event_types: []
+required_udm_fields: ["metadata.id", "metadata.product_event_type", "metadata.product_name", "network.http.user_agent", "principal.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Authorized assessments that set the suffix deliberately for deconfliction."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_user_agent_session_suffix.spl", sha256: 8532331a96f5c3a1f9f87db316bbe015d49174d93c41b313f8457e34563235ac, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_user_agent_session_suffix.kql", sha256: 51037f9e8bbf0cacbb59494bff1edc4ccab61880d03479df79cbe9789405b1b5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_user_agent_session_suffix.sql", sha256: 3baae844d7e6c627ef05cf2592b37cd9eac4405d7af0f3ff6ca4daa2ade71ec8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_user_agent_session_suffix.eql", sha256: 797afea87705433eb5f3364294a4adbbc58cf4af0e5bcce64103059b4aa2cd09, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_user_agent_session_suffix.yml", sha256: d76b9b67d5f16d427bcdbd8fd81dbe4ae1499bf99b04677c3fadf65662fc6681, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

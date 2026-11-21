@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_instance_userdata_modify_restart
+canonical_path: detections/pacu/yaral/pacu_instance_userdata_modify_restart.yaral
+canonical_sha256: 87d662efd56f13876dc4f2db00fcf6b84e1f00b476f19d49154f574803f58f57
+description: "Detects one principal modifying an EC2 instance's user data and starting that instance within 30 minutes, which executes the new user data at boot."
+severity: high
+procedure_ids: ["PA-P09"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters attribute in additional.fields['attribute'] and instanceId in target.resource.name; userIdentity.invokedBy in additional.fields (service-invoked changes excluded, PA-DR-10)."
+atomic_event_types: ["ModifyInstanceAttribute", "StartInstances"]
+required_udm_fields: ["additional.fields", "metadata.event_timestamp.seconds", "metadata.product_event_type", "metadata.product_name", "principal.ip", "principal.user.userid", "target.resource.name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Configuration changes during maintenance by instance owners."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md; public-rules/comparisons/pacu/pacu_instance_userdata_modify_restart.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_instance_userdata_modify_restart.spl", sha256: 07499141a26fc6fcf4050c9e0ea441fc35c850402e962ea83afab23ac352b4f2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/pacu/kql/pacu_instance_userdata_modify_restart.kql", sha256: 873b595b20e0930bab82d8ff6d3ce8cef6cfbec9d4d3d6643973788a924a270c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_instance_userdata_modify_restart.sql", sha256: c2ca21862ef607d007599ba95d41c073d06178cfa8fd2f0da370481bbcb9303e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_instance_userdata_modify_restart.eql", sha256: ca1094133da15ac3edac62be7c8dd665832340c5c76b420a1f1a866fe57eac6c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sigma: { path: "detections/pacu/sigma/pacu_instance_userdata_modify_restart.yml", sha256: 1de52fe97153cef49ff7f142dafe8ab13b70f4ca9c88a3b6261980aa7cc6a756, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

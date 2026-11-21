@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_cognito_pool_abuse
+canonical_path: detections/pacu/yaral/pacu_cognito_pool_abuse.yaral
+canonical_sha256: 37fb914c19af683fa0584c9dbab47be5f49fe95cc3039715a9314b2dec3b9ef5
+description: "Detects one principal performing two or more kinds of Cognito identity-creation actions within 30 minutes: CreateUserPool, CreateUserPoolClient, CreateIdentityPool, AdminCreateUser or AdminUpdateUserAttributes."
+severity: medium
+procedure_ids: ["PA-P14"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields."
+atomic_event_types: ["AdminCreateUser", "CreateIdentityPool", "CreateUserPoolClient"]
+required_udm_fields: ["metadata.product_event_type", "metadata.product_name", "principal.user.userid"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Application deployment pipelines that provision Cognito resources."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_cognito_pool_abuse.spl", sha256: 5c16ce7e66fa169ccb262c3b8e05365ccd9489c76027d27acf76e98641b41a61, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/pacu/kql/pacu_cognito_pool_abuse.kql", sha256: 5a143f36ee343206ba1c3ae366dbacdf58d1e42c04b6b82cec882dced7ceec61, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_cognito_pool_abuse.sql", sha256: d9e87fd4174bf583ea64cf0b85237c305d45d08a148652ee0b0774703407c23b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_cognito_pool_abuse.eql", sha256: c6d51681eb6c3a2d83d6aa13f7ff5c6e47838550e065ad1fa0dab29702e5c87a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_cognito_pool_abuse.yml", sha256: aec0304cbb92c785bf19a58966b62e5d75ec5b3c493ca3840ecb6e86600b9955, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

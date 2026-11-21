@@ -1,27 +1,57 @@
 schema_version: 1
 tool_id: pacu
 name: "Pacu"
-lifecycle_status: triaged
-analyzed_revision: "unknown"
+lifecycle_status: analyzed
+analyzed_revision: "7dd34aa0856b2a964763a70be9dc9d78abc08a81"
 context_entry_points:
   registry: registry/tools.yml
+  summary: summaries/pacu.md
+  coverage: coverage/pacu.yml
+  report: reports/pacu/source-analysis.md
+  telemetry: telemetry/pacu.md
 counts:
-  procedures: 0
-  canonical_rules: 0
-  spl_translations: 0
-  kql_translations: 0
-  sql_translations: 0
-  eql_translations: 0
-  sigma_translations: 0
+  procedures: 16
+  canonical_rules: 22
+  spl_translations: 22
+  kql_translations: 22
+  sql_translations: 22
+  eql_translations: 22
+  sigma_translations: 22
 completion_states:
-  source_analysis: incomplete
-  canonical_detection: not_started
-  telemetry_reconciliation: not_started
-  secondary_translation: not_started
-  rule_validation_labels: "not_applicable"
+  source_analysis: complete
+  canonical_detection: complete
+  telemetry_reconciliation: complete_for_experimental_rules
+  secondary_translation: draft_complete
+  rule_validation_labels: "22 needs_validation"
 artifact_hashes:
-  registry: f3094b68a53c86bcfe950c9998d5a365811c6ee840b864fbd431f3bb90eeb112
+  registry: a472cdce6fb052c7b943d29648d8575fbe6f02db5e4f70c1dadaf684f889731c
+  coverage: 38e186e66dbc60672d0901bd4e2ffa3bdcaaa170edac87294b1b5666fc5d7979
+  report: 1843294d5cf872f2fd1b7eddb34ca895008c5fde0bb9d0c182cb8376fa985ecf
+  telemetry: 3be5d20bfc9a7b3de5275bfe83849217acb3ad5334f68d66625f0b49958a7902
+  detection_review: dc2f995f9129025b5f0419034cb68fd851bb8c2ae81055f02f788da9f9790738
+  translation_review: d0f6a9fc2000a103006cb045e74c7d3dd3762a661c8c68340cc99f8b36d33e40
 rules:
-  []
+  - { name: pacu_access_denied_permission_bruteforce, severity: high, procedures: "PA-P02", dependency: dependencies/pacu/pacu_access_denied_permission_bruteforce.yml, canonical_sha256: e12a39340194379e99563864733ff9b45221d41d7a2d64837380e30069824bfb }
+  - { name: pacu_cfn_template_bucket_injection, severity: high, procedures: "PA-P05", dependency: dependencies/pacu/pacu_cfn_template_bucket_injection.yml, canonical_sha256: bd941ae85d8084a0f128369195bcf60f063d1d8b5fb41db2dd6bb6b6d650b435 }
+  - { name: pacu_cognito_pool_abuse, severity: medium, procedures: "PA-P14", dependency: dependencies/pacu/pacu_cognito_pool_abuse.yml, canonical_sha256: 37fb914c19af683fa0584c9dbab47be5f49fe95cc3039715a9314b2dec3b9ef5 }
+  - { name: pacu_credential_report_generation, severity: medium, procedures: "PA-P02", dependency: dependencies/pacu/pacu_credential_report_generation.yml, canonical_sha256: 403a7ab6a2166295b4d43aac95d52ce4c6b7b359d4a5db921bde87e3ce7b2fa5 }
+  - { name: pacu_detection_service_impairment, severity: high, procedures: "PA-P07", dependency: dependencies/pacu/pacu_detection_service_impairment.yml, canonical_sha256: c902976c197f0857f56c6f09d3927701fe921b7fab8661d60413f00deecfb389 }
+  - { name: pacu_ecs_task_definition_run, severity: medium, procedures: "PA-P09", dependency: dependencies/pacu/pacu_ecs_task_definition_run.yml, canonical_sha256: 2da896547068c34124bf7c06e33bff1df03806f62ca725d114a277bc82f0c5fe }
+  - { name: pacu_eks_service_account_token_collection, severity: high, procedures: "PA-P15", dependency: dependencies/pacu/pacu_eks_service_account_token_collection.yml, canonical_sha256: daca6b68f1a211570862e75e7deef2a02855f8bda082aa750b21c21bb03f2656 }
+  - { name: pacu_eventbridge_lambda_backdoor_chain, severity: high, procedures: "PA-P05", dependency: dependencies/pacu/pacu_eventbridge_lambda_backdoor_chain.yml, canonical_sha256: 90b1f1e2da7e6bdb38c679641aed0b365ac5a7fe475927783739e7b9648b88a7 }
+  - { name: pacu_iam_credential_backdoor_other_user, severity: high, procedures: "PA-P03,PA-P04", dependency: dependencies/pacu/pacu_iam_credential_backdoor_other_user.yml, canonical_sha256: 617f93f99bcee72d4a7676bb6a11077b5e707e44453e12c78e580c4a7575c038 }
+  - { name: pacu_iam_privilege_modification_burst, severity: high, procedures: "PA-P03,PA-P04", dependency: dependencies/pacu/pacu_iam_privilege_modification_burst.yml, canonical_sha256: 4b4355ba277543e8fa2f4522bd89b218b54a520db29bce2e5993fd2c60aa2c6a }
+  - { name: pacu_instance_userdata_modify_restart, severity: high, procedures: "PA-P09", dependency: dependencies/pacu/pacu_instance_userdata_modify_restart.yml, canonical_sha256: 87d662efd56f13876dc4f2db00fcf6b84e1f00b476f19d49154f574803f58f57 }
+  - { name: pacu_log_formula_injection, severity: medium, procedures: "PA-P13", dependency: dependencies/pacu/pacu_log_formula_injection.yml, canonical_sha256: be83fcb1f1b0f846c97f4392d893671a0090ab452d2e5c0fcc9e7167f671f4e3 }
+  - { name: pacu_multi_service_enumeration_fanout, severity: medium, procedures: "PA-P02,PA-P11,PA-P16", dependency: dependencies/pacu/pacu_multi_service_enumeration_fanout.yml, canonical_sha256: 496f28e7133980140c9e88d21789024b7e13025f6a0ad0c3586635c12a5a4408 }
+  - { name: pacu_organization_member_role_assumption, severity: high, procedures: "PA-P09", dependency: dependencies/pacu/pacu_organization_member_role_assumption.yml, canonical_sha256: d269898db44d72b4250aef9739eb9cd9ba13f6c0c7eb0e663e4b86b9e45c74cc }
+  - { name: pacu_s3_bulk_object_download, severity: medium, procedures: "PA-P11", dependency: dependencies/pacu/pacu_s3_bulk_object_download.yml, canonical_sha256: 60a7437509db2cf56f5d31040a1101dae2eec3f2ca234766667eb5f3d5ae4456 }
+  - { name: pacu_secret_value_bulk_retrieval, severity: high, procedures: "PA-P08", dependency: dependencies/pacu/pacu_secret_value_bulk_retrieval.yml, canonical_sha256: 2a29ade66e83133bfc20369aa2da3b31b8070dda798e316a108c65be6f5d9c26 }
+  - { name: pacu_security_group_open_ingress, severity: medium, procedures: "PA-P06", dependency: dependencies/pacu/pacu_security_group_open_ingress.yml, canonical_sha256: 5f8f27745e40b7f2d30392c11bd8d1330ff62bcc804c8173e94dcca148c1ed5a }
+  - { name: pacu_service_credential_issuance, severity: medium, procedures: "PA-P06", dependency: dependencies/pacu/pacu_service_credential_issuance.yml, canonical_sha256: 036cf5171e958122d99b1c6697517413b571def956e88c33a4a384ac401576d2 }
+  - { name: pacu_snapshot_and_database_takeover, severity: high, procedures: "PA-P10", dependency: dependencies/pacu/pacu_snapshot_and_database_takeover.yml, canonical_sha256: 2f37e2c9ddfcc6dcfa3f8cd7451586c37f0a2440e8abaede8b115de4cac8e022 }
+  - { name: pacu_sns_topic_subscription_fanout, severity: medium, procedures: "PA-P12", dependency: dependencies/pacu/pacu_sns_topic_subscription_fanout.yml, canonical_sha256: 02555bdd4fe0f64d769823df92d81030eb9030030381a052fc276044b7765aec }
+  - { name: pacu_ssm_instance_profile_rce_chain, severity: high, procedures: "PA-P09", dependency: dependencies/pacu/pacu_ssm_instance_profile_rce_chain.yml, canonical_sha256: e4bef5499fcbc6f7ecd2c7a8ea037a1514a5206d781eab311f6458dbc80f898d }
+  - { name: pacu_user_agent_session_suffix, severity: high, procedures: "PA-P01", dependency: dependencies/pacu/pacu_user_agent_session_suffix.yml, canonical_sha256: 7811984363e728f756522c12299df0c45715591852d9ff9563f53798dbb569d9 }
 unresolved:
   source_blockers: 0

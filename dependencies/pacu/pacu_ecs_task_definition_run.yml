@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_ecs_task_definition_run
+canonical_path: detections/pacu/yaral/pacu_ecs_task_definition_run.yaral
+canonical_sha256: 2da896547068c34124bf7c06e33bff1df03806f62ca725d114a277bc82f0c5fe
+description: "Detects one principal registering an ECS task definition and running a task within 30 minutes, used to execute attacker commands under the task role."
+severity: medium
+procedure_ids: ["PA-P09"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields."
+atomic_event_types: ["RegisterTaskDefinition", "RunTask"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.product_event_type", "metadata.product_name", "principal.user.userid", "target.resource.name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "CI/CD pipelines that register and run tasks; approve their role ARNs."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_ecs_task_definition_run.spl", sha256: 59952a0c6b1e3928905b8a0f0c23d30b92fbfc98938ebd0a4c4f57a49a57d42a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/pacu/kql/pacu_ecs_task_definition_run.kql", sha256: 1657370062fe5c58cdda7a29ef3574d271aee583b7adb51bbb45c908d202b8dc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/pacu/sql/pacu_ecs_task_definition_run.sql", sha256: 29005fc40591fb6e424e3c54fce7039a70b746a4fe49c60a986a8fa957ef4f56, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/pacu/eql/pacu_ecs_task_definition_run.eql", sha256: 7447296e545b5ca565a655d3299976c3c06afbfd58da6e40f5d97c95049abd15, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sigma: { path: "detections/pacu/sigma/pacu_ecs_task_definition_run.yml", sha256: 5a5edb974fd9e0f4832b50b48e3a0df59d2492994182a3001dc32aa74cda95ec, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

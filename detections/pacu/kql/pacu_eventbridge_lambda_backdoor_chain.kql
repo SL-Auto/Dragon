@@ -1,0 +1,30 @@
+// source_yaral: detections/pacu/yaral/pacu_eventbridge_lambda_backdoor_chain.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: pacu_eventbridge_lambda_backdoor_chain
+// severity: high
+// procedure_ids: PA-P05
+// description: Detects one principal creating a Lambda function and an EventBridge rule whose event pattern matches IAM or EC2 API events within 30 minutes (PA-DR-04), the event-driven backdoor that reacts to new users, roles or security groups.
+// log_source_prerequisites: AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; PutRule eventPattern in additional.fields['eventPattern'].
+// false_positives: Serverless deployment pipelines (CloudFormation, SAM, CDK) that create functions and rules together; approve their role ARNs.
+// references: reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (product_name, product_event_type, principal_arn, event_source, source_ip, user_agent, resource_name, event_pattern); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native ordered two-event correlation on principal_arn within 30 minutes (first event before second). Exact per-pair join; KQL suffixes duplicate right-side columns with 1. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+let window = 30m;
+let first_leg = NormalizedEvents
+    | where TimeGenerated > ago(60m)
+    | where product_name == "AWS CloudTrail"
+    and product_event_type matches regex @"(?i)^CreateFunction"
+    | project-rename FirstTime = TimeGenerated;
+let second_leg = NormalizedEvents
+    | where TimeGenerated > ago(60m)
+    | where product_name == "AWS CloudTrail"
+    and product_event_type == "PutRule"
+    and event_pattern matches regex @"(?i)aws\.(iam|ec2)"
+    | project-rename SecondTime = TimeGenerated;
+first_leg
+| join kind=inner second_leg on principal_arn
+| where SecondTime between (FirstTime .. FirstTime + window)
+| summarize FirstTime = min(FirstTime), LastTime = max(SecondTime), Pairs = count() by principal_arn
+| extend CanonicalRule = "pacu_eventbridge_lambda_backdoor_chain"

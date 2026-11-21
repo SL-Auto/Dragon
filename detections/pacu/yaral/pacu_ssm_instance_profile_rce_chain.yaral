@@ -1,0 +1,33 @@
+rule pacu_ssm_instance_profile_rce_chain {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one principal attaching an IAM instance profile to an instance (AssociateIamInstanceProfile or ReplaceIamInstanceProfileAssociation) and sending an SSM command within 30 minutes."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Granting an instance a role and then executing commands on it is a remote-execution chain."
+    procedure_ids = "PA-P09"
+    log_source_prerequisites = "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields."
+    false_positives = "Fleet-onboarding automation that attaches profiles and runs bootstrap commands."
+    references = "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized association and SendCommand events from one ARN."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/pacu/detection-review.md"
+  events:
+    $a.metadata.product_name = "AWS CloudTrail"
+    $a.metadata.product_event_type = /^(AssociateIamInstanceProfile|ReplaceIamInstanceProfileAssociation)$/
+    $a.principal.user.userid = $principal
+
+    $c.metadata.product_name = "AWS CloudTrail"
+    $c.metadata.product_event_type = "SendCommand"
+    $c.principal.user.userid = $principal
+
+    $a.metadata.event_timestamp.seconds <= $c.metadata.event_timestamp.seconds
+  match:
+    $principal over 30m
+  outcome:
+    $documents = array_distinct($c.additional.fields["documentName"])
+  condition:
+    $a and $c
+}

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: pacu
+rule_name: pacu_snapshot_and_database_takeover
+canonical_path: detections/pacu/yaral/pacu_snapshot_and_database_takeover.yaral
+canonical_sha256: 2f37e2c9ddfcc6dcfa3f8cd7451586c37f0a2440e8abaede8b115de4cac8e022
+description: "Detects one principal resetting an RDS master password (ModifyDBInstance with MasterUserPassword), or performing two or more snapshot-access steps (RDS snapshot creation or restore, EBS volume creation from snapshot, volume attachment, EBS direct snapshot reads) within 30 minutes."
+severity: high
+procedure_ids: ["PA-P10"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail management events normalized with metadata.product_name = 'AWS CloudTrail', eventName in metadata.product_event_type, userIdentity ARN in principal.user.userid, userAgent in network.http.user_agent and requestParameters in additional.fields; requestParameters keys in additional.fields; EBS direct API data events enabled for ListSnapshotBlocks and GetSnapshotBlock."
+atomic_event_types: ["AttachVolume", "CreateVolume", "ListSnapshotBlocks", "ModifyDBInstance", "RestoreDBInstanceFromDBSnapshot"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "metadata.product_name", "principal.user.userid"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Database administrators and backup or disaster-recovery automation."
+references: "reports/pacu/source-analysis.md#procedure-analysis; reviews/pacu/detection-review.md"
+translations:
+  spl: { path: "detections/pacu/spl/pacu_snapshot_and_database_takeover.spl", sha256: dd81284b2a8f06d4bca36fcaa89f13a1000c46480f17b90850cecafbad192b25, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/pacu/kql/pacu_snapshot_and_database_takeover.kql", sha256: 58d9936702896158605e2a110ef26adb4eb87475b99d4fef67815277606fb99b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/pacu/sql/pacu_snapshot_and_database_takeover.sql", sha256: 88e6ef2af83d64b31867b7ae5a6cf41f8f7473ff1d61606fd14de115a6759441, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/pacu/eql/pacu_snapshot_and_database_takeover.eql", sha256: 2afe346f8dd07480bf77839492369725b363ef8833229d8849a7b052abc12a07, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/pacu/sigma/pacu_snapshot_and_database_takeover.yml", sha256: 86d20806e48fbc8a55678ef2c505545cac2fdffac727b46caa653562dc4c8678, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
