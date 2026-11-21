@@ -1,0 +1,45 @@
+title: "Detects installation or first load of the Npcap packet-capture driver (service or driver named npcap, or a driver signed by Insecure.Com LLC), which the Nmap Windows installer bundles for raw scanning."
+name: nmap_npcap_driver_install_base
+status: experimental
+description: "Detects installation or first load of the Npcap packet-capture driver (service or driver named npcap, or a driver signed by Insecure.Com LLC), which the Nmap Windows installer bundles for raw scanning."
+source_yaral: "detections/nmap/yaral/nmap_npcap_driver_install.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, hostname, service_name, target_path, signer); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+procedure_ids: "NM-P14"
+log_source_prerequisites: "Windows System 7045 (service installed) and Sysmon Event ID 6 (driver loaded, DRIVER_LOAD) with service or image name and signer."
+logsource:
+  service: system
+  product: windows
+detection:
+  alt0_0:
+    product_event_type: "7045"
+    service_name|re: "(?i)^npcap"
+  alt0_1:
+    product_event_type: "6"
+    target_path|re: "(?i)\\\\npcap\\.sys$"
+  alt0_2:
+    product_event_type: "6"
+    signer|re: "(?i)Insecure\\.Com"
+  condition: 1 of alt0_*
+falsepositives:
+  - "Wireshark and network-troubleshooting installations by administrators."
+level: medium
+---
+title: "Detects installation or first load of the Npcap packet-capture driver (service or driver named npcap, or a driver signed by Insecure.Com LLC), which the Nmap Windows installer bundles for raw scanning."
+name: nmap_npcap_driver_install
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - nmap_npcap_driver_install_base
+  group-by:
+    - hostname
+  timespan: 60m
+  condition:
+    gte: 1
+level: medium

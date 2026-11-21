@@ -1,0 +1,41 @@
+title: "Detects one process issuing reverse DNS (PTR) queries for one hundred or more distinct in-addr.arpa or ip6.arpa names within 5 minutes, the default mass reverse resolution after host discovery."
+name: nmap_reverse_dns_ptr_burst_base
+status: experimental
+description: "Detects one process issuing reverse DNS (PTR) queries for one hundred or more distinct in-addr.arpa or ip6.arpa names within 5 minutes, the default mass reverse resolution after host discovery."
+source_yaral: "detections/nmap/yaral/nmap_reverse_dns_ptr_burst.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, process_id, process_path, dns_query); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+procedure_ids: "NM-P07"
+log_source_prerequisites: "Process-attributed DNS query telemetry (Sysmon Event ID 22 or EDR NETWORK_DNS) with query name, host and process ID."
+logsource:
+  category: dns_query
+  product: windows
+detection:
+  sel:
+    event_type: "NETWORK_DNS"
+    dns_query|re: "(?i)\\.(in-addr|ip6)\\.arpa\\.?$"
+  condition: sel
+falsepositives:
+  - "Network monitoring and logging tools that reverse-resolve many addresses; approve their images."
+level: medium
+---
+title: "Detects one process issuing reverse DNS (PTR) queries for one hundred or more distinct in-addr.arpa or ip6.arpa names within 5 minutes, the default mass reverse resolution after host discovery."
+name: nmap_reverse_dns_ptr_burst
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - nmap_reverse_dns_ptr_burst_base
+  group-by:
+    - hostname
+    - process_id
+  timespan: 5m
+  condition:
+    field: dns_query
+    gte: 100
+level: medium

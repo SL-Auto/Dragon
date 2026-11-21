@@ -94,11 +94,12 @@ tools:
     name: Nmap
     aliases: []
     category: discovery
-    status: triaged
-    source_code: { availability: public, repository: https://github.com/nmap/nmap, analyzed_revision: unknown }
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/nmap/nmap, analyzed_revision: 80dd68b8d88cbc89e584941e9ba68e57247d2230 }
     first_seen: unknown
-    last_reviewed: 2026-08-15
-    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+    last_reviewed: 2026-11-21
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: reports/nmap/source-analysis.md }, { path: coverage/nmap.yml }, { path: detections/nmap/ }, { path: reviews/nmap/detection-review.md }, { path: telemetry/nmap.md }, { path: public-rules/comparisons/nmap/ }]
+    notes: "Comprehensive for the pinned revision: scan engines, all 620 NSE scripts by category, Ncat, Nping and the Windows installer. Zenmap and Ndiff are excluded as front-end or offline tools. Rules are experimental."
   - id: chisel
     name: Chisel
     aliases: []

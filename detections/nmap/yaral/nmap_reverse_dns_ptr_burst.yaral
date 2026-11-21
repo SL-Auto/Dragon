@@ -1,0 +1,30 @@
+rule nmap_reverse_dns_ptr_burst {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one process issuing reverse DNS (PTR) queries for one hundred or more distinct in-addr.arpa or ip6.arpa names within 5 minutes, the default mass reverse resolution after host discovery."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Mass PTR resolution by one process is characteristic of scanners; most applications resolve forward names."
+    procedure_ids = "NM-P07"
+    log_source_prerequisites = "Process-attributed DNS query telemetry (Sysmon Event ID 22 or EDR NETWORK_DNS) with query name, host and process ID."
+    false_positives = "Network monitoring and logging tools that reverse-resolve many addresses; approve their images."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized Sysmon Event ID 22 fixtures with 100 PTR queries from one process."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_DNS"
+    re.regex($e.network.dns.questions.name, `(?i)\.(in-addr|ip6)\.arpa\.?$`)
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $pid
+    $e.network.dns.questions.name = $query
+  match:
+    $host, $pid over 5m
+  outcome:
+    $names = count_distinct($query)
+    $process = array_distinct($e.principal.process.file.full_path)
+  condition:
+    $e and $names >= 100
+}

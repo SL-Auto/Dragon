@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: nmap_process_connect_scan_fanout
+canonical_path: detections/nmap/yaral/nmap_process_connect_scan_fanout.yaral
+canonical_sha256: bb1ac1a237799e6a5c1568ea5302689ee446b33b716494414ccb429b6140bdc1
+description: "Detects one unverified process opening outbound connections to fifty or more distinct internal hosts, or fifty or more distinct ports, within 5 minutes, the host effect of a connect scan, version probing or script scanning."
+severity: medium
+procedure_ids: ["NM-P02", "NM-P05", "NM-P08"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with destination IP and port, host and stable process ID; optional signature verification status."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.file.full_path", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id", "target.ip", "target.port"]
+correlation_window: "5m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Approved vulnerability scanners, asset-discovery agents and monitoring systems."
+references: "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+translations:
+  spl: { path: "detections/nmap/spl/nmap_process_connect_scan_fanout.spl", sha256: d5f29753fb7d69aed51596e4f71eb948c3f43a9c8c2f40749b1496f723730f75, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/nmap/kql/nmap_process_connect_scan_fanout.kql", sha256: 47101486f432af24ec14422f0f36b46a38745f036104c0e86da20a61bb166e8e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/nmap/sql/nmap_process_connect_scan_fanout.sql", sha256: 7c3d508bcb700f6596bd739d44730cf1ea78b9cd9d132b52076e3c840386def9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/nmap/eql/nmap_process_connect_scan_fanout.eql", sha256: e78b8500e9bcf5911960987b0e4f15c0dddec3260818005ab1c63cdb2fc81650, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/nmap_process_connect_scan_fanout.yml", sha256: d8a5459b97981607c2744b73c3b8009c45cd42996025c5be1046638f0a38a43b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

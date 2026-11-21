@@ -1,0 +1,38 @@
+title: "Detects HTTP requests carrying the Nmap Scripting Engine's default User-Agent, which names the engine and its documentation URL."
+name: nmap_nse_http_default_user_agent_base
+status: experimental
+description: "Detects HTTP requests carrying the Nmap Scripting Engine's default User-Agent, which names the engine and its documentation URL."
+source_yaral: "detections/nmap/yaral/nmap_nse_http_default_user_agent.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, source_ip, user_agent, target_host); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+procedure_ids: "NM-P08,NM-P10"
+log_source_prerequisites: "Web server, reverse proxy, WAF, forward proxy or NDR NETWORK_HTTP events with User-Agent and source IP."
+logsource:
+  category: webserver
+detection:
+  sel:
+    event_type: "NETWORK_HTTP"
+    user_agent|re: "(?i)Nmap Scripting Engine"
+  condition: sel
+falsepositives:
+  - "Authorized vulnerability scans using default NSE settings."
+level: medium
+---
+title: "Detects HTTP requests carrying the Nmap Scripting Engine's default User-Agent, which names the engine and its documentation URL."
+name: nmap_nse_http_default_user_agent
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - nmap_nse_http_default_user_agent_base
+  group-by:
+    - source_ip
+  timespan: 60m
+  condition:
+    gte: 1
+level: medium

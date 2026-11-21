@@ -1,0 +1,18 @@
+# source_yaral: detections/nmap/yaral/nmap_reverse_dns_ptr_burst.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: nmap_reverse_dns_ptr_burst
+# severity: medium
+# procedure_ids: NM-P07
+# description: Detects one process issuing reverse DNS (PTR) queries for one hundred or more distinct in-addr.arpa or ip6.arpa names within 5 minutes, the default mass reverse resolution after host discovery.
+# log_source_prerequisites: Process-attributed DNS query telemetry (Sysmon Event ID 22 or EDR NETWORK_DNS) with query name, host and process ID.
+# false_positives: Network monitoring and logging tools that reverse-resolve many addresses; approve their images.
+# references: reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, process_id, process_path, dns_query); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by hostname, process_id and threshold. Hop window approximated by scheduling every 5 minutes over the trailing 5 minutes.
+| search index=<configured_index> earliest=-5m@m latest=now
+| where event_type=="NETWORK_DNS" AND match(dns_query, "(?i)\\.(in-addr|ip6)\\.arpa\\.?$")
+| stats dc(dns_query) as matched_count values(process_path) as process_path_values by hostname process_id
+| where matched_count >= 100
+| eval canonical_rule="nmap_reverse_dns_ptr_burst"

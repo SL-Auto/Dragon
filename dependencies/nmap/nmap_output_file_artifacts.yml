@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: nmap_output_file_artifacts
+canonical_path: detections/nmap/yaral/nmap_output_file_artifacts.yaral
+canonical_sha256: 51c531dc4658a20c094c2793da6bbef571c197c7a173bfc58ce68804947fde29
+description: "Detects creation of a grepable Nmap output file (.gnmap), produced by -oG or alongside .nmap and .xml by -oA."
+severity: medium
+procedure_ids: ["NM-P13"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "FILE_CREATION telemetry (Sysmon Event ID 11 or EDR) with target path, host and creating process."
+atomic_event_types: ["FILE_CREATION"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.file.full_path", "target.file.full_path"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Administrators saving authorized scan results."
+references: "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+translations:
+  spl: { path: "detections/nmap/spl/nmap_output_file_artifacts.spl", sha256: 62bf1f50ea8d5b5520173f76670e08e8673f92169493b51e5f829b77cd56f3ac, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/nmap/kql/nmap_output_file_artifacts.kql", sha256: ecd96c95e2b61c1c73e253d8b04e862ae6af3e99b78ebefc9894d0edb9748652, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/nmap/sql/nmap_output_file_artifacts.sql", sha256: 4b16e6f3fabefa74cd4ffe8dc7ed005cb6fb2546e15ef9c8c3f8e38ed16deecc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/nmap/eql/nmap_output_file_artifacts.eql", sha256: 21f66544b7474e6376df73033e1a8362ad6925e39dd85c71b6e507a19fd6827f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/nmap_output_file_artifacts.yml", sha256: a6a83c1e4af295bbf77ac10e764b587c3b432ce94f7983a8eae1d34fcf063f0d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

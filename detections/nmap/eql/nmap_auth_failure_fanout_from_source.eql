@@ -1,0 +1,14 @@
+// source_yaral: detections/nmap/yaral/nmap_auth_failure_fanout_from_source.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: nmap_auth_failure_fanout_from_source
+// severity: medium
+// procedure_ids: NM-P09
+// description: Detects one source IP producing authentication failures for ten or more distinct accounts, or against five or more hosts, within 10 minutes, the target-side effect of NSE brute-force and default-credential scripts.
+// log_source_prerequisites: Windows Security 4625 and 4771 (and service authentication failures normalized as USER_LOGIN with security_result.action BLOCK) with source IP, target account and target host.
+// false_positives: Misconfigured services retrying stale credentials, password-audit tools and shared NAT sources.
+// references: reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (event_type, product_event_type, source_ip, target_user, target_host, action); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where ((event.code in ("4625", "4771")) or (event.action == "USER_LOGIN" and labels.action == "BLOCK"))

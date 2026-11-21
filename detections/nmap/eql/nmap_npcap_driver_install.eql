@@ -1,0 +1,14 @@
+// source_yaral: detections/nmap/yaral/nmap_npcap_driver_install.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: nmap_npcap_driver_install
+// severity: medium
+// procedure_ids: NM-P14
+// description: Detects installation or first load of the Npcap packet-capture driver (service or driver named npcap, or a driver signed by Insecure.Com LLC), which the Nmap Windows installer bundles for raw scanning.
+// log_source_prerequisites: Windows System 7045 (service installed) and Sysmon Event ID 6 (driver loaded, DRIVER_LOAD) with service or image name and signer.
+// false_positives: Wireshark and network-troubleshooting installations by administrators.
+// references: reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_event_type, hostname, service_name, target_path, signer); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where ((event.code == "7045" and service.name regex~ "^npcap") or (event.code == "6" and file.path regex~ "\\\\npcap\\.sys$") or (event.code == "6" and file.code_signature.subject_name regex~ "Insecure\\.Com"))

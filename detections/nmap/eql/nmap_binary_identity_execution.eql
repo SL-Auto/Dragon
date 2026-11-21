@@ -1,0 +1,15 @@
+// source_yaral: detections/nmap/yaral/nmap_binary_identity_execution.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: nmap_binary_identity_execution
+// severity: medium
+// procedure_ids: NM-P01,NM-P02,NM-P03,NM-P05,NM-P06,NM-P07,NM-P08
+// description: Detects execution of the Nmap binary identified by its PE OriginalFileName (nmap.exe), which survives renaming on Windows, or by an image named nmap on other platforms. It covers default invocations such as nmap <target> that carry no option grammar.
+// log_source_prerequisites: PROCESS_LAUNCH telemetry with image path and PE OriginalFileName (Sysmon Event ID 1 OriginalFileName mapped to target.process.file.pe_file.original_file_name, or EDR equivalent).
+// false_positives: Authorized administrators and vulnerability-management hosts running Nmap; approve by host.
+// references: reports/nmap/source-analysis.md#procedure-analysis; public-rules/comparisons/nmap/nmap_cli_option_grammar.md; reviews/nmap/detection-review.md#nm-dr-08
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (event_type, hostname, process_path, command_line, original_file_name); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where event.action == "PROCESS_LAUNCH"
+  and ((process.pe.original_file_name regex~ "^nmap\\.exe$") or (process.executable regex~ "(\\\\nmap\\.exe|/nmap)$"))

@@ -1,0 +1,39 @@
+title: "Detects creation of a grepable Nmap output file (.gnmap), produced by -oG or alongside .nmap and .xml by -oA."
+name: nmap_output_file_artifacts_base
+status: experimental
+description: "Detects creation of a grepable Nmap output file (.gnmap), produced by -oG or alongside .nmap and .xml by -oA."
+source_yaral: "detections/nmap/yaral/nmap_output_file_artifacts.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, target_path, process_path); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+procedure_ids: "NM-P13"
+log_source_prerequisites: "FILE_CREATION telemetry (Sysmon Event ID 11 or EDR) with target path, host and creating process."
+logsource:
+  category: file_event
+  product: windows
+detection:
+  sel:
+    event_type: "FILE_CREATION"
+    target_path|re: "(?i)\\.gnmap$"
+  condition: sel
+falsepositives:
+  - "Administrators saving authorized scan results."
+level: medium
+---
+title: "Detects creation of a grepable Nmap output file (.gnmap), produced by -oG or alongside .nmap and .xml by -oA."
+name: nmap_output_file_artifacts
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - nmap_output_file_artifacts_base
+  group-by:
+    - hostname
+  timespan: 60m
+  condition:
+    gte: 1
+level: medium

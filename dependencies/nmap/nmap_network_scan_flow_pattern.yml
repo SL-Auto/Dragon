@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: nmap_network_scan_flow_pattern
+canonical_path: detections/nmap/yaral/nmap_network_scan_flow_pattern.yaral
+canonical_sha256: eb716db5e6733a10e50344510eff38600f416e4afeb36780c04460e7d4f0fbc9
+description: "Detects one internal source IP probing one hundred or more distinct destination ports on a host, or one hundred or more hosts, within 5 minutes in network flow telemetry, covering raw and half-open scans that endpoint sensors do not attribute to a process."
+severity: medium
+procedure_ids: ["NM-P01", "NM-P03", "NM-P04", "NM-P06"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "NDR, firewall or flow telemetry (NETWORK_CONNECTION or NETWORK_FLOW without process) with source IP, destination IP and port; denied and reset flows retained."
+atomic_event_types: []
+required_udm_fields: ["metadata.event_type", "principal.ip", "target.ip", "target.port"]
+correlation_window: "5m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Vulnerability scanners, network monitoring and load-balancer health checks; approve scanner IPs."
+references: "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+translations:
+  spl: { path: "detections/nmap/spl/nmap_network_scan_flow_pattern.spl", sha256: 8c350126a19eb44ca3c5ffbb59546ebfc2befd44f38987baee25f14ee3307350, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/nmap/kql/nmap_network_scan_flow_pattern.kql", sha256: 325ba8b9ae5fa7d2bf30f1557b0539d3121d666ff5a58ca963aaff77470a943f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/nmap/sql/nmap_network_scan_flow_pattern.sql", sha256: 9f791359d70825619963a87f198b0ba769736c190d45e69a1f4abb2c225f1063, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/nmap/eql/nmap_network_scan_flow_pattern.eql", sha256: 9a684d99f9364b01f95b74d873fec238b29e2e0c91c1f72e45b6ec3a3745deac, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/nmap_network_scan_flow_pattern.yml", sha256: d34b68bd6a59c3404b1b47d98ae8e63dca5e771cc418c391813125b87f515fe4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

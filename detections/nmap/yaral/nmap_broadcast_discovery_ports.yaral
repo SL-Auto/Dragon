@@ -1,0 +1,31 @@
+rule nmap_broadcast_discovery_ports {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one non-system process sending to four or more distinct local discovery protocols (LLMNR 5355, mDNS 5353, SSDP 1900, NBNS 137, DHCP 67, WS-Discovery 3702, SLP 427) within 2 minutes, the pattern of NSE broadcast scripts."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Operating-system discovery services use one or two of these from system processes; one user-mode process touching many is a discovery sweep."
+    procedure_ids = "NM-P11"
+    log_source_prerequisites = "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with destination IP and port, host and stable process ID; optional signature verification status. UDP to multicast or broadcast destinations must be logged."
+    false_positives = "Media and device-discovery applications and network inventory tools."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized UDP events to four discovery ports from one process; confirm the sensor logs multicast destinations."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $pid
+    ($e.target.port = 5355 or $e.target.port = 5353 or $e.target.port = 1900 or $e.target.port = 137 or $e.target.port = 67 or $e.target.port = 3702 or $e.target.port = 427)
+    not re.regex($e.principal.process.file.full_path, `(?i)\\windows\\system32\\(svchost|lsass|services|dashost)\.exe$`)
+    $e.target.port = $port
+  match:
+    $host, $pid over 2m
+  outcome:
+    $protocols = count_distinct($port)
+    $process = array_distinct($e.principal.process.file.full_path)
+  condition:
+    $e and $protocols >= 4
+}

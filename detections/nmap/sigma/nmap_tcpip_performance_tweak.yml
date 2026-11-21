@@ -1,0 +1,43 @@
+title: "Detects the Nmap installer's optional TCP/IP performance change: regedt32 /S importing nmap_performance.reg, or writes of MaxUserPort or TcpTimedWaitDelay under the Tcpip Parameters key."
+name: nmap_tcpip_performance_tweak_base
+status: experimental
+description: "Detects the Nmap installer's optional TCP/IP performance change: regedt32 /S importing nmap_performance.reg, or writes of MaxUserPort or TcpTimedWaitDelay under the Tcpip Parameters key."
+source_yaral: "detections/nmap/yaral/nmap_tcpip_performance_tweak.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, registry_key, registry_value, command_line); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+procedure_ids: "NM-P14"
+log_source_prerequisites: "REGISTRY_MODIFICATION telemetry (Sysmon Event ID 13 or EDR) with key and value name, and PROCESS_LAUNCH with command line."
+logsource:
+  category: registry_set
+  product: windows
+detection:
+  alt0_0:
+    event_type: "REGISTRY_MODIFICATION"
+    registry_key|re: "(?i)\\\\Services\\\\Tcpip\\\\Parameters$"
+    registry_value|re: "(?i)^(MaxUserPort|TcpTimedWaitDelay)$"
+  alt0_1:
+    event_type: "PROCESS_LAUNCH"
+    command_line|re: "(?i)regedt32(\\.exe)?\\\"?\\s+/S\\s+.*nmap_performance\\.reg"
+  condition: 1 of alt0_*
+falsepositives:
+  - "Server tuning by administrators for high-connection workloads."
+level: medium
+---
+title: "Detects the Nmap installer's optional TCP/IP performance change: regedt32 /S importing nmap_performance.reg, or writes of MaxUserPort or TcpTimedWaitDelay under the Tcpip Parameters key."
+name: nmap_tcpip_performance_tweak
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - nmap_tcpip_performance_tweak_base
+  group-by:
+    - hostname
+  timespan: 60m
+  condition:
+    gte: 1
+level: medium

@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: nmap_npcap_driver_install
+canonical_path: detections/nmap/yaral/nmap_npcap_driver_install.yaral
+canonical_sha256: 4453c10c613d832980bbe932d108d3fb22166c6ddc47f22fc01cd48aeeef6f12
+description: "Detects installation or first load of the Npcap packet-capture driver (service or driver named npcap, or a driver signed by Insecure.Com LLC), which the Nmap Windows installer bundles for raw scanning."
+severity: medium
+procedure_ids: ["NM-P14"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Windows System 7045 (service installed) and Sysmon Event ID 6 (driver loaded, DRIVER_LOAD) with service or image name and signer."
+atomic_event_types: ["6", "7045"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "target.file.full_path", "target.file.signature_info.signer", "target.resource.name"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Wireshark and network-troubleshooting installations by administrators."
+references: "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+translations:
+  spl: { path: "detections/nmap/spl/nmap_npcap_driver_install.spl", sha256: e0d59942c4f6d38e064ab2990cf6c66c6dc5fd8f3c1177acf8584d0d67847f4c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/nmap/kql/nmap_npcap_driver_install.kql", sha256: f1e53d95d3a894b09311d0615ca2f2bf273939f543e7007bf33bef9561704c61, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/nmap/sql/nmap_npcap_driver_install.sql", sha256: 36a89ada1ec699542af0c9ff6bb22dde8275401a9f63d69195051929e0bd7b6e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/nmap/eql/nmap_npcap_driver_install.eql", sha256: 71b228c0b821badde9fe84a9f1da4db03c277bb3e21f9f8aa44516762af33c2d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/nmap_npcap_driver_install.yml", sha256: 54752bfd34746fe57745cd75ba25cdebdd8ab2929a4892debf26e8649eda6268, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

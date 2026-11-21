@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: nmap_binary_identity_execution
+canonical_path: detections/nmap/yaral/nmap_binary_identity_execution.yaral
+canonical_sha256: b470c8d92e088fbb175ed836f86dd545db8f86d6334f3475c13c613cd6a0a308
+description: "Detects execution of the Nmap binary identified by its PE OriginalFileName (nmap.exe), which survives renaming on Windows, or by an image named nmap on other platforms. It covers default invocations such as nmap <target> that carry no option grammar."
+severity: medium
+procedure_ids: ["NM-P01", "NM-P02", "NM-P03", "NM-P05", "NM-P06", "NM-P07", "NM-P08"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "PROCESS_LAUNCH telemetry with image path and PE OriginalFileName (Sysmon Event ID 1 OriginalFileName mapped to target.process.file.pe_file.original_file_name, or EDR equivalent)."
+atomic_event_types: ["PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.user.userid", "target.process.command_line", "target.process.file.full_path", "target.process.file.pe_file.original_file_name"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Authorized administrators and vulnerability-management hosts running Nmap; approve by host."
+references: "reports/nmap/source-analysis.md#procedure-analysis; public-rules/comparisons/nmap/nmap_cli_option_grammar.md; reviews/nmap/detection-review.md#nm-dr-08"
+translations:
+  spl: { path: "detections/nmap/spl/nmap_binary_identity_execution.spl", sha256: d9e57a5ebbed836ba924181747a46e4933c354913deaea8627951dbe4cf25a91, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/nmap/kql/nmap_binary_identity_execution.kql", sha256: 87ece5d2da77f386ecdd42833ca788c41f0af10fd3894497f9bef5f25b090d61, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/nmap/sql/nmap_binary_identity_execution.sql", sha256: 8784d210898c39d4d73d90c2bdde60335e05e4139fbb80bb87d9be88840644de, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/nmap/eql/nmap_binary_identity_execution.eql", sha256: a99f7f5a17d9caaf712ea049d82799622a9f4e5038f634f52f052c2422368d1a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/nmap_binary_identity_execution.yml", sha256: 75cbc935aa5955f673e7b1b6b66caeb7da0a21e5a3ea5472d2a763040a2e5dc6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

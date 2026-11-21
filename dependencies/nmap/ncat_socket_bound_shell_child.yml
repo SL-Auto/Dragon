@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: ncat_socket_bound_shell_child
+canonical_path: detections/nmap/yaral/ncat_socket_bound_shell_child.yaral
+canonical_sha256: 41a16766bcfbca4635e29eb4917c8db9fd4f4770a99805f88940bc020fd127b8
+description: "Detects a command shell started by a parent process whose command line binds a program to a socket (-e, --exec, -c or --sh-exec) together with listen mode or an IP address and port. This is the effect of an Ncat or netcat bind or reverse shell, regardless of the parent's name."
+severity: high
+procedure_ids: ["NM-P15"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "PROCESS_LAUNCH telemetry with child image path and the parent command line (Sysmon Event ID 1 ParentCommandLine mapped to principal.process.command_line, or EDR equivalent)."
+atomic_event_types: ["PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.command_line", "principal.process.file.full_path", "target.process.file.full_path"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Administrators using Ncat for authorized troubleshooting with command execution."
+references: "reports/nmap/source-analysis.md#procedure-analysis; public-rules/comparisons/nmap/ncat_exec_or_broker_grammar.md; reviews/nmap/detection-review.md#nm-dr-09"
+translations:
+  spl: { path: "detections/nmap/spl/ncat_socket_bound_shell_child.spl", sha256: 6d225e3d1489e0a22e958d67e8070f2a82d8b0cd0ee8a6fcec16e4f7c65123ff, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/nmap/kql/ncat_socket_bound_shell_child.kql", sha256: c9406034b3d13eb8ed527433cda6bd501d410b7496d06abfa68157bc4bb7bed0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/nmap/sql/ncat_socket_bound_shell_child.sql", sha256: 2b064c31b8b795de3430135ea0a58061c06239a53a9fb7a18e19c29251fe84b8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/nmap/eql/ncat_socket_bound_shell_child.eql", sha256: f850e8e1612d2f7cf9275aab604cde1f245395e0edc9860a93b5dbc2689afebd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/ncat_socket_bound_shell_child.yml", sha256: 38e2e042bf67d9b0475c21326ac3b1c36884d420f71a68da6f262648b6369f1f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

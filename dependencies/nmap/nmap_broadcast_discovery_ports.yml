@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: nmap_broadcast_discovery_ports
+canonical_path: detections/nmap/yaral/nmap_broadcast_discovery_ports.yaral
+canonical_sha256: bc6880430eb8d9526f06847dac2abe6b3c043caff9c02ebdea9844deb1579ce9
+description: "Detects one non-system process sending to four or more distinct local discovery protocols (LLMNR 5355, mDNS 5353, SSDP 1900, NBNS 137, DHCP 67, WS-Discovery 3702, SLP 427) within 2 minutes, the pattern of NSE broadcast scripts."
+severity: medium
+procedure_ids: ["NM-P11"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with destination IP and port, host and stable process ID; optional signature verification status. UDP to multicast or broadcast destinations must be logged."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.file.full_path", "principal.process.product_specific_process_id", "target.port"]
+correlation_window: "2m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Media and device-discovery applications and network inventory tools."
+references: "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+translations:
+  spl: { path: "detections/nmap/spl/nmap_broadcast_discovery_ports.spl", sha256: a5b3a1c7137d60bbbb3ef8665281da51a84275d532acdb59f8edc4003aa70f50, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/nmap/kql/nmap_broadcast_discovery_ports.kql", sha256: 54765aa246cd31d565b63f12b6fc783ae6fe78830e364196bca8917c4376908d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/nmap/sql/nmap_broadcast_discovery_ports.sql", sha256: 7d9f97d3f25acc013497c4605e9c2178f4e5b7b086364bd1f9c979b8c604a5dc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/nmap/eql/nmap_broadcast_discovery_ports.eql", sha256: f99001833986cac0dde31ceeb458d9313a0d9c55c3607b15e1c6b73806ec53c7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/nmap_broadcast_discovery_ports.yml", sha256: e3784631415acc455b810a76d168d35dcd35f8ca615c8916dbcb9c9447aabaf7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

@@ -1,0 +1,23 @@
+-- source_yaral: detections/nmap/yaral/ncat_socket_bound_shell_child.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: high
+-- rule_name: ncat_socket_bound_shell_child
+-- severity: high
+-- procedure_ids: NM-P15
+-- description: Detects a command shell started by a parent process whose command line binds a program to a socket (-e, --exec, -c or --sh-exec) together with listen mode or an IP address and port. This is the effect of an Ncat or netcat bind or reverse shell, regardless of the parent's name.
+-- log_source_prerequisites: PROCESS_LAUNCH telemetry with child image path and the parent command line (Sysmon Event ID 1 ParentCommandLine mapped to principal.process.command_line, or EDR equivalent).
+-- false_positives: Administrators using Ncat for authorized troubleshooting with command execution.
+-- references: reports/nmap/source-analysis.md#procedure-analysis; public-rules/comparisons/nmap/ncat_exec_or_broker_grammar.md; reviews/nmap/detection-review.md#nm-dr-09
+-- schema_profile: schemas/normalized-sql.yml
+-- field_mapping: normalized columns (event_type, hostname, process_path, parent_process_path, parent_command_line); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+-- assumptions_and_gaps: Native filter, grouping by hostname, parent_process_path and threshold. Hop window approximated by scheduling every 20 minutes over the trailing 60 minutes. Regex and interval syntax are dialect-specific.
+-- Schema assumption: normalized_events with columns event_time, event_type, hostname, process_path, parent_process_path, parent_command_line.
+SELECT hostname, parent_process_path, COUNT(*) AS matched_count, 'ncat_socket_bound_shell_child' AS canonical_rule
+FROM normalized_events
+WHERE event_time >= CURRENT_TIMESTAMP - INTERVAL '60' MINUTE
+  AND event_type = 'PROCESS_LAUNCH'
+  AND REGEXP_LIKE(process_path, '(\\(cmd|powershell|pwsh)\.exe|/(ba|z|da|k)?sh)$', 'i')
+  AND REGEXP_LIKE(parent_command_line, '(^|\s)(-e|--exec|-c|--sh-exec)(\s|=)\S+', 'i')
+  AND ((REGEXP_LIKE(parent_command_line, '(^|\s)(-[nvk]*l[nvkp]*|--listen)(\s|$)', 'i')) OR (REGEXP_LIKE(parent_command_line, '(\d{1,3}\.){3}\d{1,3}\s+\d{2,5}(\s|$)', 'i')))
+GROUP BY hostname, parent_process_path
+HAVING COUNT(*) >= 1;

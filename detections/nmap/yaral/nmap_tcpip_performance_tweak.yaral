@@ -1,0 +1,32 @@
+rule nmap_tcpip_performance_tweak {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects the Nmap installer's optional TCP/IP performance change: regedt32 /S importing nmap_performance.reg, or writes of MaxUserPort or TcpTimedWaitDelay under the Tcpip Parameters key."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Raising ephemeral ports and shortening TIME_WAIT supports high-rate connect scanning and is rarely changed on managed hosts."
+    procedure_ids = "NM-P14"
+    log_source_prerequisites = "REGISTRY_MODIFICATION telemetry (Sysmon Event ID 13 or EDR) with key and value name, and PROCESS_LAUNCH with command line."
+    false_positives = "Server tuning by administrators for high-connection workloads."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized registry and process fixtures for the installer section."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    (
+      ($e.metadata.event_type = "REGISTRY_MODIFICATION" and
+       re.regex($e.target.registry.registry_key, `(?i)\\Services\\Tcpip\\Parameters$`) and
+       re.regex($e.target.registry.registry_value_name, `(?i)^(MaxUserPort|TcpTimedWaitDelay)$`)) or
+      ($e.metadata.event_type = "PROCESS_LAUNCH" and
+       re.regex($e.target.process.command_line, `(?i)regedt32(\.exe)?"?\s+/S\s+.*nmap_performance\.reg`))
+    )
+    $e.principal.hostname = $host
+  match:
+    $host over 1h
+  outcome:
+    $values = array_distinct($e.target.registry.registry_value_name)
+  condition:
+    $e
+}

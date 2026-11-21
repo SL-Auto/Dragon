@@ -23,6 +23,7 @@ ECS_MAP = {
     "source_ip": "source.ip", "service_name": "service.name", "logon_type": "labels.logon_type",
     "command_line": "process.command_line", "parent_process_path": "process.parent.executable",
     "parent_process_id": "process.parent.entity_id", "user_agent": "user_agent.original",
+    "original_file_name": "process.pe.original_file_name", "parent_command_line": "process.parent.command_line", "signer": "file.code_signature.subject_name",
 }
 
 

@@ -1,0 +1,29 @@
+rule nmap_npcap_driver_install {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects installation or first load of the Npcap packet-capture driver (service or driver named npcap, or a driver signed by Insecure.Com LLC), which the Nmap Windows installer bundles for raw scanning."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Packet-capture drivers on servers and ordinary workstations are uncommon and enable raw scanning and sniffing; Wireshark users also install Npcap."
+    procedure_ids = "NM-P14"
+    log_source_prerequisites = "Windows System 7045 (service installed) and Sysmon Event ID 6 (driver loaded, DRIVER_LOAD) with service or image name and signer."
+    false_positives = "Wireshark and network-troubleshooting installations by administrators."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized 7045 and Sysmon Event ID 6 fixtures for npcap; inventory approved capture hosts."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    (
+      ($e.metadata.product_event_type = "7045" and re.regex($e.target.resource.name, `(?i)^npcap`)) or
+      ($e.metadata.product_event_type = "6" and (re.regex($e.target.file.full_path, `(?i)\\npcap\.sys$`) or re.regex($e.target.file.signature_info.signer, `(?i)Insecure\.Com`)))
+    )
+    $e.principal.hostname = $host
+  match:
+    $host over 1h
+  outcome:
+    $artifacts = array_distinct($e.target.file.full_path)
+  condition:
+    $e
+}

@@ -1,0 +1,18 @@
+# source_yaral: detections/nmap/yaral/nmap_output_file_artifacts.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: nmap_output_file_artifacts
+# severity: medium
+# procedure_ids: NM-P13
+# description: Detects creation of a grepable Nmap output file (.gnmap), produced by -oG or alongside .nmap and .xml by -oA.
+# log_source_prerequisites: FILE_CREATION telemetry (Sysmon Event ID 11 or EDR) with target path, host and creating process.
+# false_positives: Administrators saving authorized scan results.
+# references: reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, target_path, process_path); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by hostname and threshold. Hop window approximated by scheduling every 20 minutes over the trailing 60 minutes.
+| search index=<configured_index> earliest=-60m@m latest=now
+| where event_type=="FILE_CREATION" AND match(target_path, "(?i)\\.gnmap$")
+| stats count as matched_count values(target_path) as target_path_values values(process_path) as process_path_values by hostname
+| where matched_count >= 1
+| eval canonical_rule="nmap_output_file_artifacts"

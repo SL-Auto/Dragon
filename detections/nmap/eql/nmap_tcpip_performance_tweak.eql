@@ -1,0 +1,14 @@
+// source_yaral: detections/nmap/yaral/nmap_tcpip_performance_tweak.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: nmap_tcpip_performance_tweak
+// severity: medium
+// procedure_ids: NM-P14
+// description: Detects the Nmap installer's optional TCP/IP performance change: regedt32 /S importing nmap_performance.reg, or writes of MaxUserPort or TcpTimedWaitDelay under the Tcpip Parameters key.
+// log_source_prerequisites: REGISTRY_MODIFICATION telemetry (Sysmon Event ID 13 or EDR) with key and value name, and PROCESS_LAUNCH with command line.
+// false_positives: Server tuning by administrators for high-connection workloads.
+// references: reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (event_type, hostname, registry_key, registry_value, command_line); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where ((event.action == "REGISTRY_MODIFICATION" and registry.key regex~ "\\\\Services\\\\Tcpip\\\\Parameters$" and registry.value regex~ "^(MaxUserPort|TcpTimedWaitDelay)$") or (event.action == "PROCESS_LAUNCH" and process.command_line regex~ "regedt32(\\.exe)?\\\"?\\s+/S\\s+.*nmap_performance\\.reg"))

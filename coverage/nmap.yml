@@ -1,0 +1,29 @@
+schema_version: 1
+tool_id: nmap
+analyzed_revision: 80dd68b8d88cbc89e584941e9ba68e57247d2230
+inventory_method: option parser, scan engines, service and OS detection, DNS, all 620 NSE scripts by declared category, Ncat, Nping and the Windows installer reconciled to procedures
+inventory_complete: true
+inventory_evidence: [reports/nmap/source-analysis.md]
+excluded_paths:
+  - { path: zenmap, reason: GUI front end that launches nmap; effects identical to NM-P01 to NM-P13 }
+  - { path: ndiff, reason: offline comparison of local XML output }
+  - { path: "libdnet-stripped liblinear liblua libnetutil libpcap libpcre libssh2 libz nbase nsock", reason: bundled implementation libraries surfacing through the analyzed procedures }
+  - { path: "docs tests fuzz macosx", reason: non-deployed material }
+procedures:
+  - { id: NM-P01, name: host discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar, nmap_binary_identity_execution, nmap_network_scan_flow_pattern] }
+  - { id: NM-P02, name: TCP connect scan, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar, nmap_binary_identity_execution, nmap_process_connect_scan_fanout] }
+  - { id: NM-P03, name: raw port scans, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar, nmap_binary_identity_execution, nmap_network_scan_flow_pattern] }
+  - { id: NM-P04, name: idle and FTP bounce scans, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar, nmap_network_scan_flow_pattern] }
+  - { id: NM-P05, name: service and version detection, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar, nmap_binary_identity_execution, nmap_process_connect_scan_fanout] }
+  - { id: NM-P06, name: OS fingerprinting and traceroute, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar, nmap_binary_identity_execution, nmap_network_scan_flow_pattern] }
+  - { id: NM-P07, name: reverse DNS resolution, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_reverse_dns_ptr_burst, nmap_cli_option_grammar, nmap_binary_identity_execution] }
+  - { id: NM-P08, name: NSE discovery safe default and version scripts, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar, nmap_binary_identity_execution, nmap_process_connect_scan_fanout, nmap_nse_http_default_user_agent] }
+  - { id: NM-P09, name: NSE brute and auth scripts, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar, nmap_auth_failure_fanout_from_source] }
+  - { id: NM-P10, name: NSE vuln exploit intrusive dos fuzzer and malware scripts, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar, nmap_nse_http_default_user_agent], notes: "per-script target signatures belong to IDS content" }
+  - { id: NM-P11, name: NSE broadcast scripts, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar, nmap_broadcast_discovery_ports] }
+  - { id: NM-P12, name: NSE external scripts, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar] }
+  - { id: NM-P13, name: output files, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar, nmap_output_file_artifacts] }
+  - { id: NM-P14, name: Windows installation artifacts, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_npcap_driver_install, nmap_tcpip_performance_tweak] }
+  - { id: NM-P15, name: Ncat, telemetry_status: assessed, detection_status: detected, detection_rules: [ncat_exec_or_broker_grammar, ncat_socket_bound_shell_child] }
+  - { id: NM-P16, name: Nping, telemetry_status: assessed, detection_status: detected, detection_rules: [nmap_cli_option_grammar] }
+completion: { total_procedures: 16, detected: 16, not_observable: 0, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

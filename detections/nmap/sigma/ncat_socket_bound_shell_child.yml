@@ -1,0 +1,45 @@
+title: "Detects a command shell started by a parent process whose command line binds a program to a socket (-e, --exec, -c or --sh-exec) together with listen mode or an IP address and port. This is the effect of an Ncat or netcat bind or reverse shell, regardless of the parent's name."
+name: ncat_socket_bound_shell_child_base
+status: experimental
+description: "Detects a command shell started by a parent process whose command line binds a program to a socket (-e, --exec, -c or --sh-exec) together with listen mode or an IP address and port. This is the effect of an Ncat or netcat bind or reverse shell, regardless of the parent's name."
+source_yaral: "detections/nmap/yaral/ncat_socket_bound_shell_child.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, process_path, parent_process_path, parent_command_line); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/nmap/source-analysis.md#procedure-analysis; public-rules/comparisons/nmap/ncat_exec_or_broker_grammar.md; reviews/nmap/detection-review.md#nm-dr-09"
+procedure_ids: "NM-P15"
+log_source_prerequisites: "PROCESS_LAUNCH telemetry with child image path and the parent command line (Sysmon Event ID 1 ParentCommandLine mapped to principal.process.command_line, or EDR equivalent)."
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  sel:
+    event_type: "PROCESS_LAUNCH"
+    process_path|re: "(?i)(\\\\(cmd|powershell|pwsh)\\.exe|/(ba|z|da|k)?sh)$"
+    parent_command_line|re: "(?i)(^|\\s)(-e|--exec|-c|--sh-exec)(\\s|=)\\S+"
+  alt0_0:
+    parent_command_line|re: "(?i)(^|\\s)(-[nvk]*l[nvkp]*|--listen)(\\s|$)"
+  alt0_1:
+    parent_command_line|re: "(?i)(\\d{1,3}\\.){3}\\d{1,3}\\s+\\d{2,5}(\\s|$)"
+  condition: sel and 1 of alt0_*
+falsepositives:
+  - "Administrators using Ncat for authorized troubleshooting with command execution."
+level: high
+---
+title: "Detects a command shell started by a parent process whose command line binds a program to a socket (-e, --exec, -c or --sh-exec) together with listen mode or an IP address and port. This is the effect of an Ncat or netcat bind or reverse shell, regardless of the parent's name."
+name: ncat_socket_bound_shell_child
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - ncat_socket_bound_shell_child_base
+  group-by:
+    - hostname
+    - parent_process_path
+  timespan: 60m
+  condition:
+    gte: 1
+level: high

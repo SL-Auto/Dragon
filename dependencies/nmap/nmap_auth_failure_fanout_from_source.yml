@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: nmap_auth_failure_fanout_from_source
+canonical_path: detections/nmap/yaral/nmap_auth_failure_fanout_from_source.yaral
+canonical_sha256: 9d04523505c29afe8305fa72b1ede25c488b54e1ca073427062ca24743c489ee
+description: "Detects one source IP producing authentication failures for ten or more distinct accounts, or against five or more hosts, within 10 minutes, the target-side effect of NSE brute-force and default-credential scripts."
+severity: medium
+procedure_ids: ["NM-P09"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Windows Security 4625 and 4771 (and service authentication failures normalized as USER_LOGIN with security_result.action BLOCK) with source IP, target account and target host."
+atomic_event_types: ["USER_LOGIN"]
+required_udm_fields: ["metadata.event_type", "metadata.product_event_type", "principal.ip", "security_result.action", "target.hostname", "target.user.userid"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Misconfigured services retrying stale credentials, password-audit tools and shared NAT sources."
+references: "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+translations:
+  spl: { path: "detections/nmap/spl/nmap_auth_failure_fanout_from_source.spl", sha256: 63e8a744522c0104ca2c41abc35275fd691fb4081c06b4476d1b0841150f5fae, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/nmap/kql/nmap_auth_failure_fanout_from_source.kql", sha256: 4593234cea4274e08cc904c0bbc5ebb263bd6aadb7c2ff45228fd12e62edc916, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/nmap/sql/nmap_auth_failure_fanout_from_source.sql", sha256: 37b6abb3a0e7cabf2f57ae5a9103e21c5a8aaf83392735e2f136270da3b4525a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/nmap/eql/nmap_auth_failure_fanout_from_source.eql", sha256: 6e0cded3c9a8734aa2b48c4680d6845aa087c1ccaee8b9bbd8ec1f1e4d01a4f2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/nmap_auth_failure_fanout_from_source.yml", sha256: 0b8e5a21b10bf181f39a975d9368b704dd1c3cc7272384ae7427580eeddf4628, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

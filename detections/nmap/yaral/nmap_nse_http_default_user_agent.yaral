@@ -1,0 +1,28 @@
+rule nmap_nse_http_default_user_agent {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects HTTP requests carrying the Nmap Scripting Engine's default User-Agent, which names the engine and its documentation URL."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "The string self-identifies NSE HTTP scripts and is the library default; it can be overridden with a script argument."
+    procedure_ids = "NM-P08,NM-P10"
+    log_source_prerequisites = "Web server, reverse proxy, WAF, forward proxy or NDR NETWORK_HTTP events with User-Agent and source IP."
+    false_positives = "Authorized vulnerability scans using default NSE settings."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Search historical web logs for the string and replay a sanitized request."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_HTTP"
+    re.regex($e.network.http.user_agent, `(?i)Nmap Scripting Engine`)
+    $e.principal.ip = $source
+  match:
+    $source over 1h
+  outcome:
+    $targets = array_distinct($e.target.hostname)
+    $requests = count($e.metadata.id)
+  condition:
+    $e
+}

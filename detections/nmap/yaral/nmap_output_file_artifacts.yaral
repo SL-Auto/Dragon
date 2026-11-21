@@ -1,0 +1,28 @@
+rule nmap_output_file_artifacts {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects creation of a grepable Nmap output file (.gnmap), produced by -oG or alongside .nmap and .xml by -oA."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "The .gnmap extension is specific to Nmap output; -oA always appends it, although -oG accepts any name."
+    procedure_ids = "NM-P13"
+    log_source_prerequisites = "FILE_CREATION telemetry (Sysmon Event ID 11 or EDR) with target path, host and creating process."
+    false_positives = "Administrators saving authorized scan results."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized file-creation fixtures for -oA output."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    $e.metadata.event_type = "FILE_CREATION"
+    re.regex($e.target.file.full_path, `(?i)\.gnmap$`)
+    $e.principal.hostname = $host
+  match:
+    $host over 1h
+  outcome:
+    $paths = array_distinct($e.target.file.full_path)
+    $processes = array_distinct($e.principal.process.file.full_path)
+  condition:
+    $e
+}

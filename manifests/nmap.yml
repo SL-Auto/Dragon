@@ -1,27 +1,48 @@
 schema_version: 1
 tool_id: nmap
 name: "Nmap"
-lifecycle_status: triaged
-analyzed_revision: "unknown"
+lifecycle_status: analyzed
+analyzed_revision: "80dd68b8d88cbc89e584941e9ba68e57247d2230"
 context_entry_points:
   registry: registry/tools.yml
+  summary: summaries/nmap.md
+  coverage: coverage/nmap.yml
+  report: reports/nmap/source-analysis.md
+  telemetry: telemetry/nmap.md
 counts:
-  procedures: 0
-  canonical_rules: 0
-  spl_translations: 0
-  kql_translations: 0
-  sql_translations: 0
-  eql_translations: 0
-  sigma_translations: 0
+  procedures: 16
+  canonical_rules: 13
+  spl_translations: 13
+  kql_translations: 13
+  sql_translations: 13
+  eql_translations: 13
+  sigma_translations: 13
 completion_states:
-  source_analysis: incomplete
-  canonical_detection: not_started
-  telemetry_reconciliation: not_started
-  secondary_translation: not_started
-  rule_validation_labels: "not_applicable"
+  source_analysis: complete
+  canonical_detection: complete
+  telemetry_reconciliation: complete_for_experimental_rules
+  secondary_translation: draft_complete
+  rule_validation_labels: "13 needs_validation"
 artifact_hashes:
-  registry: 5d9b28e4ea91785054ba14299210b638ab12473a2e666795a18d98ef71962a17
+  registry: f3094b68a53c86bcfe950c9998d5a365811c6ee840b864fbd431f3bb90eeb112
+  coverage: eac6649594eacf77d66f1a6d4cef684a3c58cf14dcc742e9e71d0073f79b065b
+  report: 4f1ae965765bd9b2a477c46a480fb4f278c64711a775af494d847cee7bec7379
+  telemetry: dd8278742906e3385458ab1043ed62fc50606a993c109aa2cc908f637cacc586
+  detection_review: 9afba875bab1319df057c5da446882df7c5ead3c6cacf24d4ddc88cba07202f4
+  translation_review: 0d98ced40baf8ded07115be5caf141f0e832216a04da4c3bfe212161c01cd5a8
 rules:
-  []
+  - { name: ncat_exec_or_broker_grammar, severity: high, procedures: "NM-P15", dependency: dependencies/nmap/ncat_exec_or_broker_grammar.yml, canonical_sha256: 5ca681be1b7e4df59c4736db2863ebf6ebac6110826c7d17a72644fef08bc52b }
+  - { name: ncat_socket_bound_shell_child, severity: high, procedures: "NM-P15", dependency: dependencies/nmap/ncat_socket_bound_shell_child.yml, canonical_sha256: 41a16766bcfbca4635e29eb4917c8db9fd4f4770a99805f88940bc020fd127b8 }
+  - { name: nmap_auth_failure_fanout_from_source, severity: medium, procedures: "NM-P09", dependency: dependencies/nmap/nmap_auth_failure_fanout_from_source.yml, canonical_sha256: 9d04523505c29afe8305fa72b1ede25c488b54e1ca073427062ca24743c489ee }
+  - { name: nmap_binary_identity_execution, severity: medium, procedures: "NM-P01,NM-P02,NM-P03,NM-P05,NM-P06,NM-P07,NM-P08", dependency: dependencies/nmap/nmap_binary_identity_execution.yml, canonical_sha256: b470c8d92e088fbb175ed836f86dd545db8f86d6334f3475c13c613cd6a0a308 }
+  - { name: nmap_broadcast_discovery_ports, severity: medium, procedures: "NM-P11", dependency: dependencies/nmap/nmap_broadcast_discovery_ports.yml, canonical_sha256: bc6880430eb8d9526f06847dac2abe6b3c043caff9c02ebdea9844deb1579ce9 }
+  - { name: nmap_cli_option_grammar, severity: high, procedures: "NM-P01,NM-P02,NM-P03,NM-P04,NM-P05,NM-P06,NM-P07,NM-P08,NM-P09,NM-P10,NM-P11,NM-P12,NM-P13,NM-P16", dependency: dependencies/nmap/nmap_cli_option_grammar.yml, canonical_sha256: ac6b08aae46683a67004fa2970aa91fc2723909cc5445965dd5af6553968bddb }
+  - { name: nmap_network_scan_flow_pattern, severity: medium, procedures: "NM-P01,NM-P03,NM-P04,NM-P06", dependency: dependencies/nmap/nmap_network_scan_flow_pattern.yml, canonical_sha256: eb716db5e6733a10e50344510eff38600f416e4afeb36780c04460e7d4f0fbc9 }
+  - { name: nmap_npcap_driver_install, severity: medium, procedures: "NM-P14", dependency: dependencies/nmap/nmap_npcap_driver_install.yml, canonical_sha256: 4453c10c613d832980bbe932d108d3fb22166c6ddc47f22fc01cd48aeeef6f12 }
+  - { name: nmap_nse_http_default_user_agent, severity: medium, procedures: "NM-P08,NM-P10", dependency: dependencies/nmap/nmap_nse_http_default_user_agent.yml, canonical_sha256: d9dca649d44645bad804c1609d65de6b7181edfb3994f44db52fffd5c383b874 }
+  - { name: nmap_output_file_artifacts, severity: medium, procedures: "NM-P13", dependency: dependencies/nmap/nmap_output_file_artifacts.yml, canonical_sha256: 51c531dc4658a20c094c2793da6bbef571c197c7a173bfc58ce68804947fde29 }
+  - { name: nmap_process_connect_scan_fanout, severity: medium, procedures: "NM-P02,NM-P05,NM-P08", dependency: dependencies/nmap/nmap_process_connect_scan_fanout.yml, canonical_sha256: bb1ac1a237799e6a5c1568ea5302689ee446b33b716494414ccb429b6140bdc1 }
+  - { name: nmap_reverse_dns_ptr_burst, severity: medium, procedures: "NM-P07", dependency: dependencies/nmap/nmap_reverse_dns_ptr_burst.yml, canonical_sha256: 20e9573087c48b99850878e7c2b8505c42bdd8afe3db6679914466633aaedf1f }
+  - { name: nmap_tcpip_performance_tweak, severity: medium, procedures: "NM-P14", dependency: dependencies/nmap/nmap_tcpip_performance_tweak.yml, canonical_sha256: c752264a46f1ac2dc18a3f542b1c889c1896f561fdc0419ab5e31e2449389dc2 }
 unresolved:
   source_blockers: 0

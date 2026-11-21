@@ -1,0 +1,22 @@
+// source_yaral: detections/nmap/yaral/nmap_process_connect_scan_fanout.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: nmap_process_connect_scan_fanout
+// severity: medium
+// procedure_ids: NM-P02,NM-P05,NM-P08
+// description: Detects one unverified process opening outbound connections to fifty or more distinct internal hosts, or fifty or more distinct ports, within 5 minutes, the host effect of a connect scan, version probing or script scanning.
+// log_source_prerequisites: Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with destination IP and port, host and stable process ID; optional signature verification status.
+// false_positives: Approved vulnerability scanners, asset-discovery agents and monitoring systems.
+// references: reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (event_type, direction, hostname, process_id, process_path, target_ip, target_port, process_signed); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native filter, grouping by hostname, process_id and threshold. Hop window approximated by scheduling every 5 minutes over the trailing 5 minutes. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+NormalizedEvents
+| where TimeGenerated > ago(5m)
+| where event_type == "NETWORK_CONNECTION"
+    and direction == "OUTBOUND"
+    and target_ip matches regex @"(?i)^(10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.|f[cd][0-9a-f]{2}:)"
+    and coalesce(tobool(process_signed), false) == false
+| summarize MatchedCount = count_distinct(target_ip), target_port_values = make_set(target_port, 20), process_path_values = make_set(process_path, 20) by hostname, process_id
+| where MatchedCount >= 50
+| extend CanonicalRule = "nmap_process_connect_scan_fanout"

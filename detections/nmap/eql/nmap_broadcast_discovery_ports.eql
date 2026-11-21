@@ -1,0 +1,16 @@
+// source_yaral: detections/nmap/yaral/nmap_broadcast_discovery_ports.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: nmap_broadcast_discovery_ports
+// severity: medium
+// procedure_ids: NM-P11
+// description: Detects one non-system process sending to four or more distinct local discovery protocols (LLMNR 5355, mDNS 5353, SSDP 1900, NBNS 137, DHCP 67, WS-Discovery 3702, SLP 427) within 2 minutes, the pattern of NSE broadcast scripts.
+// log_source_prerequisites: Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with destination IP and port, host and stable process ID; optional signature verification status. UDP to multicast or broadcast destinations must be logged.
+// false_positives: Media and device-discovery applications and network inventory tools.
+// references: reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (event_type, hostname, process_id, process_path, target_port); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where event.action == "NETWORK_CONNECTION"
+  and destination.port in ("5355", "5353", "1900", "137", "67", "3702", "427")
+  and not process.executable regex~ "\\\\windows\\\\system32\\\\(svchost|lsass|services|dashost)\\.exe$"

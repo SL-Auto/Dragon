@@ -1,0 +1,36 @@
+rule nmap_cli_option_grammar {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a process started with Nmap or Nping option grammar regardless of the executable name: an Nmap scan-type flag (-sS, -sT, -sU, -sV, -sC and similar) together with a port, discovery, script, output or timing option; or Nping's distinctive long options."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "The combination of compiled scan flags is specific to the tool family and survives renaming; scanning from a non-administrative host is uncommon."
+    procedure_ids = "NM-P01,NM-P02,NM-P03,NM-P04,NM-P05,NM-P06,NM-P07,NM-P08,NM-P09,NM-P10,NM-P11,NM-P12,NM-P13,NM-P16"
+    log_source_prerequisites = "PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, Linux auditd EXECVE or EDR) with the full command line, image path and host."
+    false_positives = "Authorized network administrators, vulnerability-management scanners and IT asset discovery running Nmap; approve by host and account."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized command lines for each scan type, Nping modes and renamed binaries; confirm unrelated tools with -s or -p flags do not match."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    (
+      (
+        re.regex($p.target.process.command_line, `(^|\s)-s[STUVACNFXWMOYZIL]{1,2}(\s|$)`) and
+        re.regex($p.target.process.command_line, `(^|\s)(-p\s*[0-9TU:,-]+|-p-|-Pn|-P[SAUYEPM][0-9,]*|-O(\s|$)|-A(\s|$)|-T[0-5](\s|$)|--top-ports|--script(\s|=)|-o[ANXGS](\s|$)|--min-rate|--max-retries|--open(\s|$))`)
+      ) or
+      re.regex($p.target.process.command_line, `(^|\s)--(script|script-args)(\s|=)\S*(vuln|exploit|brute|auth|intrusive|dos|broadcast|discovery|default|safe|[a-z0-9-]+\.nse)`) or
+      re.regex($p.target.process.command_line, `(^|\s)--(echo-server|echo-client|icmp-type|tcp-connect|arp-type)(\s|=)`)
+    )
+    $p.target.process.file.full_path = $image
+  match:
+    $host, $image over 1h
+  outcome:
+    $command_lines = array_distinct($p.target.process.command_line)
+    $users = array_distinct($p.principal.user.userid)
+  condition:
+    $p
+}

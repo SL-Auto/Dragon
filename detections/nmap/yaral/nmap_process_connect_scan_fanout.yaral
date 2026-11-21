@@ -1,0 +1,37 @@
+rule nmap_process_connect_scan_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one unverified process opening outbound connections to fifty or more distinct internal hosts, or fifty or more distinct ports, within 5 minutes, the host effect of a connect scan, version probing or script scanning."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Connect scans and NSE work complete full connections from the scanning process; legitimate software rarely reaches this breadth in 5 minutes."
+    procedure_ids = "NM-P02,NM-P05,NM-P08"
+    log_source_prerequisites = "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with destination IP and port, host and stable process ID; optional signature verification status."
+    false_positives = "Approved vulnerability scanners, asset-discovery agents and monitoring systems."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized flows of one process reaching 50 internal hosts or 50 ports in 5 minutes; baseline approved scanners."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.network.direction = "OUTBOUND"
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $pid
+    (
+      net.ip_in_range_cidr($e.target.ip, "10.0.0.0/8") or
+      net.ip_in_range_cidr($e.target.ip, "172.16.0.0/12") or
+      net.ip_in_range_cidr($e.target.ip, "192.168.0.0/16") or
+      net.ip_in_range_cidr($e.target.ip, "fc00::/7")
+    )
+    $e.principal.process.file.signature_info.verification_status != "VERIFIED"
+  match:
+    $host, $pid over 5m
+  outcome:
+    $hosts = count_distinct($e.target.ip)
+    $ports = count_distinct($e.target.port)
+    $process = array_distinct($e.principal.process.file.full_path)
+  condition:
+    $e and ($hosts >= 50 or $ports >= 50)
+}

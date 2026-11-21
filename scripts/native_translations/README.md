@@ -10,6 +10,7 @@ These scripts regenerate hand-specified secondary translations (SPL, KQL, SQL, E
 | `bloodhound_compensating.py` | 5 BloodHound compensating rules (hand-authored per backend) |
 | `specs_ligolo.py` | 4 single-event Ligolo-ng rules (the 3 multi-event correlations use the generator) |
 | `specs_cloudfox.py` | 15 CloudFox cloud-audit and endpoint rules |
+| `specs_nmap.py` | 13 Nmap, Ncat and Nping rules |
 
 Usage, from any directory (the scripts do not execute detection content):
 
@@ -19,6 +20,7 @@ python -I scripts/native_translations/specs_ri.py
 python -I scripts/native_translations/bloodhound_compensating.py
 python -I scripts/native_translations/specs_ligolo.py
 python -I scripts/native_translations/specs_cloudfox.py
+python -I scripts/native_translations/specs_nmap.py
 ```
 
 When a canonical rule in these sets changes:

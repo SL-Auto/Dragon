@@ -1,0 +1,35 @@
+rule ncat_exec_or_broker_grammar {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a process started with Ncat command-execution or relay grammar regardless of the executable name: --sh-exec, --lua-exec, --broker, --chat or --keep-open; or -e/--exec/-c combined with listen mode (-l with only n, v, k or p companions) and a port argument (NM-DR-05)."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Binding a command to a socket or brokering connections provides shells and relays; the long options are specific to Ncat."
+    procedure_ids = "NM-P15"
+    log_source_prerequisites = "PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, Linux auditd EXECVE or EDR) with the full command line, image path and host."
+    false_positives = "Administrators using Ncat for authorized troubleshooting."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized command lines in short and long forms and renamed binaries; confirm unrelated tools with -e flags do not match without listen mode."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    (
+      re.regex($p.target.process.command_line, `(^|\s)--(sh-exec|lua-exec|broker|chat|keep-open)(\s|=|$)`) or
+      (
+        re.regex($p.target.process.command_line, `(^|\s)(-e|--exec|-c)(\s|=)\S+`) and
+        re.regex($p.target.process.command_line, `(^|\s)(-[nvk]*l[nvkp]*|--listen)(\s|$)`) and
+        re.regex($p.target.process.command_line, `\s\d{2,5}(\s|$)`)
+      )
+    )
+    $p.target.process.file.full_path = $image
+  match:
+    $host, $image over 1h
+  outcome:
+    $command_lines = array_distinct($p.target.process.command_line)
+  condition:
+    $p
+}

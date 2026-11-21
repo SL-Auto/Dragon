@@ -1,0 +1,44 @@
+title: "Detects one unverified process opening outbound connections to fifty or more distinct internal hosts, or fifty or more distinct ports, within 5 minutes, the host effect of a connect scan, version probing or script scanning."
+name: nmap_process_connect_scan_fanout_base
+status: experimental
+description: "Detects one unverified process opening outbound connections to fifty or more distinct internal hosts, or fifty or more distinct ports, within 5 minutes, the host effect of a connect scan, version probing or script scanning."
+source_yaral: "detections/nmap/yaral/nmap_process_connect_scan_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, direction, hostname, process_id, process_path, target_ip, target_port, process_signed); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+procedure_ids: "NM-P02,NM-P05,NM-P08"
+log_source_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with destination IP and port, host and stable process ID; optional signature verification status."
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  sel:
+    event_type: "NETWORK_CONNECTION"
+    direction: "OUTBOUND"
+    target_ip|re: "(?i)^(10\\.|172\\.(1[6-9]|2[0-9]|3[01])\\.|192\\.168\\.|f[cd][0-9a-f]{2}:)"
+  filter0:
+    process_signed: true
+  condition: sel and not filter0
+falsepositives:
+  - "Approved vulnerability scanners, asset-discovery agents and monitoring systems."
+level: medium
+---
+title: "Detects one unverified process opening outbound connections to fifty or more distinct internal hosts, or fifty or more distinct ports, within 5 minutes, the host effect of a connect scan, version probing or script scanning."
+name: nmap_process_connect_scan_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - nmap_process_connect_scan_fanout_base
+  group-by:
+    - hostname
+    - process_id
+  timespan: 5m
+  condition:
+    field: target_ip
+    gte: 50
+level: medium

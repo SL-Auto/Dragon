@@ -1,0 +1,31 @@
+rule nmap_auth_failure_fanout_from_source {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one source IP producing authentication failures for ten or more distinct accounts, or against five or more hosts, within 10 minutes, the target-side effect of NSE brute-force and default-credential scripts."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Brute scripts iterate username lists across services from one scanning host; legitimate failures cluster on few accounts."
+    procedure_ids = "NM-P09"
+    log_source_prerequisites = "Windows Security 4625 and 4771 (and service authentication failures normalized as USER_LOGIN with security_result.action BLOCK) with source IP, target account and target host."
+    false_positives = "Misconfigured services retrying stale credentials, password-audit tools and shared NAT sources."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized failure fixtures for ten accounts or five hosts from one source."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    (
+      $e.metadata.product_event_type = /^(4625|4771)$/ or
+      ($e.metadata.event_type = "USER_LOGIN" and $e.security_result.action = "BLOCK")
+    )
+    $e.principal.ip = $source
+    $e.target.user.userid = $account
+  match:
+    $source over 10m
+  outcome:
+    $accounts = count_distinct($account)
+    $hosts = count_distinct($e.target.hostname)
+  condition:
+    $e and ($accounts >= 10 or $hosts >= 5)
+}

@@ -1,0 +1,32 @@
+rule nmap_binary_identity_execution {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects execution of the Nmap binary identified by its PE OriginalFileName (nmap.exe), which survives renaming on Windows, or by an image named nmap on other platforms. It covers default invocations such as nmap <target> that carry no option grammar."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Binary identity is reliable on Windows through PE version information; on Linux the name is mutable. Administrators also run Nmap."
+    procedure_ids = "NM-P01,NM-P02,NM-P03,NM-P05,NM-P06,NM-P07,NM-P08"
+    log_source_prerequisites = "PROCESS_LAUNCH telemetry with image path and PE OriginalFileName (Sysmon Event ID 1 OriginalFileName mapped to target.process.file.pe_file.original_file_name, or EDR equivalent)."
+    false_positives = "Authorized administrators and vulnerability-management hosts running Nmap; approve by host."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; public-rules/comparisons/nmap/nmap_cli_option_grammar.md; reviews/nmap/detection-review.md#nm-dr-08"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized Sysmon Event ID 1 fixtures for renamed nmap.exe and Linux nmap; confirm OriginalFileName mapping."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    (
+      re.regex($p.target.process.file.pe_file.original_file_name, `(?i)^nmap\.exe$`) or
+      re.regex($p.target.process.file.full_path, `(?i)(\\nmap\.exe|/nmap)$`)
+    )
+    $p.target.process.file.full_path = $image
+  match:
+    $host, $image over 1h
+  outcome:
+    $command_lines = array_distinct($p.target.process.command_line)
+    $users = array_distinct($p.principal.user.userid)
+  condition:
+    $p
+}

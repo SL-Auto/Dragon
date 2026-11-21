@@ -1,0 +1,41 @@
+title: "Detects one internal source IP probing one hundred or more distinct destination ports on a host, or one hundred or more hosts, within 5 minutes in network flow telemetry, covering raw and half-open scans that endpoint sensors do not attribute to a process."
+name: nmap_network_scan_flow_pattern_base
+status: experimental
+description: "Detects one internal source IP probing one hundred or more distinct destination ports on a host, or one hundred or more hosts, within 5 minutes in network flow telemetry, covering raw and half-open scans that endpoint sensors do not attribute to a process."
+source_yaral: "detections/nmap/yaral/nmap_network_scan_flow_pattern.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, source_ip, target_ip, target_port); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+procedure_ids: "NM-P01,NM-P03,NM-P04,NM-P06"
+log_source_prerequisites: "NDR, firewall or flow telemetry (NETWORK_CONNECTION or NETWORK_FLOW without process) with source IP, destination IP and port; denied and reset flows retained."
+logsource:
+  category: firewall
+detection:
+  sel:
+    event_type:
+      - "NETWORK_CONNECTION"
+      - "NETWORK_FLOW"
+    source_ip|re: "(?i)^(10\\.|172\\.(1[6-9]|2[0-9]|3[01])\\.|192\\.168\\.)"
+  condition: sel
+falsepositives:
+  - "Vulnerability scanners, network monitoring and load-balancer health checks; approve scanner IPs."
+level: medium
+---
+title: "Detects one internal source IP probing one hundred or more distinct destination ports on a host, or one hundred or more hosts, within 5 minutes in network flow telemetry, covering raw and half-open scans that endpoint sensors do not attribute to a process."
+name: nmap_network_scan_flow_pattern
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - nmap_network_scan_flow_pattern_base
+  group-by:
+    - source_ip
+  timespan: 5m
+  condition:
+    field: target_ip
+    gte: 100
+level: medium

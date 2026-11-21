@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: nmap_cli_option_grammar
+canonical_path: detections/nmap/yaral/nmap_cli_option_grammar.yaral
+canonical_sha256: ac6b08aae46683a67004fa2970aa91fc2723909cc5445965dd5af6553968bddb
+description: "Detects a process started with Nmap or Nping option grammar regardless of the executable name: an Nmap scan-type flag (-sS, -sT, -sU, -sV, -sC and similar) together with a port, discovery, script, output or timing option; or Nping's distinctive long options."
+severity: high
+procedure_ids: ["NM-P01", "NM-P02", "NM-P03", "NM-P04", "NM-P05", "NM-P06", "NM-P07", "NM-P08", "NM-P09", "NM-P10", "NM-P11", "NM-P12", "NM-P13", "NM-P16"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, Linux auditd EXECVE or EDR) with the full command line, image path and host."
+atomic_event_types: ["PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.user.userid", "target.process.command_line", "target.process.file.full_path"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Authorized network administrators, vulnerability-management scanners and IT asset discovery running Nmap; approve by host and account."
+references: "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+translations:
+  spl: { path: "detections/nmap/spl/nmap_cli_option_grammar.spl", sha256: e7094e377047bbdb6c6770b5940a0818725623799db2638fedc9c927baf2c0d8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/nmap/kql/nmap_cli_option_grammar.kql", sha256: 43e87fbb4aa0d1184a29d1b16d0d88e2d72bd1e5eae092a67450fc7225272668, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/nmap/sql/nmap_cli_option_grammar.sql", sha256: 91a23ea2a5ffd7928497a86cc70d40da14bee691f5781604a4d0a71d95c00293, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/nmap/eql/nmap_cli_option_grammar.eql", sha256: c9e3041167cadd524a925d6475b9fc62b03a88dd499f34a778fc4d96bdc58cd7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/nmap_cli_option_grammar.yml", sha256: b78a822d98a614e61592341317dd55d0bbd0528f0fc21c2150e3b687f053c69c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

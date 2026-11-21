@@ -1,0 +1,15 @@
+// source_yaral: detections/nmap/yaral/nmap_cli_option_grammar.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: nmap_cli_option_grammar
+// severity: high
+// procedure_ids: NM-P01,NM-P02,NM-P03,NM-P04,NM-P05,NM-P06,NM-P07,NM-P08,NM-P09,NM-P10,NM-P11,NM-P12,NM-P13,NM-P16
+// description: Detects a process started with Nmap or Nping option grammar regardless of the executable name: an Nmap scan-type flag (-sS, -sT, -sU, -sV, -sC and similar) together with a port, discovery, script, output or timing option; or Nping's distinctive long options.
+// log_source_prerequisites: PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, Linux auditd EXECVE or EDR) with the full command line, image path and host.
+// false_positives: Authorized network administrators, vulnerability-management scanners and IT asset discovery running Nmap; approve by host and account.
+// references: reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (event_type, hostname, process_path, command_line); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where event.action == "PROCESS_LAUNCH"
+  and ((process.command_line regex~ "(^|\\s)-s[STUVACNFXWMOYZIL]{1,2}(\\s|$)" and process.command_line regex~ "(^|\\s)(-p\\s*[0-9TU:,-]+|-p-|-Pn|-P[SAUYEPM][0-9,]*|-O(\\s|$)|-A(\\s|$)|-T[0-5](\\s|$)|--top-ports|--script(\\s|=)|-o[ANXGS](\\s|$)|--min-rate|--max-retries|--open(\\s|$))") or (process.command_line regex~ "(^|\\s)--(script|script-args)(\\s|=)\\S*(vuln|exploit|brute|auth|intrusive|dos|broadcast|discovery|default|safe|[a-z0-9-]+\\.nse)") or (process.command_line regex~ "(^|\\s)--(echo-server|echo-client|icmp-type|tcp-connect|arp-type)(\\s|=)"))

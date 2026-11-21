@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: ncat_exec_or_broker_grammar
+canonical_path: detections/nmap/yaral/ncat_exec_or_broker_grammar.yaral
+canonical_sha256: 5ca681be1b7e4df59c4736db2863ebf6ebac6110826c7d17a72644fef08bc52b
+description: "Detects a process started with Ncat command-execution or relay grammar regardless of the executable name: --sh-exec, --lua-exec, --broker, --chat or --keep-open; or -e/--exec/-c combined with listen mode (-l with only n, v, k or p companions) and a port argument (NM-DR-05)."
+severity: high
+procedure_ids: ["NM-P15"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, Linux auditd EXECVE or EDR) with the full command line, image path and host."
+atomic_event_types: ["PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "target.process.command_line", "target.process.file.full_path"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Administrators using Ncat for authorized troubleshooting."
+references: "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+translations:
+  spl: { path: "detections/nmap/spl/ncat_exec_or_broker_grammar.spl", sha256: b1d613c9006ca18ed0de9afb92888e2e3dda5fad41e5b7447dd2ef09bd424050, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/nmap/kql/ncat_exec_or_broker_grammar.kql", sha256: 054fdceae5735523bb575e089422dac75978cb3e15a4731cbcbec8f8b247ed4b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/nmap/sql/ncat_exec_or_broker_grammar.sql", sha256: 0bcec8e083e4a14ed62013c6c66e3757303e542f173210dc467e6a2a019bb8db, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/nmap/eql/ncat_exec_or_broker_grammar.eql", sha256: 341ff96e36cda7cb92221051b9a7e8e2836e1d1c53dd1b0a6563a14b3d23fd68, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/ncat_exec_or_broker_grammar.yml", sha256: 169cf29cece3ab59fb403158573cbe4b4c8f4769313c7ce6bddcefb3d47ada23, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

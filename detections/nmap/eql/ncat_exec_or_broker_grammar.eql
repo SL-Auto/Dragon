@@ -1,0 +1,15 @@
+// source_yaral: detections/nmap/yaral/ncat_exec_or_broker_grammar.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: ncat_exec_or_broker_grammar
+// severity: high
+// procedure_ids: NM-P15
+// description: Detects a process started with Ncat command-execution or relay grammar regardless of the executable name: --sh-exec, --lua-exec, --broker, --chat or --keep-open; or -e/--exec/-c combined with listen mode (-l with only n, v, k or p companions) and a port argument (NM-DR-05).
+// log_source_prerequisites: PROCESS_LAUNCH telemetry (Sysmon Event ID 1, Security 4688 with command line, Linux auditd EXECVE or EDR) with the full command line, image path and host.
+// false_positives: Administrators using Ncat for authorized troubleshooting.
+// references: reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (event_type, hostname, process_path, command_line); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where event.action == "PROCESS_LAUNCH"
+  and ((process.command_line regex~ "(^|\\s)--(sh-exec|lua-exec|broker|chat|keep-open)(\\s|=|$)") or (process.command_line regex~ "(^|\\s)(-e|--exec|-c)(\\s|=)\\S+" and process.command_line regex~ "(^|\\s)(-[nvk]*l[nvkp]*|--listen)(\\s|$)" and process.command_line regex~ "\\s\\d{2,5}(\\s|$)"))

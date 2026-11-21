@@ -1,0 +1,18 @@
+# source_yaral: detections/nmap/yaral/nmap_tcpip_performance_tweak.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: nmap_tcpip_performance_tweak
+# severity: medium
+# procedure_ids: NM-P14
+# description: Detects the Nmap installer's optional TCP/IP performance change: regedt32 /S importing nmap_performance.reg, or writes of MaxUserPort or TcpTimedWaitDelay under the Tcpip Parameters key.
+# log_source_prerequisites: REGISTRY_MODIFICATION telemetry (Sysmon Event ID 13 or EDR) with key and value name, and PROCESS_LAUNCH with command line.
+# false_positives: Server tuning by administrators for high-connection workloads.
+# references: reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, registry_key, registry_value, command_line); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by hostname and threshold. Hop window approximated by scheduling every 20 minutes over the trailing 60 minutes.
+| search index=<configured_index> earliest=-60m@m latest=now
+| where ((event_type=="REGISTRY_MODIFICATION" AND match(registry_key, "(?i)\\\\Services\\\\Tcpip\\\\Parameters$") AND match(registry_value, "(?i)^(MaxUserPort|TcpTimedWaitDelay)$")) OR (event_type=="PROCESS_LAUNCH" AND match(command_line, "(?i)regedt32(\\.exe)?\\\"?\\s+/S\\s+.*nmap_performance\\.reg")))
+| stats count as matched_count values(registry_value) as registry_value_values by hostname
+| where matched_count >= 1
+| eval canonical_rule="nmap_tcpip_performance_tweak"

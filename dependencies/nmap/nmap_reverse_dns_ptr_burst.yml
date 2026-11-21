@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: nmap_reverse_dns_ptr_burst
+canonical_path: detections/nmap/yaral/nmap_reverse_dns_ptr_burst.yaral
+canonical_sha256: 20e9573087c48b99850878e7c2b8505c42bdd8afe3db6679914466633aaedf1f
+description: "Detects one process issuing reverse DNS (PTR) queries for one hundred or more distinct in-addr.arpa or ip6.arpa names within 5 minutes, the default mass reverse resolution after host discovery."
+severity: medium
+procedure_ids: ["NM-P07"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed DNS query telemetry (Sysmon Event ID 22 or EDR NETWORK_DNS) with query name, host and process ID."
+atomic_event_types: ["NETWORK_DNS"]
+required_udm_fields: ["metadata.event_type", "network.dns.questions.name", "principal.hostname", "principal.process.file.full_path", "principal.process.product_specific_process_id"]
+correlation_window: "5m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Network monitoring and logging tools that reverse-resolve many addresses; approve their images."
+references: "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+translations:
+  spl: { path: "detections/nmap/spl/nmap_reverse_dns_ptr_burst.spl", sha256: 6aeeae72d11d59093f8d416318981ab17dda08fccf5ceb5a1999ff7f6fa0ef1d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/nmap/kql/nmap_reverse_dns_ptr_burst.kql", sha256: 2c7aa6679bafe7bfad5d7ba541bd44900049315e2ffa3cb9f49b55cb13936f13, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/nmap/sql/nmap_reverse_dns_ptr_burst.sql", sha256: e87d77373aeefe654282af3dd81dbcf5eafdd13e53ece008b287f511facc662e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/nmap/eql/nmap_reverse_dns_ptr_burst.eql", sha256: 27e55a346a0e291b9e13e39c0e110189388e2f0f21f6179af48a7965766a3e77, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/nmap_reverse_dns_ptr_burst.yml", sha256: 030bfc8f41d2b5210d0d6215cd44b642a9c40769b95b48383ca6c8904e7ba502, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

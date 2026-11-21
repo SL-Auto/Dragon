@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: nmap_nse_http_default_user_agent
+canonical_path: detections/nmap/yaral/nmap_nse_http_default_user_agent.yaral
+canonical_sha256: d9dca649d44645bad804c1609d65de6b7181edfb3994f44db52fffd5c383b874
+description: "Detects HTTP requests carrying the Nmap Scripting Engine's default User-Agent, which names the engine and its documentation URL."
+severity: medium
+procedure_ids: ["NM-P08", "NM-P10"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Web server, reverse proxy, WAF, forward proxy or NDR NETWORK_HTTP events with User-Agent and source IP."
+atomic_event_types: ["NETWORK_HTTP"]
+required_udm_fields: ["metadata.event_type", "metadata.id", "network.http.user_agent", "principal.ip", "target.hostname"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Authorized vulnerability scans using default NSE settings."
+references: "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+translations:
+  spl: { path: "detections/nmap/spl/nmap_nse_http_default_user_agent.spl", sha256: b8cefe1e1dfb7dc3a1c0ef4bad3b11d3d32caac3b2542785ef1c3a4038bed520, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/nmap/kql/nmap_nse_http_default_user_agent.kql", sha256: adac3eea14b8ab916da9ee746746aa47fd45b5e93de46ceef15224aabe1150ba, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/nmap/sql/nmap_nse_http_default_user_agent.sql", sha256: 9360b3b253fab7cc5d74e49eafe11214655c0901c1b7ec3f1c133e1ae530f668, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/nmap/eql/nmap_nse_http_default_user_agent.eql", sha256: 729d1862d861a9d9815944eae4dd3bc090faee8ddfae54f90859190159866dd9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/nmap_nse_http_default_user_agent.yml", sha256: e37f653c41a823f35e98c727eb3648334d9a2b0764af780eff37bbb3b3dd4742, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

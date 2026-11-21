@@ -1,0 +1,32 @@
+rule nmap_network_scan_flow_pattern {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one internal source IP probing one hundred or more distinct destination ports on a host, or one hundred or more hosts, within 5 minutes in network flow telemetry, covering raw and half-open scans that endpoint sensors do not attribute to a process."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Raw SYN, flag and UDP scans bypass process attribution but remain visible as flow breadth at network sensors."
+    procedure_ids = "NM-P01,NM-P03,NM-P04,NM-P06"
+    log_source_prerequisites = "NDR, firewall or flow telemetry (NETWORK_CONNECTION or NETWORK_FLOW without process) with source IP, destination IP and port; denied and reset flows retained."
+    false_positives = "Vulnerability scanners, network monitoring and load-balancer health checks; approve scanner IPs."
+    references = "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized flow fixtures of vertical and horizontal sweeps; confirm denied and reset flows are retained."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/nmap/detection-review.md"
+  events:
+    $e.metadata.event_type = /^(NETWORK_CONNECTION|NETWORK_FLOW)$/
+    $e.principal.ip = $source
+    (
+      net.ip_in_range_cidr($e.principal.ip, "10.0.0.0/8") or
+      net.ip_in_range_cidr($e.principal.ip, "172.16.0.0/12") or
+      net.ip_in_range_cidr($e.principal.ip, "192.168.0.0/16")
+    )
+  match:
+    $source over 5m
+  outcome:
+    $hosts = count_distinct($e.target.ip)
+    $ports = count_distinct($e.target.port)
+  condition:
+    $e and ($hosts >= 100 or $ports >= 100)
+}

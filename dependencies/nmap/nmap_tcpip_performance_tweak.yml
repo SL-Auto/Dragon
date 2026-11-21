@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: nmap
+rule_name: nmap_tcpip_performance_tweak
+canonical_path: detections/nmap/yaral/nmap_tcpip_performance_tweak.yaral
+canonical_sha256: c752264a46f1ac2dc18a3f542b1c889c1896f561fdc0419ab5e31e2449389dc2
+description: "Detects the Nmap installer's optional TCP/IP performance change: regedt32 /S importing nmap_performance.reg, or writes of MaxUserPort or TcpTimedWaitDelay under the Tcpip Parameters key."
+severity: medium
+procedure_ids: ["NM-P14"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "REGISTRY_MODIFICATION telemetry (Sysmon Event ID 13 or EDR) with key and value name, and PROCESS_LAUNCH with command line."
+atomic_event_types: ["PROCESS_LAUNCH", "REGISTRY_MODIFICATION"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "target.process.command_line", "target.registry.registry_key", "target.registry.registry_value_name"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Server tuning by administrators for high-connection workloads."
+references: "reports/nmap/source-analysis.md#procedure-analysis; reviews/nmap/detection-review.md"
+translations:
+  spl: { path: "detections/nmap/spl/nmap_tcpip_performance_tweak.spl", sha256: 42991f1bb7fb00530dc46c014fb1251869815a644945cdc124b4a6b5bd76f0ce, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/nmap/kql/nmap_tcpip_performance_tweak.kql", sha256: bfc1e5f7c789ab6973976aea7233ebc46850ee7cdc4cc66b139e32afc9b5213a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/nmap/sql/nmap_tcpip_performance_tweak.sql", sha256: 7f1fca97d70039fd4a646df99e60679f5a330d319cfb01ededbf48e5cbaebb4e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/nmap/eql/nmap_tcpip_performance_tweak.eql", sha256: a00f03572cd68e50a830641f31cca62310e7d72fc18cf8eb27e5dc4c2c2dbedc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/nmap/sigma/nmap_tcpip_performance_tweak.yml", sha256: 0af604ffdad9f22ec460eb57d505416081af6f7578ef2f202781161a1e8427d1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
