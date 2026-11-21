@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_asrep_single_account_sensitive
+canonical_path: detections/rubeus/yaral/rubeus_asrep_single_account_sensitive.yaral
+canonical_sha256: 1d3c6021dc3fe12d0ab18b357146b8530fc905b8aa7aa9de1233a7fa55c72618
+description: "Detects a successful AS request without pre-authentication data for an account the tenant has classified as high-risk, compensating for targeted single-account AS-REP roasting below the three-account threshold of rubeus_asrep_roast_sequence."
+severity: high
+procedure_ids: ["PROC-003"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "DC Security 4768 with PreAuthType, Status, source IP and target account, plus an account-risk enrichment that sets additional.fields[account_risk_tier] = high for privileged, service and other sensitive accounts. Without that enrichment this rule stays silent; the base three-account rule still applies."
+atomic_event_types: ["4768"]
+required_udm_fields: ["additional.fields", "metadata.id", "metadata.product_event_type", "principal.ip", "target.user.userid"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Sensitive accounts that legitimately have pre-authentication disabled for legacy clients; record them as approved exceptions in the risk enrichment."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_asrep_roast_sequence.md; reviews/rubeus/detection-review.md#review-014"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_asrep_single_account_sensitive.spl", sha256: 1c7a8e4b123536dbb969654a3060eb8b1b4fc9cc70b935c6aa4ea9264c36faa1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/rubeus/kql/rubeus_asrep_single_account_sensitive.kql", sha256: 306e0412aef0ba17f0295e7a66e0fd62aa81987e58bb0c6e9a5912eb12a787d5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/rubeus/sql/rubeus_asrep_single_account_sensitive.sql", sha256: 99a4b398ea93be9df6e45bfa4c0a40c56e8511b75b991b0b5d9df05638660614, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/rubeus/eql/rubeus_asrep_single_account_sensitive.eql", sha256: 4295765f3901bc8ad515c959e1a31c5823a4203983e7f95df93b71317cd4e764, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_asrep_single_account_sensitive.yml", sha256: ffef3646116337d59fe57d6b974d74086917dbe82873863acce3bc685d1e5ee4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

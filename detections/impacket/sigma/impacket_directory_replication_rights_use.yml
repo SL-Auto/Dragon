@@ -1,0 +1,41 @@
+title: "Detects use of directory replication extended rights (DS-Replication-Get-Changes, -All, -In-Filtered-Set) by a principal not approved for replication, the domain-controller effect of DRSUAPI replication-based secret retrieval. Restores the replication branch removed from impacket_sensitive_file_or_replication_access by the 2026-08-16 split."
+name: impacket_directory_replication_rights_use_base
+status: experimental
+description: "Detects use of directory replication extended rights (DS-Replication-Get-Changes, -All, -In-Filtered-Set) by a principal not approved for replication, the domain-controller effect of DRSUAPI replication-based secret retrieval. Restores the replication branch removed from impacket_sensitive_file_or_replication_access by the 2026-08-16 split."
+source_yaral: "detections/impacket/yaral/impacket_directory_replication_rights_use.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, hostname, user_id, properties, approved_replication_principal); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/impacket/source-analysis.md#imp-13; public-rules/comparisons/impacket/impacket_sensitive_file_or_replication_access.md; reviews/impacket/detection-review.md#review-013; https://learn.microsoft.com/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4662"
+procedure_ids: "IMP-13"
+log_source_prerequisites: "Domain-controller Security 4662 (Directory Service Access auditing with a SACL on the domain naming context) with subject account, logging DC, and the replication right GUID in the properties/description; optional approved-replication-principal enrichment (additional.fields[approved_replication_principal])."
+logsource:
+  service: security
+  product: windows
+detection:
+  sel:
+    product_event_type: "4662"
+    properties|re: "(?i)(DS-Replication-Get-Changes|Replicating Directory Changes|1131f6a[a-d]-9c07-11d1-f79f-00c04fc2dcd2|89e95b76-444d-4c62-991a-0facbeda640c)"
+  filter0:
+    approved_replication_principal: true
+  condition: sel and not filter0
+falsepositives:
+  - "Domain controllers replicating with each other, Entra Connect and other identity synchronization, migration and directory-backup products; mark them with the approved-replication-principal enrichment."
+level: high
+---
+title: "Detects use of directory replication extended rights (DS-Replication-Get-Changes, -All, -In-Filtered-Set) by a principal not approved for replication, the domain-controller effect of DRSUAPI replication-based secret retrieval. Restores the replication branch removed from impacket_sensitive_file_or_replication_access by the 2026-08-16 split."
+name: impacket_directory_replication_rights_use
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - impacket_directory_replication_rights_use_base
+  group-by:
+    - user_id
+  timespan: 10m
+  condition:
+    gte: 1
+level: high

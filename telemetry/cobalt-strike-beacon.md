@@ -67,6 +67,7 @@
 | `cobalt_strike_socket_listen_or_rare_egress_compensating_signal` | CSB-008 | CS-TEL-02 | SOCKET_LISTEN and inbound NETWORK_CONNECTION with vendor process ID and port | signer and prevalence | Sysmon has no listen event; EDR listen telemetry required |
 | `cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal` | CSB-004,014,016 | CS-TEL-01 | EXECUTABLE_MEMORY (private, unbacked) and THREAD_START in that region, same host and process | approved-JIT-host enrichment (fails open) | vendor-specific memory telemetry; unavailable in native logs |
 | `cobalt_strike_user_data_collection_compensating_signal` | CSB-027 | CS-TEL-02,09 | SCREEN_CAPTURE/CLIPBOARD_READ/INPUT_CAPTURE/BROWSER_SECRET_READ, then outbound NETWORK_CONNECTION by the same process | destination prevalence | user-data sensors are vendor-specific and often disabled |
+| `cobalt_strike_remote_management_execution_compensating_signal` | CSB-031,032,033 | CS-TEL-01,11,12 | target-side WINRM_SESSION/WMI_REMOTE_OPERATION/SSH_AUTH with host and account, then PROCESS_LAUNCH on that host whose launching process (`principal.process`) is wsmprovhost.exe, wmiprvse.exe or sshd, same account | source IP of the session | parent-process path missing from process events makes the rule silent; configuration-management traffic is the main benign overlap (DR-23) |
 
 ## Deployment order
 

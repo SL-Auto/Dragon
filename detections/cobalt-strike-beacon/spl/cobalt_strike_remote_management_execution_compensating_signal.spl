@@ -1,0 +1,19 @@
+# source_yaral: detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_management_execution_compensating_signal.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: partial
+# rule_name: cobalt_strike_remote_management_execution_compensating_signal
+# severity: medium
+# procedure_ids: CSB-031,CSB-032,CSB-033
+# description: Correlates a WinRM, remote WMI or SSH session on a target with a subsequent process launched by the matching remote-management host process (wsmprovhost.exe, wmiprvse.exe or sshd) as the same account. This replaces the base rule's any-process-by-the-same-user join with process lineage that ties the child to the remote-management channel.
+# log_source_prerequisites: Target-side WINRM_SESSION, WMI_REMOTE_OPERATION or SSH_AUTH events with target host and account, plus PROCESS_LAUNCH on the same host where principal.process is the launching (parent) process, joined on host and account within 10 minutes, session first.
+# false_positives: Remote administration, configuration management (DSC, Ansible over WinRM/SSH), monitoring and patching that run commands through WinRM, WMI or SSH.
+# references: reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_remote_management_execution.md; reviews/cobalt-strike-beacon/detection-review.md#dr-23
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, user_id, process_path, source_ip); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native ordered two-event correlation on hostname, user_id within 10 minutes (first event before second). Scheduled every 5 minutes over the trailing 20 minutes. SPL compares the earliest first-leg and latest second-leg time per key, which is weaker than per-pair ordering.
+| search index=<configured_index> earliest=-20m@m latest=now
+| eval leg=case(in(event_type, "WINRM_SESSION", "WMI_REMOTE_OPERATION", "SSH_AUTH"), "a", event_type=="PROCESS_LAUNCH" AND match(process_path, "(?i)(\\\\(wsmprovhost|wmiprvse|sshd)\\.exe|/sshd)$"), "b")
+| where isnotnull(leg)
+| stats min(eval(if(leg="a", _time, null()))) as first_a max(eval(if(leg="b", _time, null()))) as last_b by hostname user_id
+| where isnotnull(first_a) AND isnotnull(last_b) AND first_a <= last_b AND last_b - first_a <= 600
+| eval canonical_rule="cobalt_strike_remote_management_execution_compensating_signal"

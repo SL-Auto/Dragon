@@ -7,8 +7,8 @@
 // description: Detects an unapproved process accessing or creating a Kerberos ticket-cache artifact file by extension.
 // log_source_prerequisites: Normalize EDR file read/create events with process, user, path, extension, and signer, plus an approved-Kerberos-tool process enrichment.
 // false_positives: Incident response, Kerberos troubleshooting, development, labs, and approved assessments where the approved-tool enrichment is stale or incomplete.
-// references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_artifact_access_or_creation.md
-// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling. The weak free-text "asrep"/"kerberoast" substring branch was removed; only the .kirbi/.ccache-extension-plus-unapproved-process branch remains, so the approved-tool enrichment join is required, not optional.
+// references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_artifact_access_or_creation.md; reviews/rubeus/detection-review.md#review-010
+// assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
 // schema_profile: schemas/elastic-ecs.yml
 // ECS assumption: event.code carries product IDs and event.action carries normalized event types.
 any where event.code in ("FILE_CREATION", "FILE_READ") or event.action in ("FILE_CREATION", "FILE_READ")

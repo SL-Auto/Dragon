@@ -1,7 +1,7 @@
 # Cobalt Strike Beacon translation review
 
-- Canonical rules: 38 YARA-L rules under `detections/cobalt-strike-beacon/yaral/`.
-- Secondary drafts reviewed: 190 files; 38 each in SPL, KQL, SQL, Elastic EQL, and Sigma.
+- Canonical rules: 39 YARA-L rules under `detections/cobalt-strike-beacon/yaral/`.
+- Secondary drafts reviewed: 195 files; 39 each in SPL, KQL, SQL, Elastic EQL, and Sigma.
 - Parity: complete by basename and source linkage.
 - Fidelity: the 21 original rules and 5 regenerated base rules are `partial` generator drafts; the 17 compensating signals are `high` or `partial` per the 2026-11-21 exceptions below. None claim equivalence or validation.
 - Shared backend limitations: `schemas/splunk-cim.yml`, `schemas/sentinel-asim.yml`, `schemas/normalized-sql.yml`, `schemas/elastic-ecs.yml`, and `schemas/sigma.yml`.
@@ -18,3 +18,9 @@
 - **5 base rules** (`directory_discovery`, `dns_process_context`, `file_cleanup_or_timestomp`, `named_pipe_peer_activity`, `sensitive_file_activity`): regenerated with `scripts/translate-yaral.ps1` after the additive event-type fix (DR-13). They remain generator candidate-retrieval drafts (`partial`).
 - `high` means the canonical logic is expressed natively in the target. It does not mean equivalent or validated: column names are tenant assumptions, and every file stays `experimental_needs_backend_mapping_and_validation`.
 
+## 2026-11-21 exceptions — remaining four comparisons
+
+- `cobalt_strike_remote_management_execution_compensating_signal` is rendered natively (`scripts/native_translations/specs_csb.py`) as an ordered two-event sequence on host and account.
+  - **KQL, SQL, EQL and Sigma:** `high`.
+  - **SPL:** `partial`, for the per-pair ordering limitation.
+- The launching-process path assumes the backend's process-creation parent image field is mapped to `process_path`.

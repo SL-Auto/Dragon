@@ -1,0 +1,16 @@
+// source_yaral: detections/impacket/yaral/impacket_new_machine_account_s4u.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: impacket_new_machine_account_s4u
+// severity: high
+// procedure_ids: IMP-07,IMP-11,IMP-22
+// description: Detects a newly created computer account requesting S4U (protocol-transition or constrained-delegation) service tickets within one hour of its creation, proving that the object created in the directory participates in the later ticket path. This is the resource-based constrained delegation chain: account creation, delegation configuration, then S4U ticket requests as the new account.
+// log_source_prerequisites: Domain-controller Security 4741 (computer account created; new account in target.user.userid) and 4769 (requesting account in target.user.userid) with S4U context in the description, a structured delegation_flow field, or TransmittedServices, from every DC.
+// false_positives: Provisioning or middleware that creates a computer account and immediately configures it for constrained delegation; approve those service accounts after validation.
+// references: reports/impacket/source-analysis.md#imp-22; public-rules/comparisons/impacket/impacket_privilege_path_effects.md; reviews/impacket/detection-review.md#review-014
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (product_event_type, user_id, target_user, service_name, source_ip, description, delegation_flow, TransmittedServices); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native EQL sequence with per-event join keys and maxspan=60m.
+sequence with maxspan=60m
+  [any where event.code == "4741"] by labels.target_user
+  [any where event.code == "4769" and ((labels.description regex~ "(S4U2Self|S4U2Proxy|protocol transition|transited services)") or (labels.delegation_flow regex~ "^(S4U2Self|S4U2Proxy)$") or (labels.TransmittedServices regex~ "[A-Za-z0-9]"))] by labels.target_user

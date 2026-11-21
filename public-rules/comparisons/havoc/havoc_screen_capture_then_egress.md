@@ -8,7 +8,7 @@
 - Procedures: HV-P14
 - Public candidates were consulted only after independent source analysis, rule generation and adversarial review.
 
-- [`public-rules/snapshots/splunk-security-content/457ce9f5ea69a8d5be9463989ee23b9366858d16/detections/endpoint/windows_screen_capture_in_temp_folder.yml`](../../snapshots/splunk-security-content/457ce9f5ea69a8d5be9463989ee23b9366858d16/detections/endpoint/windows_screen_capture_in_temp_folder.yml) - SHA-256 `3b492ba66576b412c923e4c2a6fbdb67c737b25735dc886d0f840c37ec34359e`
+- [`public-rules/snapshots/splunk-security-content/21509485465aaed2cfa4604e3d2ab5ee52975f0a/detections/endpoint/windows_screen_capture_in_temp_folder.yml`](../../snapshots/splunk-security-content/21509485465aaed2cfa4604e3d2ab5ee52975f0a/detections/endpoint/windows_screen_capture_in_temp_folder.yml) - SHA-256 `69a4d85d05c5dc13a22ea3e646ac56d795a9e15d06bb5dfe07d17cf70dc54bec`
 
 ## Procedure and detection-branch matrix
 
@@ -52,7 +52,8 @@
 
 - Candidate improvement: file-backed capture when semantic telemetry is absent
 - Independent verification: pinned Havoc report, internal review, telemetry contract and candidate hash/path above
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: Adversarial review of the proposal (2026-08-16) found two independent defects. First, it queries `metadata.product_event_type = "FILE_CREATION"` / `"NETWORK_CONNECTION"`, but every canonical Havoc rule in this repository correctly uses `metadata.event_type` for normalized UDM category values, so as written this predicate would not match real telemetry and the rule would silently never fire. Second, independent of the field-name defect, the logic does not implement the branch it claims to address: it correlates any FILE_CREATION with any NETWORK_CONNECTION on the same process with no image-extension, temp-directory, or capture-API predicate, so it does not narrow to "file-backed capture" and would match essentially any process that both writes a file and makes a network connection -- an unacceptably broad, high-false-positive signal.
 - Adversarial re-check: Re-ran the procedure-branch matrix against the proposal. It does not close the stated missing branch and would introduce a materially noisier rule than existing canonical coverage; canonical logic is unchanged and no compensating rule is added.
 - Required regeneration: none. Canonical logic, telemetry, translations, and dependencies are unchanged because the proposal was rejected, not adopted or modified.
@@ -89,3 +90,8 @@ rule havoc_screen_capture_then_egress_proposal {
 ```
 
 This proposal is actual detection logic for the scoped missing branch, not an automatic adoption. It must be compiled, mapped, benign-baselined and adversarially reviewed before canonical use. The only accepted comparison change in this pass is the independently implemented stable-destination recurrence rule documented above.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `detections/endpoint/windows_screen_capture_in_temp_folder.yml` changed between 457ce9f and 2150948; re-read on 2026-11-21: only modification date and analytic-story metadata changed; the search is identical. The comparison conclusions and decision are unaffected.

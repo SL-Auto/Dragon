@@ -10,8 +10,8 @@
 - Scope mapping rationale: ordered Rubeus procedure behavior and observable security effects; public candidates were selected by procedure and telemetry, not rule names.
 
 Public candidates:
-- [`public-rules/snapshots/microsoft-sentinel/5f947544657288586559c41b218eaaf182636728/Detections/MultipleDataSources/MultiplePasswordresetsbyUser.yaml`](../../snapshots/microsoft-sentinel/5f947544657288586559c41b218eaaf182636728/Detections/MultipleDataSources/MultiplePasswordresetsbyUser.yaml) - SHA-256 `8ad0cbf4b7adcaccf50f8923542387bf1bb29e5e3f5c0410187856043f10eefd`
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/persistence_remote_password_reset.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/persistence_remote_password_reset.toml) - SHA-256 `494f7c799f5ec9a154df77868f884fe7cde2f35893455bae0d3e39c58cc054e9`
+- [`public-rules/snapshots/microsoft-sentinel/c3361d9ff34320e7fe3314d5f9063e15470ca53e/Detections/MultipleDataSources/MultiplePasswordresetsbyUser.yaml`](../../snapshots/microsoft-sentinel/c3361d9ff34320e7fe3314d5f9063e15470ca53e/Detections/MultipleDataSources/MultiplePasswordresetsbyUser.yaml) - SHA-256 `8ad0cbf4b7adcaccf50f8923542387bf1bb29e5e3f5c0410187856043f10eefd`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/persistence_remote_password_reset.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/persistence_remote_password_reset.toml) - SHA-256 `eb33f3fb58144446745d8d6e71cdb3676309903f67c27a0c01b0e45669a10682`
 
 ## Procedure and detection-branch matrix
 
@@ -49,11 +49,16 @@ The rule claims process-attributed Kerberos password-service coverage but implem
 
 ## Decision trail
 
-- Candidate improvement: Correct the description/implementation mismatch; add a distinct process-attributed kpasswd branch if telemetry exists and a sensitive-single-account branch. Keep generic multi-target logic compensating only.
-- Independent verification: `Required against Rubeus source analysis, concrete telemetry schemas, and sanitized fixtures before changing canonical logic.`
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The comparison identifies a detection-engineering gap; no public predicate is copied automatically.`
-- Required regeneration: `YARA-L adversarial review, telemetry reconciliation, five translations, and this comparison.`
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/rubeus/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, and canonical logic had not acted on the proposal; decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - The proposal's join of a port-464 connection to 4723/4724 by host and actor cannot succeed: those events are logged on the DC and carry no client workstation or IP.
+  - The missing branch it named (process-attributed kpasswd traffic) is real and is adopted without the unjoinable leg, as `rubeus_kerberos_transport_from_unexpected_process` covering ports 88 and 464 (REVIEW-015). PROC-012 moves from `not_observable` to `detected`.
+- Canonical result: `detections/rubeus/yaral/rubeus_unusual_kerberos_password_change.yaral`, SHA-256 `d8a689f045c862f5bb8743ea25ed91ec0dd2ad199e75a3cb85681d7ef4dffae3`.
+- Canonical result: `detections/rubeus/yaral/rubeus_kerberos_transport_from_unexpected_process.yaral`, SHA-256 `3135be137086b6cba19c72bf21974e8aa19f01a4ef42afd3f58e5c79da5a465c`.
+- Regeneration: canonical change on 2026-11-21; detection review, coverage, `telemetry/rubeus.md`, `telemetry/MASTER.md` counts, five translations, dependency/manifest hashes and this re-comparison were regenerated in the same run.
 
 ## Unmatched scope
 
@@ -91,3 +96,86 @@ rule rubeus_kpasswd_process_and_account_change {
 Adds the missing transport/process branch and can cover one account change. It still cannot attribute the change to Rubeus without caller trust/history, and port 464 is also used legitimately by native password workflows.
 
 If adopted, update the canonical YARA-L, adversarial detection review, Rubeus telemetry matrix and master counts, all five translations, dependency hashes, and this comparison.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/persistence_remote_password_reset.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Process-attributed kpasswd (port 464) from a non-LSA process | covered by `rubeus_kerberos_transport_from_unexpected_process` | not covered | non-LSA port 464 - strong | 4723/4724 multi-target - weak | ours_stronger |
+| Remote reset of a privileged account password | covered only as multi-target cardinality; no logon-session join | `persistence_remote_password_reset.toml`: 4624 network logon followed within 1m by 4724 in the same logon session (privileged-account scoping advised) | 4724 privileged target - moderate | `MultiplePasswordresetsbyUser.yaml` multi-source volume - weak | public_stronger |
+
+- Current canonical YARA-L `detections/rubeus/yaral/rubeus_unusual_kerberos_password_change.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule rubeus_unusual_kerberos_password_change {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a Kerberos password change from an unusual source or process context."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Unexpected password changes can represent account manipulation but are normal in identity workflows."
+    procedure_ids = "PROC-012"
+    log_source_prerequisites = "Normalize account-management password-change events and process-attributed network connections to Kerberos password-change service where available."
+    false_positives = "User password changes, helpdesk resets, machine-account rotation, and identity management."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+    validation_status = "needs_validation"
+    validation_method = "Baseline password-management sources and replay approved account-change fixtures."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.product_event_type = /(4723|4724)/
+    $e.principal.hostname = $source_host
+    $e.principal.user.userid = $actor
+    $e.target.user.userid = $target
+  match:
+    $source_host, $actor over 10m
+  outcome:
+    $targets = count_distinct($target)
+  condition:
+    $e and $targets >= 2
+}
+```
+
+- Current canonical YARA-L `detections/rubeus/yaral/rubeus_kerberos_transport_from_unexpected_process.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule rubeus_kerberos_transport_from_unexpected_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a Windows process other than lsass.exe connecting to a Kerberos KDC (port 88) or the Kerberos password-change service (port 464). This is the client-side network effect of ticket requests, roasting, delegation abuse or password change performed by a tool that implements its own Kerberos transport instead of using the LSA."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "On domain-joined Windows hosts, Kerberos AS/TGS and kpasswd exchanges are normally sent by the LSA (lsass.exe). A user-mode process speaking Kerberos directly is uncommon, independent of tool names, and sits on the path of every Rubeus ticket operation (raw TcpClient transport, Networking.cs L116-160)."
+    procedure_ids = "PROC-001,PROC-002,PROC-003,PROC-004,PROC-005,PROC-012"
+    log_source_prerequisites = "Process-attributed network-connection telemetry (Sysmon Event ID 3 or EDR equivalent, NETWORK_CONNECTION) with destination port, host and initiating process image path. Windows hosts are identified by a drive-letter image path."
+    false_positives = "Java and other cross-platform applications with their own Kerberos stack, MIT Kerberos for Windows, identity-synchronization and password-management agents, and authorized security assessment tools; approve them by image path and signer after validation. Domain controllers should be scoped separately if their KDC-to-KDC traffic is attributed to processes other than lsass.exe."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_unusual_kerberos_password_change.md; public-rules/comparisons/rubeus/rubeus_kerberoast_sequence.md; reviews/rubeus/detection-review.md#review-015"
+    validation_status = "needs_validation"
+    validation_method = "Confirm on sanitized endpoint telemetry that ordinary logon, ticket renewal and interactive or scripted password changes appear only from lsass.exe, inventory approved non-LSA Kerberos clients, and replay a fixture of a non-LSA process connecting to ports 88 and 464."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    ($e.target.port = 88 or $e.target.port = 464)
+    $e.principal.hostname = $host
+    $e.principal.process.file.full_path = $process
+    re.regex($e.principal.process.file.full_path, `(?i)^[a-z]:\\`)
+    not re.regex($e.principal.process.file.full_path, `(?i)^[a-z]:\\windows\\system32\\lsass\.exe$`)
+  match:
+    $host, $process over 10m
+  outcome:
+    $ports = array_distinct($e.target.port)
+    $destinations = array_distinct($e.target.ip)
+    $connections = count($e.metadata.id)
+    $accounts = array_distinct($e.principal.user.userid)
+  condition:
+    $e
+}
+```
+
+- Re-comparison outcome: the current canonical rule set closes the branch the proposal targeted, within declared telemetry; `public_stronger` rows are recorded gaps with named compensating signals in `reviews/rubeus/detection-review.md`.

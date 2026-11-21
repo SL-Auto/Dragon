@@ -10,7 +10,7 @@
 - Scope mapping rationale: procedure, ordered behavior, security effect, platform and telemetry; names and syntax were not mapping criteria.
 
 Public candidate:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/ml/command_and_control_ml_dns_tunneling.toml`](../../public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/ml/command_and_control_ml_dns_tunneling.toml) - SHA-256 `e4c4a1d045b18317b512b979e727e95c19767208db6ec180ed1368e6142db6e1`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/ml/command_and_control_ml_dns_tunneling.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/ml/command_and_control_ml_dns_tunneling.toml) - SHA-256 `eaa66978039f203084f832a39b78947d13becee680f3ecbfd6bb21bedbd782ea`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,17 @@ A volume threshold misses low-rate sessions and does not distinguish resolver DN
 
 ## Decision trail
 
-- Candidate improvement: independently implement and test the strong branch below.
-- Independent verification: pinned Sliver source, provider semantics, schema mappings and authorized sanitized fixtures required.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: comparative evidence is not canonical authority; proposal has not passed adversarial review.
-- Required regeneration: canonical detection review, coverage, telemetry/master, five translations, dependencies/manifests/hashes, then re-comparison.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/sliver/detection-review.md`.
+- Prior state: this trail still read `deferred_pending_rule_improvement_run`, although the 2026-08-16 backlog resolution (REVIEW-010 to REVIEW-014) had already acted on the proposal; this pass re-reviews that action and records the terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - Recurrence is measured per host, PID, destination and port as at least 6 events spread over at least 4 distinct minutes in 30 minutes, instead of first-seen prevalence.
+  - Dropped the proposal's hard destination-prevalence requirement, which is optional enrichment in `telemetry/sliver.md` (REVIEW-011).
+  - Adopted as an additional narrow rule beside the broad base rule, not as a replacement, so procedures without the narrow sub-case keep coverage (REVIEW-012).
+- Canonical result: `detections/sliver/yaral/sliver_dns_or_udp_process_egress.yaral`, SHA-256 `b4971ecd76cbd288a53394c27b79a873922766adcf60d96efa457325d2c1ff95`.
+- Canonical result: `detections/sliver/yaral/sliver_low_and_slow_udp_beacon.yaral`, SHA-256 `67a99ecaeb3c4a2d9702b5f5a8a986a3b86fd35fe2822c2bef614b0ed4974e4f`.
+- Regeneration: coverage, telemetry, `telemetry/MASTER.md`, five translations and dependency hashes were regenerated on 2026-08-16 when the rule was adopted; re-verified present and hash-consistent on 2026-11-21.
 
 ## Unmatched scope
 
@@ -90,3 +96,77 @@ rule sliver_dns_or_udp_process_egress_strong_branch {
 ```
 
 The proposal uses concrete telemetry semantics but does not prove tool identity. It remains limited by collection health, process-entity fidelity, enrichment quality and activity outside the window. If accepted or modified, complete the full downstream workflow; if rejected, preserve the rationale without changing canonical logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/ml/command_and_control_ml_dns_tunneling.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Process-attributed DNS/UDP transport | covered by base rule | `command_and_control_ml_dns_tunneling.toml`: ML job on unusually many DNS queries for one top-level domain | process-attributed UDP egress - moderate | ML DNS anomaly - moderate | complementary |
+| Low-and-slow periodic UDP to one destination | covered by `sliver_low_and_slow_udp_beacon` | covered only if query volume to one TLD is anomalous | minute-spread recurrence per destination - strong | none | complementary |
+| High-volume DNS tunnelling to one domain | covered only when process-attributed | covered by the ML job without process attribution | per-domain query volume - moderate | none | complementary |
+
+- Current canonical YARA-L `detections/sliver/yaral/sliver_dns_or_udp_process_egress.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule sliver_dns_or_udp_process_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "High-volume DNS or UDP from one process"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Covers DNS and tunnel transports without mutable indicators"
+    procedure_ids = "PROC-004"
+    log_source_prerequisites = "Process-attributed DNS or UDP network telemetry"
+    false_positives = "Resolvers, browsers, VPN clients"
+    references = "reports/sliver/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+  events:
+    $e.principal.hostname = $host
+    $e.principal.process.file.full_path = $proc ($e.metadata.event_type = "NETWORK_DNS" or
+    $e.network.ip_protocol = "UDP")
+  match: $host, $proc over 10m
+  outcome: $count = count($e.metadata.id)
+  condition: $e and $count >= 20
+}
+```
+
+- Current canonical YARA-L `detections/sliver/yaral/sliver_low_and_slow_udp_beacon.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule sliver_low_and_slow_udp_beacon {
+  meta:
+    author = "Detection Research Agent"
+    description = "One process makes low-volume, time-spread, repeated DNS or UDP connections to the same destination and port"
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Per-destination recurrence with a time-spread requirement covers low-and-slow DNS/WireGuard-style channels that a flat 20-events-per-10-minutes burst threshold misses"
+    procedure_ids = "PROC-004"
+    log_source_prerequisites = "Process-attributed DNS or UDP network telemetry with stable destination and port"
+    false_positives = "DNS resolvers, VPN/WireGuard clients, monitoring agents, chat/voice UDP applications"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_dns_or_udp_process_egress.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "accepted_as_compensating_rule_from_unvalidated_proposal"
+  events:
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $pid
+    $e.target.ip = $destination
+    $e.target.port = $port
+    ($e.metadata.event_type = "NETWORK_DNS" or $e.network.ip_protocol = "UDP")
+  match: $host, $pid, $destination, $port over 30m
+  outcome:
+    $connections = count($e.metadata.id)
+    $active_minutes = count_distinct(timestamp.get_minute($e.metadata.event_timestamp.seconds))
+  condition: $e and $connections >= 6 and $active_minutes >= 4
+}
+```
+
+- Re-comparison outcome: the current canonical rule set closes the branch the proposal targeted, within declared telemetry. Remaining limits are the accepted gaps in `reviews/sliver/detection-review.md`.

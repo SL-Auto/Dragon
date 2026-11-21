@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_azure_authentication_context
 canonical_path: detections/bloodhound/yaral/bloodhound_azure_authentication_context.yaral
-canonical_sha256: 1ac130cf67d6e9fdf1f6b3fe0a3c91848c3e091437a166fef314916463615713
+canonical_sha256: 877ef43c851f41b6394f0f1c649b62dfddcf90404f18e0043f0bc2d0c58cbae1
 description: "Detects a sign-in followed by broad Graph or ARM read activity from the same principal and application, independent of source IP."
 severity: medium
 procedure_ids: ["BH-016"]
@@ -10,15 +10,15 @@ validation_status: "needs_validation"
 telemetry_prerequisites: "Entra interactive/service-principal sign-ins and Graph/ARM audit with principal user ID, application/service-principal ID and resource-family enrichment."
 atomic_event_types: ["AADServicePrincipalSignInLogs", "AZURE_RESOURCE_READ", "MicrosoftGraphActivityLogs", "SigninLogs"]
 required_udm_fields: ["metadata.product_event_type", "principal.application", "principal.user.userid", "target.resource.attribute.labels"]
-correlation_window: "30m"
+correlation_window: "60m"
 uses_multi_event_correlation: true
 uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Cloud inventory, governance, CSPM and authorized assessment."
-references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_azure_authentication_context.md"
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_azure_authentication_context.md, reviews/bloodhound/detection-review.md#bh-dr-27"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_azure_authentication_context.spl", sha256: 853b6fbc060d53812f0b076d51483b134d023a7631454e8609ded00023b6857f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_azure_authentication_context.kql", sha256: 3502178b83c688a850c40039090c5c5f9d442e8fb22e4d37dbac739c09cf6587, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_azure_authentication_context.sql", sha256: c27b80b43bb1b75e4dc86eb004c428617a97d63dab00124e7b993c4bf86a0bc1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_azure_authentication_context.eql", sha256: aa6eb0331e43933834f7b01814a774f053e1cb4f6eb1594042091c3430657ba2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_azure_authentication_context.yml", sha256: 039826dd130461209d0ea858035225a37862daa526c20343fe1c60871b49a295, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_azure_authentication_context.spl", sha256: c7ee7d80c6c30d6598cd7238f2a8cc0dbc7e411cfe9b41552974e62f4157f86d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_azure_authentication_context.kql", sha256: 31269d2b0d155f2ce8b38c2ecb9f2f28f22273aea300ed79c2cbf4c2973a51b7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_azure_authentication_context.sql", sha256: 773ff8416a835ba6abb7b87902b64c291a9add2340dfd74cdb8ec6bf4d8a2fc8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_azure_authentication_context.eql", sha256: 4098b558df84928181834901a40fbe35bf73d2f3b5b08cfd77a77a96f00fc84d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_azure_authentication_context.yml", sha256: 5767c6c263a0cd2bd43aeb63f3ec0b568896941dc841e854848bafed513a7a4b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,32 +1,32 @@
 # Cobalt Strike Beacon public-rule comparison index
 
-Pinned revisions: Elastic `7e91c156324cdc64cda27f7fec7067b1148074ef`; Chronicle community `234e9223c3b8f3d1c30209d9663797ba69057533`; Microsoft Sentinel `5f947544657288586559c41b218eaaf182636728`.
+Pinned revisions: Elastic `9d792a8f6731542935156db61eaba88bf337e819`; Chronicle community `dbc9beb79597b519be086fce082214494d75b6a8`; Microsoft Sentinel `c3361d9ff34320e7fe3314d5f9063e15470ca53e`.
 
-All 21 canonical rules were compared by procedure branch and observable effect. Proposals are `unvalidated_proposal` inputs and no public logic has been adopted automatically.
+All 21 canonical rules were compared by procedure branch and observable effect. Proposals are `unvalidated_proposal` inputs; no public logic is adopted automatically. Each comparison ends in a terminal decision, listed below, and adopted proposals were implemented independently as canonical rules after adversarial review.
 
-| Internal rule | Procedures | Headline conclusion |
-| --- | --- | --- |
-| [cobalt_strike_alternate_identity_process](./cobalt_strike_alternate_identity_process.md) | CSB-012 | complementary; proposed compensating_rule |
-| [cobalt_strike_credential_access_effect](./cobalt_strike_credential_access_effect.md) | CSB-028 | complementary; proposed split |
-| [cobalt_strike_cross_process_injection](./cobalt_strike_cross_process_injection.md) | CSB-018,CSB-019 | complementary; proposed rewrite |
-| [cobalt_strike_directory_discovery](./cobalt_strike_directory_discovery.md) | CSB-022 | complementary; proposed compensating_rule |
-| [cobalt_strike_discovery_fanout](./cobalt_strike_discovery_fanout.md) | CSB-021 | complementary; proposed compensating_rule |
-| [cobalt_strike_dns_process_context](./cobalt_strike_dns_process_context.md) | CSB-006 | complementary; proposed compensating_rule |
-| [cobalt_strike_file_cleanup_or_timestomp](./cobalt_strike_file_cleanup_or_timestomp.md) | CSB-026,CSB-034 | complementary; proposed compensating_rule |
-| [cobalt_strike_named_pipe_peer_activity](./cobalt_strike_named_pipe_peer_activity.md) | CSB-007 | complementary; proposed compensating_rule |
-| [cobalt_strike_powershell_or_clr_in_unusual_host](./cobalt_strike_powershell_or_clr_in_unusual_host.md) | CSB-015,CSB-017 | complementary; proposed compensating_rule |
-| [cobalt_strike_privileged_context_change](./cobalt_strike_privileged_context_change.md) | CSB-011 | complementary; proposed rewrite |
-| [cobalt_strike_process_network_context](./cobalt_strike_process_network_context.md) | CSB-001,CSB-002,CSB-005 | complementary; proposed compensating_rule |
-| [cobalt_strike_remote_management_execution](./cobalt_strike_remote_management_execution.md) | CSB-031,CSB-032,CSB-033 | complementary; proposed rewrite |
-| [cobalt_strike_remote_service_sequence](./cobalt_strike_remote_service_sequence.md) | CSB-030 | complementary; proposed rewrite |
-| [cobalt_strike_sensitive_file_activity](./cobalt_strike_sensitive_file_activity.md) | CSB-024,CSB-025 | complementary; proposed compensating_rule |
-| [cobalt_strike_sensitive_registry_read](./cobalt_strike_sensitive_registry_read.md) | CSB-023 | complementary; proposed compensating_rule |
-| [cobalt_strike_service_or_integrity_transition](./cobalt_strike_service_or_integrity_transition.md) | CSB-020 | complementary; proposed rewrite |
-| [cobalt_strike_socket_fanout_or_forwarding](./cobalt_strike_socket_fanout_or_forwarding.md) | CSB-009 | complementary; proposed rewrite |
-| [cobalt_strike_socket_listen_or_rare_egress](./cobalt_strike_socket_listen_or_rare_egress.md) | CSB-008 | complementary; proposed compensating_rule |
-| [cobalt_strike_suspicious_process_lineage_or_memory](./cobalt_strike_suspicious_process_lineage_or_memory.md) | CSB-004,CSB-014,CSB-016 | complementary; proposed rewrite |
-| [cobalt_strike_unusual_authentication_material_use](./cobalt_strike_unusual_authentication_material_use.md) | CSB-013 | complementary; proposed compensating_rule |
-| [cobalt_strike_user_data_collection](./cobalt_strike_user_data_collection.md) | CSB-027 | complementary; proposed rewrite |
+| Internal rule | Procedures | Headline conclusion | Decision |
+| --- | --- | --- | --- |
+| [cobalt_strike_alternate_identity_process](./cobalt_strike_alternate_identity_process.md) | CSB-012 | complementary; proposed compensating_rule | reject |
+| [cobalt_strike_credential_access_effect](./cobalt_strike_credential_access_effect.md) | CSB-028 | complementary; proposed split | modify |
+| [cobalt_strike_cross_process_injection](./cobalt_strike_cross_process_injection.md) | CSB-018,CSB-019 | complementary; proposed rewrite | reject |
+| [cobalt_strike_directory_discovery](./cobalt_strike_directory_discovery.md) | CSB-022 | complementary; proposed compensating_rule | modify |
+| [cobalt_strike_discovery_fanout](./cobalt_strike_discovery_fanout.md) | CSB-021 | complementary; proposed compensating_rule | modify |
+| [cobalt_strike_dns_process_context](./cobalt_strike_dns_process_context.md) | CSB-006 | complementary; proposed compensating_rule | modify |
+| [cobalt_strike_file_cleanup_or_timestomp](./cobalt_strike_file_cleanup_or_timestomp.md) | CSB-026,CSB-034 | complementary; proposed compensating_rule | modify |
+| [cobalt_strike_named_pipe_peer_activity](./cobalt_strike_named_pipe_peer_activity.md) | CSB-007 | complementary; proposed compensating_rule | modify |
+| [cobalt_strike_powershell_or_clr_in_unusual_host](./cobalt_strike_powershell_or_clr_in_unusual_host.md) | CSB-015,CSB-017 | complementary; proposed compensating_rule | modify |
+| [cobalt_strike_privileged_context_change](./cobalt_strike_privileged_context_change.md) | CSB-011 | complementary; proposed rewrite | modify |
+| [cobalt_strike_process_network_context](./cobalt_strike_process_network_context.md) | CSB-001,CSB-002,CSB-005 | complementary; proposed compensating_rule | accept |
+| [cobalt_strike_remote_management_execution](./cobalt_strike_remote_management_execution.md) | CSB-031,CSB-032,CSB-033 | complementary; proposed rewrite | modify |
+| [cobalt_strike_remote_service_sequence](./cobalt_strike_remote_service_sequence.md) | CSB-030 | complementary; proposed rewrite | modify |
+| [cobalt_strike_sensitive_file_activity](./cobalt_strike_sensitive_file_activity.md) | CSB-024,CSB-025 | complementary; proposed compensating_rule | modify |
+| [cobalt_strike_sensitive_registry_read](./cobalt_strike_sensitive_registry_read.md) | CSB-023 | complementary; proposed compensating_rule | modify |
+| [cobalt_strike_service_or_integrity_transition](./cobalt_strike_service_or_integrity_transition.md) | CSB-020 | complementary; proposed rewrite | modify |
+| [cobalt_strike_socket_fanout_or_forwarding](./cobalt_strike_socket_fanout_or_forwarding.md) | CSB-009 | complementary; proposed rewrite | modify |
+| [cobalt_strike_socket_listen_or_rare_egress](./cobalt_strike_socket_listen_or_rare_egress.md) | CSB-008 | complementary; proposed compensating_rule | modify |
+| [cobalt_strike_suspicious_process_lineage_or_memory](./cobalt_strike_suspicious_process_lineage_or_memory.md) | CSB-004,CSB-014,CSB-016 | complementary; proposed rewrite | modify |
+| [cobalt_strike_unusual_authentication_material_use](./cobalt_strike_unusual_authentication_material_use.md) | CSB-013 | complementary; proposed compensating_rule | reject |
+| [cobalt_strike_user_data_collection](./cobalt_strike_user_data_collection.md) | CSB-027 | complementary; proposed rewrite | modify |
 
 ## Cross-rule findings
 

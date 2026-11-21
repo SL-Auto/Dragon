@@ -1,4 +1,4 @@
-title: "Detects Kerberos ticket-cache purge operations from EDR API telemetry."
+title: "Detects Kerberos ticket-cache purge operations from EDR API telemetry. Split from ticket submission, which is a stronger, separately severity-scored signal covered by rubeus_lsa_ticket_submission."
 name: rubeus_lsa_ticket_mutation
 status: experimental
 description: "Detects Kerberos ticket-cache purge operations from EDR API telemetry. Split from ticket submission, which is a stronger, separately severity-scored signal covered by rubeus_lsa_ticket_submission."
@@ -6,10 +6,9 @@ source_yaral: "detections/rubeus/yaral/rubeus_lsa_ticket_mutation.yaral"
 translation_status: experimental_needs_backend_mapping_and_validation
 fidelity: partial
 schema_profile: schemas/sigma.yml
-assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling. Purge was split from ticket submission on 2026-08-16; deploy this rule together with rubeus_lsa_ticket_submission rather than as a substitute for it."
+assumptions_and_gaps: "Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling."
 references:
-  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
-  - "public-rules/comparisons/rubeus/rubeus_lsa_ticket_mutation.md"
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_mutation.md; reviews/rubeus/detection-review.md#review-010"
 procedure_ids: "PROC-007"
 log_source_prerequisites: "EDR must expose LsaCallAuthenticationPackage message type, caller process, user, host, and target LUID."
 logsource:
@@ -17,11 +16,7 @@ logsource:
 detection:
   selection_event_type:
     event.code: ["EDR_API_CALL"]
-  filter_api:
-    api_name: "LsaCallAuthenticationPackage"
-  filter_purge_message:
-    kerberos_message_type|contains: "KerbPurgeTicketCacheMessage"
-  condition: selection_event_type and filter_api and filter_purge_message
+  condition: selection_event_type
 falsepositives:
   - "Klist purge, SSO, identity middleware, and incident response routinely purge cached tickets."
 level: medium

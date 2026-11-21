@@ -11,42 +11,44 @@ context_entry_points:
   telemetry: telemetry/rubeus.md
 counts:
   procedures: 13
-  canonical_rules: 17
-  spl_translations: 17
-  kql_translations: 17
-  sql_translations: 17
-  eql_translations: 17
-  sigma_translations: 17
+  canonical_rules: 19
+  spl_translations: 19
+  kql_translations: 19
+  sql_translations: 19
+  eql_translations: 19
+  sigma_translations: 19
 completion_states:
   source_analysis: complete
   canonical_detection: complete
   telemetry_reconciliation: complete_for_experimental_rules
   secondary_translation: draft_complete
-  rule_validation_labels: "17 needs_validation"
+  rule_validation_labels: "19 needs_validation"
 artifact_hashes:
   registry: 9c75dda74d8d2e504e70b5b119d8961f733d1f55eb544e13ccd697f701c1ac32
-  coverage: 74e9623e0a33d2f9aa511e05a419650e300ab297e0f8ed2dc812738c4710a7bb
+  coverage: 358b3b672c263c910af360d4e6588db6d4607cb1b83c2c7a08603276019c131f
   report: 95f4218e339ef4ba05a90a41bed3d55389fd3bcd4b28a465eb633530c9ac33e6
-  telemetry: f81ff37df6d7abf6b1da7d531562910ce9f9120dfacd2ae32900db993c91d800
-  detection_review: 19a9451b16d2871a00db5b93bc4caf43ed4c05669e14dd31dda65f6de3161993
-  translation_review: fabc06734f71ce134bdd33a0e814e6ff4b347050c778ba68190394fc4badd071
+  telemetry: 06012608a3074306e8bc2ee150210b22cfd45f9d26e1277332c58bd63469e046
+  detection_review: fa20eaaa1de3beee823c853fd7ad502e14e58746bc27536ed6ef592123dc42cf
+  translation_review: 59122da5c29f001f5a6ac1c32ce764be752d8d26c247232e574c43cbbe8b3d75
 rules:
   - { name: rubeus_as_request_anomaly, severity: high, procedures: "PROC-001", dependency: dependencies/rubeus/rubeus_as_request_anomaly.yml, canonical_sha256: 4d434e91e524c1ffdc07fc3fb1b1c4739068e5811f27c2393c76efbda746139d }
-  - { name: rubeus_as_request_failed_preauth_fanout, severity: high, procedures: "PROC-001", dependency: dependencies/rubeus/rubeus_as_request_failed_preauth_fanout.yml, canonical_sha256: f1075120ba5416e6499f5092ad421d4edad44eff86c0271845b9839f878e1815 }
+  - { name: rubeus_as_request_failed_preauth_fanout, severity: high, procedures: "PROC-001", dependency: dependencies/rubeus/rubeus_as_request_failed_preauth_fanout.yml, canonical_sha256: bfc7ed27e866d16e6c61cbdeb94e6cbbe89a0f55c551256c3335afb6a9aa52fc }
   - { name: rubeus_asrep_roast_sequence, severity: high, procedures: "PROC-003", dependency: dependencies/rubeus/rubeus_asrep_roast_sequence.yml, canonical_sha256: 80801563f9c0e6530dc5aee0c4d98713fe688e7ce22593d3b19b8a7eac587f93 }
-  - { name: rubeus_kerberoast_sequence, severity: high, procedures: "PROC-004", dependency: dependencies/rubeus/rubeus_kerberoast_sequence.yml, canonical_sha256: 016b9c9d9aea1a993434bdd97b51e07ac1513637738d22225cbe3a77931ae4d2 }
+  - { name: rubeus_asrep_single_account_sensitive, severity: high, procedures: "PROC-003", dependency: dependencies/rubeus/rubeus_asrep_single_account_sensitive.yml, canonical_sha256: 1d3c6021dc3fe12d0ab18b357146b8530fc905b8aa7aa9de1233a7fa55c72618 }
+  - { name: rubeus_kerberoast_sequence, severity: high, procedures: "PROC-004", dependency: dependencies/rubeus/rubeus_kerberoast_sequence.yml, canonical_sha256: 15da93a4dd9a5b4e0f9a7b42566e5d77f0e73faa69e9baa9753c207cf7c16f0a }
   - { name: rubeus_kerberos_over_http_proxy, severity: high, procedures: "PROC-013", dependency: dependencies/rubeus/rubeus_kerberos_over_http_proxy.yml, canonical_sha256: 4165d083c7a7e9ddfb70aaf3a10dbe2239f66f7e7ae404c5dd3fa74971021b04 }
+  - { name: rubeus_kerberos_transport_from_unexpected_process, severity: high, procedures: "PROC-001,PROC-002,PROC-003,PROC-004,PROC-005,PROC-012", dependency: dependencies/rubeus/rubeus_kerberos_transport_from_unexpected_process.yml, canonical_sha256: 3135be137086b6cba19c72bf21974e8aa19f01a4ef42afd3f58e5c79da5a465c }
   - { name: rubeus_lsa_encoded_ticket_retrieval, severity: high, procedures: "PROC-006", dependency: dependencies/rubeus/rubeus_lsa_encoded_ticket_retrieval.yml, canonical_sha256: ca2bbfca264197d7422bb618dc28a52333cb9652933d745a71903e4593be3e83 }
-  - { name: rubeus_lsa_ticket_cache_operations, severity: medium, procedures: "PROC-006", dependency: dependencies/rubeus/rubeus_lsa_ticket_cache_operations.yml, canonical_sha256: 7b6e427b7db0f4ff7265b7144192760e7b1476c4c61d4f88ac4a3936083f24d2 }
-  - { name: rubeus_lsa_ticket_mutation, severity: medium, procedures: "PROC-007", dependency: dependencies/rubeus/rubeus_lsa_ticket_mutation.yml, canonical_sha256: 001c34a6b24a5f41704fa2520a31facecca797d5011b50c215116f3c2c732b0d }
+  - { name: rubeus_lsa_ticket_cache_operations, severity: medium, procedures: "PROC-006", dependency: dependencies/rubeus/rubeus_lsa_ticket_cache_operations.yml, canonical_sha256: 073d98f4eff68c1be91ad8a104baa4c6c6d95f844e8ad6c9d64a1a641f61206b }
+  - { name: rubeus_lsa_ticket_mutation, severity: medium, procedures: "PROC-007", dependency: dependencies/rubeus/rubeus_lsa_ticket_mutation.yml, canonical_sha256: 485d48dac9e21776aad342932d84647f31ed17bdabf2527be6c884f7aabc03cb }
   - { name: rubeus_lsa_ticket_submission, severity: high, procedures: "PROC-007", dependency: dependencies/rubeus/rubeus_lsa_ticket_submission.yml, canonical_sha256: 881eaa2936051d30c531bb805d759c7d5c316c1a65dffdcb4a61316528b84dfb }
   - { name: rubeus_netonly_ticket_sequence, severity: high, procedures: "PROC-007", dependency: dependencies/rubeus/rubeus_netonly_ticket_sequence.yml, canonical_sha256: bd7254460b7e21b17f1bcae77f1c60d603728f5541626cb6dfea4a20fb3ca080 }
   - { name: rubeus_rc4_service_ticket_fanout, severity: high, procedures: "PROC-002,PROC-004", dependency: dependencies/rubeus/rubeus_rc4_service_ticket_fanout.yml, canonical_sha256: bb2ab81cab71ec92ce7c341dbdd1cbb22c4f9d240b0d950792d0d26874842ad6 }
-  - { name: rubeus_s4u_ticket_sequence, severity: high, procedures: "PROC-005", dependency: dependencies/rubeus/rubeus_s4u_ticket_sequence.yml, canonical_sha256: 96f21b9975d346dc078d9c5350f857190b8c91a49a9593b7cbf0582bb2e7279b }
+  - { name: rubeus_s4u_ticket_sequence, severity: high, procedures: "PROC-005", dependency: dependencies/rubeus/rubeus_s4u_ticket_sequence.yml, canonical_sha256: a6fd72e4b572c019f832e4c219a00e29a333932c3954ddc70c196c27b5f53f18 }
   - { name: rubeus_service_ticket_or_renewal_anomaly, severity: medium, procedures: "PROC-002", dependency: dependencies/rubeus/rubeus_service_ticket_or_renewal_anomaly.yml, canonical_sha256: d05d50852c7d957e25314551f171a72818f5b3577dba75b1e865e9cffed054c6 }
-  - { name: rubeus_ticket_artifact_access_or_creation, severity: medium, procedures: "PROC-008,PROC-009,PROC-010,PROC-013", dependency: dependencies/rubeus/rubeus_ticket_artifact_access_or_creation.yml, canonical_sha256: f74d0b80dc62f1517c8c11b2c4a7ff776b4167ee4258866ec5350561d3f69f43 }
+  - { name: rubeus_ticket_artifact_access_or_creation, severity: medium, procedures: "PROC-008,PROC-009,PROC-010,PROC-013", dependency: dependencies/rubeus/rubeus_ticket_artifact_access_or_creation.yml, canonical_sha256: e6a6bb144045465c89e20547c24dc9701c8fdfd4fe10eaa3b2510e73642f5b32 }
   - { name: rubeus_ticket_renewal_anomaly, severity: low, procedures: "PROC-002", dependency: dependencies/rubeus/rubeus_ticket_renewal_anomaly.yml, canonical_sha256: c040817d2c55fff869bae32ba093b0acce6f61456b3b691f1d1ce3b761f92957 }
-  - { name: rubeus_ticket_use_without_credible_kdc_issue, severity: high, procedures: "PROC-008,PROC-009", dependency: dependencies/rubeus/rubeus_ticket_use_without_credible_kdc_issue.yml, canonical_sha256: b86e32320bf2c240bc4747a1f1162ed63cf032a2d011fffa1cfae3a6162a851e }
+  - { name: rubeus_ticket_use_without_credible_kdc_issue, severity: high, procedures: "PROC-008,PROC-009", dependency: dependencies/rubeus/rubeus_ticket_use_without_credible_kdc_issue.yml, canonical_sha256: 9b1a401a78e05d4f74bf947a8f3bf45b32850abdbb3e6f552b8a8e0d03d20d96 }
   - { name: rubeus_unusual_kerberos_password_change, severity: medium, procedures: "PROC-012", dependency: dependencies/rubeus/rubeus_unusual_kerberos_password_change.yml, canonical_sha256: f24602a8b6cee6d289a2550ea49f99138e6556b07091461b0cf55c9730088238 }
 unresolved:
   source_blockers: 0

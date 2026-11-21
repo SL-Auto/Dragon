@@ -7,7 +7,7 @@
 # description: Detects unusual remote RPC interface enumeration and discovery volume.
 # log_source_prerequisites: RPC-aware network or ETW telemetry with source, target and interface UUID.
 # false_positives: Inventory, vulnerability scanning and management systems.
-# references: reports/impacket/source-analysis.md
+# references: reports/impacket/source-analysis.md, reviews/impacket/detection-review.md#review-015
 # assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 # schema_profile: schemas/splunk-cim.yml
 index=<configured_index>

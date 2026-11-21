@@ -10,8 +10,8 @@
 - Scope mapping rationale: ordered Rubeus procedure behavior and observable security effects; public candidates were selected by procedure and telemetry, not rule names.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/credential_access_disable_kerberos_preauth.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/credential_access_disable_kerberos_preauth.toml) - SHA-256 `087a8e0ac15450e25ce75c6b1c2e316f9502728c980336484c27053541c23bfb`
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/lateral_movement_credential_access_kerberos_correlation.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/lateral_movement_credential_access_kerberos_correlation.toml) - SHA-256 `a4eb95afd079e1433cd4ec4cb5420d592edcd4f597fd85b3f0104b29555794ab`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/credential_access_disable_kerberos_preauth.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/credential_access_disable_kerberos_preauth.toml) - SHA-256 `68728c5adca5762dcb512cf2f536800499057a791dc74dd50fa81b0a6c2da6ff`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/lateral_movement_credential_access_kerberos_correlation.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/lateral_movement_credential_access_kerberos_correlation.toml) - SHA-256 `6ab27ba3bdb4279de4387de8a76f928fc24dd16eb25a2e8d7658cd9d447c1648`
 
 ## Procedure and detection-branch matrix
 
@@ -49,11 +49,16 @@ The three-account threshold creates a material targeted-single-account gap and a
 
 ## Decision trail
 
-- Candidate improvement: Retain the strong PreAuthType branch; add a lower-volume sensitive/rare-account branch and separately monitor preauthentication-disable changes after verifying directory audit mappings.
-- Independent verification: `Required against Rubeus source analysis, concrete telemetry schemas, and sanitized fixtures before changing canonical logic.`
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The comparison identifies a detection-engineering gap; no public predicate is copied automatically.`
-- Required regeneration: `YARA-L adversarial review, telemetry reconciliation, five translations, and this comparison.`
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/rubeus/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, and canonical logic had not acted on the proposal; decided here with the evidence in hand.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - Adopted as additive `rubeus_asrep_single_account_sensitive` with Status `0x0` added, so only issued AS-REPs count (REVIEW-014).
+  - The hard `account_risk_tier = "high"` dependency is kept: without enrichment the additive rule stays silent instead of alerting on every legitimate no-pre-authentication account.
+- Canonical result: `detections/rubeus/yaral/rubeus_asrep_roast_sequence.yaral`, SHA-256 `c083b11b86d7df5571ad9071069c797b9fb9cd7d8733c37e0c314fadd928f338`.
+- Canonical result: `detections/rubeus/yaral/rubeus_asrep_single_account_sensitive.yaral`, SHA-256 `1d3c6021dc3fe12d0ab18b357146b8530fc905b8aa7aa9de1233a7fa55c72618`.
+- Regeneration: canonical change on 2026-11-21; detection review, coverage, `telemetry/rubeus.md`, `telemetry/MASTER.md` counts, five translations, dependency/manifest hashes and this re-comparison were regenerated in the same run.
 
 ## Unmatched scope
 
@@ -86,3 +91,86 @@ rule rubeus_asrep_roast_sensitive_account {
 Closes the single-account gap without weakening the existing multi-account rule. The risk tier must come from authoritative identity enrichment; a hard-coded account list would be too fragile.
 
 If adopted, update the canonical YARA-L, adversarial detection review, Rubeus telemetry matrix and master counts, all five translations, dependency hashes, and this comparison.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/credential_access_disable_kerberos_preauth.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+- `rules/windows/lateral_movement_credential_access_kerberos_correlation.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Multi-account no-pre-authentication AS requests | covered by base rule (>= 3 accounts) | not covered | PreAuthType 0 fan-out - strong | transport rule - strong | ours_stronger |
+| Targeted single high-risk account | covered by `rubeus_asrep_single_account_sensitive` when risk enrichment exists | not covered | PreAuthType 0 + Status 0x0 + high-risk tier - strong | none without enrichment | ours_stronger |
+| Attacker disables pre-authentication on an account first | not covered by Rubeus rules (precondition, outside PROC-003) | `credential_access_disable_kerberos_preauth.toml`: 4738 UAC change disabling pre-authentication | UAC change - strong | none | public_stronger |
+
+- Current canonical YARA-L `detections/rubeus/yaral/rubeus_asrep_roast_sequence.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule rubeus_asrep_roast_sequence {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one source requesting no-preauthentication AS responses for multiple accounts."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Multi-account no-preauthentication requests closely match AS-REP roasting discovery and collection."
+    procedure_ids = "PROC-003"
+    log_source_prerequisites = "Normalize 4768 with source IP, account, and PreAuthType in the configured additional field."
+    false_positives = "Authorized account configuration audits and identity assessment."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+    validation_status = "needs_validation"
+    validation_method = "Verify the parser's PreAuthType representation with sanitized fixtures."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "4768"
+    $e.additional.fields["PreAuthType"].value.string_value = "0"
+    $e.principal.ip = $source
+    $e.target.user.userid = $account
+  match:
+    $source over 10m
+  outcome:
+    $accounts = count_distinct($account)
+  condition:
+    $e and $accounts >= 3
+}
+```
+
+- Current canonical YARA-L `detections/rubeus/yaral/rubeus_asrep_single_account_sensitive.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule rubeus_asrep_single_account_sensitive {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a successful AS request without pre-authentication data for an account the tenant has classified as high-risk, compensating for targeted single-account AS-REP roasting below the three-account threshold of rubeus_asrep_roast_sequence."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "A pre-authentication-free AS-REP for a high-risk account yields offline-crackable material even when only one account is targeted."
+    procedure_ids = "PROC-003"
+    log_source_prerequisites = "DC Security 4768 with PreAuthType, Status, source IP and target account, plus an account-risk enrichment that sets additional.fields[account_risk_tier] = high for privileged, service and other sensitive accounts. Without that enrichment this rule stays silent; the base three-account rule still applies."
+    false_positives = "Sensitive accounts that legitimately have pre-authentication disabled for legacy clients; record them as approved exceptions in the risk enrichment."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_asrep_roast_sequence.md; reviews/rubeus/detection-review.md#review-014"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized 4768 fixtures for one high-risk no-pre-authentication account, one ordinary account and one failed request; confirm only the first matches and that the risk enrichment is present on 4768 events."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "4768"
+    $e.additional.fields["PreAuthType"].value.string_value = "0"
+    $e.additional.fields["Status"].value.string_value = "0x0"
+    $e.additional.fields["account_risk_tier"].value.string_value = "high"
+    $e.principal.ip = $source
+    $e.target.user.userid = $account
+  match:
+    $source, $account over 1h
+  outcome:
+    $requests = count($e.metadata.id)
+    $encryption_types = array_distinct($e.additional.fields["TicketEncryptionType"].value.string_value)
+  condition:
+    $e
+}
+```
+
+- Re-comparison outcome: the current canonical rule set closes the branch the proposal targeted, within declared telemetry; `public_stronger` rows are recorded gaps with named compensating signals in `reviews/rubeus/detection-review.md`.

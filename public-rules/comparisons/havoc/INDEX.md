@@ -1,6 +1,6 @@
 # Havoc public-rule comparison index
 
-Pinned revisions: Elastic `7e91c156324cdc64cda27f7fec7067b1148074ef`; Chronicle `234e9223c3b8f3d1c30209d9663797ba69057533`; Microsoft Sentinel `5f947544657288586559c41b218eaaf182636728`; Splunk `457ce9f5ea69a8d5be9463989ee23b9366858d16`.
+Pinned revisions: Elastic `9d792a8f6731542935156db61eaba88bf337e819`; Chronicle `dbc9beb79597b519be086fce082214494d75b6a8`; Microsoft Sentinel `c3361d9ff34320e7fe3314d5f9063e15470ca53e`; Splunk `21509485465aaed2cfa4604e3d2ab5ee52975f0a`.
 
 All 13 canonical Havoc rules have procedure-level comparisons. Public logic remains untrusted comparative evidence.
 

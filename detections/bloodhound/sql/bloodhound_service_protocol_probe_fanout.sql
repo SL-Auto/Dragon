@@ -4,10 +4,10 @@
 -- rule_name: bloodhound_service_protocol_probe_fanout
 -- severity: medium
 -- procedure_ids: BH-013
--- description: Detects one process probing WebDAV, SMB, LDAP and LDAPS capability across many hosts.
--- log_source_prerequisites: Process-attributed network events with target host, port, protocol and connection result.
+-- description: Detects one process probing at least three distinct service families among WebDAV, SMB, LDAP and LDAPS capability across many hosts, requiring protocol-family diversity rather than raw target/port count.
+-- log_source_prerequisites: Process-attributed network events with target host, port and resolved service-family classification.
 -- false_positives: Vulnerability scanners, service inventory and network monitoring.
--- references: reports/bloodhound/source-analysis.md
+-- references: reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_service_protocol_probe_fanout.md, reviews/bloodhound/detection-review.md#bh-dr-30
 -- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 -- schema_profile: schemas/normalized-sql.yml
 -- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).

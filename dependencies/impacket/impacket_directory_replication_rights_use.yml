@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: impacket
+rule_name: impacket_directory_replication_rights_use
+canonical_path: detections/impacket/yaral/impacket_directory_replication_rights_use.yaral
+canonical_sha256: 6a3cc33e2a97cd345f04f4383cd3ebcd1ac17d1ef660829fd40448d56178a82a
+description: "Detects use of directory replication extended rights (DS-Replication-Get-Changes, -All, -In-Filtered-Set) by a principal not approved for replication, the domain-controller effect of DRSUAPI replication-based secret retrieval. Restores the replication branch removed from impacket_sensitive_file_or_replication_access by the 2026-08-16 split."
+severity: high
+procedure_ids: ["IMP-13"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Domain-controller Security 4662 (Directory Service Access auditing with a SACL on the domain naming context) with subject account, logging DC, and the replication right GUID in the properties/description; optional approved-replication-principal enrichment (additional.fields[approved_replication_principal])."
+atomic_event_types: ["4662"]
+required_udm_fields: ["additional.fields", "metadata.id", "metadata.product_event_type", "principal.hostname", "principal.user.userid", "security_result.description"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Domain controllers replicating with each other, Entra Connect and other identity synchronization, migration and directory-backup products; mark them with the approved-replication-principal enrichment."
+references: "reports/impacket/source-analysis.md#imp-13; public-rules/comparisons/impacket/impacket_sensitive_file_or_replication_access.md; reviews/impacket/detection-review.md#review-013; https://learn.microsoft.com/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4662"
+translations:
+  spl: { path: "detections/impacket/spl/impacket_directory_replication_rights_use.spl", sha256: 0f8a4707085b31ea03c01d1248b94085f8cef569194a6c4e89a76b9c4a1fb1b3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/impacket/kql/impacket_directory_replication_rights_use.kql", sha256: 96cbfa8fd4fe1a540a29099ba10b097798dd731428e318664f2fd9ca8d323b60, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/impacket/sql/impacket_directory_replication_rights_use.sql", sha256: eb25dc54160debfedb9e5a6e0d5b45a5cce11746354d14b2c21cf54ddf3f0574, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/impacket/eql/impacket_directory_replication_rights_use.eql", sha256: cab01dcd5913ff525d365381ae697593178f4030b37dd19d40a1eeb57167cfb1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_directory_replication_rights_use.yml", sha256: ced32362db355a3582bd5a2c47ef76a1aebee724a023ba2e050aefdf9ab9fbde, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped by procedure, observable effect and telemetry rather than name or syntax.
 
 Public candidate:
-- [`public-rules/snapshots/microsoft-sentinel/5f947544657288586559c41b218eaaf182636728/Solutions/Microsoft Defender XDR/Analytic Rules/Persistence/LocalAdminGroupChanges.yaml`](../../snapshots/microsoft-sentinel/5f947544657288586559c41b218eaaf182636728/Solutions/Microsoft Defender XDR/Analytic Rules/Persistence/LocalAdminGroupChanges.yaml) - SHA-256 `a69b713c78006b4acf935295e2ec0dfc61c3fe36fcd2fdbbb8e3f1177c24e359`
+- [`public-rules/snapshots/microsoft-sentinel/c3361d9ff34320e7fe3314d5f9063e15470ca53e/Solutions/Microsoft Defender XDR/Analytic Rules/Persistence/LocalAdminGroupChanges.yaml`](../../snapshots/microsoft-sentinel/c3361d9ff34320e7fe3314d5f9063e15470ca53e/Solutions/Microsoft Defender XDR/Analytic Rules/Persistence/LocalAdminGroupChanges.yaml) - SHA-256 `a69b713c78006b4acf935295e2ec0dfc61c3fe36fcd2fdbbb8e3f1177c24e359`
 
 ## Procedure and detection-branch matrix
 
@@ -83,3 +83,8 @@ rule impacket_remote_account_or_group_change_strong_branch {
 ```
 
 This proposal strengthens a procedure-level branch without importing the public predicate. It remains vulnerable to missing source telemetry, semantic mapping errors, and activity outside the correlation period. If adopted, test benign administrative workloads and missing-data behavior, then update every downstream artifact required by the workflow.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- No referenced candidate changed content.

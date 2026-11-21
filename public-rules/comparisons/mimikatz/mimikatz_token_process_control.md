@@ -10,7 +10,7 @@
 - Scope mapping rationale: mapped by security effect, ordered procedure and required telemetry; names and syntax were not mapping criteria.
 
 Public evidence:
-- Behaviorally relevant public candidate: [SeDebugPrivilege enablement](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/privilege_escalation_tokenmanip_sedebugpriv_enabled.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `66429a12ee26c63892341e2f91d2b7c171da9ad9f30fabd2ac613e5a069d5b6d`.
+- Behaviorally relevant public candidate: [SeDebugPrivilege enablement](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/privilege_escalation_tokenmanip_sedebugpriv_enabled.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `6e8f7a7fb4ce7a4c2dd84b21d8be310b5dfb5a8c3c216bb4d4458e6f9f946735`.
 
 ## Procedure and detection-branch matrix
 
@@ -91,3 +91,8 @@ rule mimikatz_token_manipulation_to_sensitive_access {
 Remaining gaps: thresholds, fields, ordering and trust enrichment need authorized telemetry validation; absence of required collection cannot be interpreted as benign activity.
 
 If accepted or modified, update canonical YARA-L and every downstream artifact, re-run adversarial review, and compare the revised final rule again.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/windows/privilege_escalation_tokenmanip_sedebugpriv_enabled.toml` changed between 7e91c15 and 9d792a8; re-read on 2026-11-21: 12 process-path exclusions were added (dllhost, w3wp, netsh, netstat, RuntimeBroker, taskkill, tasklist under System32 and SysWOW64). This narrows the public rule's privilege-enable branch, which strengthens any `ours_stronger` conclusion on that branch. The comparison conclusions and decision are unaffected.

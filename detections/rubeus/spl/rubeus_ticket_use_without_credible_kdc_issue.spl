@@ -1,17 +1,17 @@
 # source_yaral: detections/rubeus/yaral/rubeus_ticket_use_without_credible_kdc_issue.yaral
 # translation_status: experimental_needs_backend_mapping_and_validation
-# fidelity: partial
+# fidelity: unsupported
 # rule_name: rubeus_ticket_use_without_credible_kdc_issue
 # severity: high
 # procedure_ids: PROC-008,PROC-009
-# description: Detects anomalous Kerberos-authenticated service use without a corresponding observed service-ticket issue, gated on an explicit domain-controller collection-health signal.
-# log_source_prerequisites: Centralize complete 4769 telemetry and resource-side Kerberos service-use/PAC anomaly data with normalized user, source, and service, plus a collection-health event proving all authoritative domain controllers reported for the window.
-# false_positives: Missing DC logs, cached tickets, referrals, cross-realm activity, and parser mismatches; the collection-health gate mitigates but does not eliminate these.
-# references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_use_without_credible_kdc_issue.md
-# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend. The absence check (zero matching 4769 events) and the required collection-health gate are not expressible as a simple filter and need a native absence/anti-join construct in the target backend.
+# description: Detects anomalous Kerberos-authenticated service use without a corresponding observed service-ticket issue, gated on an explicit domain-controller collection-health signal so absence-based logic never fires during known incomplete DC coverage.
+# log_source_prerequisites: Centralize complete 4769 telemetry and resource-side Kerberos service-use/PAC anomaly data with normalized user, source, and service, plus a collection-health event that proves all authoritative domain controllers reported for the correlation window. The health event and the resource-side access event must both carry the AD domain in target.administrative_domain; that field joins the health gate to the activity.
+# false_positives: Missing DC logs, cached tickets, referrals, cross-realm activity, and parser mismatches; the collection-health gate mitigates but does not eliminate these because health may be reported as true while an individual DC's forwarder is silently stalled.
+# references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_use_without_credible_kdc_issue.md; reviews/rubeus/detection-review.md#review-013
+# assumptions_and_gaps: Target draft does not safely reproduce canonical absence logic; implement only after confirming complete source coverage and time semantics.
 # schema_profile: schemas/splunk-cim.yml
 index=<configured_index>
-| where in(coalesce('metadata.product_event_type','metadata.event_type'), "4769", "USER_LOGIN")
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "4769", "COLLECTION_HEALTH", "USER_LOGIN")
 | eval canonical_rule="rubeus_ticket_use_without_credible_kdc_issue"
 | stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
 | where count > 0

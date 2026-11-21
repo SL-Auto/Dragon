@@ -1,26 +1,26 @@
 rule sliver_remote_admin_sequence {
   meta:
     author = "Detection Research Agent"
-    description = "Remote authentication followed by service or SSH execution on target, joined by logon/session identity"
-    date = "2026-08-16"
+    description = "Remote authentication followed by Windows service installation (4697) or SSH command execution on the target, joined by logon/session identity"
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
-    severity_rationale = "Adding the logon/session identifier to the join key closes the review-identified gap that a bare host-plus-user join can associate unrelated administration on a busy host; the identifier is not required to match against the network event so the join still degrades gracefully when a tenant lacks session-ID propagation"
+    severity_rationale = "Adding the logon/session identifier to the join key closes the review-identified gap that a bare host-plus-user join can associate unrelated administration on a busy host; System 7045 carries no logon identifier and was removed from the session-joined branch (REVIEW-015); 7045-only service installs remain covered by sliver_identity_or_service_from_network_process and sliver_explicit_credential_service_creation"
     procedure_ids = "PROC-020"
-    log_source_prerequisites = "Authentication and service/SSH process events with target host, account, and logon/session identifier"
+    log_source_prerequisites = "Windows Security 4624 and 4697 (TargetLogonId / SubjectLogonId normalized to network.session_id) or SSH authentication and command events with target host, account and session identifier"
     false_positives = "Deployment, backup, authorized remote administration"
-    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_remote_admin_sequence.md"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_remote_admin_sequence.md, reviews/sliver/detection-review.md#review-015"
     validation_status = "needs_validation"
     review_status = "reviewed_with_gaps"
     review_reference = "reviews/sliver/detection-review.md"
     source_comparison = "modified_from_unvalidated_proposal"
   events:
-    $l.metadata.product_event_type = /(4624|sshd_auth_success)/
+    $l.metadata.product_event_type = /^(4624|sshd_auth_success)$/
     $l.target.hostname = $host
     $l.target.user.userid = $user
     $l.network.session_id = $session
 
-    $x.metadata.product_event_type = /(4697|7045|sshd_command)/
+    $x.metadata.product_event_type = /^(4697|sshd_command)$/
     $x.target.hostname = $host
     $x.principal.user.userid = $user
     $x.network.session_id = $session

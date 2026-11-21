@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_ticket_artifact_access_or_creation
 canonical_path: detections/rubeus/yaral/rubeus_ticket_artifact_access_or_creation.yaral
-canonical_sha256: f74d0b80dc62f1517c8c11b2c4a7ff776b4167ee4258866ec5350561d3f69f43
+canonical_sha256: e6a6bb144045465c89e20547c24dc9701c8fdfd4fe10eaa3b2510e73642f5b32
 description: "Detects an unapproved process accessing or creating a Kerberos ticket-cache artifact file by extension."
 severity: medium
 procedure_ids: ["PROC-008", "PROC-009", "PROC-010", "PROC-013"]
@@ -15,10 +15,10 @@ uses_multi_event_correlation: false
 uses_aggregation: false
 uses_absence_logic: false
 false_positives: "Incident response, Kerberos troubleshooting, development, labs, and approved assessments where the approved-tool enrichment is stale or incomplete."
-references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_artifact_access_or_creation.md"
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_artifact_access_or_creation.md; reviews/rubeus/detection-review.md#review-010"
 translations:
-  spl: { path: "detections/rubeus/spl/rubeus_ticket_artifact_access_or_creation.spl", sha256: 08f2027a48ab0e9742974d9b2f56a7a9335358862b86ce4011ecdb0176f1d171, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/rubeus/kql/rubeus_ticket_artifact_access_or_creation.kql", sha256: a9139097ae1e365e1727a3f159b9f1449c9baa8329155326f82f2fc8bf7ad6ce, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/rubeus/sql/rubeus_ticket_artifact_access_or_creation.sql", sha256: 73d7aef5db547f33fd7767d0a4e42bd0a9e7238fff24fa9654e6a54efae9c7c8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/rubeus/eql/rubeus_ticket_artifact_access_or_creation.eql", sha256: 1575276269cac370e001a45d4a8742f55ecf8cb8b94f854d9446b2019c737217, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/rubeus/sigma/rubeus_ticket_artifact_access_or_creation.yml", sha256: ad5b44f46d560b489c74aa4a429d87fb7e982d75e9b97545be5dc0ad4a4755f2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/rubeus/spl/rubeus_ticket_artifact_access_or_creation.spl", sha256: ea5373f16a73f83a79eebb3e5ad235ca964dcf2637334258793c0284a7ee9147, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_ticket_artifact_access_or_creation.kql", sha256: 1c3601ba63da609c91f324e0bd126475e6054d4e415142524c001d3dedfd3fc1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_ticket_artifact_access_or_creation.sql", sha256: 03b3b60e147ca672efab10314a837a831bbe51ba6ea0966d8b82b63e1d59d88c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_ticket_artifact_access_or_creation.eql", sha256: edc3ca62f5526729f6c7818864ac0176a6d07d145b5453e8a9886d46f91a144d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_ticket_artifact_access_or_creation.yml", sha256: ec4c32249adadd9f91fd1df5f180a25df84e8ae19b8e51dfb3728332b1358382, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

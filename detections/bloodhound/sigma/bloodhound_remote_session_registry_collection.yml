@@ -1,16 +1,16 @@
-title: "Correlates SRVSVC session enumeration or remote registry reads with multi-host SMB/RPC activity."
+title: "Correlates SRVSVC session enumeration or remote registry reads, bound to a stable source process entity, with multi-host SMB/RPC activity."
 name: bloodhound_remote_session_registry_collection
 status: experimental
-description: "Correlates SRVSVC session enumeration or remote registry reads with multi-host SMB/RPC activity."
+description: "Correlates SRVSVC session enumeration or remote registry reads, bound to a stable source process entity, with multi-host SMB/RPC activity."
 source_yaral: "detections/bloodhound/yaral/bloodhound_remote_session_registry_collection.yaral"
 translation_status: experimental_needs_backend_mapping_and_validation
 fidelity: partial
 schema_profile: schemas/sigma.yml
 assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
 references:
-  - "reports/bloodhound/source-analysis.md"
+  - "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_remote_session_registry_collection.md, reviews/bloodhound/detection-review.md#bh-dr-29"
 procedure_ids: "BH-007,BH-008"
-log_source_prerequisites: "NDR/EDR RPC interface or REGISTRY_READ telemetry plus source identity and target host."
+log_source_prerequisites: "NDR/EDR RPC interface or REGISTRY_READ telemetry plus source process entity, source identity and target host."
 logsource:
   category: generic
 detection:

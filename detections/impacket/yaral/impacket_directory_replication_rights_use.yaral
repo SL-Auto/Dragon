@@ -1,0 +1,29 @@
+rule impacket_directory_replication_rights_use {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects use of directory replication extended rights (DS-Replication-Get-Changes, -All, -In-Filtered-Set) by a principal not approved for replication, the domain-controller effect of DRSUAPI replication-based secret retrieval. Restores the replication branch removed from impacket_sensitive_file_or_replication_access by the 2026-08-16 split."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Replication of secret attributes discloses domain credential material; DC-to-DC and approved synchronization accounts must be distinguished by enrichment, not by mutable account names."
+    procedure_ids = "IMP-13"
+    log_source_prerequisites = "Domain-controller Security 4662 (Directory Service Access auditing with a SACL on the domain naming context) with subject account, logging DC, and the replication right GUID in the properties/description; optional approved-replication-principal enrichment (additional.fields[approved_replication_principal])."
+    false_positives = "Domain controllers replicating with each other, Entra Connect and other identity synchronization, migration and directory-backup products; mark them with the approved-replication-principal enrichment."
+    references = "reports/impacket/source-analysis.md#imp-13; public-rules/comparisons/impacket/impacket_sensitive_file_or_replication_access.md; reviews/impacket/detection-review.md#review-013; https://learn.microsoft.com/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4662"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized 4662 fixtures for DC-to-DC replication with enrichment, approved sync accounts, and a non-approved workstation account requesting Get-Changes-All; confirm only the last matches."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/impacket/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "4662"
+    re.regex($e.security_result.description, `(?i)(DS-Replication-Get-Changes|Replicating Directory Changes|1131f6a[a-d]-9c07-11d1-f79f-00c04fc2dcd2|89e95b76-444d-4c62-991a-0facbeda640c)`)
+    $e.additional.fields["approved_replication_principal"].value.bool_value != true
+    $e.principal.user.userid = $actor
+  match:
+    $actor over 10m
+  outcome:
+    $domain_controllers = array_distinct($e.principal.hostname)
+    $events = count($e.metadata.id)
+  condition:
+    $e
+}

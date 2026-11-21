@@ -1,0 +1,21 @@
+// source_yaral: detections/impacket/yaral/impacket_directory_replication_rights_use.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: impacket_directory_replication_rights_use
+// severity: high
+// procedure_ids: IMP-13
+// description: Detects use of directory replication extended rights (DS-Replication-Get-Changes, -All, -In-Filtered-Set) by a principal not approved for replication, the domain-controller effect of DRSUAPI replication-based secret retrieval. Restores the replication branch removed from impacket_sensitive_file_or_replication_access by the 2026-08-16 split.
+// log_source_prerequisites: Domain-controller Security 4662 (Directory Service Access auditing with a SACL on the domain naming context) with subject account, logging DC, and the replication right GUID in the properties/description; optional approved-replication-principal enrichment (additional.fields[approved_replication_principal]).
+// false_positives: Domain controllers replicating with each other, Entra Connect and other identity synchronization, migration and directory-backup products; mark them with the approved-replication-principal enrichment.
+// references: reports/impacket/source-analysis.md#imp-13; public-rules/comparisons/impacket/impacket_sensitive_file_or_replication_access.md; reviews/impacket/detection-review.md#review-013; https://learn.microsoft.com/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4662
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (product_event_type, hostname, user_id, properties, approved_replication_principal); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native filter, grouping by user_id and threshold. Hop window approximated by scheduling every 5 minutes over the trailing 10 minutes. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+NormalizedEvents
+| where TimeGenerated > ago(10m)
+| where product_event_type == "4662"
+    and properties matches regex @"(?i)(DS-Replication-Get-Changes|Replicating Directory Changes|1131f6a[a-d]-9c07-11d1-f79f-00c04fc2dcd2|89e95b76-444d-4c62-991a-0facbeda640c)"
+    and coalesce(tobool(approved_replication_principal), false) == false
+| summarize MatchedCount = count(), hostname_values = make_set(hostname, 20) by user_id
+| where MatchedCount >= 1
+| extend CanonicalRule = "impacket_directory_replication_rights_use"

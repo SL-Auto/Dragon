@@ -1,0 +1,58 @@
+title: "Detects a newly created computer account requesting S4U (protocol-transition or constrained-delegation) service tickets within one hour of its creation, proving that the object created in the directory participates in the later ticket path. This is the resource-based constrained delegation chain: account creation, delegation configuration, then S4U ticket requests as the new account."
+name: impacket_new_machine_account_s4u_first
+status: experimental
+description: "Detects a newly created computer account requesting S4U (protocol-transition or constrained-delegation) service tickets within one hour of its creation, proving that the object created in the directory participates in the later ticket path. This is the resource-based constrained delegation chain: account creation, delegation configuration, then S4U ticket requests as the new account."
+source_yaral: "detections/impacket/yaral/impacket_new_machine_account_s4u.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, user_id, target_user, service_name, source_ip, description, delegation_flow, TransmittedServices); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Two base rules plus a Sigma temporal_ordered correlation."
+references:
+  - "reports/impacket/source-analysis.md#imp-22; public-rules/comparisons/impacket/impacket_privilege_path_effects.md; reviews/impacket/detection-review.md#review-014"
+procedure_ids: "IMP-07,IMP-11,IMP-22"
+log_source_prerequisites: "Domain-controller Security 4741 (computer account created; new account in target.user.userid) and 4769 (requesting account in target.user.userid) with S4U context in the description, a structured delegation_flow field, or TransmittedServices, from every DC."
+logsource:
+  service: security
+  product: windows
+detection:
+  sel:
+    product_event_type: "4741"
+  condition: sel
+falsepositives:
+  - "Provisioning or middleware that creates a computer account and immediately configures it for constrained delegation; approve those service accounts after validation."
+level: high
+---
+title: "Detects a newly created computer account requesting S4U (protocol-transition or constrained-delegation) service tickets within one hour of its creation, proving that the object created in the directory participates in the later ticket path. This is the resource-based constrained delegation chain: account creation, delegation configuration, then S4U ticket requests as the new account."
+name: impacket_new_machine_account_s4u_second
+status: experimental
+description: "Detects a newly created computer account requesting S4U (protocol-transition or constrained-delegation) service tickets within one hour of its creation, proving that the object created in the directory participates in the later ticket path. This is the resource-based constrained delegation chain: account creation, delegation configuration, then S4U ticket requests as the new account."
+logsource:
+  service: security
+  product: windows
+detection:
+  sel:
+    product_event_type: "4769"
+  alt0_0:
+    description|re: "(?i)(S4U2Self|S4U2Proxy|protocol transition|transited services)"
+  alt0_1:
+    delegation_flow|re: "(?i)^(S4U2Self|S4U2Proxy)$"
+  alt0_2:
+    TransmittedServices|re: "(?i)[A-Za-z0-9]"
+  condition: sel and 1 of alt0_*
+falsepositives:
+  - "Provisioning or middleware that creates a computer account and immediately configures it for constrained delegation; approve those service accounts after validation."
+level: high
+---
+title: "Detects a newly created computer account requesting S4U (protocol-transition or constrained-delegation) service tickets within one hour of its creation, proving that the object created in the directory participates in the later ticket path. This is the resource-based constrained delegation chain: account creation, delegation configuration, then S4U ticket requests as the new account."
+name: impacket_new_machine_account_s4u
+status: experimental
+correlation:
+  type: temporal_ordered
+  rules:
+    - impacket_new_machine_account_s4u_first
+    - impacket_new_machine_account_s4u_second
+  group-by:
+    - target_user
+  timespan: 60m
+level: high

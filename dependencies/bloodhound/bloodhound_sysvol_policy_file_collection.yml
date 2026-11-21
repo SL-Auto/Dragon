@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_sysvol_policy_file_collection
 canonical_path: detections/bloodhound/yaral/bloodhound_sysvol_policy_file_collection.yaral
-canonical_sha256: 4b1a06ce093bfb4fba7a2133da5d6bd8bb1e8b0a59ac297e9f7266890aa07e40
+canonical_sha256: 05709ba38b7e973198437ac680456281dcaa150ceae70c4df9f37281da72354c
 description: "Detects one source process, excluding the Group Policy client service itself, reading multiple policy artifacts from SYSVOL."
 severity: medium
 procedure_ids: ["BH-011"]
@@ -10,15 +10,15 @@ validation_status: "needs_validation"
 telemetry_prerequisites: "Windows 5145 or EDR FILE_READ with source process, account, share/path, target DC and a Group Policy client service (GPSVC) classification label."
 atomic_event_types: ["5145", "FILE_READ"]
 required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.process.file.full_path", "principal.process.file.labels", "target.file.full_path"]
-correlation_window: "15m"
+correlation_window: "30m"
 uses_multi_event_correlation: true
 uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Group Policy processing, configuration management, backup and policy auditing not attributed to the GPSVC host process."
-references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_sysvol_policy_file_collection.md"
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_sysvol_policy_file_collection.md, reviews/bloodhound/detection-review.md#bh-dr-31"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_sysvol_policy_file_collection.spl", sha256: d90148c0ccb2106f5b8302e52fa5d960fb99f7540e9da00cc8e0f2014844343a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_sysvol_policy_file_collection.kql", sha256: 29c8413613185a1f15f41992cec4d3d763dd714bca11a0cedfd1b7e547ac7dfe, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_sysvol_policy_file_collection.sql", sha256: ec70c8818f57bcc9ebe1ecf2791ed9305ab1012faac75e200831555a77a17a86, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_sysvol_policy_file_collection.eql", sha256: eb2877aeb871dc663e73fe667de75e19c50cd6ea2462be413eae4b818808c9e2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_sysvol_policy_file_collection.yml", sha256: f1980eeab0ecad69c9ea2a16fbf5c9aa188e5a14e5215b546c37b7699e8c3ce9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_sysvol_policy_file_collection.spl", sha256: 5930e4caf17e0d1b56c92216147697642d417b6b3dfcc134b820efddfda41869, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_sysvol_policy_file_collection.kql", sha256: 4ebd6356ff0ee0b6b94ea337fb13978a552119dee72f48f301ab738b3bfb2757, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_sysvol_policy_file_collection.sql", sha256: a6010779c50bac6c9191babd7f90a435ac05d07cbda3416b9a1b52d0d0abb594, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_sysvol_policy_file_collection.eql", sha256: 5a4cc7032e3e51a35c541a7afa3f349c845ea649fc1f8d161e5d4c353866d3bd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_sysvol_policy_file_collection.yml", sha256: 769140db1560568608456707d2ebfe51a8bb8c91f755d6368a9d75c4eed16ed1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

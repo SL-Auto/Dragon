@@ -1,6 +1,6 @@
 ﻿# Mimikatz public-rule comparison index
 
-Pinned Elastic revision: `7e91c156324cdc64cda27f7fec7067b1148074ef`.
+Pinned Elastic revision: `9d792a8f6731542935156db61eaba88bf337e819`.
 
 All 17 canonical Mimikatz rules were compared at procedure-branch and signal-strength level. Public rules are independent evidence only; proposed code remains `unvalidated_proposal` and canonical detections were not changed.
 

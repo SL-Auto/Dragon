@@ -10,7 +10,7 @@
 - Scope mapping rationale: procedure, ordered behavior, security effect, platform and telemetry; names and syntax were not mapping criteria.
 
 Public candidate:
-- [`public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/win_susp_or_malicious_service_created.yaral`](../../public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/win_susp_or_malicious_service_created.yaral) - SHA-256 `ffca062a76c08fcc3917a87424760bba8042c956275b072e962943ac5f3803f7`
+- [`public-rules/snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/win_susp_or_malicious_service_created.yaral`](../../snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/win_susp_or_malicious_service_created.yaral) - SHA-256 `ffca062a76c08fcc3917a87424760bba8042c956275b072e962943ac5f3803f7`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,18 @@ Four event families with different meanings are conflated and account-based corr
 
 ## Decision trail
 
-- Candidate improvement: independently implement and test the strong branch below.
-- Independent verification: pinned Sliver source, provider semantics, schema mappings and authorized sanitized fixtures required.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: comparative evidence is not canonical authority; proposal has not passed adversarial review.
-- Required regeneration: canonical detection review, coverage, telemetry/master, five translations, dependencies/manifests/hashes, then re-comparison.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/sliver/detection-review.md`.
+- Prior state: this trail still read `deferred_pending_rule_improvement_run`, although the 2026-08-16 backlog resolution (REVIEW-010 to REVIEW-014) had already acted on the proposal; this pass re-reviews that action and records the terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - The narrow rule chains 4648 explicit-credential use to a 4697/7045 service install as the credentialed account on the same host, separating it from the four-family base rule (REVIEW-014).
+  - Removed the proposal's `event_timestamp.seconds <=` ordering; bounded co-occurrence in the match window is kept (REVIEW-010).
+  - Adopted as an additional narrow rule beside the broad base rule, not as a replacement, so procedures without the narrow sub-case keep coverage (REVIEW-012).
+  - Anchored the 4697/7045 alternation on 2026-11-21 (REVIEW-016).
+- Canonical result: `detections/sliver/yaral/sliver_identity_or_service_from_network_process.yaral`, SHA-256 `f9d5d6618d160cefcac63d5691612b565047b039a69b4030b94e34a499577a04`.
+- Canonical result: `detections/sliver/yaral/sliver_explicit_credential_service_creation.yaral`, SHA-256 `b3ed99f9a80da02ec97e7243bf92a6ff2fd7ee21611b170136f0679b85d28d07`.
+- Regeneration: canonical change on 2026-11-21; detection review, telemetry row, five translations (after the generator anchoring fix), dependency/manifest hashes and this re-comparison were regenerated in the same run.
 
 ## Unmatched scope
 
@@ -91,3 +98,82 @@ rule sliver_identity_or_service_from_network_process_strong_branch {
 ```
 
 The proposal uses concrete telemetry semantics but does not prove tool identity. It remains limited by collection health, process-entity fidelity, enrichment quality and activity outside the window. If accepted or modified, complete the full downstream workflow; if rejected, preserve the rationale without changing canonical logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/community/microsoft/windows/win_susp_or_malicious_service_created.yaral` differs between 234e922 and dbc9beb only in line endings (snapshot path moved where applicable); content is identical.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Explicit-credential logon followed by service install | covered by `sliver_explicit_credential_service_creation` | `win_susp_or_malicious_service_created.yaral`: 7045 service names on a suspicious/known-malicious list | 4648 to 4697/7045 account chain - strong | known-bad service name - weak (mutable) | complementary |
+| Privilege assignment or service creation from a network-active process | covered by base rule | service creation only | privileged event plus host egress - weak | none | complementary |
+| Service carrying a known-malicious name | not targeted (names are mutable) | covered | service-name list - weak | none | different_scope |
+
+- Current canonical YARA-L `detections/sliver/yaral/sliver_identity_or_service_from_network_process.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule sliver_identity_or_service_from_network_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "Explicit credentials privileged logon or service operation associated with a network process/account"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Covers durable privilege and service effects"
+    procedure_ids = "PROC-016,PROC-017,PROC-019"
+    log_source_prerequisites = "Windows identity/service and process network telemetry normalized by host and account"
+    false_positives = "Deployment, backup, authorized administration"
+    references = "reports/sliver/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+  events:
+    $a.metadata.product_event_type = /(4648|4672|4697|7045)/
+    $a.target.hostname = $host
+    $a.principal.user.userid = $user
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.principal.hostname = $host
+    $n.principal.user.userid = $user
+  match: $host, $user over 10m
+  condition: $a and $n
+}
+```
+
+- Current canonical YARA-L `detections/sliver/yaral/sliver_explicit_credential_service_creation.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule sliver_explicit_credential_service_creation {
+  meta:
+    author = "Detection Research Agent"
+    description = "An explicit-credential logon is followed by a service or task creation performed as that credentialed account on the same host"
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Chaining an explicit-credential logon (4648) to a subsequent service/task creation (4697/7045) under the same account is a materially stronger sequence signal than co-occurrence of any one of four unrelated event families with generic account-based network correlation"
+    procedure_ids = "PROC-016,PROC-017,PROC-019"
+    log_source_prerequisites = "Windows explicit-credential logon and service/task-creation events correlated by target account and host, plus process-attributed network telemetry on the same host"
+    false_positives = "Software deployment tooling, backup agents, and authorized administrators who run-as another account before installing a service"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_identity_or_service_from_network_process.md, reviews/sliver/detection-review.md#review-016"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "accepted_as_compensating_rule_from_unvalidated_proposal"
+  events:
+    $c.metadata.product_event_type = "4648"
+    $c.target.hostname = $host
+    $c.target.user.userid = $credential_user
+
+    $s.metadata.product_event_type = /^(4697|7045)$/
+    $s.principal.user.userid = $credential_user
+    $s.target.hostname = $host
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.principal.hostname = $host
+  match: $host, $credential_user over 15m
+  condition: $c and $s and $n
+}
+```
+
+- Re-comparison outcome: the current canonical rule set closes the branch the proposal targeted, within declared telemetry. Remaining limits are the accepted gaps in `reviews/sliver/detection-review.md`.

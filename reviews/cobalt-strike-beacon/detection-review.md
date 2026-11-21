@@ -189,6 +189,35 @@ All 17 rules were re-traced after the changes above:
 - Every event type matches the inventory, with legacy names kept as aliases.
 - Every count is computed in `outcome`.
 
+## 2026-11-21 delta review — remaining four deferred comparisons
+
+The comparisons for `cobalt_strike_alternate_identity_process`, `cobalt_strike_cross_process_injection`, `cobalt_strike_remote_management_execution` and `cobalt_strike_unusual_authentication_material_use` still read `deferred_pending_rule_improvement_run`. Canonical logic had not acted on any of them.
+
+### Finding DR-23 — remote-management child joined only by account
+
+- Severity: `medium`
+- Rule: `cobalt_strike_remote_management_execution` (base), new `cobalt_strike_remote_management_execution_compensating_signal`.
+- Gap or failure mode: the base rule pairs a WinRM, WMI or SSH session with any process launched by the same account on the target within 10 minutes. An interactive or scheduled process by that account satisfies it, so the executed command is never tied to the remote channel.
+- Proposal defects:
+  - It reads the parent from `principal.process.parent_process`, which in a UDM PROCESS_LAUNCH is the grandparent, since `principal.process` is the launcher.
+  - It uses a non-inventory `REMOTE_SESSION` event type.
+  - It requires a source-side event, which fails when the operator host is unmonitored.
+- Resolution: `compensating_signal`. The new rule keeps the base's target-side session types and requires the launching process (`principal.process.file.full_path`) to be wsmprovhost.exe, wmiprvse.exe or sshd. It joins on host and account, session first. It uses OS service-host lineage only, with no mutable tool names.
+
+### Finding DR-24 — three proposals rejected
+
+- Severity: `medium`
+- Rules: unchanged.
+- `cobalt_strike_alternate_identity_process`: the proposal matches every successful AUTHENTICATION by any user (`#target >= 1`), with no link to the 4648 alternate identity. Resource-side confirmation would need a cross-host join (4648 TargetServerName to a 4624 on that server with the source workstation), and WorkstationName is not reliably populated for Kerberos network logons. Compensating signal: `cobalt_strike_unusual_authentication_material_use`.
+- `cobalt_strike_cross_process_injection`: the proposal replaces stable `process.entity_id` joins with reusable PIDs and hard-requires a `dangerous_memory_rights = true` enrichment, which fails closed. The base rule already joins the opener to the effect on the same source and target entities, which is the strongest causal link the telemetry supports.
+- `cobalt_strike_unusual_authentication_material_use`: the proposal's syntax is invalid (`not $issue...` in events, `not $issue` in condition). Its 20-minute absence window is far shorter than service-ticket lifetime, so it would alert on every logon that reuses a cached ticket. The sound form, with a 12-hour window, a domain-joined collection-health gate and a PAC-anomaly requirement, already exists as `rubeus_ticket_use_without_credible_kdc_issue` (Rubeus REVIEW-013).
+- Resolution: `rejected`. Proposed code is preserved in each comparison.
+
+### Accepted limitation noted on re-review
+
+- `cobalt_strike_alternate_identity_process` joins the 4648 target account to a process running as that account. A new-credentials (net-only) token keeps the original user on the process, so that pattern does not satisfy the join.
+- `accepted_gap`. Standard process telemetry does not expose the network identity of a new-credentials token. Compensating signals: 4624 LogonType 9 analytics and resource-side authentication rules.
+
 ## Required follow-up
 
 1. Compile every rule in the target Google SecOps tenant after mapping semantic event types and enrichment fields to actual UDM.

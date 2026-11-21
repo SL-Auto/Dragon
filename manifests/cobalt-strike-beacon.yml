@@ -11,25 +11,25 @@ context_entry_points:
   telemetry: telemetry/cobalt-strike-beacon.md
 counts:
   procedures: 34
-  canonical_rules: 38
-  spl_translations: 38
-  kql_translations: 38
-  sql_translations: 38
-  eql_translations: 38
-  sigma_translations: 38
+  canonical_rules: 39
+  spl_translations: 39
+  kql_translations: 39
+  sql_translations: 39
+  eql_translations: 39
+  sigma_translations: 39
 completion_states:
   source_analysis: complete
   canonical_detection: complete
   telemetry_reconciliation: complete_for_experimental_rules
   secondary_translation: draft_complete
-  rule_validation_labels: "38 needs_validation"
+  rule_validation_labels: "39 needs_validation"
 artifact_hashes:
   registry: 9c75dda74d8d2e504e70b5b119d8961f733d1f55eb544e13ccd697f701c1ac32
-  coverage: 54dfcfaf6cd4dbf756aee55ea947c2b19368ca40d34c6efb5ece61da684f3dc0
+  coverage: f9784fe39c4e27cb7fb287098c399fe784fa084f18dad79f9af757884a90ddb3
   report: 5a76b896d287446e468706249dbdd265b7d0983da175cb747b5d32c84073d604
-  telemetry: dbf7f951e645524430189dae8ef9788369c619787bd1b94253c86bba701421cd
-  detection_review: 460e98ec21f37e2c3cb8bb6d821d58b765826b495bc28b77ebd3beac9e0b02a4
-  translation_review: 2a18da998334df093069ef3bf4c989f9ec15f29fc6980db3eb6f479a2f8151ea
+  telemetry: 333c801c233fa0d4b22dd8fd8d656f4bdf9a68bba813b1e5e3486515ab6c3b6f
+  detection_review: c4cb63fac9b2e9367a0526b75ba31b470192cfa7e268967a21ebdb1ccd0238b8
+  translation_review: 781734e45be2487f1a96e8ea3cdb862f1e68246152c1197693b3c92e54f0783f
 rules:
   - { name: cobalt_strike_alternate_identity_process, severity: medium, procedures: "CSB-012", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_alternate_identity_process.yml, canonical_sha256: 0fbd27a0f097e62e6ff8de4feac398b44d9f8aec0709a0b5e20fd234972cf9c3 }
   - { name: cobalt_strike_credential_access_effect, severity: high, procedures: "CSB-028", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_credential_access_effect.yml, canonical_sha256: df19f0878f93eba0b0fc68cdd3dedd8f78d2aa4d6a26295ff09976cccb9f398d }
@@ -52,6 +52,7 @@ rules:
   - { name: cobalt_strike_process_network_context, severity: medium, procedures: "CSB-001,CSB-002,CSB-005", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_process_network_context.yml, canonical_sha256: cb0dbb4890f67d1821743f69c63690a53847a42a4d9a4891a9d072e5e5571065 }
   - { name: cobalt_strike_process_network_context_compensating_signal, severity: high, procedures: "CSB-001,CSB-002,CSB-005", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_process_network_context_compensating_signal.yml, canonical_sha256: 0a0da7f5c54a7f93c54aca8f55ef5818b8ba1544fa571e84a04c33845014cfa4 }
   - { name: cobalt_strike_remote_management_execution, severity: medium, procedures: "CSB-031,CSB-032,CSB-033", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_remote_management_execution.yml, canonical_sha256: a88351da6639c3ec31419e05c28cab9fc847597c1a91de33532178aa30e80c6b }
+  - { name: cobalt_strike_remote_management_execution_compensating_signal, severity: medium, procedures: "CSB-031,CSB-032,CSB-033", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_remote_management_execution_compensating_signal.yml, canonical_sha256: 79a26523202d6118b5ac34c21280381b309882a1650d60f3e97b08cb350f427a }
   - { name: cobalt_strike_remote_service_sequence, severity: high, procedures: "CSB-030", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_remote_service_sequence.yml, canonical_sha256: 8893eede14fcde6b816e49053b9f11373bdddaa72ab138e7a10b7aa171ee8bb2 }
   - { name: cobalt_strike_remote_service_sequence_compensating_signal, severity: high, procedures: "CSB-030", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_remote_service_sequence_compensating_signal.yml, canonical_sha256: 7734832c640d1af57678b07076f38299eb531238b31838187d321c2e9643ec84 }
   - { name: cobalt_strike_sensitive_file_activity, severity: high, procedures: "CSB-024,CSB-025", dependency: dependencies/cobalt-strike-beacon/cobalt_strike_sensitive_file_activity.yml, canonical_sha256: ec0bb1be3a9293708dfe9efbf4a9f6ea67b4c7cbd45bf5b297b173c5e2656334 }

@@ -10,7 +10,7 @@
 - Scope mapping rationale: ordered Rubeus procedure behavior and observable security effects; public candidates were selected by procedure and telemetry, not rule names.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/credential_access_posh_kerb_ticket_dump.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/credential_access_posh_kerb_ticket_dump.toml) - SHA-256 `e16587e2ac4f262ae22672c81f6acb76c6e66cc0af6ab59c0bdc036d64e300a9`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/credential_access_posh_kerb_ticket_dump.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/credential_access_posh_kerb_ticket_dump.toml) - SHA-256 `c7aa4e8158b8ff85b9652e1a5d31baf2a8381ac30b2e840fb1e8fb027f9eedd3`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,15 @@ Relies on mutable names/extensions, groups four procedures, and misses memory-on
 
 ## Decision trail
 
-- Candidate improvement: Keep artifact detection as compensation, lower substring-only confidence, add file-content/type and process-context branches, and link extraction-to-artifact-to-submit when telemetry permits.
-- Independent verification: `Required against Rubeus source analysis, concrete telemetry schemas, and sanitized fixtures before changing canonical logic.`
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The comparison identifies a detection-engineering gap; no public predicate is copied automatically.`
-- Required regeneration: `YARA-L adversarial review, telemetry reconciliation, five translations, and this comparison.`
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/rubeus/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, although the proposal had already been copied into canonical YARA-L on 2026-08-16 without a recorded decision or review finding; the live rule was re-reviewed before this terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - The 2026-08-16 rewrite adds FILE_READ to the proposal's creation-only branch and drops its process-path requirement.
+  - Invalid `re.regex ... nocase` replaced with `(?i)` (REVIEW-010). Name-based artifact matching remains an accepted gap (REVIEW-005).
+- Canonical result: `detections/rubeus/yaral/rubeus_ticket_artifact_access_or_creation.yaral`, SHA-256 `5c1923b64ce91f2ce4f93e8e9e9b90a3440ad7ba070f8fd67d1242606d64f46a`.
+- Regeneration: canonical change on 2026-11-21; detection review, coverage, `telemetry/rubeus.md`, `telemetry/MASTER.md` counts, five translations, dependency/manifest hashes and this re-comparison were regenerated in the same run.
 
 ## Unmatched scope
 
@@ -84,3 +88,43 @@ rule rubeus_ticket_artifact_from_unapproved_process {
 Removes weak â€œasrep/kerberoastâ€ substring matching and requires attributed creation by an unapproved process. It cannot cover memory-only handling; direct API and subsequent ticket-use rules remain required.
 
 If adopted, update the canonical YARA-L, adversarial detection review, Rubeus telemetry matrix and master counts, all five translations, dependency hashes, and this comparison.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/credential_access_posh_kerb_ticket_dump.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Ticket file (.kirbi/.ccache) created or read | covered | not covered | artifact extension - weak (mutable) | LSA API rules - strong | ours_stronger |
+| Ticket retrieval through PowerShell LSA package access | covered by `rubeus_lsa_encoded_ticket_retrieval` (compiled or scripted) | `credential_access_posh_kerb_ticket_dump.toml`: PowerShell 4104 content | LSA API success - strong | script-block content - moderate | complementary |
+
+- Current canonical YARA-L `detections/rubeus/yaral/rubeus_ticket_artifact_access_or_creation.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule rubeus_ticket_artifact_access_or_creation {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects an unapproved process accessing or creating a Kerberos ticket-cache artifact file by extension."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Ticket artifacts support offline parsing, mutation, or reuse, but authorized IR and labs overlap."
+    procedure_ids = "PROC-008,PROC-009,PROC-010,PROC-013"
+    log_source_prerequisites = "Normalize EDR file read/create events with process, user, path, extension, and signer, plus an approved-Kerberos-tool process enrichment."
+    false_positives = "Incident response, Kerberos troubleshooting, development, labs, and approved assessments where the approved-tool enrichment is stale or incomplete."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_artifact_access_or_creation.md; reviews/rubeus/detection-review.md#review-010"
+    validation_status = "needs_validation"
+    validation_method = "Replay benign ticket-file read/write fixtures and approved IR activity. The prior free-text \"asrep\"/\"kerberoast\" substring branch was removed because it could collide with benign filenames (research notes, downloaded tooling, documentation) without any causal link to actual ticket handling; only the extension-plus-unapproved-process branch remains. This narrows recall for renamed or extensionless artifacts, which stays an accepted gap pending file-content/type telemetry."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    ($e.metadata.event_type = "FILE_CREATION" or $e.metadata.event_type = "FILE_READ")
+    re.regex($e.target.file.full_path, `(?i)\.(kirbi|ccache)$`)
+    $e.additional.fields["approved_kerberos_tool"].value.bool_value = false
+  condition:
+    $e
+}
+```
+
+- Re-comparison outcome: the current canonical rule set closes the branch the proposal targeted, within declared telemetry; `public_stronger` rows are recorded gaps with named compensating signals in `reviews/rubeus/detection-review.md`.

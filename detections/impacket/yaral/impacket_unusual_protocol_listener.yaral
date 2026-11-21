@@ -2,20 +2,21 @@ rule impacket_unusual_protocol_listener {
  meta:
   author = "Detection Research Agent"
   description = "Detects non-server processes listening on SMB or relay-associated service ports."
-  date = "2026-08-15"
+  date = "2026-11-21"
   status = "experimental"
   severity = "MEDIUM"
   severity_rationale = "Unexpected protocol listeners can expose authentication or staging services."
   procedure_ids = "IMP-02"
   log_source_prerequisites = "EDR network-listen events with process, host, port and direction."
   false_positives = "Approved file servers, development services and security tools."
-  references = "reports/impacket/source-analysis.md"
+  references = "reports/impacket/source-analysis.md, reviews/impacket/detection-review.md#review-015"
   validation_status = "needs_validation"
   review_status = "reviewed_with_gaps"
   review_reference = "reviews/impacket/detection-review.md"
  events:
   $e.metadata.event_type = "NETWORK_CONNECTION"
   $e.network.direction = "LISTEN"
-  $e.target.port = /(445|80|443|1433|389|636|25|110|143)/
+  ($e.target.port = 445 or $e.target.port = 80 or $e.target.port = 443 or $e.target.port = 1433 or $e.target.port = 389 or
+   $e.target.port = 636 or $e.target.port = 25 or $e.target.port = 110 or $e.target.port = 143)
  condition: $e
 }

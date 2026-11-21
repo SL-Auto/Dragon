@@ -4,10 +4,10 @@
 // rule_name: bloodhound_azure_authentication_context
 // severity: medium
 // procedure_ids: BH-016
-// description: Detects a sign-in followed by broad Graph or ARM read activity from the same principal and source.
-// log_source_prerequisites: Entra interactive/service-principal sign-ins and Graph/ARM audit with principal/app, source IP and correlation identifiers.
+// description: Detects a sign-in followed by broad Graph or ARM read activity from the same principal and application, independent of source IP.
+// log_source_prerequisites: Entra interactive/service-principal sign-ins and Graph/ARM audit with principal user ID, application/service-principal ID and resource-family enrichment.
 // false_positives: Cloud inventory, governance, CSPM and authorized assessment.
-// references: reports/bloodhound/source-analysis.md
+// references: reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_azure_authentication_context.md, reviews/bloodhound/detection-review.md#bh-dr-27
 // assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 // schema_profile: schemas/sentinel-asim.yml
 NormalizedEvents

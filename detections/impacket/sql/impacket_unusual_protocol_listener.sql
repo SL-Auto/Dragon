@@ -7,7 +7,7 @@
 -- description: Detects non-server processes listening on SMB or relay-associated service ports.
 -- log_source_prerequisites: EDR network-listen events with process, host, port and direction.
 -- false_positives: Approved file servers, development services and security tools.
--- references: reports/impacket/source-analysis.md
+-- references: reports/impacket/source-analysis.md, reviews/impacket/detection-review.md#review-015
 -- assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
 -- schema_profile: schemas/normalized-sql.yml
 -- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).

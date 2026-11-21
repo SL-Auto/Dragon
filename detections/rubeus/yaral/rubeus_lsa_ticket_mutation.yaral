@@ -2,14 +2,14 @@ rule rubeus_lsa_ticket_mutation {
   meta:
     author = "Detection Research Agent"
     description = "Detects Kerberos ticket-cache purge operations from EDR API telemetry. Split from ticket submission, which is a stronger, separately severity-scored signal covered by rubeus_lsa_ticket_submission."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "MEDIUM"
     severity_rationale = "A KerbPurgeTicketCacheMessage call can conceal session state, but is also routine troubleshooting (klist purge) more often than submission is; scored lower than the dedicated submission rule which is the direct pass-the-ticket mechanism."
     procedure_ids = "PROC-007"
     log_source_prerequisites = "EDR must expose LsaCallAuthenticationPackage message type, caller process, user, host, and target LUID."
     false_positives = "Klist purge, SSO, identity middleware, and incident response routinely purge cached tickets."
-    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_mutation.md"
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_mutation.md; reviews/rubeus/detection-review.md#review-010"
     validation_status = "needs_validation"
     validation_method = "Replay sanitized purge API fixtures from approved administration. Confirm this rule and rubeus_lsa_ticket_submission are both enabled together, since submission was split out of this rule's scope on 2026-08-16."
     review_status = "reviewed_with_gaps"
@@ -17,7 +17,7 @@ rule rubeus_lsa_ticket_mutation {
   events:
     $e.metadata.product_event_type = "EDR_API_CALL"
     $e.additional.fields["api_name"].value.string_value = "LsaCallAuthenticationPackage"
-    re.regex($e.additional.fields["kerberos_message_type"].value.string_value, `KerbPurgeTicketCacheMessage`) nocase
+    re.regex($e.additional.fields["kerberos_message_type"].value.string_value, `(?i)KerbPurgeTicketCacheMessage`)
   condition:
     $e
 }

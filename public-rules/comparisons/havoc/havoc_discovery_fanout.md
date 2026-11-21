@@ -8,7 +8,7 @@
 - Procedures: HV-P04, HV-P13
 - Public candidates were consulted only after independent source analysis, rule generation and adversarial review.
 
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules_building_block/discovery_generic_process_discovery.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules_building_block/discovery_generic_process_discovery.toml) - SHA-256 `6fe09ca83b4bba1b048c20053fa086ead26afbe96a45cf3847d8fd1b81ac37fa`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules_building_block/discovery_generic_process_discovery.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules_building_block/discovery_generic_process_discovery.toml) - SHA-256 `b67c0b52d6c2b0a67530920d32b33633e5ba7d398444604e98ffbf50222ea518`
 
 ## Procedure and detection-branch matrix
 
@@ -52,7 +52,8 @@
 
 - Candidate improvement: single sensitive query and local discovery
 - Independent verification: pinned Havoc report, internal review, telemetry contract and candidate hash/path above
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: Adversarial review of the proposal (2026-08-16) found two independent defects. First, it queries `metadata.product_event_type = "LDAP_SEARCH"` / `"SMB_SESSION"`, but every canonical Havoc rule in this repository correctly uses `metadata.event_type` for normalized UDM category values; `product_event_type` holds the raw vendor-specific event identifier, not a semantic UDM enum name, so as written this predicate would not match real telemetry and the rule would silently never fire. Second, independent of the field-name defect, the logic does not implement the branch it claims to address: it requires both an LDAP_SEARCH and an SMB_SESSION event on the same process, which is a generic two-event correlation, not the stated "single sensitive query" (a single LDAP event with a sensitive-attribute predicate, no SMB requirement) or "local discovery" (no network session at all) branch.
 - Adversarial re-check: Re-ran the procedure-branch matrix against the proposal. It does not close the stated missing branch and introduces no correlation distinct from the existing canonical fanout rule; canonical logic is unchanged and no compensating rule is added.
 - Required regeneration: none. Canonical logic, telemetry, translations, and dependencies are unchanged because the proposal was rejected, not adopted or modified.
@@ -89,3 +90,8 @@ rule havoc_discovery_fanout_proposal {
 ```
 
 This proposal is actual detection logic for the scoped missing branch, not an automatic adoption. It must be compiled, mapped, benign-baselined and adversarially reviewed before canonical use. The only accepted comparison change in this pass is the independently implemented stable-destination recurrence rule documented above.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules_building_block/discovery_generic_process_discovery.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.

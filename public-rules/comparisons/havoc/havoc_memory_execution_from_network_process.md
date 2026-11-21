@@ -8,7 +8,7 @@
 - Procedures: HV-P09, HV-P10, HV-P11
 - Public candidates were consulted only after independent source analysis, rule generation and adversarial review.
 
-- [`public-rules/snapshots/splunk-security-content/457ce9f5ea69a8d5be9463989ee23b9366858d16/detections/endpoint/windows_process_injection_remote_thread.yml`](../../snapshots/splunk-security-content/457ce9f5ea69a8d5be9463989ee23b9366858d16/detections/endpoint/windows_process_injection_remote_thread.yml) - SHA-256 `8c56ad827f03ba5c458fa86279ef045ef240559bc50651df44edc04e76f03ed4`
+- [`public-rules/snapshots/splunk-security-content/21509485465aaed2cfa4604e3d2ab5ee52975f0a/detections/endpoint/windows_process_injection_remote_thread.yml`](../../snapshots/splunk-security-content/21509485465aaed2cfa4604e3d2ab5ee52975f0a/detections/endpoint/windows_process_injection_remote_thread.yml) - SHA-256 `be5bef467c0519c5555da8ef410102a1922475d42e985483a42e9c6adf5865b2`
 
 ## Procedure and detection-branch matrix
 
@@ -52,7 +52,8 @@
 
 - Candidate improvement: direct cross-process access and execution sequence
 - Independent verification: pinned Havoc report, internal review, telemetry contract and candidate hash/path above
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: Adversarial review of the proposal (2026-08-16) found two independent defects. First, it queries `metadata.product_event_type = "PROCESS_ACCESS"` / `"REMOTE_THREAD"`, but every canonical Havoc rule in this repository correctly uses `metadata.event_type` for normalized UDM category values, so as written this predicate would not match real telemetry and the rule would silently never fire. Second, the proposal does not bind a distinct target process for the PROCESS_ACCESS event (both `$a` and `$b` share only the same `$pid` as principal), so it cannot verify the access is genuinely cross-process, and it reuses the REMOTE_THREAD semantic that this repository's own adversarial review already flagged (`reviews/havoc/detection-review.md` HV-DR-04) as an unverified, vendor-dependent mapping requiring tenant-specific parser confirmation before any use -- reintroducing exactly the unbound semantic branch that review explicitly said not to enable.
 - Adversarial re-check: Re-ran the procedure-branch matrix against the proposal. It does not close the stated "direct cross-process access and execution sequence" branch because it never differentiates accessor from target; canonical logic is unchanged and no compensating rule is added.
 - Required regeneration: none. Canonical logic, telemetry, translations, and dependencies are unchanged because the proposal was rejected, not adopted or modified.
@@ -89,3 +90,8 @@ rule havoc_memory_execution_from_network_process_proposal {
 ```
 
 This proposal is actual detection logic for the scoped missing branch, not an automatic adoption. It must be compiled, mapped, benign-baselined and adversarially reviewed before canonical use. The only accepted comparison change in this pass is the independently implemented stable-destination recurrence rule documented above.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `detections/endpoint/windows_process_injection_remote_thread.yml` changed between 457ce9f and 2150948; re-read on 2026-11-21: only modification date and analytic-story metadata changed; the search is identical. The comparison conclusions and decision are unaffected.

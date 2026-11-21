@@ -1,7 +1,7 @@
 # Impacket translation review
 
-- Canonical rules: 23 YARA-L rules under `detections/impacket/yaral/`.
-- Secondary drafts reviewed: 115 files; 23 each in SPL, KQL, SQL, Elastic EQL, and Sigma.
+- Canonical rules: 25 YARA-L rules under `detections/impacket/yaral/`.
+- Secondary drafts reviewed: 125 files; 25 each in SPL, KQL, SQL, Elastic EQL, and Sigma.
 - Parity: complete by basename and source linkage.
 - Fidelity: generator drafts are `partial`; the three rules in the 2026-11-21 exceptions are `high` or `partial` as listed. None claim equivalence or validation.
 - Shared backend limitations: `schemas/splunk-cim.yml`, `schemas/sentinel-asim.yml`, `schemas/normalized-sql.yml`, `schemas/elastic-ecs.yml`, and `schemas/sigma.yml`.
@@ -21,3 +21,10 @@
   - **EQL** is `partial`: it cannot aggregate.
 - `impacket_wmi_activity_operational_class_signal`: SPL, KQL, SQL and Sigma are `high`; EQL is `partial`.
 - Four base rules received the anchoring fix (REVIEW-009) and were regenerated with `scripts/translate-yaral.ps1`, remaining `partial` drafts: `impacket_terminal_services_control`, `impacket_remote_registry_activity`, `impacket_wmi_subscription_change` and `impacket_rapid_scheduled_task_create_and_run`.
+
+## 2026-11-21 exceptions — comparison backlog resolution
+
+- `impacket_directory_replication_rights_use` (single-event aggregation) and `impacket_new_machine_account_s4u` (ordered two-event sequence on the new account) are rendered natively (`scripts/native_translations/specs_ri.py`).
+  - **Replication rule:** SPL, KQL, SQL and Sigma `high`; EQL `partial`.
+  - **Sequence rule:** KQL, SQL, EQL and Sigma `high`; SPL `partial`, because the `stats` correlation compares the earliest first-leg time with the latest second-leg time rather than per pair.
+- The generator drafts for `impacket_rapid_scheduled_task_create_and_run`, `impacket_remote_rpc_discovery` and `impacket_unusual_protocol_listener` were regenerated. The first previously emitted a wildcard event list, because the generator did not strip `^`/`$` from anchored alternations; that is now fixed in `scripts/translate-yaral.ps1`. The other two follow the port-equality fix (REVIEW-015).

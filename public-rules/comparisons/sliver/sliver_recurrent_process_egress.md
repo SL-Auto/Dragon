@@ -10,7 +10,7 @@
 - Scope mapping rationale: procedure, ordered behavior, security effect, platform and telemetry; names and syntax were not mapping criteria.
 
 Public candidate:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/integrations/beaconing/command_and_control_beaconing.toml`](../../public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/integrations/beaconing/command_and_control_beaconing.toml) - SHA-256 `d0fbb054f29b80fbabfd18d901114fc4b73626d06d70de3bf2d3a657b576b989`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/integrations/beaconing/command_and_control_beaconing.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/integrations/beaconing/command_and_control_beaconing.toml) - SHA-256 `15dcc199f4d6f4c857491e708ee86dca4969214ba73533c85c30e39e5b038c0c`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,15 @@ Five connections is a weak count, missing periodicity, destination stability, ra
 
 ## Decision trail
 
-- Candidate improvement: independently implement and test the strong branch below.
-- Independent verification: pinned Sliver source, provider semantics, schema mappings and authorized sanitized fixtures required.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: comparative evidence is not canonical authority; proposal has not passed adversarial review.
-- Required regeneration: canonical detection review, coverage, telemetry/master, five translations, dependencies/manifests/hashes, then re-comparison.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/sliver/detection-review.md`.
+- Prior state: this trail still read `deferred_pending_rule_improvement_run`, although the 2026-08-16 backlog resolution (REVIEW-010 to REVIEW-014) had already acted on the proposal; this pass re-reviews that action and records the terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - Rewritten in place: grouped by host, PID and destination (not process image) and requiring at least 5 connections across at least 4 distinct minutes in 1 hour (REVIEW-003, REVIEW-014).
+  - Dropped the proposal's hard destination-prevalence requirement, which is optional enrichment in `telemetry/sliver.md` (REVIEW-011).
+- Canonical result: `detections/sliver/yaral/sliver_recurrent_process_egress.yaral`, SHA-256 `8ceeda0c19ed5b6fd4a4c0463fa38d65bff3ee64aae738aebed1c1333ce7d605`.
+- Regeneration: coverage, telemetry, `telemetry/MASTER.md`, five translations and dependency hashes were regenerated on 2026-08-16 when the rule was adopted; re-verified present and hash-consistent on 2026-11-21.
 
 ## Unmatched scope
 
@@ -89,3 +93,48 @@ rule sliver_recurrent_process_egress_strong_branch {
 ```
 
 The proposal uses concrete telemetry semantics but does not prove tool identity. It remains limited by collection health, process-entity fidelity, enrichment quality and activity outside the window. If accepted or modified, complete the full downstream workflow; if rejected, preserve the rationale without changing canonical logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/integrations/beaconing/command_and_control_beaconing.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| One process repeatedly contacts one destination | covered (PID plus destination, minute spread) | `command_and_control_beaconing.toml`: beaconing-integration statistical model (`beacon_stats.is_beaconing`) | per-destination minute-spread recurrence - strong | integration beaconing score - moderate | complementary |
+| Jittered or long-interval beaconing beyond 1 hour | not covered | covered by the integration's longer baselines | long-window periodicity - moderate | `sliver_low_and_slow_udp_beacon` for UDP - moderate | public_stronger |
+
+- Current canonical YARA-L `detections/sliver/yaral/sliver_recurrent_process_egress.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule sliver_recurrent_process_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "One process entity repeatedly communicates outbound to the same destination, spread across multiple minutes"
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Adding per-destination grouping and a minute-spread requirement fixes the review-acknowledged weakness that a bare five-connections-per-image threshold with no destination dimension is satisfied by ordinary multi-site browsing and misses whether recurrence is against one stable destination"
+    procedure_ids = "PROC-002,PROC-003"
+    log_source_prerequisites = "Process-attributed network events with stable process entity and destination"
+    false_positives = "Agents, updaters, browsers, monitoring"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_recurrent_process_egress.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "modified_from_unvalidated_proposal"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.network.direction = "OUTBOUND"
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $pid
+    $e.target.ip = $destination
+  match: $host, $pid, $destination over 1h
+  outcome:
+    $connections = count($e.metadata.id)
+    $active_minutes = count_distinct(timestamp.get_minute($e.metadata.event_timestamp.seconds))
+  condition: $e and $connections >= 5 and $active_minutes >= 4
+}
+```
+
+- Re-comparison outcome: the current canonical rule set closes the branch the proposal targeted, within declared telemetry. Remaining limits are the accepted gaps in `reviews/sliver/detection-review.md`.

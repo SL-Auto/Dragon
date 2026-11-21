@@ -10,7 +10,7 @@
 - Scope mapping rationale: mapped by security effect, ordered procedure and required telemetry; names and syntax were not mapping criteria.
 
 Public evidence:
-- Behaviorally relevant public candidate: [LSA security-package registration](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/persistence_via_lsa_security_support_provider_registry.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `49cfe6d605473eedb20f48f0d285a100081ea4f3f91bcc9f3e21cf02a47410a6`.
+- Behaviorally relevant public candidate: [LSA security-package registration](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/persistence_via_lsa_security_support_provider_registry.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `251cae46baa6d8404ae10635f7b9b7b25334c6c12a2d72424143f2578fdf7140`.
 
 ## Procedure and detection-branch matrix
 
@@ -91,3 +91,8 @@ rule mimikatz_module_registration_to_protected_load {
 Remaining gaps: thresholds, fields, ordering and trust enrichment need authorized telemetry validation; absence of required collection cannot be interpreted as benign activity.
 
 If accepted or modified, update canonical YARA-L and every downstream artifact, re-run adversarial review, and compare the revised final rule again.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/windows/persistence_via_lsa_security_support_provider_registry.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.

@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped by procedure, observable effect and telemetry rather than name or syntax.
 
 Public candidate:
-- [`public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/impacket_wmiexec_cisa_report.yaral`](../../public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/impacket_wmiexec_cisa_report.yaral) - SHA-256 `f58e8a176873a313463e9f196ef0ee3ea287cf603a772f386032c41511c70d19`
+- [`public-rules/snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/impacket_wmiexec_cisa_report.yaral`](../../snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/impacket_wmiexec_cisa_report.yaral) - SHA-256 `f58e8a176873a313463e9f196ef0ee3ea287cf603a772f386032c41511c70d19`
 
 ## Procedure and detection-branch matrix
 
@@ -89,3 +89,8 @@ rule impacket_wmi_subscription_change_strong_branch {
 ```
 
 This proposal strengthens a procedure-level branch without importing the public predicate. It remains vulnerable to missing source telemetry, semantic mapping errors, and activity outside the correlation period. If adopted, test benign administrative workloads and missing-data behavior, then update every downstream artifact required by the workflow.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/community/microsoft/windows/impacket_wmiexec_cisa_report.yaral` differs between 234e922 and dbc9beb only in line endings (snapshot path moved where applicable); content is identical.

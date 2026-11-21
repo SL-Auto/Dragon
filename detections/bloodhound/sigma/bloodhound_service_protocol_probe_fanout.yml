@@ -1,16 +1,16 @@
-title: "Detects one process probing WebDAV, SMB, LDAP and LDAPS capability across many hosts."
+title: "Detects one process probing at least three distinct service families among WebDAV, SMB, LDAP and LDAPS capability across many hosts, requiring protocol-family diversity rather than raw target/port count."
 name: bloodhound_service_protocol_probe_fanout
 status: experimental
-description: "Detects one process probing WebDAV, SMB, LDAP and LDAPS capability across many hosts."
+description: "Detects one process probing at least three distinct service families among WebDAV, SMB, LDAP and LDAPS capability across many hosts, requiring protocol-family diversity rather than raw target/port count."
 source_yaral: "detections/bloodhound/yaral/bloodhound_service_protocol_probe_fanout.yaral"
 translation_status: experimental_needs_backend_mapping_and_validation
 fidelity: partial
 schema_profile: schemas/sigma.yml
 assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
 references:
-  - "reports/bloodhound/source-analysis.md"
+  - "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_service_protocol_probe_fanout.md, reviews/bloodhound/detection-review.md#bh-dr-30"
 procedure_ids: "BH-013"
-log_source_prerequisites: "Process-attributed network events with target host, port, protocol and connection result."
+log_source_prerequisites: "Process-attributed network events with target host, port and resolved service-family classification."
 logsource:
   category: generic
 detection:

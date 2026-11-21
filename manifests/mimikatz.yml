@@ -29,7 +29,7 @@ artifact_hashes:
   report: 20a5bb1808b093ce3e81a82f0bb0b2a52bbf3db518a1c7e950cf67b1410f2abc
   telemetry: d09a6f61abc9a0890cfabde28e6a00bc14ac498443696a80d9a2f9043b473ce4
   detection_review: 963e155e8971f6a5045fe79865f4d17c7110c090e612a64d839c939472d850c7
-  translation_review: 85b0f5db3b591d6e0101172ac18f04b9c495177f7574c38391a2f334ccc738c6
+  translation_review: 2592d4a5598a1852a84d958c4700c86cb13b47de27c7c0ebfcd620dc84320ef2
 rules:
   - { name: mimikatz_account_secret_change, severity: medium, procedures: "P16", dependency: dependencies/mimikatz/mimikatz_account_secret_change.yml, canonical_sha256: 66d0f40e547f3f9e2415dab8bd67adac1528b43f9044d9d108d9b10e37db07c3 }
   - { name: mimikatz_certificate_key_operation, severity: medium, procedures: "P21,P24", dependency: dependencies/mimikatz/mimikatz_certificate_key_operation.yml, canonical_sha256: 64f823ae73143b204d48f14c9f3530e6f419df149598fad403fac9dcae5c98a6 }
@@ -41,7 +41,7 @@ rules:
   - { name: mimikatz_event_log_impairment, severity: high, procedures: "P26", dependency: dependencies/mimikatz/mimikatz_event_log_impairment.yml, canonical_sha256: b8b872e7353cf5f75c0c80aea0db8b904202b6030ed126f3eba26029188a2a6f }
   - { name: mimikatz_firmware_driver_operation, severity: high, procedures: "P39,P43", dependency: dependencies/mimikatz/mimikatz_firmware_driver_operation.yml, canonical_sha256: 2b4d48eac086f718eb23b625aea716bce51c8cd2c89f319e6276bf1b52fb70d7 }
   - { name: mimikatz_kerberos_activity, severity: low, procedures: "P10", dependency: dependencies/mimikatz/mimikatz_kerberos_activity.yml, canonical_sha256: 5dff37a4aaae23268f0933645c816692994c3368a872a5e4be9c7d2540df41db }
-  - { name: mimikatz_lsass_memory_access, severity: high, procedures: "P07,P09,P13", dependency: dependencies/mimikatz/mimikatz_lsass_memory_access.yml, canonical_sha256: 17540bc7231d2699bc6e55b65575428886667b0966a58fa57a3e48c3cdddbd9a }
+  - { name: mimikatz_lsass_memory_access, severity: high, procedures: "P07,P09,P13", dependency: dependencies/mimikatz/mimikatz_lsass_memory_access.yml, canonical_sha256: 37511a60e9ccd8a81a1e3014d9541ddd3ebdce4d31961a87bbb24586acc32cf6 }
   - { name: mimikatz_module_load_into_lsass_or_spooler, severity: high, procedures: "P06,P36,P44,P45", dependency: dependencies/mimikatz/mimikatz_module_load_into_lsass_or_spooler.yml, canonical_sha256: 92c8c794ad8d9815c6ab0323bdb0371005e6bc89071cabe85b46ea0e2045f4bc }
   - { name: mimikatz_process_file_context, severity: low, procedures: "P01,P31,P33", dependency: dependencies/mimikatz/mimikatz_process_file_context.yml, canonical_sha256: d5f6a552854c45dd35f954e592a3089a05bc9847b59ee2b002984c525c9620ab }
   - { name: mimikatz_protected_sam_system_access_sequence, severity: high, procedures: "P12", dependency: dependencies/mimikatz/mimikatz_protected_sam_system_access_sequence.yml, canonical_sha256: d4d6f914ea4840b15803abae0b4f1b0ddef6087d9e4bfcd1410261e11a7d09d2 }

@@ -10,7 +10,7 @@
 - Scope mapping rationale: mapped by security effect, ordered procedure and required telemetry; names and syntax were not mapping criteria.
 
 Public evidence:
-- Behaviorally relevant public candidate: [LSASS OpenProcess API access](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/credential_access_lsass_openprocess_api.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `b053c9ff7abe3db0852a2d05888838aae2c514b32dd028624cad9964b940ce89`.
+- Behaviorally relevant public candidate: [LSASS OpenProcess API access](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/credential_access_lsass_openprocess_api.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `708a6e458747459ce31e73de4812ae0e2f57b05dd7bacc4ed899af13aa97bd1d`.
 
 ## Procedure and detection-branch matrix
 
@@ -90,3 +90,8 @@ rule mimikatz_lsass_sensitive_granted_access {
 Remaining gaps: thresholds, fields, ordering and trust enrichment need authorized telemetry validation; absence of required collection cannot be interpreted as benign activity.
 
 If accepted or modified, update canonical YARA-L and every downstream artifact, re-run adversarial review, and compare the revised final rule again.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/windows/credential_access_lsass_openprocess_api.toml` changed between 7e91c15 and 9d792a8; re-read on 2026-11-21: the ES|QL now uses `mv_contains(event.category, "api")` and `host.os.type` and needs stack 9.4; the semantics are equivalent. The comparison conclusions and decision are unaffected.

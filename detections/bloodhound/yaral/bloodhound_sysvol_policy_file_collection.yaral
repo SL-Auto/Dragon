@@ -2,14 +2,14 @@ rule bloodhound_sysvol_policy_file_collection {
   meta:
     author = "Detection Research Agent"
     description = "Detects one source process, excluding the Group Policy client service itself, reading multiple policy artifacts from SYSVOL."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "MEDIUM"
     severity_rationale = "SYSVOL policy reads support attack-path discovery but are common for domain clients and management tooling."
     procedure_ids = "BH-011"
     log_source_prerequisites = "Windows 5145 or EDR FILE_READ with source process, account, share/path, target DC and a Group Policy client service (GPSVC) classification label."
     false_positives = "Group Policy processing, configuration management, backup and policy auditing not attributed to the GPSVC host process."
-    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_sysvol_policy_file_collection.md"
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_sysvol_policy_file_collection.md, reviews/bloodhound/detection-review.md#bh-dr-31"
     validation_status = "needs_validation"
     validation_method = "Separate normal client policy refresh (attributed to GPSVC) from broad policy-file traversal fixtures attributed to other processes."
     review_status = "reviewed_with_gaps"
@@ -19,10 +19,10 @@ rule bloodhound_sysvol_policy_file_collection {
     $e.principal.hostname = $source
     $e.principal.process.file.full_path = $process
     $e.principal.process.file.labels["is_group_policy_service"] != "true"
-    re.regex($e.target.file.full_path, `(?i)(SYSVOL|Policies).*(Groups.xml|GptTmpl.inf|Registry.pol)`)
+    re.regex($e.target.file.full_path, `(?i)\\(SYSVOL|Policies)\\.*\\(Groups\.xml|GptTmpl\.inf|Registry\.pol)$`)
     $e.target.file.full_path = $path
   match:
-    $source, $process over 15m
+    $source, $process over 30m
   outcome:
     $paths = count_distinct($path)
   condition:

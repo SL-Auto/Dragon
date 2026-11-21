@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped by procedure, observable effect and telemetry rather than name or syntax.
 
 Public candidate:
-- [`public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/potential_tampering_with_rdp_related_registry_keys_via_reg_exe.yaral`](../../public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/potential_tampering_with_rdp_related_registry_keys_via_reg_exe.yaral) - SHA-256 `e79650f8b000e49753626aa7b858cf0363e069455be9bc5735e869be62c78abd`
+- [`public-rules/snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/potential_tampering_with_rdp_related_registry_keys_via_reg_exe.yaral`](../../snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/potential_tampering_with_rdp_related_registry_keys_via_reg_exe.yaral) - SHA-256 `e79650f8b000e49753626aa7b858cf0363e069455be9bc5735e869be62c78abd`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,17 @@ Common session lifecycle events lack caller-to-target-session attribution and ad
 
 ## Decision trail
 
-- Candidate improvement: independently add the strong branch below, retaining the existing rule until sanitized telemetry proves whether a split or replacement is appropriate.
-- Independent verification: required against pinned Impacket source analysis, provider documentation, local schema mappings, and authorized fixtures.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: public logic is comparative evidence, not authority; this proposal has not passed internal adversarial review.
-- Required regeneration: canonical review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, then this comparison.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/impacket/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, although a rule implementing the proposal's branch had been added on 2026-08-16 and revised on 2026-11-21 (REVIEW-010 to REVIEW-012) without the decision being recorded here.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - Adopted as additive `impacket_terminal_services_session_control_by_other_actor`. It requires both identities to be non-empty before comparing them, because an empty-versus-populated comparison would otherwise match every event (REVIEW-011).
+  - IDs anchored (`^(4778|4779|23|24|25)$`); aggregation per host over 10m.
+  - Actor identity is often absent in session events; this is an accepted gap with the base lifecycle rule as compensation.
+- Canonical result: `detections/impacket/yaral/impacket_terminal_services_control.yaral`, SHA-256 `60bbc59d9f72f780557a5609d5da0202fcf24683a20d0dd972658b622353a4d3`.
+- Canonical result: `detections/impacket/yaral/impacket_terminal_services_session_control_by_other_actor.yaral`, SHA-256 `92d0a4bd4849fe08c77dff4872faa57a3d3eaebe3b004d0121c23a790894a7f5`.
+- Regeneration: the adopted rule was reviewed and regenerated earlier on 2026-11-21 (see review reference); re-verified current.
 
 ## Unmatched scope
 
@@ -84,3 +90,76 @@ rule impacket_terminal_services_control_strong_branch {
 ```
 
 This proposal strengthens a procedure-level branch without importing the public predicate. It remains vulnerable to missing source telemetry, semantic mapping errors, and activity outside the correlation period. If adopted, test benign administrative workloads and missing-data behavior, then update every downstream artifact required by the workflow.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- All public candidates were re-pinned to the refreshed snapshots; no referenced candidate file changed content.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Session connect/disconnect/reconnect events | covered by base rule | `potential_tampering_with_rdp_related_registry_keys_via_reg_exe.yaral`: reg.exe changing Terminal Server keys | session lifecycle - weak | other-actor rule - moderate | different_scope |
+| One actor controlling another user's session | covered by the other-actor rule when both identities exist | not covered | actor differs from session owner - moderate | none | ours_stronger |
+| RDP enablement through registry tampering | not targeted by these rules | covered | reg.exe Terminal Server key change - moderate | none | public_stronger |
+
+- Current canonical YARA-L `detections/impacket/yaral/impacket_terminal_services_control.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule impacket_terminal_services_control {
+ meta:
+  author = "Detection Research Agent"
+  description = "Detects unusual Terminal Services session connect, disconnect or logoff activity."
+  date = "2026-08-15"
+  status = "experimental"
+  severity = "MEDIUM"
+  severity_rationale = "Remote session manipulation may disrupt or hijack user activity."
+  procedure_ids = "IMP-18"
+  log_source_prerequisites = "Terminal Services Operational and Security session events with actor and session."
+  false_positives = "Helpdesk and session administration."
+  references = "reports/impacket/source-analysis.md"
+  validation_status = "needs_validation"
+  review_status = "reviewed_with_gaps"
+  review_reference = "reviews/impacket/detection-review.md"
+ events:
+  $e.metadata.product_event_type = /^(4778|4779|23|24|25)$/
+ condition: $e
+}
+```
+
+- Current canonical YARA-L `detections/impacket/yaral/impacket_terminal_services_session_control_by_other_actor.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule impacket_terminal_services_session_control_by_other_actor {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a Terminal Services session connect, disconnect, reconnect or logoff control action performed by a principal different from the session's own target user, consistent with remote session hijack or tscon-style session takeover."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Controlling another user's interactive session can expose that user's authenticated desktop context and is a known RDP session-hijack primitive."
+    procedure_ids = "IMP-18"
+    log_source_prerequisites = "Terminal Services Operational and Security session events (4778/4779/23/24/25) with both a populated principal (acting) and target (session-owning) user identity."
+    false_positives = "Helpdesk-initiated session shadowing/takeover, session broker or load-balancer service accounts, and RDS farm reconnection performed under a management service identity."
+    references = "reports/impacket/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed"
+    review_reference = "reviews/impacket/detection-review.md"
+    source_comparison = "public-rules/comparisons/impacket/impacket_terminal_services_control.md"
+    comparison_decision = "modify"
+  events:
+    $e.metadata.product_event_type = /^(4778|4779|23|24|25)$/
+    $e.principal.user.userid != ""
+    $e.target.user.userid != ""
+    $e.principal.user.userid != $e.target.user.userid
+    $e.principal.hostname = $host
+  match:
+    $host over 10m
+  outcome:
+    $actors = array_distinct($e.principal.user.userid)
+    $session_owners = array_distinct($e.target.user.userid)
+  condition:
+    $e
+}
+```
+
+- Re-comparison outcome: The adopted rule closes the caller-to-session attribution branch where the provider supplies both identities.

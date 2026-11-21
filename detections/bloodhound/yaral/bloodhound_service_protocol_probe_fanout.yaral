@@ -2,14 +2,14 @@ rule bloodhound_service_protocol_probe_fanout {
   meta:
     author = "Detection Research Agent"
     description = "Detects one process probing at least three distinct service families among WebDAV, SMB, LDAP and LDAPS capability across many hosts, requiring protocol-family diversity rather than raw target/port count."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "MEDIUM"
     severity_rationale = "Multi-protocol capability discovery is suspicious outside scanners but has substantial administrative overlap."
     procedure_ids = "BH-013"
     log_source_prerequisites = "Process-attributed network events with target host, port and resolved service-family classification."
     false_positives = "Vulnerability scanners, service inventory and network monitoring."
-    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_service_protocol_probe_fanout.md"
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_service_protocol_probe_fanout.md, reviews/bloodhound/detection-review.md#bh-dr-30"
     validation_status = "needs_validation"
     validation_method = "Test target/service cardinality and approved scanner exclusions with flow fixtures, including ordinary single-protocol web browsing as a negative."
     review_status = "reviewed_with_gaps"
@@ -20,7 +20,7 @@ rule bloodhound_service_protocol_probe_fanout {
     $e.principal.process.file.full_path = $process
     $e.target.ip = $target
     $e.target.resource.attribute.labels["service_family"] = $service
-    $service = /(?i)(webdav|smb|ldap|ldaps)/
+    re.regex($e.target.resource.attribute.labels["service_family"], `(?i)^(webdav|smb|ldap|ldaps)$`)
   match:
     $host, $process over 30m
   outcome:

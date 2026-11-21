@@ -1,29 +1,29 @@
 ﻿# Impacket public-rule comparison index
 
-All 20 canonical Impacket YARA-L rules have procedure-branch comparisons. Public rules are untrusted comparative evidence. Every proposed code block is an `unvalidated_proposal` and no canonical rule was changed by this comparison pass.
+All 20 canonical Impacket YARA-L rules have procedure-branch comparisons. Public rules are untrusted comparative evidence. Every proposal block remains an `unvalidated_proposal`. Each comparison's decision trail records whether canonical logic was changed; current decisions are listed below. Rules added later (`impacket_ntlm_relay_with_privileged_effect`, `impacket_terminal_services_session_control_by_other_actor`, `impacket_wmi_activity_operational_class_signal`, `impacket_directory_replication_rights_use`, `impacket_new_machine_account_s4u`) are compared within the comparison whose branch they close.
 
 | Internal rule | Procedures | Proposal | Decision |
 | --- | --- | --- | --- |
-| [`impacket_ad_authorization_change`](./impacket_ad_authorization_change.md) | `IMP-10` | patch | deferred_pending_rule_improvement_run |
-| [`impacket_cross_source_ntlm_relay`](./impacket_cross_source_ntlm_relay.md) | `IMP-21` | rewrite | deferred_pending_rule_improvement_run |
-| [`impacket_packet_capture_or_raw_socket`](./impacket_packet_capture_or_raw_socket.md) | `IMP-19` | compensating_rule | deferred_pending_rule_improvement_run |
-| [`impacket_privilege_path_effects`](./impacket_privilege_path_effects.md) | `IMP-22` | rewrite | deferred_pending_rule_improvement_run |
-| [`impacket_rapid_scheduled_task_create_and_run`](./impacket_rapid_scheduled_task_create_and_run.md) | `IMP-04` | compensating_rule | deferred_pending_rule_improvement_run |
-| [`impacket_remote_account_or_group_change`](./impacket_remote_account_or_group_change.md) | `IMP-07` | patch | deferred_pending_rule_improvement_run |
-| [`impacket_remote_registry_activity`](./impacket_remote_registry_activity.md) | `IMP-14` | rewrite | deferred_pending_rule_improvement_run |
-| [`impacket_remote_rpc_discovery`](./impacket_remote_rpc_discovery.md) | `IMP-08,IMP-16` | compensating_rule | deferred_pending_rule_improvement_run |
-| [`impacket_remote_service_binary_sequence`](./impacket_remote_service_binary_sequence.md) | `IMP-03` | rewrite | deferred_pending_rule_improvement_run |
-| [`impacket_remote_wmi_activity`](./impacket_remote_wmi_activity.md) | `IMP-05` | compensating_rule | deferred_pending_rule_improvement_run |
-| [`impacket_sensitive_file_or_replication_access`](./impacket_sensitive_file_or_replication_access.md) | `IMP-13` | split | deferred_pending_rule_improvement_run |
-| [`impacket_sensitive_ldap_search`](./impacket_sensitive_ldap_search.md) | `IMP-09` | patch | deferred_pending_rule_improvement_run |
-| [`impacket_short_lived_command_service`](./impacket_short_lived_command_service.md) | `IMP-03` | rewrite | deferred_pending_rule_improvement_run |
-| [`impacket_smb_sensitive_file_activity`](./impacket_smb_sensitive_file_activity.md) | `IMP-01,IMP-13` | patch | deferred_pending_rule_improvement_run |
-| [`impacket_suspicious_kerberos_requests`](./impacket_suspicious_kerberos_requests.md) | `IMP-11` | rewrite | deferred_pending_rule_improvement_run |
-| [`impacket_suspicious_service_control`](./impacket_suspicious_service_control.md) | `IMP-03` | rewrite | deferred_pending_rule_improvement_run |
-| [`impacket_terminal_services_control`](./impacket_terminal_services_control.md) | `IMP-18` | patch | deferred_pending_rule_improvement_run |
-| [`impacket_unusual_protocol_listener`](./impacket_unusual_protocol_listener.md) | `IMP-02` | patch | deferred_pending_rule_improvement_run |
-| [`impacket_unusual_service_authentication`](./impacket_unusual_service_authentication.md) | `IMP-15` | compensating_rule | deferred_pending_rule_improvement_run |
-| [`impacket_wmi_subscription_change`](./impacket_wmi_subscription_change.md) | `IMP-06` | rewrite | deferred_pending_rule_improvement_run |
+| [`impacket_ad_authorization_change`](./impacket_ad_authorization_change.md) | `IMP-10` | patch | reject |
+| [`impacket_cross_source_ntlm_relay`](./impacket_cross_source_ntlm_relay.md) | `IMP-21` | rewrite | modify |
+| [`impacket_packet_capture_or_raw_socket`](./impacket_packet_capture_or_raw_socket.md) | `IMP-19` | compensating_rule | reject |
+| [`impacket_privilege_path_effects`](./impacket_privilege_path_effects.md) | `IMP-22` | rewrite | reject |
+| [`impacket_rapid_scheduled_task_create_and_run`](./impacket_rapid_scheduled_task_create_and_run.md) | `IMP-04` | compensating_rule | reject |
+| [`impacket_remote_account_or_group_change`](./impacket_remote_account_or_group_change.md) | `IMP-07` | patch | reject |
+| [`impacket_remote_registry_activity`](./impacket_remote_registry_activity.md) | `IMP-14` | rewrite | reject |
+| [`impacket_remote_rpc_discovery`](./impacket_remote_rpc_discovery.md) | `IMP-08,IMP-16` | compensating_rule | reject |
+| [`impacket_remote_service_binary_sequence`](./impacket_remote_service_binary_sequence.md) | `IMP-03` | rewrite | reject |
+| [`impacket_remote_wmi_activity`](./impacket_remote_wmi_activity.md) | `IMP-05` | compensating_rule | modify |
+| [`impacket_sensitive_file_or_replication_access`](./impacket_sensitive_file_or_replication_access.md) | `IMP-13` | split | modify |
+| [`impacket_sensitive_ldap_search`](./impacket_sensitive_ldap_search.md) | `IMP-09` | patch | reject |
+| [`impacket_short_lived_command_service`](./impacket_short_lived_command_service.md) | `IMP-03` | rewrite | reject |
+| [`impacket_smb_sensitive_file_activity`](./impacket_smb_sensitive_file_activity.md) | `IMP-01,IMP-13` | patch | reject |
+| [`impacket_suspicious_kerberos_requests`](./impacket_suspicious_kerberos_requests.md) | `IMP-11` | rewrite | reject |
+| [`impacket_suspicious_service_control`](./impacket_suspicious_service_control.md) | `IMP-03` | rewrite | reject |
+| [`impacket_terminal_services_control`](./impacket_terminal_services_control.md) | `IMP-18` | patch | modify |
+| [`impacket_unusual_protocol_listener`](./impacket_unusual_protocol_listener.md) | `IMP-02` | patch | reject |
+| [`impacket_unusual_service_authentication`](./impacket_unusual_service_authentication.md) | `IMP-15` | compensating_rule | reject |
+| [`impacket_wmi_subscription_change`](./impacket_wmi_subscription_change.md) | `IMP-06` | rewrite | reject |
 
 ## Portfolio findings
 

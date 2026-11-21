@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_unusual_protocol_listener
 canonical_path: detections/impacket/yaral/impacket_unusual_protocol_listener.yaral
-canonical_sha256: 5221ad1aefbe816e25263a216f6d5d0fa4dd07742eb73ab034bd3701bc33c742
+canonical_sha256: 98a9c940d164b05c56ff29973b65972b064a685c1f7395639bbdac7468910de3
 description: "Detects non-server processes listening on SMB or relay-associated service ports."
 severity: medium
 procedure_ids: ["IMP-02"]
@@ -15,10 +15,10 @@ uses_multi_event_correlation: false
 uses_aggregation: false
 uses_absence_logic: false
 false_positives: "Approved file servers, development services and security tools."
-references: "reports/impacket/source-analysis.md"
+references: "reports/impacket/source-analysis.md, reviews/impacket/detection-review.md#review-015"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_unusual_protocol_listener.spl", sha256: b20343579bde99e235139ed5af7174309b3aef5eebdc451fb1d8e152247268ad, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_unusual_protocol_listener.kql", sha256: 8a4f0536913b82d294fe1c6b5eee21ba9f0bb5b0389c459d6285b1111dea5773, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_unusual_protocol_listener.sql", sha256: 988333a354326903c3000203e4a9f3951379d504f5d3933d9518781303cc8a8b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_unusual_protocol_listener.eql", sha256: 7cf8fe15989771b91c9d112921b78ad1d52599b9fa07a6c68501257f1d00fe5d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_unusual_protocol_listener.yml", sha256: 926a2b86f8617e191f2e4bbe99cd14963cd2dd0962a63a7cc26d0453603def2f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_unusual_protocol_listener.spl", sha256: 147435f4ee25ff7d0d3a87b586cb1028d46389244c8e31d9a9182fbb3c4a4563, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_unusual_protocol_listener.kql", sha256: 134a6c3f8f4beb84be6c116a950807196d053660e757ef548869c200f33bbdcd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_unusual_protocol_listener.sql", sha256: 4eae7a17b35f0d43669e5af916f15fcbe127d9accf901890f06d80417d05afc6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_unusual_protocol_listener.eql", sha256: cdeb3d43a146e820d1b0bc38134718e2a6daeb52cce27f778f1aec523996d232, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_unusual_protocol_listener.yml", sha256: 34c5096b395b9d7853247edfa0b5912393fe517c8461c57dbe920b07cf34e0cb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

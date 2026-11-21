@@ -2,22 +2,22 @@
 
 Pinned Rubeus revision: `74215f68ea70bd6a66c008da91bf5fe21d20b154`
 
-All 12 canonical Rubeus rules were compared from a threat-detection perspective. These comparisons identify improvements but deliberately do not alter canonical logic in the same pass; each accepted change must pass the normal adversarial review and regeneration gates.
+All 12 canonical Rubeus rules were compared from a threat-detection perspective. Every comparison ends in a terminal `accept`, `modify` or `reject` decision; accepted and modified proposals were implemented in canonical YARA-L after adversarial review, with full downstream regeneration. Rules added by later passes are covered through the comparison whose branch they close.
 
-| Internal rule | Procedure | Headline conclusion |
-| --- | --- | --- |
-| [rubeus_as_request_anomaly](./rubeus_as_request_anomaly.md) | PROC-001 | complementary, ours_stronger, public_stronger |
-| [rubeus_asrep_roast_sequence](./rubeus_asrep_roast_sequence.md) | PROC-003 | ours_stronger, public_stronger |
-| [rubeus_kerberoast_sequence](./rubeus_kerberoast_sequence.md) | PROC-004 | complementary, ours_stronger, public_stronger |
-| [rubeus_kerberos_over_http_proxy](./rubeus_kerberos_over_http_proxy.md) | PROC-013 | insufficient_evidence, ours_stronger, public_stronger |
-| [rubeus_lsa_ticket_cache_operations](./rubeus_lsa_ticket_cache_operations.md) | PROC-006 | complementary, different_scope, equivalent |
-| [rubeus_lsa_ticket_mutation](./rubeus_lsa_ticket_mutation.md) | PROC-007 | ours_stronger, public_stronger |
-| [rubeus_netonly_ticket_sequence](./rubeus_netonly_ticket_sequence.md) | PROC-007 | different_scope, ours_stronger, public_stronger |
-| [rubeus_s4u_ticket_sequence](./rubeus_s4u_ticket_sequence.md) | PROC-005 | ours_stronger, public_stronger |
-| [rubeus_service_ticket_or_renewal_anomaly](./rubeus_service_ticket_or_renewal_anomaly.md) | PROC-002 | ours_stronger, public_stronger |
-| [rubeus_ticket_artifact_access_or_creation](./rubeus_ticket_artifact_access_or_creation.md) | PROC-008,PROC-009,PROC-010,PROC-013 | insufficient_evidence, ours_stronger, public_stronger |
-| [rubeus_ticket_use_without_credible_kdc_issue](./rubeus_ticket_use_without_credible_kdc_issue.md) | PROC-008,PROC-009 | complementary, ours_stronger |
-| [rubeus_unusual_kerberos_password_change](./rubeus_unusual_kerberos_password_change.md) | PROC-012 | equivalent, insufficient_evidence, public_stronger |
+| Internal rule | Procedure | Headline conclusion | Decision |
+| --- | --- | --- | --- |
+| [rubeus_as_request_anomaly](./rubeus_as_request_anomaly.md) | PROC-001 | complementary, ours_stronger, public_stronger | modify |
+| [rubeus_asrep_roast_sequence](./rubeus_asrep_roast_sequence.md) | PROC-003 | ours_stronger, public_stronger | modify |
+| [rubeus_kerberoast_sequence](./rubeus_kerberoast_sequence.md) | PROC-004 | complementary, ours_stronger, public_stronger | modify |
+| [rubeus_kerberos_over_http_proxy](./rubeus_kerberos_over_http_proxy.md) | PROC-013 | insufficient_evidence, ours_stronger, public_stronger | modify |
+| [rubeus_lsa_ticket_cache_operations](./rubeus_lsa_ticket_cache_operations.md) | PROC-006 | complementary, different_scope, equivalent | modify |
+| [rubeus_lsa_ticket_mutation](./rubeus_lsa_ticket_mutation.md) | PROC-007 | ours_stronger, public_stronger | modify |
+| [rubeus_netonly_ticket_sequence](./rubeus_netonly_ticket_sequence.md) | PROC-007 | different_scope, ours_stronger, public_stronger | reject |
+| [rubeus_s4u_ticket_sequence](./rubeus_s4u_ticket_sequence.md) | PROC-005 | ours_stronger, public_stronger | modify |
+| [rubeus_service_ticket_or_renewal_anomaly](./rubeus_service_ticket_or_renewal_anomaly.md) | PROC-002 | ours_stronger, public_stronger | modify |
+| [rubeus_ticket_artifact_access_or_creation](./rubeus_ticket_artifact_access_or_creation.md) | PROC-008,PROC-009,PROC-010,PROC-013 | insufficient_evidence, ours_stronger, public_stronger | modify |
+| [rubeus_ticket_use_without_credible_kdc_issue](./rubeus_ticket_use_without_credible_kdc_issue.md) | PROC-008,PROC-009 | complementary, ours_stronger | modify |
+| [rubeus_unusual_kerberos_password_change](./rubeus_unusual_kerberos_password_change.md) | PROC-012 | equivalent, insufficient_evidence, public_stronger | modify |
 
 ## Cross-rule findings
 

@@ -8,7 +8,7 @@
 - Procedures: HV-P01, HV-P03
 - Public candidates were consulted only after independent source analysis, rule generation and adversarial review.
 
-- [`public-rules/snapshots/microsoft-sentinel/5f947544657288586559c41b218eaaf182636728/Detections/ASimNetworkSession/PossibleBeaconingActivity.yaml`](../../snapshots/microsoft-sentinel/5f947544657288586559c41b218eaaf182636728/Detections/ASimNetworkSession/PossibleBeaconingActivity.yaml) - SHA-256 `3734a32db60c4407ee333c5c55c14ed635237cef4e4ac2f338064b59ac399e93`
+- [`public-rules/snapshots/microsoft-sentinel/c3361d9ff34320e7fe3314d5f9063e15470ca53e/Detections/ASimNetworkSession/PossibleBeaconingActivity.yaml`](../../snapshots/microsoft-sentinel/c3361d9ff34320e7fe3314d5f9063e15470ca53e/Detections/ASimNetworkSession/PossibleBeaconingActivity.yaml) - SHA-256 `3734a32db60c4407ee333c5c55c14ed635237cef4e4ac2f338064b59ac399e93`
 
 ## Procedure and detection-branch matrix
 
@@ -52,7 +52,8 @@
 
 - Candidate improvement: collection-health and prevalence context
 - Independent verification: pinned Havoc report, internal review, telemetry contract and candidate hash/path above
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: Adversarial review of the proposal (2026-08-16) found it degenerate. The two declared event variables (`$a`, `$b`) have byte-for-byte identical constraints (`metadata.product_event_type = "NETWORK_CONNECTION"`, same `$host`, same `$pid`) with no distinguishing field, so the rule implements no "collection-health and prevalence context" logic at all -- it is a trivial self-referential pair with `condition: $a and $b`, which any single matching connection event can satisfy. Even the proposal's own "Required telemetry" line repeats "concrete NETWORK_CONNECTION and NETWORK_CONNECTION mappings," confirming the text was not adapted from the shared template for this specific branch. It also uses `metadata.product_event_type` rather than this repository's `metadata.event_type` convention.
 - Adversarial re-check: Re-ran the procedure-branch matrix against the proposal. It does not close the stated missing branch (collection-health/prevalence context remains open) and adds no enforceable logic beyond the existing canonical `havoc_stable_destination_beaconing` rule; canonical logic is unchanged and no compensating rule is added.
 - Required regeneration: none. Canonical logic, telemetry, translations, and dependencies are unchanged because the proposal was rejected, not adopted or modified.
@@ -89,3 +90,8 @@ rule havoc_stable_destination_beaconing_proposal {
 ```
 
 This proposal is actual detection logic for the scoped missing branch, not an automatic adoption. It must be compiled, mapped, benign-baselined and adversarially reviewed before canonical use. The only accepted comparison change in this pass is the independently implemented stable-destination recurrence rule documented above.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- No referenced candidate changed content.

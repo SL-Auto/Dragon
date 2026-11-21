@@ -10,7 +10,7 @@
 - Scope mapping rationale: mapped by security effect, ordered procedure and required telemetry; names and syntax were not mapping criteria.
 
 Public evidence:
-- Closest public rule examined and rejected as a counterpart: [directory replication-right access](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/credential_access_dcsync_replication_rights.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `4ebde964c7eccf61c3b015ebaebab06e7d5f0f7b8031e57b0135d727cc71066b`.
+- Closest public rule examined and rejected as a counterpart: [directory replication-right access](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/credential_access_dcsync_replication_rights.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `377bfc1f0d8db80de055524492e581dceddb326b4248640258186854f8756c83`.
 
 ## Procedure and detection-branch matrix
 
@@ -89,3 +89,8 @@ rule mimikatz_domain_discovery_to_sensitive_access {
 Remaining gaps: thresholds, fields, ordering and trust enrichment need authorized telemetry validation; absence of required collection cannot be interpreted as benign activity.
 
 If accepted or modified, update canonical YARA-L and every downstream artifact, re-run adversarial review, and compare the revised final rule again.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/windows/credential_access_dcsync_replication_rights.toml` changed between 7e91c15 and 9d792a8; re-read on 2026-11-21: the new-terms history window grew from 12h to 30h, so the rule alerts on fewer repeat principals; the replication-GUID predicate is identical. The comparison conclusions and decision are unaffected.

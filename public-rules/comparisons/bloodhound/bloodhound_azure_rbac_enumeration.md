@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidate chosen by the same procedure branch or closest compensating observable, never by rule-name similarity alone.
 
 Public candidate:
-- [Elastic AzureHound user-agent rule](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/integrations/azure/discovery_bloodhound_user_agents_detected.toml) - pinned revision and SHA-256 `ae4b54c0bd1908c0eefc9f7b8e315a543ee1e3e5795578329fea972e02ffac60`.
+- [Elastic AzureHound user-agent rule](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/integrations/azure/discovery_bloodhound_user_agents_detected.toml) - pinned revision and SHA-256 `23a2c98500bd2c50247d9d802f3681598a9844e77779b0c82682d5a85773826c`.
 
 ## Procedure and detection-branch matrix
 
@@ -47,11 +47,15 @@ single high-value scope, Graph role-management endpoints, pagination, inherited 
 
 ## Decision trail
 
-- Candidate improvement: independently add the missing procedure branch shown below; no public predicate is copied.
-- Independent verification: compare against pinned collector source, actual provider semantics, sanitized fixtures and benign inventory baselines.
-- Decision: `deferred_pending_rule_improvement_run`.
-- Reason: comparison code is an unvalidated detection-engineering proposal, not canonical logic.
-- Required regeneration: canonical review, coverage, telemetry, all translations, dependencies/hashes and this comparison after acceptance or modification.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/bloodhound/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, and canonical logic had not acted on the proposal; decided here with the evidence in hand.
+- Decision: `reject`.
+- Reason: the proposal is not adopted:
+  - The proposal's stated gap is a single high-value scope, yet it still requires five scopes and adds an AND on three relationship types, which opens a new false-negative path (BH-DR re-review).
+  - It depends on `authorization_relationship` and `scope_id` labels that no parser populates, and on a placeholder-regex comparison that is not valid YARA-L (BH-DR-30).
+- Canonical result: no canonical logic changed; the proposed code is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration: none required; canonical logic is unchanged.
 
 ## Unmatched scope
 
@@ -90,3 +94,16 @@ rule bloodhound_azure_authorization_relationship_enumeration {
 Remaining gaps: intent is not established; thresholds, normalized fields and benign baselines require authorized telemetry testing. Distributed activity and missing collection require separate compensating analytics and collection-health monitoring.
 
 If adopted, independently revise canonical YARA-L, re-run adversarial review, reconcile telemetry and master counts, regenerate all five translations and dependencies, and re-compare the final logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/integrations/azure/discovery_bloodhound_user_agents_detected.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Role assignment, definition, owner and access-policy reads across many scopes | covered (>= 10 scopes over 30 minutes, including AzureActivity) | `discovery_bloodhound_user_agents_detected.toml`: AzureHound/SharpHound/BloodHound user-agent strings in Microsoft cloud logs | authorization-operation breadth - moderate | resource fan-out rule - moderate | complementary |
+| Single high-value scope read | not covered | not covered | none | cloud audit of privileged role reads - weak | insufficient_evidence |
+| Collector identified by its default user agent | not targeted (mutable name) | covered | user-agent string - weak (mutable) | behavioral rules - moderate | different_scope |
+
+- Re-comparison outcome: canonical logic is unchanged; the conclusions above stand against the re-pinned candidates.

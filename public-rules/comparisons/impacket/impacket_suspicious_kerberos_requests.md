@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped by procedure, observable effect and telemetry rather than name or syntax.
 
 Public candidate:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/_deprecated/privilege_escalation_krbrelayup_suspicious_logon.toml`](../../public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/_deprecated/privilege_escalation_krbrelayup_suspicious_logon.toml) - SHA-256 `3e78aa4fae6e9c216368f412c301512c30698baffaec39a9da33f6f3c47c35d2`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/_deprecated/privilege_escalation_krbrelayup_suspicious_logon.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/_deprecated/privilege_escalation_krbrelayup_suspicious_logon.toml) - SHA-256 `3e78aa4fae6e9c216368f412c301512c30698baffaec39a9da33f6f3c47c35d2`
 
 ## Procedure and detection-branch matrix
 
@@ -89,3 +89,8 @@ rule impacket_suspicious_kerberos_requests_strong_branch {
 ```
 
 This proposal strengthens a procedure-level branch without importing the public predicate. It remains vulnerable to missing source telemetry, semantic mapping errors, and activity outside the correlation period. If adopted, test benign administrative workloads and missing-data behavior, then update every downstream artifact required by the workflow.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- No referenced candidate changed content.

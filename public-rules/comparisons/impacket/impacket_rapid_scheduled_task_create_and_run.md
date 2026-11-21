@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped by procedure, observable effect and telemetry rather than name or syntax.
 
 Public candidate:
-- [`public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/mitre_attack_T1053_005_windows_creation_of_scheduled_task.yaral`](../../public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/mitre_attack_T1053_005_windows_creation_of_scheduled_task.yaral) - SHA-256 `2eb44b846b6b7f7c6cb3e9cf2d371e11bb8fe956c84edc6bacd2b7a94711c637`
+- [`public-rules/snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/mitre_attack_T1053_005_windows_creation_of_scheduled_task.yaral`](../../snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/mitre_attack_T1053_005_windows_creation_of_scheduled_task.yaral) - SHA-256 `2eb44b846b6b7f7c6cb3e9cf2d371e11bb8fe956c84edc6bacd2b7a94711c637`
 
 ## Procedure and detection-branch matrix
 
@@ -83,3 +83,8 @@ rule impacket_rapid_scheduled_task_create_and_run_strong_branch {
 ```
 
 This proposal strengthens a procedure-level branch without importing the public predicate. It remains vulnerable to missing source telemetry, semantic mapping errors, and activity outside the correlation period. If adopted, test benign administrative workloads and missing-data behavior, then update every downstream artifact required by the workflow.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/community/microsoft/windows/mitre_attack_T1053_005_windows_creation_of_scheduled_task.yaral` differs between 234e922 and dbc9beb only in line endings (snapshot path moved where applicable); content is identical.

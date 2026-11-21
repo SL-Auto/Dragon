@@ -7,7 +7,7 @@
 // description: A network-active process obtains a memory-read-capable handle to a protected credential process such as lsass
 // log_source_prerequisites: Tenant-verified EDR process-access event (for example Sysmon Event ID 10) with target process identity and access mask, plus process-attributed network telemetry sharing a stable process entity
 // false_positives: EDR/AV agents, debuggers, and credential-backup tools that legitimately open lsass with read access
-// references: reports/sliver/source-analysis.md
+// references: reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_process_access_from_network_process.md, reviews/sliver/detection-review.md#review-016
 // assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 // schema_profile: schemas/sentinel-asim.yml
 NormalizedEvents

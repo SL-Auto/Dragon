@@ -8,7 +8,7 @@
 - Procedures: HV-P02, HV-P15
 - Public candidates were consulted only after independent source analysis, rule generation and adversarial review.
 
-- [`public-rules/snapshots/splunk-security-content/457ce9f5ea69a8d5be9463989ee23b9366858d16/detections/endpoint/windows_suspicious_named_pipe.yml`](../../snapshots/splunk-security-content/457ce9f5ea69a8d5be9463989ee23b9366858d16/detections/endpoint/windows_suspicious_named_pipe.yml) - SHA-256 `804aa398b05967e9aa1b43ac8b26f0d178c8b6ff6583e93b3ccda9ac1e25df6c`
+- [`public-rules/snapshots/splunk-security-content/21509485465aaed2cfa4604e3d2ab5ee52975f0a/detections/endpoint/windows_suspicious_named_pipe.yml`](../../snapshots/splunk-security-content/21509485465aaed2cfa4604e3d2ab5ee52975f0a/detections/endpoint/windows_suspicious_named_pipe.yml) - SHA-256 `ea15f3bf7c753041a93b704480868c0bbf6c8bd4af5010e00e259ba50f898154`
 
 ## Procedure and detection-branch matrix
 
@@ -52,7 +52,8 @@
 
 - Candidate improvement: remote SMB session confirmation
 - Independent verification: pinned Havoc report, internal review, telemetry contract and candidate hash/path above
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: The public branch depends on mutable names or command implementation and would weaken behavioral coverage; proposal is retained only as unvalidated comparative code.
 - Required regeneration: canonical review, telemetry, translations, dependencies and comparison when adopted
 
@@ -88,3 +89,8 @@ rule havoc_named_pipe_network_context_proposal {
 ```
 
 This proposal is actual detection logic for the scoped missing branch, not an automatic adoption. It must be compiled, mapped, benign-baselined and adversarially reviewed before canonical use. The only accepted comparison change in this pass is the independently implemented stable-destination recurrence rule documented above.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `detections/endpoint/windows_suspicious_named_pipe.yml` changed between 457ce9f and 2150948; re-read on 2026-11-21: the lookup gained `local=t` (execution locality only); the pipe-name logic is identical. The comparison conclusions and decision are unaffected.

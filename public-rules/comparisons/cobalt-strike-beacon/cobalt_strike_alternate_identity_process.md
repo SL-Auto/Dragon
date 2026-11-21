@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/privilege_escalation_create_process_with_token_unpriv.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/privilege_escalation_create_process_with_token_unpriv.toml) - SHA-256 `7c77989e0850886e4ce7a4fce305550a196863bd32551b1c4c413b34993cee35`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/privilege_escalation_create_process_with_token_unpriv.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/privilege_escalation_create_process_with_token_unpriv.toml) - SHA-256 `3c5cbda8b671438ba5af2933a41fee9fc46ad35f4bc10dbb58043b335b2584d2`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,16 @@ The canonical rule has broader tool-independent intent, but resource-side authen
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, and canonical logic had not acted on the proposal; decided here with the evidence in hand.
+- Decision: `reject`.
+- Reason: the proposal is not adopted:
+  - The proposal matches every successful AUTHENTICATION by any user (`#target >= 1`), with no link to the 4648 alternate identity, so it would alert on all authentication (DR-24).
+  - Resource-side confirmation would need a cross-host join (4648 TargetServerName to a 4624 on that server with the source workstation), and WorkstationName is not reliably populated for Kerberos network logons.
+  - Compensating signal: `cobalt_strike_unusual_authentication_material_use`. Re-review also recorded the new-credentials token limitation as an accepted gap.
+- Canonical result: no canonical logic changed; the proposed code is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration: none required; canonical logic is unchanged.
 
 ## Unmatched scope
 
@@ -88,3 +93,16 @@ rule cobalt_strike_alternate_identity_process_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/privilege_escalation_create_process_with_token_unpriv.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Explicit-credential use (4648) followed by a process running as that account | covered | `privilege_escalation_create_process_with_token_unpriv.toml`: process created with another logon session's token | 4648 + same-account process - moderate | token-impersonation process creation - strong | complementary |
+| Process created with a stolen or duplicated token | not covered by this rule | covered | token-session mismatch - strong | none | public_stronger |
+| Resource-side use of the alternate identity | not covered (no reliable cross-host key) | not covered | none | resource 4624 analytics - weak | insufficient_evidence |
+
+- Re-comparison outcome: canonical logic is unchanged; the token-impersonation branch is a recorded public_stronger gap.

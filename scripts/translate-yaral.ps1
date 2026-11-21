@@ -45,7 +45,7 @@ foreach ($toolDirectory in $toolDirectories) {
         $eventTypes = [System.Collections.Generic.List[string]]::new()
         [regex]::Matches($text, '(?m)metadata\.(?:product_event_type|event_type)\s*=\s*"([^"]+)"') | ForEach-Object { $eventTypes.Add($_.Groups[1].Value) }
         [regex]::Matches($text, '(?m)metadata\.(?:product_event_type|event_type)\s*=\s*/([^/]+)/') | ForEach-Object {
-            ($_.Groups[1].Value -replace '[()]', '').Split('|') | ForEach-Object { if ($_ -match '^[A-Za-z0-9_ -]+$') { $eventTypes.Add($_) } }
+            ($_.Groups[1].Value -replace '[\^$()]', '').Split('|') | ForEach-Object { if ($_ -match '^[A-Za-z0-9_ -]+$') { $eventTypes.Add($_) } }
         }
         [regex]::Matches($text, '(?m)re\.regex\(\$[A-Za-z0-9_]+\.metadata\.(?:product_event_type|event_type),\s*`([^`]+)`\)') | ForEach-Object {
             (($_.Groups[1].Value -replace '[\^$()]', '')).Split('|') | ForEach-Object { if ($_ -match '^[A-Za-z0-9_ -]+$') { $eventTypes.Add($_) } }

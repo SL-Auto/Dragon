@@ -7,7 +7,7 @@
 # description: Correlates LDAP SPN discovery with service-ticket fan-out by the same host and user.
 # log_source_prerequisites: Normalize directory-side LDAP filters and 4769 with host, user, and service.
 # false_positives: Service inventory, monitoring, identity governance, and authorized assessment.
-# references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md
+# references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md, reviews/rubeus/detection-review.md#review-010
 # assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 # schema_profile: schemas/splunk-cim.yml
 index=<configured_index>

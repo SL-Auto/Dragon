@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidate chosen by the same procedure branch or closest compensating observable, never by rule-name similarity alone.
 
 Public candidate:
-- [Elastic PowerShell compression building block](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules_building_block/collection_posh_compression.toml) - pinned revision and SHA-256 `e1393ea2bfc404db1a32e2ca4b1deda3d907371d53f9477ac168d98942ddd5ed`.
+- [Elastic PowerShell compression building block](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules_building_block/collection_posh_compression.toml) - pinned revision and SHA-256 `425d1333010d080e7846291b6546195b89b0bafeb2536d46336866d6feb2de6e`.
 
 ## Procedure and detection-branch matrix
 
@@ -47,11 +47,15 @@ CSV output, process restart, non-ZIP output, in-memory output, service output an
 
 ## Decision trail
 
-- Candidate improvement: independently add the missing procedure branch shown below; no public predicate is copied.
-- Independent verification: compare against pinned collector source, actual provider semantics, sanitized fixtures and benign inventory baselines.
-- Decision: `deferred_pending_rule_improvement_run`.
-- Reason: comparison code is an unvalidated detection-engineering proposal, not canonical logic.
-- Required regeneration: canonical review, coverage, telemetry, all translations, dependencies/hashes and this comparison after acceptance or modification.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/bloodhound/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, although the proposal had been copied, with divergences, into canonical YARA-L on 2026-08-16 without a recorded decision or review finding; the live rule was re-reviewed before this terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - The adoption counts JSON/CSV creates (`#j >= 3`) instead of distinct MD5 values, which file-creation events often lack, over 10 minutes.
+  - Re-review added a host join to both events, so identical PIDs on different hosts cannot correlate (BH-DR-28).
+- Canonical result: `detections/bloodhound/yaral/bloodhound_collection_archive_creation.yaral`, SHA-256 `5b6f313c2e5dc7860ffa614e1f7fe38dbde4330f11a8affce79a099df57bb85a`.
+- Regeneration: canonical change on 2026-11-21; detection review, `telemetry/bloodhound.md`, `telemetry/MASTER.md` counts, five translations, dependency/manifest hashes and this re-comparison were regenerated in the same run.
 
 ## Unmatched scope
 
@@ -90,3 +94,50 @@ rule bloodhound_collection_artifact_packaging {
 Remaining gaps: intent is not established; thresholds, normalized fields and benign baselines require authorized telemetry testing. Distributed activity and missing collection require separate compensating analytics and collection-health monitoring.
 
 If adopted, independently revise canonical YARA-L, re-run adversarial review, reconcile telemetry and master counts, regenerate all five translations and dependencies, and re-compare the final logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules_building_block/collection_posh_compression.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Same process writes multiple JSON/CSV files and an archive | covered (host plus process) | `collection_posh_compression.toml` (building block): PowerShell script blocks using compression cmdlets/classes | file creates plus archive - moderate | script-block compression - weak | complementary |
+| Compiled collector archiving without PowerShell | covered | not covered | file events - moderate | none | ours_stronger |
+
+- Current canonical YARA-L `detections/bloodhound/yaral/bloodhound_collection_archive_creation.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule bloodhound_collection_archive_creation {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates multiple JSON or CSV file creations with archive creation by one process."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "The collection artifact lifecycle is useful but filenames and archive formats are mutable."
+    procedure_ids = "BH-015"
+    log_source_prerequisites = "EDR or Sysmon file create/delete events with stable process entity, path and extension."
+    false_positives = "Backup, export, packaging, browser download and administrative reporting software."
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_collection_archive_creation.md, reviews/bloodhound/detection-review.md#bh-dr-28"
+    validation_status = "needs_validation"
+    validation_method = "Use benign multi-JSON/CSV archive fixtures with reordered and missing-delete cases."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $j.metadata.product_event_type = /^(11|FILE_CREATION)$/
+    $j.principal.hostname = $host
+    $j.principal.process.product_specific_process_id = $process
+    re.regex($j.target.file.full_path, `(?i)\.(json|csv)$`)
+    $a.metadata.product_event_type = /^(11|FILE_CREATION)$/
+    $a.principal.hostname = $host
+    $a.principal.process.product_specific_process_id = $process
+    re.regex($a.target.file.full_path, `(?i)\.(zip|7z)$`)
+  match:
+    $host, $process over 10m
+  condition:
+    #j >= 3 and $a
+}
+```
+
+- Re-comparison outcome: the current canonical rule closes the branch the proposal targeted, within declared telemetry; remaining gaps are recorded in `reviews/bloodhound/detection-review.md`.

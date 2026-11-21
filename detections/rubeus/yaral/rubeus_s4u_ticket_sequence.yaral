@@ -2,14 +2,14 @@ rule rubeus_s4u_ticket_sequence {
   meta:
     author = "Detection Research Agent"
     description = "Detects a service identity making S4U requests against an authoritatively unapproved delegation edge, or requesting S4U tickets across multiple distinct target services when edge-approval enrichment is unavailable."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "Unexpected delegation edges can represent impersonation, but legitimate constrained delegation must be modeled."
     procedure_ids = "PROC-005"
-    log_source_prerequisites = "Normalize 4769 with requesting account, client/source, target service, transited services, ticket options, and delegation context, plus an authoritative delegation-edge-approval enrichment keyed by service account and target service."
+    log_source_prerequisites = "Normalize 4769 with requesting account, client/source, target service, transited services, ticket options, and delegation context, plus an authoritative delegation-edge-approval enrichment keyed by service account and target service. The single-event unapproved-edge branch additionally requires a delegation-inventory enrichment that sets delegation_inventory_evaluated = true; unset UDM booleans read as false, so without that marker the branch would fire on every S4U ticket."
     false_positives = "Approved constrained delegation, protocol transition, web front ends, and identity middleware; stale or incomplete delegation-edge enrichment."
-    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_s4u_ticket_sequence.md"
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_s4u_ticket_sequence.md; reviews/rubeus/detection-review.md#review-011"
     validation_status = "needs_validation"
     validation_method = "Compare fixtures to an authoritative delegation-edge inventory to validate the unapproved-edge branch; independently confirm the multi-target textual fan-out branch still requires two or more distinct services so it remains a compensating signal rather than the primary detection once edge enrichment is available. Verify which of security_result.description (free text) or additional.fields[delegation_flow] (structured) the parser actually populates for S4U2Self/S4U2Proxy on 4769 events, and confirm both the $e and $u branches keep firing under whichever field is present; do not remove either disjunct without re-testing against real fixtures."
     review_status = "reviewed_with_gaps"
@@ -18,14 +18,15 @@ rule rubeus_s4u_ticket_sequence {
     $e.metadata.product_event_type = "4769"
     $e.target.user.userid = $service_account
     $e.target.resource.name = $target_service
-    (re.regex($e.security_result.description, `(S4U2Self|S4U2Proxy|protocol transition|transited services)`) nocase or
-     re.regex($e.additional.fields["delegation_flow"].value.string_value, `(S4U2Self|S4U2Proxy)`) nocase)
+    (re.regex($e.security_result.description, `(?i)(S4U2Self|S4U2Proxy|protocol transition|transited services)`) or
+     re.regex($e.additional.fields["delegation_flow"].value.string_value, `(?i)(S4U2Self|S4U2Proxy)`))
 
     $u.metadata.product_event_type = "4769"
     $u.target.user.userid = $service_account
     $u.additional.fields["delegation_edge_approved"].value.bool_value = false
-    (re.regex($u.security_result.description, `(S4U2Self|S4U2Proxy|protocol transition|transited services)`) nocase or
-     re.regex($u.additional.fields["delegation_flow"].value.string_value, `(S4U2Self|S4U2Proxy)`) nocase)
+    $u.additional.fields["delegation_inventory_evaluated"].value.bool_value = true
+    (re.regex($u.security_result.description, `(?i)(S4U2Self|S4U2Proxy|protocol transition|transited services)`) or
+     re.regex($u.additional.fields["delegation_flow"].value.string_value, `(?i)(S4U2Self|S4U2Proxy)`))
   match:
     $service_account over 10m
   outcome:

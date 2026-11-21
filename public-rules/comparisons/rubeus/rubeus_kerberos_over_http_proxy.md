@@ -10,7 +10,7 @@
 - Scope mapping rationale: ordered Rubeus procedure behavior and observable security effects; public candidates were selected by procedure and telemetry, not rule names.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/credential_access_kerberoasting_unusual_process.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/credential_access_kerberoasting_unusual_process.toml) - SHA-256 `cbabbfa8cacdc7c5a023087dfd6c81a87cf485f66edb56da36bb45ae56b591dc`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/credential_access_kerberoasting_unusual_process.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/credential_access_kerberoasting_unusual_process.toml) - SHA-256 `3e84a66e6565021a3ad046cdf5fbca7167c01ba0e62e4b28b2970ad18d466881`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,16 @@ The rule description promises an unapproved-process test that the event conditio
 
 ## Decision trail
 
-- Candidate improvement: Fix ours by correlating content type with process identity, signer and approved proxy destinations; preserve a content-type-only lower-severity branch when process attribution is absent.
-- Independent verification: `Required against Rubeus source analysis, concrete telemetry schemas, and sanitized fixtures before changing canonical logic.`
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The comparison identifies a detection-engineering gap; no public predicate is copied automatically.`
-- Required regeneration: `YARA-L adversarial review, telemetry reconciliation, five translations, and this comparison.`
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/rubeus/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, although the proposal had already been copied into canonical YARA-L on 2026-08-16 without a recorded decision or review finding; the live rule was re-reviewed before this terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - The 2026-08-16 rewrite OR-s the client and destination approvals rather than requiring both, so either unapproved side alerts.
+  - Unset approval booleans read as false, so the rule fails open by design when enrichment is absent.
+  - Process attribution is required, so proxy-only HTTP logs cannot satisfy it (accepted gap, recorded in the re-review section of the 2026-11-21 delta).
+- Canonical result: `detections/rubeus/yaral/rubeus_kerberos_over_http_proxy.yaral`, SHA-256 `f8d19c7ad5697408267e8b80b82e9d430db1535d52094fb3be6be89995ee1e77`.
+- Regeneration: none required; canonical logic is unchanged.
 
 ## Unmatched scope
 
@@ -85,3 +90,44 @@ rule rubeus_kerberos_over_http_unapproved_process {
 Makes the rule match its description and turns a protocol-only signal into an attributed, policy-aware branch. It still misses encrypted traffic where Content-Type is unavailable, so process/destination compensation remains necessary.
 
 If adopted, update the canonical YARA-L, adversarial detection review, Rubeus telemetry matrix and master counts, all five translations, dependency hashes, and this comparison.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/credential_access_kerberoasting_unusual_process.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Kerberos tunnelled over HTTP (`application/kerberos`) by a process | covered (process-attributed HTTP) | not covered by `credential_access_kerberoasting_unusual_process.toml` (port 88 only) | Content-Type plus process - strong | none | ours_stronger |
+| Direct port-88 Kerberos from a non-LSA process | covered by `rubeus_kerberos_transport_from_unexpected_process` | covered | non-LSA port 88 - strong | none | equivalent |
+
+- Current canonical YARA-L `detections/rubeus/yaral/rubeus_kerberos_over_http_proxy.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule rubeus_kerberos_over_http_proxy {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects Kerberos messages transported over HTTP where either the initiating process or the destination is not on the approved KDC-proxy allowlist."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Kerberos HTTP proxy use is uncommon outside approved KDC proxy clients and provides strong process context."
+    procedure_ids = "PROC-013"
+    log_source_prerequisites = "Normalize process-attributed HTTP request Content-Type and proxy destination, plus an approved-KDC-proxy-client and approved-KDC-proxy-destination allowlist enrichment."
+    false_positives = "Approved KDC proxy, remote-access, and identity clients where the allowlist enrichment is stale or incomplete."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_kerberos_over_http_proxy.md"
+    validation_status = "needs_validation"
+    validation_method = "Verify Content-Type parser mapping with authorized KDC proxy fixtures. Verify the allowlist enrichment source is authoritative and current; confirm the OR relationship between the two approved-* flags fires when EITHER the client or the destination is unapproved (not only when both are), since requiring both would miss an unapproved client relayed through an approved destination or an approved client abused against an unapproved destination."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_HTTP"
+    $e.additional.fields["http_request_content_type"].value.string_value = "application/kerberos" nocase
+    ($e.additional.fields["approved_kdc_proxy_client"].value.bool_value = false or $e.additional.fields["approved_kdc_proxy_destination"].value.bool_value = false)
+    $e.principal.process.file.full_path != ""
+  condition:
+    $e
+}
+```
+
+- Re-comparison outcome: the current canonical rule set closes the branch the proposal targeted, within declared telemetry; `public_stronger` rows are recorded gaps with named compensating signals in `reviews/rubeus/detection-review.md`.

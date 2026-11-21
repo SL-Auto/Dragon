@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: cobalt-strike-beacon
+rule_name: cobalt_strike_remote_management_execution_compensating_signal
+canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_management_execution_compensating_signal.yaral
+canonical_sha256: 79a26523202d6118b5ac34c21280381b309882a1650d60f3e97b08cb350f427a
+description: "Correlates a WinRM, remote WMI or SSH session on a target with a subsequent process launched by the matching remote-management host process (wsmprovhost.exe, wmiprvse.exe or sshd) as the same account. This replaces the base rule's any-process-by-the-same-user join with process lineage that ties the child to the remote-management channel."
+severity: medium
+procedure_ids: ["CSB-031", "CSB-032", "CSB-033"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Target-side WINRM_SESSION, WMI_REMOTE_OPERATION or SSH_AUTH events with target host and account, plus PROCESS_LAUNCH on the same host where principal.process is the launching (parent) process, joined on host and account within 10 minutes, session first."
+atomic_event_types: ["PROCESS_LAUNCH", "SSH_AUTH", "WINRM_SESSION", "WMI_REMOTE_OPERATION"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "principal.hostname", "principal.ip", "principal.process.file.full_path", "principal.user.userid", "target.hostname", "target.process.file.full_path"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Remote administration, configuration management (DSC, Ansible over WinRM/SSH), monitoring and patching that run commands through WinRM, WMI or SSH."
+references: "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_remote_management_execution.md; reviews/cobalt-strike-beacon/detection-review.md#dr-23"
+translations:
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_remote_management_execution_compensating_signal.spl", sha256: ae40420f7612f5d97a6c0541e182d031cd795a920bfd2913628eebebb1c6aea8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_remote_management_execution_compensating_signal.kql", sha256: bfcda7e989891c427b8c3b1be7538a5a62d210faa7b5fb1d9029ea9ec52633d1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_remote_management_execution_compensating_signal.sql", sha256: ef5eb6aeeb6c9f1f2bb0e50dbb615fdc4b3308d8c792046e0bfd77151abe01ab, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_remote_management_execution_compensating_signal.eql", sha256: 3178a4fda125e8d96dac269c4df202d1bb7335ae4773c4bc587ec130292dd34b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_remote_management_execution_compensating_signal.yml", sha256: 3e75a36c5105c0299ba84ec14524bce66986f9b86b5fb965aa40693a571abf66, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

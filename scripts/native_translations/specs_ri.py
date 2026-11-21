@@ -22,6 +22,19 @@ rubeus = [
       columns=["product_event_type", "source_ip", "user_id", "service_name"],
       legs=[dict(where=[("eq","product_event_type","4770")])],
       sigma=dict(service="security", **WIN)),
+ # Added 2026-11-21 (REVIEW-012, REVIEW-014, REVIEW-015).
+ dict(name="rubeus_as_request_failed_preauth_fanout", kind="single", window=10, keys=["source_ip"], count=("user_id", 3),
+      columns=["product_event_type", "source_ip", "user_id", "Status", "action"],
+      legs=[dict(where=[("in","product_event_type",["4768","4771"]),("or",[[("eq","action","BLOCK")],[("re","Status",r"^0x(6|12|18)$")]])])],
+      sigma=dict(service="security", **WIN)),
+ dict(name="rubeus_asrep_single_account_sensitive", kind="single", window=60, keys=["source_ip", "user_id"], count=("#", 1), values=["TicketEncryptionType"],
+      columns=["product_event_type", "source_ip", "user_id", "PreAuthType", "Status", "account_risk_tier", "TicketEncryptionType"],
+      legs=[dict(where=[("eq","product_event_type","4768"),("eq","PreAuthType","0"),("eq","Status","0x0"),("eq","account_risk_tier","high")])],
+      sigma=dict(service="security", **WIN)),
+ dict(name="rubeus_kerberos_transport_from_unexpected_process", kind="single", window=10, keys=["hostname", "process_path"], count=("#", 1), values=["target_port", "target_ip", "user_id"],
+      columns=["event_type", "hostname", "process_path", "target_ip", "target_port", "user_id"],
+      legs=[dict(where=[("eq","event_type","NETWORK_CONNECTION"),("or",[[("num","target_port",88)],[("num","target_port",464)]]),("re","process_path",r"^[a-z]:\\"),("notre","process_path",r"^[a-z]:\\windows\\system32\\lsass\.exe$")])],
+      sigma=dict(category="network_connection", **WIN)),
 ]
 impacket = [
  dict(name="impacket_ntlm_relay_with_privileged_effect", kind="seq", window=5, keys=["target_host", "acting_user"],
@@ -38,6 +51,16 @@ impacket = [
       columns=["product_event_type", "hostname", "source_ip", "wmi_class"],
       legs=[dict(where=[("in","product_event_type",["5857","5858","5860","5861"]),("re","wmi_class","Win32_Process")])],
       sigma=dict(service="wmi", **WIN)),
+ # Added 2026-11-21 (REVIEW-013, REVIEW-014).
+ dict(name="impacket_directory_replication_rights_use", kind="single", window=10, keys=["user_id"], count=("#", 1), values=["hostname"],
+      columns=["product_event_type", "hostname", "user_id", "properties", "approved_replication_principal"],
+      legs=[dict(where=[("eq","product_event_type","4662"),("re","properties",r"(DS-Replication-Get-Changes|Replicating Directory Changes|1131f6a[a-d]-9c07-11d1-f79f-00c04fc2dcd2|89e95b76-444d-4c62-991a-0facbeda640c)"),("ne_true","approved_replication_principal")])],
+      sigma=dict(service="security", **WIN)),
+ dict(name="impacket_new_machine_account_s4u", kind="seq", window=60, keys=["target_user"],
+      columns=["product_event_type", "user_id", "target_user", "service_name", "source_ip", "description", "delegation_flow", "TransmittedServices"],
+      legs=[dict(where=[("eq","product_event_type","4741")]),
+            dict(where=[("eq","product_event_type","4769"),("or",[[("re","description",r"(S4U2Self|S4U2Proxy|protocol transition|transited services)")],[("re","delegation_flow",r"^(S4U2Self|S4U2Proxy)$")],[("re","TransmittedServices",r"[A-Za-z0-9]")]])])],
+      sigma=dict(service="security", **WIN)),
 ]
 
 if __name__ == "__main__":

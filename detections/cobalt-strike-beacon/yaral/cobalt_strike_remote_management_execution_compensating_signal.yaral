@@ -1,0 +1,38 @@
+rule cobalt_strike_remote_management_execution_compensating_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates a WinRM, remote WMI or SSH session on a target with a subsequent process launched by the matching remote-management host process (wsmprovhost.exe, wmiprvse.exe or sshd) as the same account. This replaces the base rule's any-process-by-the-same-user join with process lineage that ties the child to the remote-management channel."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Lineage from the remote-management host process is a much closer link between the remote session and the executed command than account co-occurrence, but administrators routinely run commands this way."
+    procedure_ids = "CSB-031,CSB-032,CSB-033"
+    log_source_prerequisites = "Target-side WINRM_SESSION, WMI_REMOTE_OPERATION or SSH_AUTH events with target host and account, plus PROCESS_LAUNCH on the same host where principal.process is the launching (parent) process, joined on host and account within 10 minutes, session first."
+    false_positives = "Remote administration, configuration management (DSC, Ansible over WinRM/SSH), monitoring and patching that run commands through WinRM, WMI or SSH."
+    references = "reports/cobalt-strike-beacon/source-analysis.md; public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_remote_management_execution.md; reviews/cobalt-strike-beacon/detection-review.md#dr-23"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized remote-management fixtures (WinRM command, WMI process create, SSH command) and ordinary interactive logons; confirm only children of the remote-management host process match, and baseline administrative volume before enabling."
+    review_status = "reviewed"
+    review_reference = "reviews/cobalt-strike-beacon/detection-review.md"
+    compensates_for = "cobalt_strike_remote_management_execution"
+    source_comparison = "public-rules/comparisons/cobalt-strike-beacon/cobalt_strike_remote_management_execution.md"
+  events:
+    ($remote.metadata.event_type = "WINRM_SESSION" or $remote.metadata.event_type = "WMI_REMOTE_OPERATION" or $remote.metadata.event_type = "SSH_AUTH")
+    $remote.target.hostname = $host
+    $remote.principal.user.userid = $user
+
+    $proc.metadata.event_type = "PROCESS_LAUNCH"
+    $proc.principal.hostname = $host
+    $proc.principal.user.userid = $user
+    re.regex($proc.principal.process.file.full_path, `(?i)(\\(wsmprovhost|wmiprvse|sshd)\.exe|/sshd)$`)
+
+    $remote.metadata.event_timestamp.seconds <= $proc.metadata.event_timestamp.seconds
+  match:
+    $host, $user over 10m
+  outcome:
+    $children = array_distinct($proc.target.process.file.full_path)
+    $sources = array_distinct($remote.principal.ip)
+    $channels = array_distinct($remote.metadata.event_type)
+  condition:
+    $remote and $proc
+}

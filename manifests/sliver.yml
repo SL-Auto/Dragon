@@ -27,20 +27,20 @@ artifact_hashes:
   registry: 9c75dda74d8d2e504e70b5b119d8961f733d1f55eb544e13ccd697f701c1ac32
   coverage: a46212d6c8438bfcf793902356c3f3e069b1231b5ae673e614ee8a90d5cde75d
   report: 676c5be38b8d8a7dee849ec2e344c2a866eb1672c5c01e946e70f17c63418567
-  telemetry: 01347b6371cf26fd57ca6d3194697c98462126436646efe24fd705455964af67
+  telemetry: 42bba4ca3d4ba82927f6e5cd1d6c0966d4bff44817eaef6545429dd34b3f3564
   detection_review: 592c49aecd39776d55a753057e7df565a8d5de1b903d742e947712c7c7e6a5a1
-  translation_review: ccd247c4899774fea825a755798c0f20f0f64bf523f8fb0abb0f216bf615f48b
+  translation_review: 5552116ffd514e5cd5fce98ce9c5269468518cbb89e7ee0a91dee5cccae4cf2a
 rules:
   - { name: sliver_browser_debugging_from_network_process, severity: high, procedures: "PROC-022", dependency: dependencies/sliver/sliver_browser_debugging_from_network_process.yml, canonical_sha256: dfa169a2f07dd73b7fe29205dde93af4c61f6c528542c0798541ad096e775123 }
   - { name: sliver_cleanup_after_egress, severity: high, procedures: "PROC-002,PROC-026", dependency: dependencies/sliver/sliver_cleanup_after_egress.yml, canonical_sha256: ed34312bdb90c19992dba037dba9bfe0cdb4f6e75a82bc8a9d55b21a11f87f5e }
   - { name: sliver_credential_file_access_from_network_process, severity: high, procedures: "PROC-007,PROC-008", dependency: dependencies/sliver/sliver_credential_file_access_from_network_process.yml, canonical_sha256: b6b290fa263c78271593b551fed39472186613230a887fd917ad07fea98715e9 }
   - { name: sliver_dns_or_udp_process_egress, severity: medium, procedures: "PROC-004", dependency: dependencies/sliver/sliver_dns_or_udp_process_egress.yml, canonical_sha256: f73774e5fdf6f3fdf5dc19d4b58f104cc271428a723903231fa8f66368524521 }
-  - { name: sliver_explicit_credential_service_creation, severity: high, procedures: "PROC-016,PROC-017,PROC-019", dependency: dependencies/sliver/sliver_explicit_credential_service_creation.yml, canonical_sha256: a83d3b69613006afe786b93c7e63c729ae3a2cf5223cbada29eb4e43c303cd4a }
+  - { name: sliver_explicit_credential_service_creation, severity: high, procedures: "PROC-016,PROC-017,PROC-019", dependency: dependencies/sliver/sliver_explicit_credential_service_creation.yml, canonical_sha256: 761c1c3406b0f8421e54a80dbdb02bb96e29e329a7ad2ce822cda326d8e841b3 }
   - { name: sliver_file_activity_from_network_process, severity: medium, procedures: "PROC-007,PROC-008,PROC-009", dependency: dependencies/sliver/sliver_file_activity_from_network_process.yml, canonical_sha256: b71a435696678e9e4bbc5ab2b563fb1d70e2de63813a34d16c3717c4b520f7e9 }
   - { name: sliver_identity_or_service_from_network_process, severity: high, procedures: "PROC-016,PROC-017,PROC-019", dependency: dependencies/sliver/sliver_identity_or_service_from_network_process.yml, canonical_sha256: d88f68eee2325f74e87ec484269733a01db1781869e035d3d63f59063d689ce9 }
   - { name: sliver_listener_with_egress, severity: high, procedures: "PROC-005,PROC-021", dependency: dependencies/sliver/sliver_listener_with_egress.yml, canonical_sha256: 77721773e47438c6acd203c92a8a22c03f24894699083944b3500d124102f551 }
   - { name: sliver_low_and_slow_udp_beacon, severity: medium, procedures: "PROC-004", dependency: dependencies/sliver/sliver_low_and_slow_udp_beacon.yml, canonical_sha256: 0117609892f654acecc9fb7e1213a296431778d224d7a593c472433b10b7f0e7 }
-  - { name: sliver_lsass_access_from_network_process, severity: high, procedures: "PROC-011,PROC-012,PROC-015", dependency: dependencies/sliver/sliver_lsass_access_from_network_process.yml, canonical_sha256: 3e1bc3fb6884219da7d183c559c2a8cac783360559e038b08fccb91583297add }
+  - { name: sliver_lsass_access_from_network_process, severity: high, procedures: "PROC-011,PROC-012,PROC-015", dependency: dependencies/sliver/sliver_lsass_access_from_network_process.yml, canonical_sha256: a8cdec32f5b22ffe9e018f42648f0202e8209c078322d6f5742ed81847bb7a0f }
   - { name: sliver_parent_egress_with_spawned_interpreter, severity: high, procedures: "PROC-010", dependency: dependencies/sliver/sliver_parent_egress_with_spawned_interpreter.yml, canonical_sha256: 103ecf232086aaff34dae4583204c9629b1fd1176c3d46fe2df9747c29ced503 }
   - { name: sliver_process_access_from_network_process, severity: high, procedures: "PROC-011,PROC-012,PROC-015", dependency: dependencies/sliver/sliver_process_access_from_network_process.yml, canonical_sha256: ebebd120a7829208924e2e29b0d228f4db80bb1685acc70240e5dd72e4eab6b7 }
   - { name: sliver_process_behavior_cluster, severity: medium, procedures: "PROC-001", dependency: dependencies/sliver/sliver_process_behavior_cluster.yml, canonical_sha256: 5b46c2a0cc13ab5e3566430e6d1c0db328060bbcddcc7c9243fdbb34ae232a5e }
@@ -48,7 +48,7 @@ rules:
   - { name: sliver_registry_from_network_process, severity: medium, procedures: "PROC-018", dependency: dependencies/sliver/sliver_registry_from_network_process.yml, canonical_sha256: 4068b5320a1c4f35e7d833bae18555b0e9aeb5d31557f826203e29d14c7bee75 }
   - { name: sliver_registry_persistence_key_from_network_process, severity: high, procedures: "PROC-018", dependency: dependencies/sliver/sliver_registry_persistence_key_from_network_process.yml, canonical_sha256: 7365308b58f9e51cc829c11e85081945ff9019f2e4007339f68dcc030f180092 }
   - { name: sliver_relay_to_novel_destination, severity: high, procedures: "PROC-005,PROC-021", dependency: dependencies/sliver/sliver_relay_to_novel_destination.yml, canonical_sha256: f378abb462abc509793b71bdbcc3c283c5ffd00ddcde1550b9b2b5224b926372 }
-  - { name: sliver_remote_admin_sequence, severity: high, procedures: "PROC-020", dependency: dependencies/sliver/sliver_remote_admin_sequence.yml, canonical_sha256: 1e31617d187e4e603c6e162dd2e21ec03f19b98cc504a626a2b680d4243b2906 }
+  - { name: sliver_remote_admin_sequence, severity: high, procedures: "PROC-020", dependency: dependencies/sliver/sliver_remote_admin_sequence.yml, canonical_sha256: 7503d39b3be429665f18c8bcb835271654226ef719bce40676d9b9d2e11ad311 }
   - { name: sliver_screen_capture_process_egress, severity: high, procedures: "PROC-014", dependency: dependencies/sliver/sliver_screen_capture_process_egress.yml, canonical_sha256: 8e8443a303e7d6b748bdf89b9f9ccafbadbd78c534efe2c84e8e2999f002dd88 }
   - { name: sliver_self_delete_after_egress, severity: high, procedures: "PROC-002,PROC-026", dependency: dependencies/sliver/sliver_self_delete_after_egress.yml, canonical_sha256: 48672c1d40fe2f51cf8acac07ed0199ae9889c4680bc2af27dc3a246bd140e72 }
   - { name: sliver_unsigned_process_novel_egress, severity: medium, procedures: "PROC-001", dependency: dependencies/sliver/sliver_unsigned_process_novel_egress.yml, canonical_sha256: d281bf2a8517906a1371d8e9dcde1f90776003ba880b64beaf82cada89b2d6dc }

@@ -1,16 +1,16 @@
-title: "Detects a sign-in followed by broad Graph or ARM read activity from the same principal and source."
+title: "Detects a sign-in followed by broad Graph or ARM read activity from the same principal and application, independent of source IP."
 name: bloodhound_azure_authentication_context
 status: experimental
-description: "Detects a sign-in followed by broad Graph or ARM read activity from the same principal and source."
+description: "Detects a sign-in followed by broad Graph or ARM read activity from the same principal and application, independent of source IP."
 source_yaral: "detections/bloodhound/yaral/bloodhound_azure_authentication_context.yaral"
 translation_status: experimental_needs_backend_mapping_and_validation
 fidelity: partial
 schema_profile: schemas/sigma.yml
 assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
 references:
-  - "reports/bloodhound/source-analysis.md"
+  - "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_azure_authentication_context.md, reviews/bloodhound/detection-review.md#bh-dr-27"
 procedure_ids: "BH-016"
-log_source_prerequisites: "Entra interactive/service-principal sign-ins and Graph/ARM audit with principal/app, source IP and correlation identifiers."
+log_source_prerequisites: "Entra interactive/service-principal sign-ins and Graph/ARM audit with principal user ID, application/service-principal ID and resource-family enrichment."
 logsource:
   category: generic
 detection:

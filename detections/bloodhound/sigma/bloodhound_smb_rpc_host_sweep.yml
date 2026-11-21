@@ -1,16 +1,16 @@
-title: "Detects one process attempting SMB or RPC connections to many internal hosts."
+title: "Detects one process attempting SMB or RPC connections to many internal hosts, excluding destinations outside the internal address range and sources labeled as an approved scanner."
 name: bloodhound_smb_rpc_host_sweep
 status: experimental
-description: "Detects one process attempting SMB or RPC connections to many internal hosts."
+description: "Detects one process attempting SMB or RPC connections to many internal hosts, excluding destinations outside the internal address range and sources labeled as an approved scanner."
 source_yaral: "detections/bloodhound/yaral/bloodhound_smb_rpc_host_sweep.yaral"
 translation_status: experimental_needs_backend_mapping_and_validation
 fidelity: partial
 schema_profile: schemas/sigma.yml
 assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
 references:
-  - "reports/bloodhound/source-analysis.md"
+  - "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_smb_rpc_host_sweep.md, reviews/bloodhound/detection-review.md#bh-dr-30"
 procedure_ids: "BH-006"
-log_source_prerequisites: "EDR/firewall network events with source process, destination host/IP and port."
+log_source_prerequisites: "EDR/firewall network events with source process, destination host/IP and port, internal-address-range enrichment and governed scanner-inventory labeling."
 logsource:
   category: generic
 detection:
@@ -18,5 +18,5 @@ detection:
     event.code: ["NETWORK_CONNECTION"]
   condition: selection_event_type
 falsepositives:
-  - "Vulnerability scanners, deployment systems, backup discovery and approved inventory."
+  - "Vulnerability scanners, deployment systems, backup discovery and approved inventory not present in the scanner-inventory label; a stale or incomplete inventory can still allow false positives."
 level: high

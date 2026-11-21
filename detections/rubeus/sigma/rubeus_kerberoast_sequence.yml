@@ -8,7 +8,7 @@ fidelity: partial
 schema_profile: schemas/sigma.yml
 assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
 references:
-  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md, reviews/rubeus/detection-review.md#review-010"
 procedure_ids: "PROC-004"
 log_source_prerequisites: "Normalize directory-side LDAP filters and 4769 with host, user, and service."
 logsource:

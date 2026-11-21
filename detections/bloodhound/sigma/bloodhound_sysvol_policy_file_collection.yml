@@ -1,16 +1,16 @@
-title: "Detects one source reading multiple policy artifacts from SYSVOL."
+title: "Detects one source process, excluding the Group Policy client service itself, reading multiple policy artifacts from SYSVOL."
 name: bloodhound_sysvol_policy_file_collection
 status: experimental
-description: "Detects one source reading multiple policy artifacts from SYSVOL."
+description: "Detects one source process, excluding the Group Policy client service itself, reading multiple policy artifacts from SYSVOL."
 source_yaral: "detections/bloodhound/yaral/bloodhound_sysvol_policy_file_collection.yaral"
 translation_status: experimental_needs_backend_mapping_and_validation
 fidelity: partial
 schema_profile: schemas/sigma.yml
 assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
 references:
-  - "reports/bloodhound/source-analysis.md"
+  - "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_sysvol_policy_file_collection.md, reviews/bloodhound/detection-review.md#bh-dr-31"
 procedure_ids: "BH-011"
-log_source_prerequisites: "Windows 5145 or EDR FILE_READ with source, account, share/path and target DC."
+log_source_prerequisites: "Windows 5145 or EDR FILE_READ with source process, account, share/path, target DC and a Group Policy client service (GPSVC) classification label."
 logsource:
   category: generic
 detection:
@@ -18,5 +18,5 @@ detection:
     event.code: ["5145", "FILE_READ"]
   condition: selection_event_type
 falsepositives:
-  - "Group Policy processing, configuration management, backup and policy auditing."
+  - "Group Policy processing, configuration management, backup and policy auditing not attributed to the GPSVC host process."
 level: medium

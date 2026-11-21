@@ -8,14 +8,14 @@ fidelity: partial
 schema_profile: schemas/sigma.yml
 assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
 references:
-  - "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_collection_archive_creation.md"
+  - "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_collection_archive_creation.md, reviews/bloodhound/detection-review.md#bh-dr-28"
 procedure_ids: "BH-015"
 log_source_prerequisites: "EDR or Sysmon file create/delete events with stable process entity, path and extension."
 logsource:
   category: generic
 detection:
   selection_event_type:
-    event.code: ["*"]
+    event.code: ["11", "FILE_CREATION"]
   condition: selection_event_type
 falsepositives:
   - "Backup, export, packaging, browser download and administrative reporting software."

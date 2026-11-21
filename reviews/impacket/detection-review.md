@@ -158,6 +158,52 @@ All three rules and the four anchored base rules were re-traced:
 - Sequences are ordered.
 - Accepted gaps name compensating rules.
 
+## 2026-11-21 delta review — comparison backlog resolution
+
+Five `public-rules/comparisons/impacket/*.md` trails still read `deferred_pending_rule_improvement_run`. Three had already been acted on: `impacket_ntlm_relay_with_privileged_effect`, `impacket_terminal_services_session_control_by_other_actor` and `impacket_wmi_activity_operational_class_signal` were reviewed above as REVIEW-010 to REVIEW-012. The other two exposed the findings below.
+
+### REVIEW-013 — the 2026-08-16 split dropped the replication branch
+
+- Severity: `blocker` (resolved in this run)
+- Rule: `impacket_sensitive_file_or_replication_access` (IMP-13).
+- Gap or failure mode:
+  - The 2026-08-16 split adopted the comparison's position that replication rights and credential-store file access are different signals.
+  - It removed 4662 from the rule but created no replication rule.
+  - Replication-based secret retrieval (`secretsdump.py`, report row IMP-13: "4662 replication GUID") therefore had no Impacket detection, while the rule name and coverage ledger still claimed it.
+- Resolution: `fixed`. New `impacket_directory_replication_rights_use`:
+  - DC 4662 with the Get-Changes, Get-Changes-All or Get-Changes-In-Filtered-Set GUIDs or names.
+  - An approved-replication-principal enrichment that fails open (`!= true`).
+  - Aggregation per actor over 10m.
+  - No account-name exclusions: excluding `$` accounts would miss replication through a compromised machine account.
+  - IMP-13 now lists both rules, and the file rule's telemetry row no longer claims 4662.
+
+### REVIEW-014 — privilege-path rule cannot prove the changed object is used
+
+- Severity: `high`
+- Rule: `impacket_privilege_path_effects` (IMP-22). The proposal is rejected; the gap it names is closed by a new rule.
+- Assumption challenged: that a directory change and a later Kerberos request by the same `principal.user.userid` capture the delegation path.
+- Gap or failure mode:
+  - In the resource-based delegation chain (`addcomputer.py`, `rbcd.py`, `getST.py`), the tickets are requested by the newly created machine account, not by the actor who made the change, so the base same-user join does not link the steps.
+  - The proposal kept the same join and replaced the concrete 4768/4769 leg with a generic `STATUS_UPDATE` event carrying a `sensitive_effect` label that no provider emits. It also added strict ordering.
+- Resolution: `compensating_signal`. New `impacket_new_machine_account_s4u`:
+  - 4741 (new computer account) followed within one hour by 4769 where the same account is the requester, with S4U context (description, `delegation_flow` or `TransmittedServices`).
+  - Ordering is kept, because creation must precede use and both events are DC-logged.
+  - An ordinary domain join (4741 followed by plain 4768/4769) does not match.
+  - The base rule is unchanged.
+
+### Re-review
+
+- REVIEW-013 is resolved in this run, so no blocker remains open.
+- Both new rules have native translations in `scripts/native_translations/specs_ri.py`.
+- `telemetry/MASTER.md` gained a Security 4741 row.
+
+### REVIEW-015 — regex comparison on the integer port field
+
+- Severity: `high`
+- Rules: `impacket_remote_rpc_discovery` (`/(135|445)/`) and `impacket_unusual_protocol_listener` (`/(445|80|443|1433|389|636|25|110|143)/`).
+- Gap or failure mode: `target.port` is an integer. A regex comparison against it is not valid YARA-L, so neither rule could match. The same defect existed in BloodHound (BH-DR-30).
+- Resolution: `fixed`. Both rules use explicit integer equality alternations. A repository-wide search finds no remaining regex comparison on a port field.
+
 ## Required follow-up
 
 - Compile against the tenant YARA-L version and validate every UDM field using positive, negative, missing-event and reordered-event fixtures.

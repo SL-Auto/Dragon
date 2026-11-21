@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: rubeus
+rule_name: rubeus_kerberos_transport_from_unexpected_process
+canonical_path: detections/rubeus/yaral/rubeus_kerberos_transport_from_unexpected_process.yaral
+canonical_sha256: 3135be137086b6cba19c72bf21974e8aa19f01a4ef42afd3f58e5c79da5a465c
+description: "Detects a Windows process other than lsass.exe connecting to a Kerberos KDC (port 88) or the Kerberos password-change service (port 464). This is the client-side network effect of ticket requests, roasting, delegation abuse or password change performed by a tool that implements its own Kerberos transport instead of using the LSA."
+severity: high
+procedure_ids: ["PROC-001", "PROC-002", "PROC-003", "PROC-004", "PROC-005", "PROC-012"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed network-connection telemetry (Sysmon Event ID 3 or EDR equivalent, NETWORK_CONNECTION) with destination port, host and initiating process image path. Windows hosts are identified by a drive-letter image path."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "metadata.id", "principal.hostname", "principal.process.file.full_path", "principal.user.userid", "target.ip", "target.port"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Java and other cross-platform applications with their own Kerberos stack, MIT Kerberos for Windows, identity-synchronization and password-management agents, and authorized security assessment tools; approve them by image path and signer after validation. Domain controllers should be scoped separately if their KDC-to-KDC traffic is attributed to processes other than lsass.exe."
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_unusual_kerberos_password_change.md; public-rules/comparisons/rubeus/rubeus_kerberoast_sequence.md; reviews/rubeus/detection-review.md#review-015"
+translations:
+  spl: { path: "detections/rubeus/spl/rubeus_kerberos_transport_from_unexpected_process.spl", sha256: 3b1555da8a29769f76d47deb31419b2ccd667fa8c68e9b6d5ee4bed73589abbb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/rubeus/kql/rubeus_kerberos_transport_from_unexpected_process.kql", sha256: 4ff78cb15dd939f5ef1ab0e332320115bc89b273d8c1e20aba5c01baabcea93b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/rubeus/sql/rubeus_kerberos_transport_from_unexpected_process.sql", sha256: 5bd974a11314e1655931efbeae53a1e2f20fe5af61c25b6ade78f3b8c768d1a1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/rubeus/eql/rubeus_kerberos_transport_from_unexpected_process.eql", sha256: 0cb05541e9edbb1880f54c67497fefb69fca43b832b11d5b3f983b420f5f73cb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_kerberos_transport_from_unexpected_process.yml", sha256: 3f8f9daea0b732ab3821be5e1bafc0088aeee9c85979a2bb2712a7101f7dedfd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

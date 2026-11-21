@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped by procedure, observable effect and telemetry rather than name or syntax.
 
 Public candidate:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/integrations/azure/credential_access_network_full_network_packet_capture_detected.toml`](../../public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/integrations/azure/credential_access_network_full_network_packet_capture_detected.toml) - SHA-256 `fcde9d7eb8e44c0d3ae74874f5ccaa77efb065cd93ee9d3857d0c1f67ce7e42e`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/integrations/azure/credential_access_network_full_network_packet_capture_detected.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/integrations/azure/credential_access_network_full_network_packet_capture_detected.toml) - SHA-256 `bcd3098157af89929a75f40da581af84546f3303d7fafaa0e2501dda51383724`
 
 ## Procedure and detection-branch matrix
 
@@ -83,3 +83,8 @@ rule impacket_packet_capture_or_raw_socket_strong_branch {
 ```
 
 This proposal strengthens a procedure-level branch without importing the public predicate. It remains vulnerable to missing source telemetry, semantic mapping errors, and activity outside the correlation period. If adopted, test benign administrative workloads and missing-data behavior, then update every downstream artifact required by the workflow.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/integrations/azure/credential_access_network_full_network_packet_capture_detected.toml` changed between 7e91c15 and 9d792a8; re-read on 2026-11-21: only the tags block was restructured; the query is identical. The comparison conclusions and decision are unaffected.

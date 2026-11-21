@@ -6,7 +6,7 @@
 - Internal canonical rule: `detections/chisel/yaral/chisel_listener_with_tunnel_egress.yaral`
 - Internal SHA-256: `f1b10d5e64891c1631a4efa168a7f6eea85af368aae988fe61b8a0bc0e551810`
 - Internal review completed before public comparison: `yes`
-- Public source/revision/path: `public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/_deprecated/command_and_control_linux_chisel_server_activity.toml`
+- Public source/revision/path: `public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/_deprecated/command_and_control_linux_chisel_server_activity.toml`
 - Public SHA-256: `9d206ceb9c9ae2b0931af8f4384a2696703ac4ce620e3d51a2af6f3b119163d2`
 - Scope mapping rationale: Both address listener and bidirectional forwarding, but mapping is based on observable behavior and T1572/T1090 effects rather than names or syntax.
 
@@ -49,7 +49,8 @@ The internal rule is non-attributive, depends on stable process entity mapping, 
 
 - Candidate improvement: Add an inbound accepted-flow branch before same-process egress.
 - Independent verification: pinned Chisel source behavior, telemetry requirements, and `reviews/chisel/detection-review.md`.
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: Adversarial review of the proposal (2026-08-16) found it unsound as written. The added event variable `$i` is declared in `events` and shares the match key `$host, $pid`, but `$i` never binds `$pid` (only `$i.metadata.product_event_type` and `$i.network.direction` are set), and `condition` only tests `$n and #n >= 2` -- `$i` is never referenced in `condition`. Per this rule's own repository convention (see `detections/chisel/yaral/chisel_listener_with_tunnel_egress.yaral`, `condition: $l and $n`), every declared event variable must appear in `condition` for its join to be enforced. As written the proposal is behaviorally identical to a bare `#n >= 2` outbound-connection threshold: the claimed inbound-acceptance correlation is not enforced at all. Even a corrected version that referenced `$i` in `condition` would still only bind on `$host` (not `$pid`), so it would assert host-level coincidence ("some inbound connection happened somewhere on this host") rather than the process-level causal correlation the existing canonical rule already provides via `$l and $n` (listen and egress on the same process). The branch matrix shows the core branches are already `ours_stronger`; this proposal does not close a genuine coverage gap and would weaken specificity if adopted.
 - Adversarial re-check: Re-ran the procedure-branch matrix against the proposal. It adds no branch beyond the canonical rule's existing `$l`/`$n` same-process correlation and is not internally consistent (unbound join variable, unenforced condition). Rejecting it introduces no new false-negative path because canonical logic is unchanged.
 - Required regeneration: none. Canonical logic, telemetry, translations, and dependencies are unchanged because the proposal was rejected, not adopted or modified.
@@ -84,3 +85,8 @@ rule proposed_chisel_listener_with_tunnel_egress {
 ```
 
 This proposal adds procedure-specific causal context while retaining behavior-first logic. It still needs provider field binding, benign-baseline testing, and reverse-mode cross-host assessment before canonical adoption.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate re-pinned from elastic-security `7e91c15` to `9d792a8`. The decision trail above is unchanged.
+- `rules/_deprecated/command_and_control_linux_chisel_server_activity.toml` is identical apart from line endings.

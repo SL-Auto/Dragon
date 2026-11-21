@@ -40,7 +40,7 @@ Generated context view. Use the coverage ledger and cited report as authoritativ
 | CSB-028 | credential dumping and directory replication | assessed | detected | cobalt_strike_credential_access_effect, cobalt_strike_credential_access_effect_compensating_signal |
 | CSB-029 | operator housekeeping queue history and task cancellation | assessed | not_observable |  |
 | CSB-030 | service remote execution and admin share staging | assessed | detected | cobalt_strike_remote_service_sequence, cobalt_strike_remote_service_sequence_compensating_signal |
-| CSB-031 | WinRM remote execution | assessed | detected | cobalt_strike_remote_management_execution |
-| CSB-032 | WMI remote execution | assessed | detected | cobalt_strike_remote_management_execution |
-| CSB-033 | SSH remote execution | assessed | detected | cobalt_strike_remote_management_execution |
+| CSB-031 | WinRM remote execution | assessed | detected | cobalt_strike_remote_management_execution, cobalt_strike_remote_management_execution_compensating_signal |
+| CSB-032 | WMI remote execution | assessed | detected | cobalt_strike_remote_management_execution, cobalt_strike_remote_management_execution_compensating_signal |
+| CSB-033 | SSH remote execution | assessed | detected | cobalt_strike_remote_management_execution, cobalt_strike_remote_management_execution_compensating_signal |
 | CSB-034 | teardown cleanup termination and residual memory | assessed | detected | cobalt_strike_file_cleanup_or_timestomp, cobalt_strike_file_cleanup_or_timestomp_compensating_signal |

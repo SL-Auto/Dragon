@@ -2,23 +2,23 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_remote_admin_sequence
 canonical_path: detections/sliver/yaral/sliver_remote_admin_sequence.yaral
-canonical_sha256: 1e31617d187e4e603c6e162dd2e21ec03f19b98cc504a626a2b680d4243b2906
-description: "Remote authentication followed by service or SSH execution on target, joined by logon/session identity"
+canonical_sha256: 7503d39b3be429665f18c8bcb835271654226ef719bce40676d9b9d2e11ad311
+description: "Remote authentication followed by Windows service installation (4697) or SSH command execution on the target, joined by logon/session identity"
 severity: high
 procedure_ids: ["PROC-020"]
 validation_status: "needs_validation"
-telemetry_prerequisites: "Authentication and service/SSH process events with target host, account, and logon/session identifier"
-atomic_event_types: ["4624", "4697", "7045", "sshd_auth_success", "sshd_command"]
+telemetry_prerequisites: "Windows Security 4624 and 4697 (TargetLogonId / SubjectLogonId normalized to network.session_id) or SSH authentication and command events with target host, account and session identifier"
+atomic_event_types: []
 required_udm_fields: ["metadata.product_event_type", "network.session_id", "principal.user.userid", "target.hostname", "target.user.userid"]
 correlation_window: "10m"
 uses_multi_event_correlation: true
 uses_aggregation: false
 uses_absence_logic: false
 false_positives: "Deployment, backup, authorized remote administration"
-references: "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_remote_admin_sequence.md"
+references: "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_remote_admin_sequence.md, reviews/sliver/detection-review.md#review-015"
 translations:
-  spl: { path: "detections/sliver/spl/sliver_remote_admin_sequence.spl", sha256: d6eb9f7862c24d971258af050433ef6c28915ac3b2b2d72590b46c7bce12d3a8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/sliver/kql/sliver_remote_admin_sequence.kql", sha256: 6e471f77d91ba4e753182af3805745271faa93105da319d0eadac6e465171d4c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/sliver/sql/sliver_remote_admin_sequence.sql", sha256: c268192c18b9fe1bb6df61e6bb61287fb958e0e55e1ec72d7d6af2635f771616, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/sliver/eql/sliver_remote_admin_sequence.eql", sha256: f5498cc41ef3b198fe619d472cf33492286e8c6ba91fa3a088840ff349dc4db9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/sliver/sigma/sliver_remote_admin_sequence.yml", sha256: 60304bfc31ce2b8b5aad636e6d591116b4b3f4ea6768753bd2bbbec8feb1c1e2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/sliver/spl/sliver_remote_admin_sequence.spl", sha256: 3489c31215809e6b73dfd2b62f1e6f2a6a7a268526f0b115c06e53495ad1af0f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_remote_admin_sequence.kql", sha256: ca9fa42f6e779bece5cb751108251e641b482c0a1614244406877419755d379b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_remote_admin_sequence.sql", sha256: ac729aac8e594e824e5b814c6eaade72eeaa7667d2085cb4cab48c1047c97826, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_remote_admin_sequence.eql", sha256: d0f1756f7886adca8dd606b71d32140b671ef93f3bb077417abb2cad30adb032, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_remote_admin_sequence.yml", sha256: 35b2b1cfb355d9f1793f442f3737813c43ae36d8b2ca1f4fe63f682d8f6d37d6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

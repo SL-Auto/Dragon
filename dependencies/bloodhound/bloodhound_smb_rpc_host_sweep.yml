@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_smb_rpc_host_sweep
 canonical_path: detections/bloodhound/yaral/bloodhound_smb_rpc_host_sweep.yaral
-canonical_sha256: 217caff224b1079a7005a4c715c6438984e4f159e0d3c54395e9e5e7fd64f8fb
+canonical_sha256: 4348f894ca3a08126eeb8442ab131507343f9303c51f365a93d05b8241806ab0
 description: "Detects one process attempting SMB or RPC connections to many internal hosts, excluding destinations outside the internal address range and sources labeled as an approved scanner."
 severity: high
 procedure_ids: ["BH-006"]
@@ -10,15 +10,15 @@ validation_status: "needs_validation"
 telemetry_prerequisites: "EDR/firewall network events with source process, destination host/IP and port, internal-address-range enrichment and governed scanner-inventory labeling."
 atomic_event_types: ["NETWORK_CONNECTION"]
 required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.file.full_path", "principal.process.file.labels", "target.ip", "target.ip_in_internal_range", "target.port"]
-correlation_window: "10m"
+correlation_window: "30m"
 uses_multi_event_correlation: true
 uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Vulnerability scanners, deployment systems, backup discovery and approved inventory not present in the scanner-inventory label; a stale or incomplete inventory can still allow false positives."
-references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_smb_rpc_host_sweep.md"
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_smb_rpc_host_sweep.md, reviews/bloodhound/detection-review.md#bh-dr-30"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_smb_rpc_host_sweep.spl", sha256: b47449583fdd72c1f07f531ae0504eb462f8ecafb46b5ae836b1274df2a3362c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_smb_rpc_host_sweep.kql", sha256: ae28454e2f574cfe622b865ace9b8131f84f43d14b64883c3ee6d2effdbf273c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_smb_rpc_host_sweep.sql", sha256: fd6620665945827d2319c3ac9fcae2a553db86ee160c9398e2ee9a1faea2d4cd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_smb_rpc_host_sweep.eql", sha256: e088f4294c89bb91fbd74831dab3f8126da06d15fcd27bb1a663ce926ee6e66c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_smb_rpc_host_sweep.yml", sha256: 89f4eef781f4579c2d35b519119c98b41ffc9323b532be21933858d1f199d0d1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_smb_rpc_host_sweep.spl", sha256: 6d3749f7736e8c7db539240ee4d5b2ec8576e2346297a5d18a782e04142dbb1d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_smb_rpc_host_sweep.kql", sha256: d5cd95292a8f902620f9b1dfe3a7e0464a785c57c4a1eef4ff84146b49ab8ac4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_smb_rpc_host_sweep.sql", sha256: 0175cba2766e2a6b31831a92c1d21f728a20bc70923e0b937f6382b300ee7ddb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_smb_rpc_host_sweep.eql", sha256: 288aedd0e19fe96adadbad91a504508952ffad3c8ee318121e2870f89e26919a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_smb_rpc_host_sweep.yml", sha256: 0e0b5e790c7d5eea0a254a05058bc67d0b4ad6fe1d41be870d2b2411f5ea32e1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

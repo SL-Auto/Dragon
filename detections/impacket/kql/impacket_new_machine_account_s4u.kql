@@ -1,0 +1,28 @@
+// source_yaral: detections/impacket/yaral/impacket_new_machine_account_s4u.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: high
+// rule_name: impacket_new_machine_account_s4u
+// severity: high
+// procedure_ids: IMP-07,IMP-11,IMP-22
+// description: Detects a newly created computer account requesting S4U (protocol-transition or constrained-delegation) service tickets within one hour of its creation, proving that the object created in the directory participates in the later ticket path. This is the resource-based constrained delegation chain: account creation, delegation configuration, then S4U ticket requests as the new account.
+// log_source_prerequisites: Domain-controller Security 4741 (computer account created; new account in target.user.userid) and 4769 (requesting account in target.user.userid) with S4U context in the description, a structured delegation_flow field, or TransmittedServices, from every DC.
+// false_positives: Provisioning or middleware that creates a computer account and immediately configures it for constrained delegation; approve those service accounts after validation.
+// references: reports/impacket/source-analysis.md#imp-22; public-rules/comparisons/impacket/impacket_privilege_path_effects.md; reviews/impacket/detection-review.md#review-014
+// schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (product_event_type, user_id, target_user, service_name, source_ip, description, delegation_flow, TransmittedServices); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native ordered two-event correlation on target_user within 60 minutes (first event before second). Exact per-pair join; KQL suffixes duplicate right-side columns with 1. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
+let window = 60m;
+let first_leg = NormalizedEvents
+    | where TimeGenerated > ago(120m)
+    | where product_event_type == "4741"
+    | project-rename FirstTime = TimeGenerated;
+let second_leg = NormalizedEvents
+    | where TimeGenerated > ago(120m)
+    | where product_event_type == "4769"
+    and ((description matches regex @"(?i)(S4U2Self|S4U2Proxy|protocol transition|transited services)") or (delegation_flow matches regex @"(?i)^(S4U2Self|S4U2Proxy)$") or (TransmittedServices matches regex @"(?i)[A-Za-z0-9]"))
+    | project-rename SecondTime = TimeGenerated;
+first_leg
+| join kind=inner second_leg on target_user
+| where SecondTime between (FirstTime .. FirstTime + window)
+| summarize FirstTime = min(FirstTime), LastTime = max(SecondTime), Pairs = count() by target_user
+| extend CanonicalRule = "impacket_new_machine_account_s4u"

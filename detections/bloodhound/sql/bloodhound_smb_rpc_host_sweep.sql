@@ -4,10 +4,10 @@
 -- rule_name: bloodhound_smb_rpc_host_sweep
 -- severity: high
 -- procedure_ids: BH-006
--- description: Detects one process attempting SMB or RPC connections to many internal hosts.
--- log_source_prerequisites: EDR/firewall network events with source process, destination host/IP and port.
--- false_positives: Vulnerability scanners, deployment systems, backup discovery and approved inventory.
--- references: reports/bloodhound/source-analysis.md
+-- description: Detects one process attempting SMB or RPC connections to many internal hosts, excluding destinations outside the internal address range and sources labeled as an approved scanner.
+-- log_source_prerequisites: EDR/firewall network events with source process, destination host/IP and port, internal-address-range enrichment and governed scanner-inventory labeling.
+-- false_positives: Vulnerability scanners, deployment systems, backup discovery and approved inventory not present in the scanner-inventory label; a stale or incomplete inventory can still allow false positives.
+-- references: reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_smb_rpc_host_sweep.md, reviews/bloodhound/detection-review.md#bh-dr-30
 -- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 -- schema_profile: schemas/normalized-sql.yml
 -- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).

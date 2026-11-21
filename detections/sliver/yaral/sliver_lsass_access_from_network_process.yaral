@@ -2,14 +2,14 @@ rule sliver_lsass_access_from_network_process {
   meta:
     author = "Detection Research Agent"
     description = "A network-active process obtains a memory-read-capable handle to a protected credential process such as lsass"
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "Target-process identity (lsass/winlogon/csrss) plus a memory-read access mask is a high-specificity credential-access signal, compensating for the broad process-access rule that conflates access, injection, assembly-load, library-load, and dump signals under one generic module-load predicate"
     procedure_ids = "PROC-011,PROC-012,PROC-015"
     log_source_prerequisites = "Tenant-verified EDR process-access event (for example Sysmon Event ID 10) with target process identity and access mask, plus process-attributed network telemetry sharing a stable process entity"
     false_positives = "EDR/AV agents, debuggers, and credential-backup tools that legitimately open lsass with read access"
-    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_process_access_from_network_process.md"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_process_access_from_network_process.md, reviews/sliver/detection-review.md#review-016"
     validation_status = "needs_validation"
     review_status = "reviewed_with_gaps"
     review_reference = "reviews/sliver/detection-review.md"
@@ -19,7 +19,7 @@ rule sliver_lsass_access_from_network_process {
     $a.principal.hostname = $host
     $a.principal.process.product_specific_process_id = $pid
     re.regex($a.target.process.file.full_path, `(?i)\\(lsass|winlogon|csrss)\.exe$`)
-    re.regex($a.target.process.access_mask, `(?i)(0x1fffff|0x1f0fff|0x143a|0x1010)`)
+    re.regex($a.target.process.access_mask, `(?i)^(0x1fffff|0x1f0fff|0x143a|0x1010)$`)
 
     $n.metadata.event_type = "NETWORK_CONNECTION"
     $n.network.direction = "OUTBOUND"

@@ -8,7 +8,7 @@ fidelity: partial
 schema_profile: schemas/sigma.yml
 assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
 references:
-  - "reports/impacket/source-analysis.md"
+  - "reports/impacket/source-analysis.md, reviews/impacket/detection-review.md#review-015"
 procedure_ids: "IMP-08,IMP-16"
 log_source_prerequisites: "RPC-aware network or ETW telemetry with source, target and interface UUID."
 logsource:

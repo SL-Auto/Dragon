@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_service_protocol_probe_fanout
 canonical_path: detections/bloodhound/yaral/bloodhound_service_protocol_probe_fanout.yaral
-canonical_sha256: b3ef253ebbcf21e8a80fa147415e3c4e89c21305dc08a410a8f77ba01b14ed4b
+canonical_sha256: 8f020f0c205c7db112179358872f1e5822e7dfdcc8e51ab5095cc3b28b51ecc1
 description: "Detects one process probing at least three distinct service families among WebDAV, SMB, LDAP and LDAPS capability across many hosts, requiring protocol-family diversity rather than raw target/port count."
 severity: medium
 procedure_ids: ["BH-013"]
@@ -15,10 +15,10 @@ uses_multi_event_correlation: true
 uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Vulnerability scanners, service inventory and network monitoring."
-references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_service_protocol_probe_fanout.md"
+references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_service_protocol_probe_fanout.md, reviews/bloodhound/detection-review.md#bh-dr-30"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_service_protocol_probe_fanout.spl", sha256: 0e91358f90f4be25069b2041ea741ff52e30c313560e0097f3312a05b494a480, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_service_protocol_probe_fanout.kql", sha256: 9140a07e58c12eee1b261b445a86a6059e5dad8777b648ff88128e1e34f3e818, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_service_protocol_probe_fanout.sql", sha256: c46601d1383d95055d82d52d3682b3339b21e834ce599d04b56ce2f82f05bc1a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_service_protocol_probe_fanout.eql", sha256: 6aa0f9e5dc270698ccc39e863c2be28595aa226fe30c7dddc5c50a0b4bf35bac, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_service_protocol_probe_fanout.yml", sha256: 54bea0fa115813429b89afc14de50a951f0652e66dd32b9cefbe48fe8e4c0c66, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_service_protocol_probe_fanout.spl", sha256: bbff80c6e8f92440267e2650d9b3944893ef9af64280825787d4ce592ddb667d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_service_protocol_probe_fanout.kql", sha256: be98b926efef320bad0d816114b125b1794a46fa494eaed34608538b295d5fc7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_service_protocol_probe_fanout.sql", sha256: 72860f1e50da1087282b475ffe942e891b9e4dc1748d206e6f1271bc75caffbe, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_service_protocol_probe_fanout.eql", sha256: 93b33ed006087775e1f473dd1863ae257a96c08cab78f1ea2191927945217815, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_service_protocol_probe_fanout.yml", sha256: 72fae7e515ed613794743620480ef96507a87dc8ca9abf0ff3fc4ac00be62495, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

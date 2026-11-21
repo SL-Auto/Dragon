@@ -10,7 +10,7 @@
 - Scope mapping rationale: procedure, ordered behavior, security effect, platform and telemetry; names and syntax were not mapping criteria.
 
 Public candidate:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/linux/defense_evasion_log_files_deleted.toml`](../../public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/linux/defense_evasion_log_files_deleted.toml) - SHA-256 `6d3108f0eaf9c6d4095c5d1b9c3d4618a06bde96bd8820122adcfc7c5d1022e9`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/linux/defense_evasion_log_files_deleted.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/linux/defense_evasion_log_files_deleted.toml) - SHA-256 `b34c11414e36e68e284e57aaaf55f301c623431f26535de705f11024d6975727`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,17 @@ Deletion and network events can be unrelated on a busy host because stable proce
 
 ## Decision trail
 
-- Candidate improvement: independently implement and test the strong branch below.
-- Independent verification: pinned Sliver source, provider semantics, schema mappings and authorized sanitized fixtures required.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: comparative evidence is not canonical authority; proposal has not passed adversarial review.
-- Required regeneration: canonical detection review, coverage, telemetry/master, five translations, dependencies/manifests/hashes, then re-comparison.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/sliver/detection-review.md`.
+- Prior state: this trail still read `deferred_pending_rule_improvement_run`, although the 2026-08-16 backlog resolution (REVIEW-010 to REVIEW-014) had already acted on the proposal; this pass re-reviews that action and records the terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - Process and file identity are proven by joining the deleted file's SHA-256 to the egressing process image hash on the same host and PID.
+  - Removed the proposal's `event_timestamp.seconds <=` ordering; bounded co-occurrence in the match window is kept (REVIEW-010).
+  - Adopted as an additional narrow rule beside the broad base rule, not as a replacement, so procedures without the narrow sub-case keep coverage (REVIEW-012).
+- Canonical result: `detections/sliver/yaral/sliver_cleanup_after_egress.yaral`, SHA-256 `bd5f75c9e717feeabf121342bd62d0e45b00abee9cb8a06aca39aba4272c4ccb`.
+- Canonical result: `detections/sliver/yaral/sliver_self_delete_after_egress.yaral`, SHA-256 `d1e9ba00923a48f8a54ff2be52cc9d52b8e056000ba53fb1eb29a43197e77470`.
+- Regeneration: coverage, telemetry, `telemetry/MASTER.md`, five translations and dependency hashes were regenerated on 2026-08-16 when the rule was adopted; re-verified present and hash-consistent on 2026-11-21.
 
 ## Unmatched scope
 
@@ -89,3 +95,83 @@ rule sliver_cleanup_after_egress_strong_branch {
 ```
 
 The proposal uses concrete telemetry semantics but does not prove tool identity. It remains limited by collection health, process-entity fidelity, enrichment quality and activity outside the window. If accepted or modified, complete the full downstream workflow; if rejected, preserve the rationale without changing canonical logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/linux/defense_evasion_log_files_deleted.toml` changed between 7e91c15 and 9d792a8; re-read on 2026-11-21: only a reference URL and classification metadata changed, the query is identical, and the conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Egressing process deletes its own image | covered by `sliver_self_delete_after_egress` (hash plus PID) | `defense_evasion_log_files_deleted.toml`: Linux log-file deletion only | deleted file hash equals egressing image hash - strong | base cleanup rule - moderate | ours_stronger |
+| Deletion of other operational artifacts after egress | covered by base `sliver_cleanup_after_egress` | partially overlapping on Linux log paths | same-process deletion after egress - moderate | none | complementary |
+| Linux system-log destruction | not targeted | covered | log-path deletion - moderate | none | different_scope |
+
+- Current canonical YARA-L `detections/sliver/yaral/sliver_cleanup_after_egress.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule sliver_cleanup_after_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "Network process deletes its own image or related artifacts"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Correlates teardown with prior remote channel"
+    procedure_ids = "PROC-002,PROC-026"
+    log_source_prerequisites = "File deletion and network telemetry with stable PID"
+    false_positives = "Installers, updaters, temporary utilities"
+    references = "reports/sliver/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+  events:
+    $d.metadata.event_type = "FILE_DELETION"
+    $d.principal.hostname = $host
+    $d.principal.process.product_specific_process_id = $pid
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match: $host, $pid over 15m
+  condition: $d and $n
+}
+```
+
+- Current canonical YARA-L `detections/sliver/yaral/sliver_self_delete_after_egress.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule sliver_self_delete_after_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "A process with outbound network activity deletes a file matching its own executable hash"
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Same-hash self-deletion after egress is a high-specificity teardown signal; compensates for the broad cleanup rule where stable process/file identity between deletion and egress is not proven"
+    procedure_ids = "PROC-002,PROC-026"
+    log_source_prerequisites = "EDR file-deletion telemetry with file hash, and process-attributed network telemetry with file hash, sharing a stable process entity"
+    false_positives = "Self-updating software and installers that replace or remove their own binary after execution"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_cleanup_after_egress.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "accepted_as_compensating_rule_from_unvalidated_proposal"
+  events:
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+    $n.principal.process.file.sha256 = $hash
+
+    $d.metadata.event_type = "FILE_DELETION"
+    $d.principal.hostname = $host
+    $d.principal.process.product_specific_process_id = $pid
+    $d.target.file.sha256 = $hash
+  match: $host, $pid, $hash over 30m
+  condition: $n and $d
+}
+```
+
+- Re-comparison outcome: the current canonical rule set closes the branch the proposal targeted, within declared telemetry. Remaining limits are the accepted gaps in `reviews/sliver/detection-review.md`.

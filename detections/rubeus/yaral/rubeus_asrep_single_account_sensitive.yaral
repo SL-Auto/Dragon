@@ -1,0 +1,31 @@
+rule rubeus_asrep_single_account_sensitive {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a successful AS request without pre-authentication data for an account the tenant has classified as high-risk, compensating for targeted single-account AS-REP roasting below the three-account threshold of rubeus_asrep_roast_sequence."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "A pre-authentication-free AS-REP for a high-risk account yields offline-crackable material even when only one account is targeted."
+    procedure_ids = "PROC-003"
+    log_source_prerequisites = "DC Security 4768 with PreAuthType, Status, source IP and target account, plus an account-risk enrichment that sets additional.fields[account_risk_tier] = high for privileged, service and other sensitive accounts. Without that enrichment this rule stays silent; the base three-account rule still applies."
+    false_positives = "Sensitive accounts that legitimately have pre-authentication disabled for legacy clients; record them as approved exceptions in the risk enrichment."
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_asrep_roast_sequence.md; reviews/rubeus/detection-review.md#review-014"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized 4768 fixtures for one high-risk no-pre-authentication account, one ordinary account and one failed request; confirm only the first matches and that the risk enrichment is present on 4768 events."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/rubeus/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "4768"
+    $e.additional.fields["PreAuthType"].value.string_value = "0"
+    $e.additional.fields["Status"].value.string_value = "0x0"
+    $e.additional.fields["account_risk_tier"].value.string_value = "high"
+    $e.principal.ip = $source
+    $e.target.user.userid = $account
+  match:
+    $source, $account over 1h
+  outcome:
+    $requests = count($e.metadata.id)
+    $encryption_types = array_distinct($e.additional.fields["TicketEncryptionType"].value.string_value)
+  condition:
+    $e
+}

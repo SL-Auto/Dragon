@@ -92,6 +92,12 @@ specs = [
       legs=[dict(where=[("in","event_type",["SCREEN_CAPTURE","CLIPBOARD_READ","INPUT_CAPTURE","BROWSER_SECRET_READ"])]),
             dict(where=[("eq","event_type","NETWORK_CONNECTION"),("eq","direction","OUTBOUND")])],
       sigma=dict(category="network_connection", **WIN)),
+ # Added 2026-11-21 (DR-23).
+ dict(name=P+"remote_management_execution"+S, kind="seq", window=10, keys=["hostname", "user_id"],
+      columns=["event_type", "hostname", "user_id", "process_path", "source_ip"],
+      legs=[dict(where=[("in","event_type",["WINRM_SESSION","WMI_REMOTE_OPERATION","SSH_AUTH"])]),
+            dict(where=[("eq","event_type","PROCESS_LAUNCH"),("re","process_path",r"(\\(wsmprovhost|wmiprvse|sshd)\.exe|/sshd)$")])],
+      sigma=dict(category="process_creation", **WIN)),
 ]
 
 if __name__ == "__main__":

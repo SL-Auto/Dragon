@@ -10,7 +10,7 @@
 - Scope mapping rationale: procedure, ordered behavior, security effect, platform and telemetry; names and syntax were not mapping criteria.
 
 Public candidate:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/lateral_movement_remote_services.toml`](../../public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/lateral_movement_remote_services.toml) - SHA-256 `613041568e8a969bee0ae85cd94b19dd714ffccb2780dfea5c478fb9f978906d`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/lateral_movement_remote_services.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/lateral_movement_remote_services.toml) - SHA-256 `95963d6a99a37667979bc001f5c10a1b8005395748650ae968250cf4b81b8b38`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,16 @@ Host and user joins can associate unrelated administration; stable logon/session
 
 ## Decision trail
 
-- Candidate improvement: independently implement and test the strong branch below.
-- Independent verification: pinned Sliver source, provider semantics, schema mappings and authorized sanitized fixtures required.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: comparative evidence is not canonical authority; proposal has not passed adversarial review.
-- Required regeneration: canonical detection review, coverage, telemetry/master, five translations, dependencies/manifests/hashes, then re-comparison.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/sliver/detection-review.md`.
+- Prior state: this trail still read `deferred_pending_rule_improvement_run`, although the 2026-08-16 backlog resolution (REVIEW-010 to REVIEW-014) had already acted on the proposal; this pass re-reviews that action and records the terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - Rewritten in place on 2026-08-16 to join 4624 and the execution event by logon/session identifier instead of host plus account alone (REVIEW-007, REVIEW-014).
+  - Removed the proposal's `event_timestamp.seconds <=` ordering; bounded co-occurrence in the match window is kept (REVIEW-010).
+  - Re-review on 2026-11-21 removed System 7045 from the session-joined branch, because 7045 carries no logon identifier and could never match, and anchored both alternations (REVIEW-015).
+- Canonical result: `detections/sliver/yaral/sliver_remote_admin_sequence.yaral`, SHA-256 `7eaf7e6e08e4dc460a0be5e7a36f6f7b8516f70c06f4e2800178e498a6ddd1aa`.
+- Regeneration: canonical change on 2026-11-21; detection review, telemetry row, five translations (after the generator anchoring fix), dependency/manifest hashes and this re-comparison were regenerated in the same run.
 
 ## Unmatched scope
 
@@ -91,3 +96,50 @@ rule sliver_remote_admin_sequence_strong_branch {
 ```
 
 The proposal uses concrete telemetry semantics but does not prove tool identity. It remains limited by collection health, process-entity fidelity, enrichment quality and activity outside the window. If accepted or modified, complete the full downstream workflow; if rejected, preserve the rationale without changing canonical logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/lateral_movement_remote_services.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Remote logon followed by service install in the same logon session | covered (4624 TargetLogonId = 4697 SubjectLogonId) | `lateral_movement_remote_services.toml`: inbound RPC to services.exe followed within 1s by a services.exe child (by host and process entity) | session-joined logon plus 4697 - strong | RPC-to-services child sequence - moderate | complementary |
+| Service install observed only through System 7045 | covered by `sliver_identity_or_service_from_network_process` and `sliver_explicit_credential_service_creation` | covered through the resulting process | 7045 plus host context - moderate | none | complementary |
+| SSH authentication followed by remote command | covered when SSH events carry a session ID | not covered (Windows only) | SSH session join - strong | none | ours_stronger |
+
+- Current canonical YARA-L `detections/sliver/yaral/sliver_remote_admin_sequence.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule sliver_remote_admin_sequence {
+  meta:
+    author = "Detection Research Agent"
+    description = "Remote authentication followed by Windows service installation (4697) or SSH command execution on the target, joined by logon/session identity"
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Adding the logon/session identifier to the join key closes the review-identified gap that a bare host-plus-user join can associate unrelated administration on a busy host; System 7045 carries no logon identifier and was removed from the session-joined branch (REVIEW-015); 7045-only service installs remain covered by sliver_identity_or_service_from_network_process and sliver_explicit_credential_service_creation"
+    procedure_ids = "PROC-020"
+    log_source_prerequisites = "Windows Security 4624 and 4697 (TargetLogonId / SubjectLogonId normalized to network.session_id) or SSH authentication and command events with target host, account and session identifier"
+    false_positives = "Deployment, backup, authorized remote administration"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_remote_admin_sequence.md, reviews/sliver/detection-review.md#review-015"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "modified_from_unvalidated_proposal"
+  events:
+    $l.metadata.product_event_type = /^(4624|sshd_auth_success)$/
+    $l.target.hostname = $host
+    $l.target.user.userid = $user
+    $l.network.session_id = $session
+
+    $x.metadata.product_event_type = /^(4697|sshd_command)$/
+    $x.target.hostname = $host
+    $x.principal.user.userid = $user
+    $x.network.session_id = $session
+  match: $host, $user, $session over 10m
+  condition: $l and $x
+}
+```
+
+- Re-comparison outcome: the current canonical rule set closes the branch the proposal targeted, within declared telemetry. Remaining limits are the accepted gaps in `reviews/sliver/detection-review.md`.

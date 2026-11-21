@@ -10,7 +10,7 @@
 - Scope mapping rationale: ordered Rubeus procedure behavior and observable security effects; public candidates were selected by procedure and telemetry, not rule names.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/privilege_escalation_newcreds_logon_rare_process.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/privilege_escalation_newcreds_logon_rare_process.toml) - SHA-256 `aed0d7ea2efe3930c49154450af4f3a0735f44801f30b9f9bd7ce6d2fbb45bb5`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/privilege_escalation_newcreds_logon_rare_process.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/privilege_escalation_newcreds_logon_rare_process.toml) - SHA-256 `59279f96db8edd7131d9ea95ce159dbe08b1b2a045087e139a5128b6774634c3`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,16 @@ Depends on uncommon target-LUID API telemetry and does not confirm the submitted
 
 ## Decision trail
 
-- Candidate improvement: Keep the same-LUID sequence as primary; add process rarity only as compensation and correlate subsequent Kerberos use where session identity is available.
-- Independent verification: `Required against Rubeus source analysis, concrete telemetry schemas, and sanitized fixtures before changing canonical logic.`
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The comparison identifies a detection-engineering gap; no public predicate is copied automatically.`
-- Required regeneration: `YARA-L adversarial review, telemetry reconciliation, five translations, and this comparison.`
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/rubeus/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, and canonical logic had not acted on the proposal; decided here with the evidence in hand.
+- Decision: `reject`.
+- Reason: the proposal is not adopted:
+  - The proposal's third leg requires a host-side Kerberos logon event carrying the net-only session LUID (`subject_luid`), which standard Windows auditing does not produce; requiring it would remove existing coverage.
+  - It also dropped the `EDR_API_CALL` event-type constraint on the submission leg, widening that leg to any event with a message-type field.
+  - Compensating signals: `rubeus_lsa_ticket_submission` and resource-side `rubeus_ticket_use_without_credible_kdc_issue`.
+- Canonical result: no canonical logic changed; the proposed code is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration: none required; canonical logic is unchanged.
 
 ## Unmatched scope
 
@@ -93,3 +98,15 @@ rule rubeus_netonly_submit_and_use_sequence {
 Adds the missing security-effect branch and extends the window for staged administration. It requires reliable LUID propagation; retain the existing two-event rule as a lower-confidence compensating alert where service-use LUID is unavailable.
 
 If adopted, update the canonical YARA-L, adversarial detection review, Rubeus telemetry matrix and master counts, all five translations, dependency hashes, and this comparison.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/privilege_escalation_newcreds_logon_rare_process.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Logon type 9 followed by ticket submission into that LUID | covered | `privilege_escalation_newcreds_logon_rare_process.toml`: new-terms on the process creating a type-9 logon | 4624 type 9 + KerbSubmitTicket LUID join - strong | rare-process new-terms - moderate | complementary |
+| Submitted ticket used from the net-only session | not covered (no standard LUID-attributed use event) | not covered | none | `rubeus_ticket_use_without_credible_kdc_issue` - moderate | insufficient_evidence |
+
+- Re-comparison outcome: canonical logic is unchanged; the conclusions above stand against the re-pinned candidates.

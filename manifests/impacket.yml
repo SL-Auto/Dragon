@@ -11,35 +11,37 @@ context_entry_points:
   telemetry: telemetry/impacket.md
 counts:
   procedures: 22
-  canonical_rules: 23
-  spl_translations: 23
-  kql_translations: 23
-  sql_translations: 23
-  eql_translations: 23
-  sigma_translations: 23
+  canonical_rules: 25
+  spl_translations: 25
+  kql_translations: 25
+  sql_translations: 25
+  eql_translations: 25
+  sigma_translations: 25
 completion_states:
   source_analysis: complete
   canonical_detection: complete
   telemetry_reconciliation: complete_for_experimental_rules
   secondary_translation: draft_complete
-  rule_validation_labels: "23 needs_validation"
+  rule_validation_labels: "25 needs_validation"
 artifact_hashes:
   registry: 9c75dda74d8d2e504e70b5b119d8961f733d1f55eb544e13ccd697f701c1ac32
-  coverage: 3acdf9ea374ba6def1b470ab58cf61c5b051b82f18829d28fb20abf7a3c6ccae
+  coverage: 5fbae2f4b44237423a119b58ba78c33f97d627a959f281197aeeb7f37f889aa8
   report: be643750a9b6a1f2c0c8f61508cc6d3cc87d0d9f08af8e208e3ca99cb239a416
-  telemetry: 9765bf3d84b49611331d8a7da1938ff3b748edaf541cc58f7afdb906c4dbbeef
-  detection_review: 96b4d710651d8537363a1b9f15d383b06cd1ae1339c55c61ba839453907de0fd
-  translation_review: 26d2b3fdc40d94d4c7c735f9b8921cd6218ff41803491d3109e02d2448f7489b
+  telemetry: ac9f3eac6b37fa778d9aebac32953057ec124ef65fabfae59ff0ded9dd6b8db4
+  detection_review: 6ee6324a99ae80212cf0e3f697e0fa4417f856c20852dd74a69c9413cd186dd6
+  translation_review: 149284c41a3604937822209ab6e904ba12d058f70e5c282627ae34d9bb1d165d
 rules:
   - { name: impacket_ad_authorization_change, severity: high, procedures: "IMP-10", dependency: dependencies/impacket/impacket_ad_authorization_change.yml, canonical_sha256: 5c1b413e2c46d0d34569d0acbc444d9996860ff220dc8e64158fbb0f5939794b }
   - { name: impacket_cross_source_ntlm_relay, severity: high, procedures: "IMP-21", dependency: dependencies/impacket/impacket_cross_source_ntlm_relay.yml, canonical_sha256: 6d00dc2d263ce4e510dc0831d14420a70868b09df319fe42355f0afe9580066a }
+  - { name: impacket_directory_replication_rights_use, severity: high, procedures: "IMP-13", dependency: dependencies/impacket/impacket_directory_replication_rights_use.yml, canonical_sha256: 6a3cc33e2a97cd345f04f4383cd3ebcd1ac17d1ef660829fd40448d56178a82a }
+  - { name: impacket_new_machine_account_s4u, severity: high, procedures: "IMP-07,IMP-11,IMP-22", dependency: dependencies/impacket/impacket_new_machine_account_s4u.yml, canonical_sha256: 4689f1638c6f24c86d779179ae0561a22a97be5337446d84aab4083aa96fde0d }
   - { name: impacket_ntlm_relay_with_privileged_effect, severity: critical, procedures: "IMP-21", dependency: dependencies/impacket/impacket_ntlm_relay_with_privileged_effect.yml, canonical_sha256: 7e380149430debcbc76766265771de27b0abb69ca5aa68bda8a1499667e5603e }
   - { name: impacket_packet_capture_or_raw_socket, severity: medium, procedures: "IMP-19", dependency: dependencies/impacket/impacket_packet_capture_or_raw_socket.yml, canonical_sha256: d939fed81097b3c9bbf47f589c1198e88b71c940a6c619a4aa80aea2f5b0e3e4 }
   - { name: impacket_privilege_path_effects, severity: high, procedures: "IMP-22", dependency: dependencies/impacket/impacket_privilege_path_effects.yml, canonical_sha256: 30e88c22257045adbed0daed5be6eff2be3d8a07c894a3eff0f9bc072531f281 }
   - { name: impacket_rapid_scheduled_task_create_and_run, severity: high, procedures: "IMP-04", dependency: dependencies/impacket/impacket_rapid_scheduled_task_create_and_run.yml, canonical_sha256: 9d555558e5c0b284c8a40074d8edb66552d7605e3e2b45b4d6e7f9a6f308ec32 }
   - { name: impacket_remote_account_or_group_change, severity: high, procedures: "IMP-07", dependency: dependencies/impacket/impacket_remote_account_or_group_change.yml, canonical_sha256: 805d6708eb0f6ac631bfb9a9dc0543b5947e4a9ee138ff9f85a6fbae03b26a70 }
   - { name: impacket_remote_registry_activity, severity: high, procedures: "IMP-14", dependency: dependencies/impacket/impacket_remote_registry_activity.yml, canonical_sha256: ca3e7dc13d7c39d95cfc9d46f4229156ff6ee4c79ebcac8a1239520e6dfc9247 }
-  - { name: impacket_remote_rpc_discovery, severity: medium, procedures: "IMP-08,IMP-16", dependency: dependencies/impacket/impacket_remote_rpc_discovery.yml, canonical_sha256: b6dbe755b1d6f9e81a2f5d1d1721afee348f9613ba76ab546d5aee7c22c2075b }
+  - { name: impacket_remote_rpc_discovery, severity: medium, procedures: "IMP-08,IMP-16", dependency: dependencies/impacket/impacket_remote_rpc_discovery.yml, canonical_sha256: 4a19ded400761c6a6eaab883583e7dd40c95897617f2e72c8bdbb571fbef549b }
   - { name: impacket_remote_service_binary_sequence, severity: high, procedures: "IMP-03", dependency: dependencies/impacket/impacket_remote_service_binary_sequence.yml, canonical_sha256: 46fa944f018c84adc76b315a4920918c057a3ccf5cafb5c63268646c3e4021b0 }
   - { name: impacket_remote_wmi_activity, severity: high, procedures: "IMP-05", dependency: dependencies/impacket/impacket_remote_wmi_activity.yml, canonical_sha256: 9c57e5db39cedaec62a02e9cc44fd71610610c319619b54ce47a65ba1a5065d6 }
   - { name: impacket_sensitive_file_or_replication_access, severity: critical, procedures: "IMP-13", dependency: dependencies/impacket/impacket_sensitive_file_or_replication_access.yml, canonical_sha256: 2c6a2aed933b46530136ebdbe57f2c8d10e32a87000d041688e2f4ec74b48e2b }
@@ -50,7 +52,7 @@ rules:
   - { name: impacket_suspicious_service_control, severity: high, procedures: "IMP-03", dependency: dependencies/impacket/impacket_suspicious_service_control.yml, canonical_sha256: 7f1546153cf365ce44799f3e78b4820074f7fa6c21299939fd7bc53e84cc9bb9 }
   - { name: impacket_terminal_services_control, severity: medium, procedures: "IMP-18", dependency: dependencies/impacket/impacket_terminal_services_control.yml, canonical_sha256: 72546c14c87b535b3cdc6ecb3930535ce11e20cd87e9aab2e27b9e0168d1e4d8 }
   - { name: impacket_terminal_services_session_control_by_other_actor, severity: high, procedures: "IMP-18", dependency: dependencies/impacket/impacket_terminal_services_session_control_by_other_actor.yml, canonical_sha256: aaf4f62b3e88bf1516a2475b25f727bd50fdfe7915cff20dca2db23883b99c43 }
-  - { name: impacket_unusual_protocol_listener, severity: medium, procedures: "IMP-02", dependency: dependencies/impacket/impacket_unusual_protocol_listener.yml, canonical_sha256: 5221ad1aefbe816e25263a216f6d5d0fa4dd07742eb73ab034bd3701bc33c742 }
+  - { name: impacket_unusual_protocol_listener, severity: medium, procedures: "IMP-02", dependency: dependencies/impacket/impacket_unusual_protocol_listener.yml, canonical_sha256: 98a9c940d164b05c56ff29973b65972b064a685c1f7395639bbdac7468910de3 }
   - { name: impacket_unusual_service_authentication, severity: medium, procedures: "IMP-15", dependency: dependencies/impacket/impacket_unusual_service_authentication.yml, canonical_sha256: 2f8c7d5eec2a2d1eb50c24dfbc7ac11c7034619ebe22c8cdbd3aacc9654fda2a }
   - { name: impacket_wmi_activity_operational_class_signal, severity: medium, procedures: "IMP-05", dependency: dependencies/impacket/impacket_wmi_activity_operational_class_signal.yml, canonical_sha256: 2962d814c60df2e0329b39de9b6bbb339bc7cf0a8597546ddfd807058c199eee }
   - { name: impacket_wmi_subscription_change, severity: high, procedures: "IMP-06", dependency: dependencies/impacket/impacket_wmi_subscription_change.yml, canonical_sha256: ebddbf218242c611c5421404ea7d1b3658ec8a0ce78906139f5edd3b1e63d605 }

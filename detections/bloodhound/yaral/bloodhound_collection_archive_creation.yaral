@@ -2,27 +2,29 @@ rule bloodhound_collection_archive_creation {
   meta:
     author = "Detection Research Agent"
     description = "Correlates multiple JSON or CSV file creations with archive creation by one process."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "MEDIUM"
     severity_rationale = "The collection artifact lifecycle is useful but filenames and archive formats are mutable."
     procedure_ids = "BH-015"
     log_source_prerequisites = "EDR or Sysmon file create/delete events with stable process entity, path and extension."
     false_positives = "Backup, export, packaging, browser download and administrative reporting software."
-    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_collection_archive_creation.md"
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_collection_archive_creation.md, reviews/bloodhound/detection-review.md#bh-dr-28"
     validation_status = "needs_validation"
     validation_method = "Use benign multi-JSON/CSV archive fixtures with reordered and missing-delete cases."
     review_status = "reviewed_with_gaps"
     review_reference = "reviews/bloodhound/detection-review.md"
   events:
     $j.metadata.product_event_type = /^(11|FILE_CREATION)$/
+    $j.principal.hostname = $host
     $j.principal.process.product_specific_process_id = $process
     re.regex($j.target.file.full_path, `(?i)\.(json|csv)$`)
     $a.metadata.product_event_type = /^(11|FILE_CREATION)$/
+    $a.principal.hostname = $host
     $a.principal.process.product_specific_process_id = $process
     re.regex($a.target.file.full_path, `(?i)\.(zip|7z)$`)
   match:
-    $process over 10m
+    $host, $process over 10m
   condition:
     #j >= 3 and $a
 }

@@ -8,6 +8,7 @@ All notable agent capabilities and workflow changes are recorded here. The struc
 
 ### Fixed
 
+- `scripts/translate-yaral.ps1` strips `^` and `$` from slash-regex event-type alternations. Previously an anchored alternation such as `/^(4624|4697)$/` produced a wildcard (`"*"`) event list in all five secondary drafts. Anchoring done for correctness had therefore silently broken five rules' translations (BloodHound, Impacket and Sliver).
 - `scripts/update-context-index.ps1` hashes content with CRLF normalized to LF. Previously a checkout under `core.autocrlf` rewrote line endings, changed raw-byte hashes and made every generated manifest and dependency record look stale.
 
 - Anchored unanchored short event-ID alternations in canonical YARA-L (for example `/(4778|4779|23|24|25)/`), which matched any ID containing those digits, such as 4625, 4720 and 1102. A repository-wide search now finds none remaining.

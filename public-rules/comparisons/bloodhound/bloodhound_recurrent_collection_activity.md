@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidate chosen by the same procedure branch or closest compensating observable, never by rule-name similarity alone.
 
 Public candidate:
-- [Elastic high-volume AD property access rule](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/discovery_high_number_ad_properties.toml) - pinned revision and SHA-256 `260d763e6cc776634fb023e536f32c6fdd6b4cb8ce889726aa0b16cb2c41aa95`.
+- [Elastic high-volume AD property access rule](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/discovery_high_number_ad_properties.toml) - pinned revision and SHA-256 `2a697272b6a7c4d634efc11afad58394b7ef80398bb692aab25ed1123afdc81e`.
 
 ## Procedure and detection-branch matrix
 
@@ -47,11 +47,15 @@ separate burst detection, recurrence across process restarts, host/user correlat
 
 ## Decision trail
 
-- Candidate improvement: independently add the missing procedure branch shown below; no public predicate is copied.
-- Independent verification: compare against pinned collector source, actual provider semantics, sanitized fixtures and benign inventory baselines.
-- Decision: `deferred_pending_rule_improvement_run`.
-- Reason: comparison code is an unvalidated detection-engineering proposal, not canonical logic.
-- Required regeneration: canonical review, coverage, telemetry, all translations, dependencies/hashes and this comparison after acceptance or modification.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/bloodhound/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, and canonical logic had not acted on the proposal; decided here with the evidence in hand.
+- Decision: `reject`.
+- Reason: the proposal is not adopted:
+  - The proposal correlates `DETECTION` events by a `detection_family` label that no rule here emits. That is not how composite detections are represented, so it cannot match.
+  - It does not address the base rule's hard prevalence dependency. That dependency is recorded as an accepted gap with compensating rules (BH-DR-32).
+- Canonical result: no canonical logic changed; the proposed code is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration: none required; canonical logic is unchanged.
 
 ## Unmatched scope
 
@@ -88,3 +92,15 @@ rule bloodhound_recurrent_collection_bursts {
 Remaining gaps: intent is not established; thresholds, normalized fields and benign baselines require authorized telemetry testing. Distributed activity and missing collection require separate compensating analytics and collection-health monitoring.
 
 If adopted, independently revise canonical YARA-L, re-run adversarial review, reconcile telemetry and master counts, regenerate all five translations and dependencies, and re-compare the final logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/discovery_high_number_ad_properties.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Rare process generating sustained LDAP/RPC/registry collection across targets | covered when prevalence enrichment exists | `discovery_high_number_ad_properties.toml`: 4662 reads of many AD attributes | volume plus breadth plus rarity - moderate | fan-out rules without prevalence - moderate | complementary |
+| Recurring bursts across process restarts | not covered | not covered | none | per-burst rules - moderate | insufficient_evidence |
+
+- Re-comparison outcome: canonical logic is unchanged; the conclusions above stand against the re-pinned candidates.

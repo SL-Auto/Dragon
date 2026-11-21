@@ -1,19 +1,19 @@
 -- source_yaral: detections/rubeus/yaral/rubeus_ticket_use_without_credible_kdc_issue.yaral
 -- translation_status: experimental_needs_backend_mapping_and_validation
--- fidelity: partial
+-- fidelity: unsupported
 -- rule_name: rubeus_ticket_use_without_credible_kdc_issue
 -- severity: high
 -- procedure_ids: PROC-008,PROC-009
--- description: Detects anomalous Kerberos-authenticated service use without a corresponding observed service-ticket issue, gated on an explicit domain-controller collection-health signal.
--- log_source_prerequisites: Centralize complete 4769 telemetry and resource-side Kerberos service-use/PAC anomaly data with normalized user, source, and service, plus a collection-health event proving all authoritative domain controllers reported for the window.
--- false_positives: Missing DC logs, cached tickets, referrals, cross-realm activity, and parser mismatches; the collection-health gate mitigates but does not eliminate these.
--- references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_use_without_credible_kdc_issue.md
--- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend. The absence check (zero matching 4769 rows) and the required collection-health gate need a LEFT JOIN ... IS NULL anti-join plus an EXISTS check against the health event, not a plain WHERE filter.
+-- description: Detects anomalous Kerberos-authenticated service use without a corresponding observed service-ticket issue, gated on an explicit domain-controller collection-health signal so absence-based logic never fires during known incomplete DC coverage.
+-- log_source_prerequisites: Centralize complete 4769 telemetry and resource-side Kerberos service-use/PAC anomaly data with normalized user, source, and service, plus a collection-health event that proves all authoritative domain controllers reported for the correlation window. The health event and the resource-side access event must both carry the AD domain in target.administrative_domain; that field joins the health gate to the activity.
+-- false_positives: Missing DC logs, cached tickets, referrals, cross-realm activity, and parser mismatches; the collection-health gate mitigates but does not eliminate these because health may be reported as true while an individual DC's forwarder is silently stalled.
+-- references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_use_without_credible_kdc_issue.md; reviews/rubeus/detection-review.md#review-013
+-- assumptions_and_gaps: Target draft does not safely reproduce canonical absence logic; implement only after confirming complete source coverage and time semantics.
 -- schema_profile: schemas/normalized-sql.yml
 -- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).
 SELECT hostname, user_id, COUNT(*) AS event_count,
        'rubeus_ticket_use_without_credible_kdc_issue' AS canonical_rule
 FROM normalized_events
-WHERE product_event_type IN ('4769', 'USER_LOGIN') OR event_type IN ('4769', 'USER_LOGIN')
+WHERE product_event_type IN ('4769', 'COLLECTION_HEALTH', 'USER_LOGIN') OR event_type IN ('4769', 'COLLECTION_HEALTH', 'USER_LOGIN')
 GROUP BY hostname, user_id
 HAVING COUNT(*) > 0;

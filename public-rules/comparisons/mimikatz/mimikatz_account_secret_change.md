@@ -10,7 +10,7 @@
 - Scope mapping rationale: mapped by security effect, ordered procedure and required telemetry; names and syntax were not mapping criteria.
 
 Public evidence:
-- Closest public rule examined and rejected as a counterpart: [alternate-credential lateral movement](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/lateral_movement_alternate_creds_pth.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `c97393830fa3ec379bd46076c8f75be58db509c63c1d5661ef5f976d5f40f43b`.
+- Closest public rule examined and rejected as a counterpart: [alternate-credential lateral movement](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/lateral_movement_alternate_creds_pth.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `28ce4bedfc138a95bb4c427ca1a7beb7234969db5b9cd72fdb1d5351c08e0cc4`.
 
 ## Procedure and detection-branch matrix
 
@@ -88,3 +88,8 @@ rule mimikatz_untrusted_account_secret_change {
 Remaining gaps: thresholds, fields, ordering and trust enrichment need authorized telemetry validation; absence of required collection cannot be interpreted as benign activity.
 
 If accepted or modified, update canonical YARA-L and every downstream artifact, re-run adversarial review, and compare the revised final rule again.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/windows/lateral_movement_alternate_creds_pth.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.

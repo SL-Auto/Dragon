@@ -1,17 +1,20 @@
 // source_yaral: detections/rubeus/yaral/rubeus_as_request_failed_preauth_fanout.yaral
 // translation_status: experimental_needs_backend_mapping_and_validation
-// fidelity: partial
+// fidelity: high
 // rule_name: rubeus_as_request_failed_preauth_fanout
 // severity: high
 // procedure_ids: PROC-001
-// description: Detects one source generating failed or atypical-result AS requests against multiple accounts, distinct from the existing successful multi-principal fan-out rule.
-// log_source_prerequisites: Normalize DC Security 4768 with source IP, target account, and a normalized security_result.action or result-code field distinguishing non-success outcomes.
+// description: Detects one source generating failed AS requests (4768 unknown/revoked principal, or 4771 pre-authentication failure) against multiple accounts, distinct from the existing multi-principal AS fan-out rule.
+// log_source_prerequisites: DC Security 4768 and 4771 with source IP, target account and the Status/Result Code field normalized to additional.fields[\
 // false_positives: Password audits, account-lockout/health monitoring tooling, and misconfigured legacy clients retrying stale credentials.
-// references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_as_request_anomaly.md
-// assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, cardinality, and the non-ALLOW result filter must be implemented and tested in the target backend.
+// references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_as_request_anomaly.md; reviews/rubeus/detection-review.md#review-012
 // schema_profile: schemas/sentinel-asim.yml
+// field_mapping: normalized columns (product_event_type, source_ip, user_id, Status, action); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: Native filter, grouping by source_ip and threshold. Hop window approximated by scheduling every 5 minutes over the trailing 10 minutes. NormalizedEvents is a placeholder for the tenant table or ASIM parser.
 NormalizedEvents
-| where (ProductEventType in ("4768") or EventType in ("4768")) and ResultAction != "ALLOW"
-| summarize AccountCount=dcount(TargetUserId) by SourceIp
-| where AccountCount >= 3
-| extend CanonicalRule="rubeus_as_request_failed_preauth_fanout"
+| where TimeGenerated > ago(10m)
+| where product_event_type in ("4768", "4771")
+    and ((action == "BLOCK") or (Status matches regex @"(?i)^0x(6|12|18)$"))
+| summarize MatchedCount = count_distinct(user_id) by source_ip
+| where MatchedCount >= 3
+| extend CanonicalRule = "rubeus_as_request_failed_preauth_fanout"

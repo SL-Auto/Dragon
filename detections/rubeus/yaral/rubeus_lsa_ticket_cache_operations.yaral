@@ -2,14 +2,14 @@ rule rubeus_lsa_ticket_cache_operations {
   meta:
     author = "Detection Research Agent"
     description = "Detects Kerberos ticket-cache query/enumeration operations from EDR API telemetry. Split from encoded-ticket retrieval, which is a stronger, separately severity-scored signal covered by rubeus_lsa_encoded_ticket_retrieval."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "MEDIUM"
     severity_rationale = "A bare KerbQueryTicketCacheMessage call enumerates cache state without necessarily extracting ticket material; klist and SSO components call this routinely, so it is scored lower than the dedicated retrieval rule."
     procedure_ids = "PROC-006"
     log_source_prerequisites = "EDR must expose LsaCallAuthenticationPackage and Kerberos message type with process and target LUID."
     false_positives = "Klist, SSO, EDR, incident response, and authentication components routinely enumerate the ticket cache."
-    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_cache_operations.md"
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_cache_operations.md; reviews/rubeus/detection-review.md#review-010"
     validation_status = "needs_validation"
     validation_method = "Use benign API-call fixtures from approved ticket tooling; never execute Rubeus. Confirm this rule and rubeus_lsa_encoded_ticket_retrieval are both enabled together, since retrieval was split out of this rule's scope on 2026-08-16."
     review_status = "reviewed_with_gaps"
@@ -17,7 +17,7 @@ rule rubeus_lsa_ticket_cache_operations {
   events:
     $e.metadata.product_event_type = "EDR_API_CALL"
     $e.additional.fields["api_name"].value.string_value = "LsaCallAuthenticationPackage"
-    re.regex($e.additional.fields["kerberos_message_type"].value.string_value, `KerbQueryTicketCacheMessage`) nocase
+    re.regex($e.additional.fields["kerberos_message_type"].value.string_value, `(?i)KerbQueryTicketCacheMessage`)
   condition:
     $e
 }

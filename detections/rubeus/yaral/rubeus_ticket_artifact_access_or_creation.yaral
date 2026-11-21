@@ -2,21 +2,21 @@ rule rubeus_ticket_artifact_access_or_creation {
   meta:
     author = "Detection Research Agent"
     description = "Detects an unapproved process accessing or creating a Kerberos ticket-cache artifact file by extension."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "MEDIUM"
     severity_rationale = "Ticket artifacts support offline parsing, mutation, or reuse, but authorized IR and labs overlap."
     procedure_ids = "PROC-008,PROC-009,PROC-010,PROC-013"
     log_source_prerequisites = "Normalize EDR file read/create events with process, user, path, extension, and signer, plus an approved-Kerberos-tool process enrichment."
     false_positives = "Incident response, Kerberos troubleshooting, development, labs, and approved assessments where the approved-tool enrichment is stale or incomplete."
-    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_artifact_access_or_creation.md"
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_artifact_access_or_creation.md; reviews/rubeus/detection-review.md#review-010"
     validation_status = "needs_validation"
     validation_method = "Replay benign ticket-file read/write fixtures and approved IR activity. The prior free-text \"asrep\"/\"kerberoast\" substring branch was removed because it could collide with benign filenames (research notes, downloaded tooling, documentation) without any causal link to actual ticket handling; only the extension-plus-unapproved-process branch remains. This narrows recall for renamed or extensionless artifacts, which stays an accepted gap pending file-content/type telemetry."
     review_status = "reviewed_with_gaps"
     review_reference = "reviews/rubeus/detection-review.md"
   events:
     ($e.metadata.event_type = "FILE_CREATION" or $e.metadata.event_type = "FILE_READ")
-    re.regex($e.target.file.full_path, `\.(kirbi|ccache)$`) nocase
+    re.regex($e.target.file.full_path, `(?i)\.(kirbi|ccache)$`)
     $e.additional.fields["approved_kerberos_tool"].value.bool_value = false
   condition:
     $e

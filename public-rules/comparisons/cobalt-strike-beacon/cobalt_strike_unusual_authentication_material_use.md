@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/microsoft-sentinel/5f947544657288586559c41b218eaaf182636728/Detections/SecurityEvent/PotentialKerberoast.yaml`](../../snapshots/microsoft-sentinel/5f947544657288586559c41b218eaaf182636728/Detections/SecurityEvent/PotentialKerberoast.yaml) - SHA-256 `747d8097f4af3b53bd1d3093223a149055eac51ac600d1e272b42d9567028f51`
+- [`public-rules/snapshots/microsoft-sentinel/c3361d9ff34320e7fe3314d5f9063e15470ca53e/Detections/SecurityEvent/PotentialKerberoast.yaml`](../../snapshots/microsoft-sentinel/c3361d9ff34320e7fe3314d5f9063e15470ca53e/Detections/SecurityEvent/PotentialKerberoast.yaml) - SHA-256 `747d8097f4af3b53bd1d3093223a149055eac51ac600d1e272b42d9567028f51`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,16 @@ The canonical rule has broader tool-independent intent, but resource access with
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, and canonical logic had not acted on the proposal; decided here with the evidence in hand.
+- Decision: `reject`.
+- Reason: the proposal is not adopted:
+  - The proposal's syntax is invalid: `not $issue...` inside events and `not $issue` in the condition (the documented form is `!$issue`).
+  - Its 20-minute absence window is far shorter than service-ticket lifetime, so it would alert on every logon that reuses a cached ticket.
+  - The sound form already exists as `rubeus_ticket_use_without_credible_kdc_issue` (12-hour window, domain-joined collection-health gate, PAC-anomaly requirement; Rubeus REVIEW-013), and it serves as the compensating signal (DR-24).
+- Canonical result: no canonical logic changed; the proposed code is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration: none required; canonical logic is unchanged.
 
 ## Unmatched scope
 
@@ -91,3 +96,15 @@ rule cobalt_strike_unusual_authentication_material_use_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- All public candidates were re-pinned to the refreshed snapshots; no referenced candidate file changed content.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Successful authentication from an asset first seen within 24h | covered | `PotentialKerberoast.yaml`: RC4 TGS volume against a baseline | first-seen asset - weak | none | different_scope |
+| Resource access without credible KDC issuance | not covered here; covered by `rubeus_ticket_use_without_credible_kdc_issue` | not covered | absence + PAC anomaly - moderate | none | complementary |
+
+- Re-comparison outcome: canonical logic is unchanged; the branch is covered by the cross-tool Rubeus rule.

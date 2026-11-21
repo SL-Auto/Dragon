@@ -52,7 +52,8 @@
 
 - Candidate improvement: sensitive read versus staging and deletion
 - Independent verification: pinned Havoc report, internal review, telemetry contract and candidate hash/path above
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: Adversarial review of the proposal (2026-08-16) found two independent defects. First, it queries `metadata.product_event_type = "FILE_READ"` / `"NETWORK_CONNECTION"`, but every canonical Havoc rule in this repository correctly uses `metadata.event_type` for normalized UDM category values; `product_event_type` holds the raw vendor-specific event identifier, not a semantic UDM enum name, so as written this predicate would not match real telemetry and the rule would silently never fire. Second, independent of the field-name defect, the logic does not implement the branch it claims to address: it correlates a generic FILE_READ with a NETWORK_CONNECTION on the same process with no sensitive-path, staging-directory, or deletion predicate, so it does not distinguish "sensitive read versus staging and deletion" as claimed and duplicates the existing canonical file-lifecycle-plus-egress correlation without adding a new branch.
 - Adversarial re-check: Re-ran the procedure-branch matrix against the proposal. It does not close the stated missing branch and is redundant with existing canonical coverage; canonical logic is unchanged and no compensating rule is added.
 - Required regeneration: none. Canonical logic, telemetry, translations, and dependencies are unchanged because the proposal was rejected, not adopted or modified.

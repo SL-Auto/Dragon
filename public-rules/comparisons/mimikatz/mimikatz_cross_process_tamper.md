@@ -10,7 +10,7 @@
 - Scope mapping rationale: mapped by security effect, ordered procedure and required telemetry; names and syntax were not mapping criteria.
 
 Public evidence:
-- Behaviorally relevant public candidate: [PowerShell process injection](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/defense_evasion_posh_process_injection.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `f9437046f997f6c05a9b68a28de50d5a180615046bdfc62d8cc5ddc5188c5f16`.
+- Behaviorally relevant public candidate: [PowerShell process injection](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/defense_evasion_posh_process_injection.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `6d9b8743b0caf3e0ed247114e2d6fbf954962dc83debdafa4e1064088b1683bd`.
 
 ## Procedure and detection-branch matrix
 
@@ -90,3 +90,8 @@ rule mimikatz_cross_process_write_execute_sequence {
 Remaining gaps: thresholds, fields, ordering and trust enrichment need authorized telemetry validation; absence of required collection cannot be interpreted as benign activity.
 
 If accepted or modified, update canonical YARA-L and every downstream artifact, re-run adversarial review, and compare the revised final rule again.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/windows/defense_evasion_posh_process_injection.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.

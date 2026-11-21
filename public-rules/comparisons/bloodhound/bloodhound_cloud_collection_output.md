@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidate chosen by the same procedure branch or closest compensating observable, never by rule-name similarity alone.
 
 Public candidate:
-- [Elastic AzureHound user-agent rule](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/integrations/azure/discovery_bloodhound_user_agents_detected.toml) - pinned revision and SHA-256 `ae4b54c0bd1908c0eefc9f7b8e315a543ee1e3e5795578329fea972e02ffac60`.
+- [Elastic AzureHound user-agent rule](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/integrations/azure/discovery_bloodhound_user_agents_detected.toml) - pinned revision and SHA-256 `23a2c98500bd2c50247d9d802f3681598a9844e77779b0c82682d5a85773826c`.
 
 ## Procedure and detection-branch matrix
 
@@ -47,11 +47,15 @@ remote/cloud execution with no hostname, stdout/object-storage output, process e
 
 ## Decision trail
 
-- Candidate improvement: independently add the missing procedure branch shown below; no public predicate is copied.
-- Independent verification: compare against pinned collector source, actual provider semantics, sanitized fixtures and benign inventory baselines.
-- Decision: `deferred_pending_rule_improvement_run`.
-- Reason: comparison code is an unvalidated detection-engineering proposal, not canonical logic.
-- Required regeneration: canonical review, coverage, telemetry, all translations, dependencies/hashes and this comparison after acceptance or modification.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/bloodhound/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, although the proposal had been copied, with divergences, into canonical YARA-L on 2026-08-16 without a recorded decision or review finding; the live rule was re-reviewed before this terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - The adoption joins cloud reads to local output by host and user rather than endpoint process ID, because cloud audit carries no endpoint PID (BH-DR-17).
+  - It adds service-install output (4697/7045) for remote execution and limits files to JSON. Event-ID alternations were anchored earlier on 2026-11-21 (BH-DR-26).
+- Canonical result: `detections/bloodhound/yaral/bloodhound_cloud_collection_output.yaral`, SHA-256 `64bde079b841adcc1d8c87dddc76adc76f490c35e094b8dee7f97c18ad17790b`.
+- Regeneration: the 2026-08-16 adoption's translations, telemetry and hashes were re-verified current on 2026-11-21; no canonical change in this run.
 
 ## Unmatched scope
 
@@ -91,3 +95,52 @@ rule bloodhound_cloud_read_to_local_output {
 Remaining gaps: intent is not established; thresholds, normalized fields and benign baselines require authorized telemetry testing. Distributed activity and missing collection require separate compensating analytics and collection-health monitoring.
 
 If adopted, independently revise canonical YARA-L, re-run adversarial review, reconcile telemetry and master counts, regenerate all five translations and dependencies, and re-compare the final logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/integrations/azure/discovery_bloodhound_user_agents_detected.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Cloud reads followed by local JSON output on the same host and user | covered | `discovery_bloodhound_user_agents_detected.toml`: AzureHound/SharpHound/BloodHound user-agent strings in Microsoft cloud logs | resource-family breadth plus output file - moderate | archive rule - moderate | complementary |
+| Collector identified by its default user agent | not targeted (mutable name) | covered | user-agent string - weak (mutable) | behavioral rules - moderate | different_scope |
+
+- Current canonical YARA-L `detections/bloodhound/yaral/bloodhound_cloud_collection_output.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule bloodhound_cloud_collection_output {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates sustained, resource-family-diverse Graph or ARM reads with local JSON output or service lifecycle effects on the same host/user."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Collection output strengthens cloud enumeration context but overlaps legitimate exporters and services."
+    procedure_ids = "BH-020"
+    log_source_prerequisites = "Process-attributed cloud egress with resource-family enrichment, plus file creation or Windows service events joined by host/user."
+    false_positives = "Cloud inventory exporters, scheduled governance jobs and authorized AzureHound deployments."
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_cloud_collection_output.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized cloud-read and JSON/service effect fixtures without running collector software."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $n.metadata.product_event_type = /^(MicrosoftGraphActivityLogs|AzureActivity|AZURE_RESOURCE_READ)$/
+    $n.principal.hostname = $host
+    $n.principal.user.userid = $user
+    $n.target.resource.attribute.labels["resource_family"] = $family
+    $f.metadata.product_event_type = /^(11|FILE_CREATION|4697|7045)$/
+    $f.principal.hostname = $host
+    $f.principal.user.userid = $user
+    (re.regex($f.target.file.full_path, `(?i)\.json$`) or $f.metadata.product_event_type = /^(4697|7045)$/)
+  match:
+    $host, $user over 30m
+  outcome:
+    $families = count_distinct($family)
+  condition:
+    $families >= 5 and $f
+}
+```
+
+- Re-comparison outcome: the current canonical rule closes the branch the proposal targeted, within declared telemetry; remaining gaps are recorded in `reviews/bloodhound/detection-review.md`.

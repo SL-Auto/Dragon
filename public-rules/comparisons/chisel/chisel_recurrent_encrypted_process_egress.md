@@ -6,8 +6,8 @@
 - Internal canonical rule: `detections/chisel/yaral/chisel_recurrent_encrypted_process_egress.yaral`
 - Internal SHA-256: `1abcc69f313196efbd69096ebe0e2bafaf92ef7a330207e212ee044af1802dea`
 - Internal review completed before public comparison: `yes`
-- Public source/revision/path: `public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/linux/command_and_control_linux_chisel_client_activity.toml`
-- Public SHA-256: `cae9bc354256cec8e9da3c65f8a32b971ab08a1d09092a63b6090580e0960d82`
+- Public source/revision/path: `public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/linux/command_and_control_linux_chisel_client_activity.toml`
+- Public SHA-256: `d81e4ca508265e8582b569bdfd4ee8ff2c484dcb0c67c13d828e6159f8094ce8`
 - Scope mapping rationale: Both address maintained client transport and reconnect, but mapping is based on observable behavior and T1572/T1090 effects rather than names or syntax.
 
 ## Procedure and detection-branch matrix
@@ -49,7 +49,8 @@ The internal rule is non-attributive, depends on stable process entity mapping, 
 
 - Candidate improvement: Require recurrent network activity plus HTTP WebSocket upgrade metadata from the same process.
 - Independent verification: pinned Chisel source behavior, telemetry requirements, and `reviews/chisel/detection-review.md`.
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: Adversarial review of the proposal (2026-08-16) found it unsound as written. The added event variable `$h` is declared in `events` and shares the match key `$host, $pid`, but `$h` never binds `$pid`, and `condition` only tests `$n and #n >= 2` -- `$h` is never referenced in `condition`. Per this rule's own repository convention (see `detections/chisel/yaral/chisel_listener_with_tunnel_egress.yaral`, `condition: $l and $n`), every declared event variable must appear in `condition` for its join to be enforced. As written the proposal is behaviorally identical to a bare `#n >= 2` outbound-connection threshold: the claimed WebSocket-upgrade correlation is not enforced at all. Even a corrected version that referenced `$h` in `condition` would still only bind on `$host` (not `$pid`), so it would assert that a WebSocket upgrade happened somewhere on the host, not that this specific recurring process performed it. The branch matrix shows the core branches are already `ours_stronger`; this proposal does not close a genuine coverage gap.
 - Adversarial re-check: Re-ran the procedure-branch matrix against the proposal. It adds no enforceable branch beyond the canonical rule's existing recurrence logic and is not internally consistent (unbound join variable, unenforced condition). Rejecting it introduces no new false-negative path because canonical logic is unchanged.
 - Required regeneration: none. Canonical logic, telemetry, translations, and dependencies are unchanged because the proposal was rejected, not adopted or modified.
@@ -84,3 +85,8 @@ rule proposed_chisel_recurrent_encrypted_process_egress {
 ```
 
 This proposal adds procedure-specific causal context while retaining behavior-first logic. It still needs provider field binding, benign-baseline testing, and reverse-mode cross-host assessment before canonical adoption.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate re-pinned from elastic-security `7e91c15` to `9d792a8`. The decision trail above is unchanged.
+- `rules/linux/command_and_control_linux_chisel_client_activity.toml` changed only in `updated_date` and classification tags (a `Threat: Protocol Tunneling` tag was added); the query is identical and the conclusions are unaffected.

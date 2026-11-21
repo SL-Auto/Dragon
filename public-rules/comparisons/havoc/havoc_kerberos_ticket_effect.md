@@ -8,7 +8,7 @@
 - Procedures: HV-P17
 - Public candidates were consulted only after independent source analysis, rule generation and adversarial review.
 
-- [`public-rules/snapshots/splunk-security-content/457ce9f5ea69a8d5be9463989ee23b9366858d16/detections/endpoint/windows_steal_or_forge_kerberos_tickets_klist.yml`](../../snapshots/splunk-security-content/457ce9f5ea69a8d5be9463989ee23b9366858d16/detections/endpoint/windows_steal_or_forge_kerberos_tickets_klist.yml) - SHA-256 `f4a308ecb68264f6f83900e9355254116f7fe669c763fc8e23e8be5d24a71498`
+- [`public-rules/snapshots/splunk-security-content/21509485465aaed2cfa4604e3d2ab5ee52975f0a/detections/endpoint/windows_steal_or_forge_kerberos_tickets_klist.yml`](../../snapshots/splunk-security-content/21509485465aaed2cfa4604e3d2ab5ee52975f0a/detections/endpoint/windows_steal_or_forge_kerberos_tickets_klist.yml) - SHA-256 `f4a308ecb68264f6f83900e9355254116f7fe669c763fc8e23e8be5d24a71498`
 
 ## Procedure and detection-branch matrix
 
@@ -52,7 +52,8 @@
 
 - Candidate improvement: command-line fallback for missing LSA telemetry
 - Independent verification: pinned Havoc report, internal review, telemetry contract and candidate hash/path above
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: The public branch depends on mutable names or command implementation and would weaken behavioral coverage; proposal is retained only as unvalidated comparative code.
 - Required regeneration: canonical review, telemetry, translations, dependencies and comparison when adopted
 
@@ -88,3 +89,8 @@ rule havoc_kerberos_ticket_effect_proposal {
 ```
 
 This proposal is actual detection logic for the scoped missing branch, not an automatic adoption. It must be compiled, mapped, benign-baselined and adversarially reviewed before canonical use. The only accepted comparison change in this pass is the independently implemented stable-destination recurrence rule documented above.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `detections/endpoint/windows_steal_or_forge_kerberos_tickets_klist.yml` differs between 457ce9f and 2150948 only in line endings (snapshot path moved where applicable); content is identical.

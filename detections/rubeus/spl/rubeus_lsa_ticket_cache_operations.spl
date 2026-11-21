@@ -7,11 +7,11 @@
 # description: Detects Kerberos ticket-cache query/enumeration operations from EDR API telemetry. Split from encoded-ticket retrieval, which is a stronger, separately severity-scored signal covered by rubeus_lsa_encoded_ticket_retrieval.
 # log_source_prerequisites: EDR must expose LsaCallAuthenticationPackage and Kerberos message type with process and target LUID.
 # false_positives: Klist, SSO, EDR, incident response, and authentication components routinely enumerate the ticket cache.
-# references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_cache_operations.md
-# assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling. Query enumeration was split from encoded-ticket retrieval on 2026-08-16; deploy this rule together with rubeus_lsa_encoded_ticket_retrieval rather than as a substitute for it.
+# references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_lsa_ticket_cache_operations.md; reviews/rubeus/detection-review.md#review-010
+# assumptions_and_gaps: Candidate retrieval is translated; map canonical UDM fields to the target schema and verify every predicate before enabling.
 # schema_profile: schemas/splunk-cim.yml
 index=<configured_index>
-| where in(coalesce('metadata.product_event_type','metadata.event_type'), "EDR_API_CALL") AND 'additional.fields.api_name'="LsaCallAuthenticationPackage" AND match('additional.fields.kerberos_message_type', "(?i)KerbQueryTicketCacheMessage")
+| where in(coalesce('metadata.product_event_type','metadata.event_type'), "EDR_API_CALL")
 | eval canonical_rule="rubeus_lsa_ticket_cache_operations"
 | stats count values('metadata.product_event_type') as observed_event_types by 'principal.hostname', 'principal.user.userid'
 | where count > 0

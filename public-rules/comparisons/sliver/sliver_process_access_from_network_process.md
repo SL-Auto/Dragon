@@ -10,7 +10,7 @@
 - Scope mapping rationale: procedure, ordered behavior, security effect, platform and telemetry; names and syntax were not mapping criteria.
 
 Public candidate:
-- [`public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/hacktool_generic_process_access.yaral`](../../public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/hacktool_generic_process_access.yaral) - SHA-256 `3e19f1fdcb5632b78d62e491cca65a8550d9e17b117bedfbc2fdc93cbaaf73aa`
+- [`public-rules/snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/hacktool_generic_process_access.yaral`](../../snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/hacktool_generic_process_access.yaral) - SHA-256 `3e19f1fdcb5632b78d62e491cca65a8550d9e17b117bedfbc2fdc93cbaaf73aa`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,18 @@ Distinct access, injection, assembly, library and dump signals are conflated; ac
 
 ## Decision trail
 
-- Candidate improvement: independently implement and test the strong branch below.
-- Independent verification: pinned Sliver source, provider semantics, schema mappings and authorized sanitized fixtures required.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: comparative evidence is not canonical authority; proposal has not passed adversarial review.
-- Required regeneration: canonical detection review, coverage, telemetry/master, five translations, dependencies/manifests/hashes, then re-comparison.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/sliver/detection-review.md`.
+- Prior state: this trail still read `deferred_pending_rule_improvement_run`, although the 2026-08-16 backlog resolution (REVIEW-010 to REVIEW-014) had already acted on the proposal; this pass re-reviews that action and records the terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - The narrow rule requires a Sysmon 10 handle to lsass, winlogon or csrss with a memory-read-capable access mask from an egressing PID.
+  - Removed the proposal's `event_timestamp.seconds <=` ordering; bounded co-occurrence in the match window is kept (REVIEW-010).
+  - Adopted as an additional narrow rule beside the broad base rule, not as a replacement, so procedures without the narrow sub-case keep coverage (REVIEW-012).
+  - Anchored the access-mask alternation on 2026-11-21 (REVIEW-016).
+- Canonical result: `detections/sliver/yaral/sliver_process_access_from_network_process.yaral`, SHA-256 `ff8160d9687d0e63c777243d44d89cda93c2d97e9155a5f50f13187bde584e92`.
+- Canonical result: `detections/sliver/yaral/sliver_lsass_access_from_network_process.yaral`, SHA-256 `091ecdcf0fd295f8330119b536111b7e2e89eb4db59527449344dca067414710`.
+- Regeneration: canonical change on 2026-11-21; detection review, telemetry row, five translations (after the generator anchoring fix), dependency/manifest hashes and this re-comparison were regenerated in the same run.
 
 ## Unmatched scope
 
@@ -88,3 +95,83 @@ rule sliver_process_access_from_network_process_strong_branch {
 ```
 
 The proposal uses concrete telemetry semantics but does not prove tool identity. It remains limited by collection health, process-entity fidelity, enrichment quality and activity outside the window. If accepted or modified, complete the full downstream workflow; if rejected, preserve the rationale without changing canonical logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/community/microsoft/windows/hacktool_generic_process_access.yaral` differs between 234e922 and dbc9beb only in line endings (snapshot path moved where applicable); content is identical.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Egressing process opens a protected credential process for memory read | covered by `sliver_lsass_access_from_network_process` | `hacktool_generic_process_access.yaral`: process access by default hacktool image names | target identity plus access mask plus same-PID egress - strong | base rule - weak | complementary |
+| Injection, assembly or library load into other processes | covered by base rule | not covered | module-load/process-access family - weak | none | ours_stronger |
+| Renamed tool image performing process access | covered (behavioral, name-independent) | not covered (image-name dependent) | same-PID access plus egress - strong | none | ours_stronger |
+
+- Current canonical YARA-L `detections/sliver/yaral/sliver_process_access_from_network_process.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule sliver_process_access_from_network_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "Outbound-network process performs sensitive process access, injection, dump, or memory load"
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Covers code execution migration and dumping"
+    procedure_ids = "PROC-011,PROC-012,PROC-015"
+    log_source_prerequisites = "Tenant-verified EDR process access/injection/memory event plus stable PID network telemetry"
+    false_positives = "EDR, debuggers, profilers, accessibility"
+    references = "reports/sliver/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+  events:
+    $a.metadata.event_type = "PROCESS_MODULE_LOAD"
+    $a.principal.hostname = $host
+    $a.principal.process.product_specific_process_id = $pid
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match: $host, $pid over 10m
+  condition: $a and $n
+}
+```
+
+- Current canonical YARA-L `detections/sliver/yaral/sliver_lsass_access_from_network_process.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule sliver_lsass_access_from_network_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "A network-active process obtains a memory-read-capable handle to a protected credential process such as lsass"
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Target-process identity (lsass/winlogon/csrss) plus a memory-read access mask is a high-specificity credential-access signal, compensating for the broad process-access rule that conflates access, injection, assembly-load, library-load, and dump signals under one generic module-load predicate"
+    procedure_ids = "PROC-011,PROC-012,PROC-015"
+    log_source_prerequisites = "Tenant-verified EDR process-access event (for example Sysmon Event ID 10) with target process identity and access mask, plus process-attributed network telemetry sharing a stable process entity"
+    false_positives = "EDR/AV agents, debuggers, and credential-backup tools that legitimately open lsass with read access"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_process_access_from_network_process.md, reviews/sliver/detection-review.md#review-016"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "accepted_as_compensating_rule_from_unvalidated_proposal"
+  events:
+    $a.metadata.product_event_type = "10"
+    $a.principal.hostname = $host
+    $a.principal.process.product_specific_process_id = $pid
+    re.regex($a.target.process.file.full_path, `(?i)\\(lsass|winlogon|csrss)\.exe$`)
+    re.regex($a.target.process.access_mask, `(?i)^(0x1fffff|0x1f0fff|0x143a|0x1010)$`)
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match: $host, $pid over 10m
+  condition: $a and $n
+}
+```
+
+- Re-comparison outcome: the current canonical rule set closes the branch the proposal targeted, within declared telemetry. Remaining limits are the accepted gaps in `reviews/sliver/detection-review.md`.

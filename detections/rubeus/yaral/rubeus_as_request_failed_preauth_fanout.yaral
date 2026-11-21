@@ -1,22 +1,22 @@
 rule rubeus_as_request_failed_preauth_fanout {
   meta:
     author = "Detection Research Agent"
-    description = "Detects one source generating failed or atypical-result AS requests against multiple accounts, distinct from the existing successful multi-principal fan-out rule."
-    date = "2026-08-16"
+    description = "Detects one source generating failed AS requests (4768 unknown/revoked principal, or 4771 pre-authentication failure) against multiple accounts, distinct from the existing multi-principal AS fan-out rule."
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "Non-success AS-REQ fan-out across multiple principals is closely associated with authentication/preauthentication probing rather than a single account's ordinary failed logon."
     procedure_ids = "PROC-001"
-    log_source_prerequisites = "Normalize DC Security 4768 with source IP, target account, and a normalized security_result.action or result-code field distinguishing non-success outcomes."
+    log_source_prerequisites = "DC Security 4768 and 4771 with source IP, target account and the Status/Result Code field normalized to additional.fields[\"Status\"] (or security_result.action = BLOCK)."
     false_positives = "Password audits, account-lockout/health monitoring tooling, and misconfigured legacy clients retrying stale credentials."
-    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_as_request_anomaly.md"
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_as_request_anomaly.md; reviews/rubeus/detection-review.md#review-012"
     validation_status = "needs_validation"
-    validation_method = "Verify the parser's security_result.action / 4768 Result Code mapping with sanitized fixtures covering bad-password, preauthentication-required, and clock-skew outcomes before enabling; replay benign password-audit fixtures to confirm the three-account threshold does not over-fire. If the parser does not populate security_result.action for 4768, this rule stays silent (false-negative-safe) rather than mis-firing."
+    validation_method = "Verify the parser's security_result.action / 4768 Result Code mapping with sanitized fixtures covering bad-password, preauthentication-required, and clock-skew outcomes before enabling; replay benign password-audit fixtures to confirm the three-account threshold does not over-fire. Failure is matched on explicit result codes 0x6 (unknown principal), 0x12 (revoked or locked) and 0x18 (pre-authentication failed), or on a BLOCK action; an unpopulated field no longer fails open."
     review_status = "reviewed_with_gaps"
     review_reference = "reviews/rubeus/detection-review.md"
   events:
-    $e.metadata.product_event_type = "4768"
-    $e.security_result.action != "ALLOW"
+    $e.metadata.product_event_type = /^(4768|4771)$/
+    ($e.security_result.action = "BLOCK" or re.regex($e.additional.fields["Status"].value.string_value, `(?i)^0x(6|12|18)$`))
     $e.principal.ip = $source
     $e.target.user.userid = $account
   match:

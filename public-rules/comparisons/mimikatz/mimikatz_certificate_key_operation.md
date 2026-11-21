@@ -10,7 +10,7 @@
 - Scope mapping rationale: mapped by security effect, ordered procedure and required telemetry; names and syntax were not mapping criteria.
 
 Public evidence:
-- Closest public rule examined and rejected as a counterpart: [DPAPI domain backup-key access](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/credential_access_domain_backup_dpapi_private_keys.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `b69707ba64c8a361e1ca8834e3bb0ff0f970c9e5eab4ae3e61f7cbf63a1e43ae`.
+- Closest public rule examined and rejected as a counterpart: [DPAPI domain backup-key access](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/credential_access_domain_backup_dpapi_private_keys.toml) - pinned Elastic revision `7e91c156324cdc64cda27f7fec7067b1148074ef`; SHA-256 `d8342f4ba76f7e201a7d5175d107238328d267855ba9181c7f6dbaecd75d195e`.
 
 ## Procedure and detection-branch matrix
 
@@ -88,3 +88,8 @@ rule mimikatz_private_key_export_or_ngc_access {
 Remaining gaps: thresholds, fields, ordering and trust enrichment need authorized telemetry validation; absence of required collection cannot be interpreted as benign activity.
 
 If accepted or modified, update canonical YARA-L and every downstream artifact, re-run adversarial review, and compare the revised final rule again.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/windows/credential_access_domain_backup_dpapi_private_keys.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.

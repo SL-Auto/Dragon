@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidate chosen by the same procedure branch or closest compensating observable, never by rule-name similarity alone.
 
 Public candidate:
-- [Elastic high-volume AD property access rule](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/discovery_high_number_ad_properties.toml) - pinned revision and SHA-256 `260d763e6cc776634fb023e536f32c6fdd6b4cb8ce889726aa0b16cb2c41aa95`.
+- [Elastic high-volume AD property access rule](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/discovery_high_number_ad_properties.toml) - pinned revision and SHA-256 `2a697272b6a7c4d634efc11afad58394b7ef80398bb692aab25ed1123afdc81e`.
 
 ## Procedure and detection-branch matrix
 
@@ -47,11 +47,14 @@ control-only security-descriptor reads, attribute aliases, and low-volume target
 
 ## Decision trail
 
-- Candidate improvement: independently add the missing procedure branch shown below; no public predicate is copied.
-- Independent verification: compare against pinned collector source, actual provider semantics, sanitized fixtures and benign inventory baselines.
-- Decision: `deferred_pending_rule_improvement_run`.
-- Reason: comparison code is an unvalidated detection-engineering proposal, not canonical logic.
-- Required regeneration: canonical review, coverage, telemetry, all translations, dependencies/hashes and this comparison after acceptance or modification.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/bloodhound/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, although the proposal had been copied, with divergences, into canonical YARA-L on 2026-08-16 without a recorded decision or review finding; the live rule was re-reviewed before this terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - The adoption alerts per event rather than the proposal's at least 10 objects per user, which closes the targeted low-volume branch at the cost of benign volume from directory tools. It adds 4662.
+- Canonical result: `detections/bloodhound/yaral/bloodhound_sensitive_directory_attribute_reads.yaral`, SHA-256 `22731dca59be7028bbe691704f90c62cf9c699ad7538e560ca2fc71fd15d4355`.
+- Regeneration: the 2026-08-16 adoption's translations, telemetry and hashes were re-verified current on 2026-11-21; no canonical change in this run.
 
 ## Unmatched scope
 
@@ -87,3 +90,42 @@ rule bloodhound_sensitive_directory_relationship_reads {
 Remaining gaps: intent is not established; thresholds, normalized fields and benign baselines require authorized telemetry testing. Distributed activity and missing collection require separate compensating analytics and collection-health monitoring.
 
 If adopted, independently revise canonical YARA-L, re-run adversarial review, reconcile telemetry and master counts, regenerate all five translations and dependencies, and re-compare the final logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/windows/discovery_high_number_ad_properties.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Security-descriptor or PKI attribute reads | covered per event | `discovery_high_number_ad_properties.toml`: 4662 reads of many attributes | SD-flags control or PKI attributes - moderate | public attribute-volume rule - moderate | complementary |
+| High attribute-count reads without sensitive attributes | not covered | covered | attribute volume - weak | LDAP fan-out rule - moderate | public_stronger |
+
+- Current canonical YARA-L `detections/bloodhound/yaral/bloodhound_sensitive_directory_attribute_reads.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule bloodhound_sensitive_directory_attribute_reads {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects LDAP searches requesting security descriptors (by named attribute or SD_FLAGS control) or AD CS relationship attributes."
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Security descriptor and PKI relationship reads are high-value attack-path discovery signals."
+    procedure_ids = "BH-003,BH-005"
+    log_source_prerequisites = "LDAP query telemetry containing requested attributes or controls (including SD_FLAGS control usage), source identity/process and naming context."
+    false_positives = "Directory permissions auditing, PKI administration and identity governance."
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_sensitive_directory_attribute_reads.md"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized LDAP query records with and without sensitive attributes or SD_FLAGS control usage."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $e.metadata.product_event_type = /(LDAP_SEARCH|1644|4662)/
+    ($e.target.resource.attribute.labels["sd_flags_control"] = "true" or re.regex($e.target.resource.attribute.labels["requested_attributes"], `(?i)(ntsecuritydescriptor|pkienrollmentservice|pkicertificatetemplate|msPKI-|certificateTemplates)`))
+  condition:
+    $e
+}
+```
+
+- Re-comparison outcome: the current canonical rule closes the branch the proposal targeted, within declared telemetry; remaining gaps are recorded in `reviews/bloodhound/detection-review.md`.

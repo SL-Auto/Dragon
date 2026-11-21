@@ -8,7 +8,7 @@
 - Procedures: HV-P05
 - Public candidates were consulted only after independent source analysis, rule generation and adversarial review.
 
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/execution_command_shell_started_by_unusual_process.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/execution_command_shell_started_by_unusual_process.toml) - SHA-256 `55f3aebbce5d984428cf53d0f2fafa496412640bff7775bec8364b0b32370193`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/execution_command_shell_started_by_unusual_process.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/execution_command_shell_started_by_unusual_process.toml) - SHA-256 `d1b7654c3ab90fd554847304f66134781385b24070318b18561b8410ac958222`
 
 ## Procedure and detection-branch matrix
 
@@ -52,7 +52,8 @@
 
 - Candidate improvement: rare-parent fallback when network attribution is absent
 - Independent verification: pinned Havoc report, internal review, telemetry contract and candidate hash/path above
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: Adversarial review of the proposal (2026-08-16) found the logic self-contradictory in addition to the field-mapping defect. It queries `metadata.product_event_type = "PROCESS_LAUNCH"` / `"NETWORK_CONNECTION"` rather than this repository's established `metadata.event_type` convention, so it would not match real telemetry. More fundamentally, the proposed rule requires a NETWORK_CONNECTION event, which directly contradicts its own stated purpose of being a "rare-parent fallback when network attribution is absent" -- a fallback for missing network telemetry cannot itself require that same network telemetry to fire -- and it adds no parent-process rarity or baseline predicate that would actually implement a rare-parent branch.
 - Adversarial re-check: Re-ran the procedure-branch matrix against the proposal. It does not close the stated missing branch and is internally inconsistent with its own premise; canonical logic is unchanged and no compensating rule is added.
 - Required regeneration: none. Canonical logic, telemetry, translations, and dependencies are unchanged because the proposal was rejected, not adopted or modified.
@@ -89,3 +90,8 @@ rule havoc_spawned_command_execution_proposal {
 ```
 
 This proposal is actual detection logic for the scoped missing branch, not an automatic adoption. It must be compiled, mapped, benign-baselined and adversarially reviewed before canonical use. The only accepted comparison change in this pass is the independently implemented stable-destination recurrence rule documented above.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/windows/execution_command_shell_started_by_unusual_process.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.

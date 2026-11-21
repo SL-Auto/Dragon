@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidate chosen by the same procedure branch or closest compensating observable, never by rule-name similarity alone.
 
 Public candidate:
-- [Elastic AzureHound user-agent rule](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/integrations/azure/discovery_bloodhound_user_agents_detected.toml) - pinned revision and SHA-256 `ae4b54c0bd1908c0eefc9f7b8e315a543ee1e3e5795578329fea972e02ffac60`.
+- [Elastic AzureHound user-agent rule](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/integrations/azure/discovery_bloodhound_user_agents_detected.toml) - pinned revision and SHA-256 `23a2c98500bd2c50247d9d802f3681598a9844e77779b0c82682d5a85773826c`.
 
 ## Procedure and detection-branch matrix
 
@@ -47,11 +47,15 @@ managed identity/no sign-in, token refresh, source-IP changes, app identity join
 
 ## Decision trail
 
-- Candidate improvement: independently add the missing procedure branch shown below; no public predicate is copied.
-- Independent verification: compare against pinned collector source, actual provider semantics, sanitized fixtures and benign inventory baselines.
-- Decision: `deferred_pending_rule_improvement_run`.
-- Reason: comparison code is an unvalidated detection-engineering proposal, not canonical logic.
-- Required regeneration: canonical review, coverage, telemetry, all translations, dependencies/hashes and this comparison after acceptance or modification.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/bloodhound/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, although the proposal had been copied, with divergences, into canonical YARA-L on 2026-08-16 without a recorded decision or review finding; the live rule was re-reviewed before this terminal decision.
+- Decision: `accept`.
+- Reason: the proposal closes a real branch and is adopted as written:
+  - The 2026-08-16 adoption had narrowed the window to 30 minutes. Re-review restored the proposal's 60 minutes, so token-lifetime collection after the first 30 minutes joins (BH-DR-27).
+  - With that change, the canonical rule equals the proposal.
+- Canonical result: `detections/bloodhound/yaral/bloodhound_azure_authentication_context.yaral`, SHA-256 `569b2d4659cd3a057b4fa7da2d9be5874b8820c810ce91712035903218924072`.
+- Regeneration: canonical change on 2026-11-21; detection review, `telemetry/bloodhound.md`, `telemetry/MASTER.md` counts, five translations, dependency/manifest hashes and this re-comparison were regenerated in the same run.
 
 ## Unmatched scope
 
@@ -90,3 +94,51 @@ rule bloodhound_azure_authentication_to_enumeration {
 Remaining gaps: intent is not established; thresholds, normalized fields and benign baselines require authorized telemetry testing. Distributed activity and missing collection require separate compensating analytics and collection-health monitoring.
 
 If adopted, independently revise canonical YARA-L, re-run adversarial review, reconcile telemetry and master counts, regenerate all five translations and dependencies, and re-compare the final logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- `rules/integrations/azure/discovery_bloodhound_user_agents_detected.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Sign-in followed by broad Graph/ARM reads by the same principal and application | covered (60-minute join, >= 5 resource families) | `discovery_bloodhound_user_agents_detected.toml`: AzureHound/SharpHound/BloodHound user-agent strings in Microsoft cloud logs | sign-in plus resource-family breadth - moderate | Graph fan-out rules - moderate | complementary |
+| Collector identified by its default user agent | not targeted (mutable name) | covered | user-agent string - weak (mutable) | behavioral rules - moderate | different_scope |
+
+- Current canonical YARA-L `detections/bloodhound/yaral/bloodhound_azure_authentication_context.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule bloodhound_azure_authentication_context {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a sign-in followed by broad Graph or ARM read activity from the same principal and application, independent of source IP."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Authentication context improves correlation but is not suspicious without enumeration breadth."
+    procedure_ids = "BH-016"
+    log_source_prerequisites = "Entra interactive/service-principal sign-ins and Graph/ARM audit with principal user ID, application/service-principal ID and resource-family enrichment."
+    false_positives = "Cloud inventory, governance, CSPM and authorized assessment."
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_azure_authentication_context.md, reviews/bloodhound/detection-review.md#bh-dr-27"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized sign-in plus normal and high-breadth cloud-read fixtures across matching and mismatched source IPs."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $s.metadata.product_event_type = /(SigninLogs|AADServicePrincipalSignInLogs)/
+    $s.principal.user.userid = $principal
+    $s.principal.application = $app
+    $r.metadata.product_event_type = /(MicrosoftGraphActivityLogs|AZURE_RESOURCE_READ)/
+    $r.principal.user.userid = $principal
+    $r.principal.application = $app
+    $r.target.resource.attribute.labels["resource_family"] = $family
+  match:
+    $principal, $app over 60m
+  outcome:
+    $families = count_distinct($family)
+  condition:
+    $s and $families >= 5
+}
+```
+
+- Re-comparison outcome: the current canonical rule closes the branch the proposal targeted, within declared telemetry; remaining gaps are recorded in `reviews/bloodhound/detection-review.md`.

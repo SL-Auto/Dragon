@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped by procedure, observable effect and telemetry rather than name or syntax.
 
 Public candidate:
-- [`public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/impacket_wmiexec_cisa_report.yaral`](../../public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/impacket_wmiexec_cisa_report.yaral) - SHA-256 `f58e8a176873a313463e9f196ef0ee3ea287cf603a772f386032c41511c70d19`
+- [`public-rules/snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/impacket_wmiexec_cisa_report.yaral`](../../snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/impacket_wmiexec_cisa_report.yaral) - SHA-256 `f58e8a176873a313463e9f196ef0ee3ea287cf603a772f386032c41511c70d19`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,16 @@ Provider child detection misses processless methods, remote caller attribution, 
 
 ## Decision trail
 
-- Candidate improvement: independently add the strong branch below, retaining the existing rule until sanitized telemetry proves whether a split or replacement is appropriate.
-- Independent verification: required against pinned Impacket source analysis, provider documentation, local schema mappings, and authorized fixtures.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: public logic is comparative evidence, not authority; this proposal has not passed internal adversarial review.
-- Required regeneration: canonical review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, then this comparison.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/impacket/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, although a rule implementing the proposal's branch had been added on 2026-08-16 and revised on 2026-11-21 (REVIEW-010 to REVIEW-012) without the decision being recorded here.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - Adopted as additive `impacket_wmi_activity_operational_class_signal`, with anchored IDs and a `Win32_Process` class filter instead of every WMI-Activity event.
+  - WMI-Activity does not log successful method execution; the provider limit is an accepted gap, compensated by the WmiPrvSE lineage base rule (REVIEW-012).
+- Canonical result: `detections/impacket/yaral/impacket_remote_wmi_activity.yaral`, SHA-256 `db22f6407666dabf6b1499636be53a5e64102c8907ce56f9fdc7d11fd2380f5f`.
+- Canonical result: `detections/impacket/yaral/impacket_wmi_activity_operational_class_signal.yaral`, SHA-256 `db9d3389c2b25fcae08c9b618480a20b10767b04f1241535d4a6cd0cd151621f`.
+- Regeneration: the adopted rule was reviewed and regenerated earlier on 2026-11-21 (see review reference); re-verified current.
 
 ## Unmatched scope
 
@@ -84,3 +89,79 @@ rule impacket_remote_wmi_activity_strong_branch {
 ```
 
 This proposal strengthens a procedure-level branch without importing the public predicate. It remains vulnerable to missing source telemetry, semantic mapping errors, and activity outside the correlation period. If adopted, test benign administrative workloads and missing-data behavior, then update every downstream artifact required by the workflow.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- All public candidates were re-pinned to the refreshed snapshots; no referenced candidate file changed content.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| WmiPrvSE spawns a child process | covered by base rule | `impacket_wmiexec_cisa_report.yaral`: wmiexec.py artifacts (command-line and output-file patterns) | WmiPrvSE child - moderate | WMI-Activity class signal - weak | complementary |
+| WMI provider errors or operations naming Win32_Process | covered by the class-signal rule | not covered | 5857-5861 with class - weak | lineage rule - moderate | ours_stronger |
+| Default tool output-file artifacts | not targeted (mutable) | covered | artifact pattern - weak | none | different_scope |
+
+- Current canonical YARA-L `detections/impacket/yaral/impacket_remote_wmi_activity.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule impacket_remote_wmi_activity {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a command interpreter created by the WMI provider; SMB output activity is optional enrichment rather than a required event."
+    date = "2026-08-15"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Remote WMI command execution is powerful and merits review when outside approved management sources."
+    procedure_ids = "IMP-05"
+    log_source_prerequisites = "Normalize WMI Activity or EDR process creation with host, account, parent process, child process, and command line."
+    false_positives = "Endpoint management, inventory, remediation, and authorized WMI administration."
+    references = "reports/impacket/source-analysis.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay approved WMI administration and synthetic correlated file events; never execute Impacket."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/impacket/detection-review.md"
+
+  events:
+    $process.metadata.event_type = "PROCESS_LAUNCH"
+    re.regex($process.principal.process.file.full_path, `(?i)\\WmiPrvSE\.exe$`)
+
+  condition:
+    $process
+}
+```
+
+- Current canonical YARA-L `detections/impacket/yaral/impacket_wmi_activity_operational_class_signal.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule impacket_wmi_activity_operational_class_signal {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a remote WMI method invocation against the Win32_Process class observed directly in the WMI-Activity Operational log, independent of whether a WmiPrvSE child process was collected."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "The operational-log signal captures processless or failed-child-collection WMI process-creation attempts that the process-lineage rule can miss, but by itself it is not proximate enough to the effect to warrant HIGH without tenant baselining."
+    procedure_ids = "IMP-05"
+    log_source_prerequisites = "WMI-Activity Operational 5857/5858/5860/5861 with the operation text parsed into a class label and the caller (ClientMachine) normalized to principal.hostname. Successful Win32_Process.Create calls are not logged by WMI-Activity; this rule sees mainly 5858 failures and 5860/5861 subscription records (review REVIEW-012)."namespace/query/class/parent/source\")."
+    false_positives = "Endpoint management, inventory, remediation, monitoring agents and any authorized WMI administration that creates or queries Win32_Process; this event family is high-volume and requires tenant baselining before enforcement."
+    references = "reports/impacket/source-analysis.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed"
+    review_reference = "reviews/impacket/detection-review.md"
+    source_comparison = "public-rules/comparisons/impacket/impacket_remote_wmi_activity.md"
+    comparison_decision = "modify"
+  events:
+    $e.metadata.product_event_type = /^(5857|5858|5860|5861)$/
+    $e.principal.hostname = $host
+    re.regex($e.target.resource.attribute.labels["class"], `(?i)Win32_Process`)
+  match:
+    $host over 10m
+  outcome:
+    $sources = array_distinct($e.principal.ip)
+    $event_ids = array_distinct($e.metadata.product_event_type)
+  condition:
+    $e
+}
+```
+
+- Re-comparison outcome: The adopted pair closes the processless-provider branch to the extent the provider logs it.

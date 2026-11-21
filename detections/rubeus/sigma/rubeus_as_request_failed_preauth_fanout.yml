@@ -1,25 +1,45 @@
-title: "Detects one source generating failed or atypical-result AS requests against multiple accounts."
-name: rubeus_as_request_failed_preauth_fanout
+title: "Detects one source generating failed AS requests (4768 unknown/revoked principal, or 4771 pre-authentication failure) against multiple accounts, distinct from the existing multi-principal AS fan-out rule."
+name: rubeus_as_request_failed_preauth_fanout_base
 status: experimental
-description: "Detects one source generating failed or atypical-result AS requests against multiple accounts, distinct from the existing successful multi-principal fan-out rule."
+description: "Detects one source generating failed AS requests (4768 unknown/revoked principal, or 4771 pre-authentication failure) against multiple accounts, distinct from the existing multi-principal AS fan-out rule."
 source_yaral: "detections/rubeus/yaral/rubeus_as_request_failed_preauth_fanout.yaral"
 translation_status: experimental_needs_backend_mapping_and_validation
-fidelity: partial
+fidelity: high
 schema_profile: schemas/sigma.yml
-assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, cardinality, and the non-ALLOW result filter must be implemented and tested in the target backend. Plain Sigma cannot natively express the distinct-account-count threshold; a correlation rule or backend-specific aggregation is required."
+field_mapping: "normalized columns (product_event_type, source_ip, user_id, Status, action); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
 references:
-  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
-  - "public-rules/comparisons/rubeus/rubeus_as_request_anomaly.md"
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_as_request_anomaly.md; reviews/rubeus/detection-review.md#review-012"
 procedure_ids: "PROC-001"
-log_source_prerequisites: "Normalize DC Security 4768 with source IP, target account, and a normalized security_result.action or result-code field distinguishing non-success outcomes."
+log_source_prerequisites: "DC Security 4768 and 4771 with source IP, target account and the Status/Result Code field normalized to additional.fields[\\"
 logsource:
-  category: generic
+  service: security
+  product: windows
 detection:
-  selection_event_type:
-    event.code: ["4768"]
-  filter_non_success:
-    event.outcome: "failure"
-  condition: selection_event_type and filter_non_success
+  sel:
+    product_event_type:
+      - "4768"
+      - "4771"
+  alt0_0:
+    action: "BLOCK"
+  alt0_1:
+    Status|re: "(?i)^0x(6|12|18)$"
+  condition: sel and 1 of alt0_*
 falsepositives:
   - "Password audits, account-lockout/health monitoring tooling, and misconfigured legacy clients retrying stale credentials."
+level: high
+---
+title: "Detects one source generating failed AS requests (4768 unknown/revoked principal, or 4771 pre-authentication failure) against multiple accounts, distinct from the existing multi-principal AS fan-out rule."
+name: rubeus_as_request_failed_preauth_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - rubeus_as_request_failed_preauth_fanout_base
+  group-by:
+    - source_ip
+  timespan: 10m
+  condition:
+    field: user_id
+    gte: 3
 level: high

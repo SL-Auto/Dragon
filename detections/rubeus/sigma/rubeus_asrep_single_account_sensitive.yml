@@ -1,0 +1,42 @@
+title: "Detects a successful AS request without pre-authentication data for an account the tenant has classified as high-risk, compensating for targeted single-account AS-REP roasting below the three-account threshold of rubeus_asrep_roast_sequence."
+name: rubeus_asrep_single_account_sensitive_base
+status: experimental
+description: "Detects a successful AS request without pre-authentication data for an account the tenant has classified as high-risk, compensating for targeted single-account AS-REP roasting below the three-account threshold of rubeus_asrep_roast_sequence."
+source_yaral: "detections/rubeus/yaral/rubeus_asrep_single_account_sensitive.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, source_ip, user_id, PreAuthType, Status, account_risk_tier, TicketEncryptionType); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_asrep_roast_sequence.md; reviews/rubeus/detection-review.md#review-014"
+procedure_ids: "PROC-003"
+log_source_prerequisites: "DC Security 4768 with PreAuthType, Status, source IP and target account, plus an account-risk enrichment that sets additional.fields[account_risk_tier] = high for privileged, service and other sensitive accounts. Without that enrichment this rule stays silent; the base three-account rule still applies."
+logsource:
+  service: security
+  product: windows
+detection:
+  sel:
+    product_event_type: "4768"
+    PreAuthType: "0"
+    Status: "0x0"
+    account_risk_tier: "high"
+  condition: sel
+falsepositives:
+  - "Sensitive accounts that legitimately have pre-authentication disabled for legacy clients; record them as approved exceptions in the risk enrichment."
+level: high
+---
+title: "Detects a successful AS request without pre-authentication data for an account the tenant has classified as high-risk, compensating for targeted single-account AS-REP roasting below the three-account threshold of rubeus_asrep_roast_sequence."
+name: rubeus_asrep_single_account_sensitive
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - rubeus_asrep_single_account_sensitive_base
+  group-by:
+    - source_ip
+    - user_id
+  timespan: 60m
+  condition:
+    gte: 1
+level: high

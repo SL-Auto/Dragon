@@ -48,11 +48,15 @@ The join does not require a debugging switch, bind address, listener, or browser
 
 ## Decision trail
 
-- Candidate improvement: independently implement and test the strong branch below.
-- Independent verification: pinned Sliver source, provider semantics, schema mappings and authorized sanitized fixtures required.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: comparative evidence is not canonical authority; proposal has not passed adversarial review.
-- Required regeneration: canonical detection review, coverage, telemetry/master, five translations, dependencies/manifests/hashes, then re-comparison.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/sliver/detection-review.md`.
+- Prior state: this trail still read `deferred_pending_rule_improvement_run`, although the 2026-08-16 backlog resolution (REVIEW-010 to REVIEW-014) had already acted on the proposal; this pass re-reviews that action and records the terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - Rewritten in place: the browser child must both carry `--remote-debugging-(port|pipe)` and open a LISTEN socket, and its parent must egress, joined by host, parent PID and browser PID (REVIEW-014).
+  - Removed the proposal's `event_timestamp.seconds <=` ordering; bounded co-occurrence in the match window is kept (REVIEW-010).
+- Canonical result: `detections/sliver/yaral/sliver_browser_debugging_from_network_process.yaral`, SHA-256 `96dbc0b7bae8d43a067c6aa497fd5f4955e69ec881c3de9f6401451221f48b06`.
+- Regeneration: coverage, telemetry, `telemetry/MASTER.md`, five translations and dependency hashes were regenerated on 2026-08-16 when the rule was adopted; re-verified present and hash-consistent on 2026-11-21.
 
 ## Unmatched scope
 
@@ -93,3 +97,56 @@ rule sliver_browser_debugging_from_network_process_strong_branch {
 ```
 
 The proposal uses concrete telemetry semantics but does not prove tool identity. It remains limited by collection health, process-entity fidelity, enrichment quality and activity outside the window. If accepted or modified, complete the full downstream workflow; if rejected, preserve the rationale without changing canonical logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- All public candidates were re-pinned to the refreshed snapshots; no referenced candidate file changed content.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Network-active process launches a browser with a remote-debugging option | covered (command line plus child PID) | no credible counterpart in the pinned snapshots | debugging switch on a child of an egressing process - strong | child LISTEN socket - strong | ours_stronger |
+| Debugging endpoint becomes reachable (local listener) | covered by the `$l` LISTEN event | not covered | LISTEN by browser PID - strong | none | ours_stronger |
+| Session data read through the debugging protocol | not observable at the host layer | not covered | none | subsequent egress by the parent - moderate | different_scope |
+
+- Current canonical YARA-L `detections/sliver/yaral/sliver_browser_debugging_from_network_process.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule sliver_browser_debugging_from_network_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "Network process launches a browser child with remote debugging enabled and a debug listener is established"
+    date = "2026-08-16"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Requires the debug-switch launch, an established local debug listener on the launched child, and continuing egress by the launching process; closes the prior gap where the join required neither a listener nor a distinct browser-child identity, and fixes a malformed multi-predicate line in the prior version"
+    procedure_ids = "PROC-022"
+    log_source_prerequisites = "Process command line plus parent network telemetry and child listen-socket telemetry"
+    false_positives = "Developers, browser automation and testing frameworks that launch browsers with remote debugging"
+    references = "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_browser_debugging_from_network_process.md"
+    validation_status = "needs_validation"
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/sliver/detection-review.md"
+    source_comparison = "modified_from_unvalidated_proposal"
+  events:
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    $p.principal.process.product_specific_process_id = $parent_pid
+    $p.target.process.product_specific_process_id = $browser_pid
+    re.regex($p.target.process.command_line, `(?i)--remote-debugging-(port|pipe)`)
+
+    $l.metadata.event_type = "NETWORK_CONNECTION"
+    $l.network.direction = "LISTEN"
+    $l.principal.hostname = $host
+    $l.principal.process.product_specific_process_id = $browser_pid
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $parent_pid
+  match: $host, $parent_pid, $browser_pid over 10m
+  condition: $p and $l and $n
+}
+```
+
+- Re-comparison outcome: the current canonical rule set closes the branch the proposal targeted, within declared telemetry. Remaining limits are the accepted gaps in `reviews/sliver/detection-review.md`.

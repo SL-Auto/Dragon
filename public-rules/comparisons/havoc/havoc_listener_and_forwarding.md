@@ -8,7 +8,7 @@
 - Procedures: HV-P16
 - Public candidates were consulted only after independent source analysis, rule generation and adversarial review.
 
-- [`public-rules/snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/port_proxy_forwarding_T1090_cisa_report.yaral`](../../snapshots/chronicle-community/234e9223c3b8f3d1c30209d9663797ba69057533/rules-community/microsoft/windows/port_proxy_forwarding_T1090_cisa_report.yaral) - SHA-256 `65d283ba8edead9233016571a5ec70310679d7ea31689016379b1283eb42d522`
+- [`public-rules/snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/port_proxy_forwarding_T1090_cisa_report.yaral`](../../snapshots/chronicle-community/dbc9beb79597b519be086fce082214494d75b6a8/rules/community/microsoft/windows/port_proxy_forwarding_T1090_cisa_report.yaral) - SHA-256 `65d283ba8edead9233016571a5ec70310679d7ea31689016379b1283eb42d522`
 
 ## Procedure and detection-branch matrix
 
@@ -52,7 +52,8 @@
 
 - Candidate improvement: host configuration forwarding branch
 - Independent verification: pinned Havoc report, internal review, telemetry contract and candidate hash/path above
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: Adversarial review of the proposal (2026-08-16) found two independent defects. First, it queries `metadata.product_event_type = "NETWORK_LISTEN"` / `"NETWORK_CONNECTION"`, but every canonical Havoc rule in this repository correctly uses `metadata.event_type` for normalized UDM category values; `product_event_type` holds the raw vendor-specific event identifier, not a semantic UDM enum name, so as written this predicate would not match real telemetry and the rule would silently never fire. Second, independent of the field-name defect, the logic does not implement the branch it claims to address: it correlates NETWORK_LISTEN with NETWORK_CONNECTION on the same process, which is exactly the existing canonical rule's logic, rather than the stated "host configuration forwarding branch" (native OS port-proxy/registry configuration events such as `netsh interface portproxy`), so it adds no new branch and is fully redundant with current coverage.
 - Adversarial re-check: Re-ran the procedure-branch matrix against the proposal. It does not close the stated missing branch (host configuration forwarding remains uncovered) and introduces no correlation distinct from the existing canonical rule; canonical logic is unchanged and no compensating rule is added.
 - Required regeneration: none. Canonical logic, telemetry, translations, and dependencies are unchanged because the proposal was rejected, not adopted or modified.
@@ -89,3 +90,8 @@ rule havoc_listener_and_forwarding_proposal {
 ```
 
 This proposal is actual detection logic for the scoped missing branch, not an automatic adoption. It must be compiled, mapped, benign-baselined and adversarially reviewed before canonical use. The only accepted comparison change in this pass is the independently implemented stable-destination recurrence rule documented above.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/community/microsoft/windows/port_proxy_forwarding_T1090_cisa_report.yaral` differs between 234e922 and dbc9beb only in line endings (snapshot path moved where applicable); content is identical.

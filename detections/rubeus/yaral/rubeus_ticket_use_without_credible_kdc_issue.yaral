@@ -2,14 +2,14 @@ rule rubeus_ticket_use_without_credible_kdc_issue {
   meta:
     author = "Detection Research Agent"
     description = "Detects anomalous Kerberos-authenticated service use without a corresponding observed service-ticket issue, gated on an explicit domain-controller collection-health signal so absence-based logic never fires during known incomplete DC coverage."
-    date = "2026-08-16"
+    date = "2026-11-21"
     status = "experimental"
     severity = "HIGH"
     severity_rationale = "The pattern can expose forged or mutated tickets, but incomplete DC logging can create false positives; the collection-health gate reduces that specific failure mode."
     procedure_ids = "PROC-008,PROC-009"
-    log_source_prerequisites = "Centralize complete 4769 telemetry and resource-side Kerberos service-use/PAC anomaly data with normalized user, source, and service, plus a collection-health event that proves all authoritative domain controllers reported for the correlation window."
+    log_source_prerequisites = "Centralize complete 4769 telemetry and resource-side Kerberos service-use/PAC anomaly data with normalized user, source, and service, plus a collection-health event that proves all authoritative domain controllers reported for the correlation window. The health event and the resource-side access event must both carry the AD domain in target.administrative_domain; that field joins the health gate to the activity."
     false_positives = "Missing DC logs, cached tickets, referrals, cross-realm activity, and parser mismatches; the collection-health gate mitigates but does not eliminate these because health may be reported as true while an individual DC's forwarder is silently stalled."
-    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_use_without_credible_kdc_issue.md"
+    references = "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_ticket_use_without_credible_kdc_issue.md; reviews/rubeus/detection-review.md#review-013"
     validation_status = "needs_validation"
     validation_method = "Test complete and intentionally incomplete DC-log fixtures, including cases where the collection-health signal itself is stale, delayed, or missing; never infer forgery from absence alone. Confirm the collection-health source is authoritative for the same domain and window as the correlated user/source/service activity."
     review_status = "reviewed_with_gaps"
@@ -17,12 +17,14 @@ rule rubeus_ticket_use_without_credible_kdc_issue {
   events:
     $health.metadata.product_event_type = "COLLECTION_HEALTH"
     $health.additional.fields["all_domain_controllers_reporting"].value.bool_value = true
+    $health.target.administrative_domain = $domain
 
     $access.metadata.event_type = "USER_LOGIN"
     $access.security_result.auth_details = "KERBEROS"
     $access.target.user.userid = $user
     $access.principal.ip = $source
     $access.target.resource.name = $service
+    $access.target.administrative_domain = $domain
     $access.additional.fields["identity_or_pac_anomaly"].value.bool_value = true
 
     $tgs.metadata.product_event_type = "4769"
@@ -32,5 +34,5 @@ rule rubeus_ticket_use_without_credible_kdc_issue {
   match:
     $user, $source, $service over 12h
   condition:
-    $health and $access and #tgs = 0
+    $health and $access and !$tgs
 }

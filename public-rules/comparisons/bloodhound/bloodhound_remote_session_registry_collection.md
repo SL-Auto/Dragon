@@ -47,11 +47,16 @@ endpoint-local RPC telemetry, operation UUID/opnum forms, single high-value targ
 
 ## Decision trail
 
-- Candidate improvement: independently add the missing procedure branch shown below; no public predicate is copied.
-- Independent verification: compare against pinned collector source, actual provider semantics, sanitized fixtures and benign inventory baselines.
-- Decision: `deferred_pending_rule_improvement_run`.
-- Reason: comparison code is an unvalidated detection-engineering proposal, not canonical logic.
-- Required regeneration: canonical review, coverage, telemetry, all translations, dependencies/hashes and this comparison after acceptance or modification.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/bloodhound/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, although the proposal had been copied, with divergences, into canonical YARA-L on 2026-08-16 without a recorded decision or review finding; the live rule was re-reviewed before this terminal decision.
+- Decision: `modify`.
+- Reason: the missing branch is real; the adopted canonical logic diverges from the proposal as follows:
+  - The adoption matches an `operation` label regex over 15 minutes and at least 5 targets instead of the proposal's operation-ID or registry-key branches.
+  - Re-review added `NetWkstaUserEnum`, `NetrWkstaUserEnum`, `WKSSVC` and `NetrSessionEnum`, which SharpHound's logged-on collection uses (`ComputerSessionProcessor.cs` L190-246; BH-DR-29).
+  - The proposal's endpoint registry-key branch is not adopted, because endpoint registry telemetry attributes remote reads to the local RemoteRegistry service (BH-DR-21).
+- Canonical result: `detections/bloodhound/yaral/bloodhound_remote_session_registry_collection.yaral`, SHA-256 `12a2d834a76b9578b6c81d51998c4393bcd14444d63967ae3e944b9d18df72fc`.
+- Regeneration: canonical change on 2026-11-21; detection review, `telemetry/bloodhound.md`, `telemetry/MASTER.md` counts, five translations, dependency/manifest hashes and this re-comparison were regenerated in the same run.
 
 ## Unmatched scope
 
@@ -88,3 +93,49 @@ rule bloodhound_remote_session_or_loggedon_collection {
 Remaining gaps: intent is not established; thresholds, normalized fields and benign baselines require authorized telemetry testing. Distributed activity and missing collection require separate compensating analytics and collection-health monitoring.
 
 If adopted, independently revise canonical YARA-L, re-run adversarial review, reconcile telemetry and master counts, regenerate all five translations and dependencies, and re-compare the final logic.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- All public candidates were re-pinned to the refreshed snapshots; no referenced candidate file changed content.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Session (NetSessionEnum) and logged-on (NetWkstaUserEnum) enumeration across many hosts | covered | no public candidate in the pinned snapshots | RPC operation per target - strong | SMB/IPC$ authentication fan-out - weak | ours_stronger |
+| Remote-registry logged-on enumeration seen only on the target endpoint | not covered (no source attribution) | not covered | none | NDR winreg - moderate | insufficient_evidence |
+
+- Current canonical YARA-L `detections/bloodhound/yaral/bloodhound_remote_session_registry_collection.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule bloodhound_remote_session_registry_collection {
+  meta:
+    author = "Detection Research Agent"
+    description = "Correlates SRVSVC session enumeration or remote registry reads, bound to a stable source process entity, with multi-host SMB/RPC activity."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Remote session and logged-on-user collection reveals lateral-movement opportunities."
+    procedure_ids = "BH-007,BH-008"
+    log_source_prerequisites = "NDR/EDR RPC interface or REGISTRY_READ telemetry plus source process entity, source identity and target host."
+    false_positives = "Endpoint inventory, helpdesk, EDR and authorized administration."
+    references = "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_remote_session_registry_collection.md, reviews/bloodhound/detection-review.md#bh-dr-29"
+    validation_status = "needs_validation"
+    validation_method = "Use sanitized SRVSVC and remote-registry fixtures with approved-management negatives and PID-reuse/concurrent-session cases."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/bloodhound/detection-review.md"
+  events:
+    $e.metadata.product_event_type = /(RPC_CALL|REGISTRY_READ)/
+    $e.principal.hostname = $source
+    $e.principal.process.product_specific_process_id = $pid
+    $e.target.hostname = $target
+    re.regex($e.target.resource.attribute.labels["operation"], `(?i)(NetSessionEnum|NetrSessionEnum|SRVSVC|NetWkstaUserEnum|NetrWkstaUserEnum|WKSSVC|remote.registry|logged.on)`)
+  match:
+    $source, $pid over 15m
+  outcome:
+    $targets = count_distinct($target)
+  condition:
+    $e and $targets >= 5
+}
+```
+
+- Re-comparison outcome: the current canonical rule closes the branch the proposal targeted, within declared telemetry; remaining gaps are recorded in `reviews/bloodhound/detection-review.md`.

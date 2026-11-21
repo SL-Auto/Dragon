@@ -19,3 +19,8 @@ The five compensating rules have hand-authored translations. The other 16 rules 
 | `bloodhound_samr_alias_membership_fanout` | `high`: Zeek `dce_rpc` endpoint/operation plus UUID/opnum branch | `partial`: no distinct count; Zeek integration lacks opnum | `high`, Zeek `dce_rpc` logsource only | Opnum-only branch needs a vendor NDR rule in Sigma/EQL. |
 
 `high` means the canonical correlation, aggregation and exclusions are expressed natively in the target. It does not mean equivalent or validated. Field mappings remain tenant assumptions, and every file stays `experimental_needs_backend_mapping_and_validation`.
+
+## 2026-11-21 exceptions — eleven deferred comparisons
+
+- The generator drafts for `bloodhound_azure_authentication_context`, `bloodhound_collection_archive_creation`, `bloodhound_remote_session_registry_collection`, `bloodhound_service_protocol_probe_fanout`, `bloodhound_smb_rpc_host_sweep` and `bloodhound_sysvol_policy_file_collection` were regenerated after canonical fixes (BH-DR-27 to BH-DR-31). They remain `partial` candidate retrieval.
+- `bloodhound_collection_archive_creation` previously emitted a wildcard event list, because of the generator anchoring defect fixed in `scripts/translate-yaral.ps1`.

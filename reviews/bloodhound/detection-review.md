@@ -219,6 +219,75 @@ All five revised rules were re-traced branch by branch after the changes above:
 - Exclusions remove only owning-service or local-service identities and do not exclude machine accounts.
 - Remaining `accepted_gap` items (BH-DR-10, BH-DR-12, BH-DR-17 cloud branch, BH-DR-24, BH-DR-25 native value names) each name a compensating rule.
 
+## 2026-11-21 delta review — eleven deferred comparisons
+
+Eleven `public-rules/comparisons/bloodhound/*.md` trails still read `deferred_pending_rule_improvement_run`:
+
+- Nine proposals had been copied into canonical rules on 2026-08-16, with divergences, but no decision or finding was recorded. Each live rule was re-reviewed against its proposal.
+- The `bloodhound_azure_rbac_enumeration` and `bloodhound_recurrent_collection_activity` proposals had not been acted on.
+
+### BH-DR-27 — sign-in to enumeration window shorter than token lifetime
+
+- Severity: `low`
+- Rule: `bloodhound_azure_authentication_context`
+- Gap or failure mode: the 2026-08-16 adoption narrowed the proposal's 60-minute window to 30 minutes. Graph and ARM collection can run on one access token for its full lifetime (typically 60-90 minutes), so enumeration that starts or continues after 30 minutes falls outside the join.
+- Resolution: `fixed`. The window is now the proposal's 60 minutes, so the adopted rule equals the proposal.
+
+### BH-DR-28 — archive packaging joined on process ID without host
+
+- Severity: `medium`
+- Rule: `bloodhound_collection_archive_creation`
+- Gap or failure mode: `product_specific_process_id` is the only key, so identical PIDs on different hosts could join one host's JSON writes to another host's archive (BH-DR-08).
+- Resolution: `fixed`. Both events now carry `principal.hostname = $host`, and the match is on `$host, $process`. The proposal's distinct-MD5 count was not adopted: `#j >= 3` counts output files without depending on hash enrichment for file-creation events.
+
+### BH-DR-29 — logged-on-user collection API missing from session rule
+
+- Severity: `medium`
+- Rule: `bloodhound_remote_session_registry_collection`
+- Gap or failure mode: SharpHound's logged-on collection calls `NetWkstaUserEnum` (`sources/sharphound-common-src/src/CommonLib/Processors/ComputerSessionProcessor.cs` L190–246; observed source fact). The rule matched only `NetSessionEnum`, `SRVSVC` and free-text "logged.on", so a sensor emitting the API or WKSSVC interface name missed this branch.
+- Resolution: `fixed`. The operation regex adds `NetWkstaUserEnum`, `NetrWkstaUserEnum`, `WKSSVC` and `NetrSessionEnum`.
+- The proposal's endpoint registry-key branch was not adopted. Endpoint registry telemetry on the target attributes remote-registry reads to the local RemoteRegistry service, so it cannot satisfy the source-to-target join (BH-DR-21).
+
+### BH-DR-30 — invalid regex comparisons on an integer field and a placeholder
+
+- Severity: `high`
+- Rules:
+  - `bloodhound_smb_rpc_host_sweep` (`$e.target.port = /(135|139|445)/`)
+  - `bloodhound_service_protocol_probe_fanout` (`$service = /(?i)(webdav|smb|ldap|ldaps)/`)
+  - Impacket `impacket_remote_rpc_discovery` and `impacket_unusual_protocol_listener`; see Impacket REVIEW-015.
+- Gap or failure mode: `target.port` is an integer, so a regex comparison is not valid, and a placeholder cannot be compared against a regex outside an event-field predicate. The rules could not match as written.
+- Resolution: `fixed`:
+  - Ports use explicit integer equality.
+  - The service-family predicate is an anchored `re.regex` on the label.
+  - The host-sweep window is now the proposal's 30 minutes, for throttled sweeps. Its approval remains fail-open (`!= "true"`), unlike the proposal's fail-closed `= "false"`.
+
+### BH-DR-31 — SYSVOL policy regex unanchored and window short for slow reads
+
+- Severity: `low`
+- Rule: `bloodhound_sysvol_policy_file_collection`
+- Gap or failure mode: `(SYSVOL|Policies).*(Groups.xml|GptTmpl.inf|Registry.pol)` was unanchored and had unescaped dots, so names such as `Groups.xml.bak` matched. The 15-minute window also missed slow reads.
+- Resolution: `fixed`. The regex is now path-segment anchored, with escaped dots and an end anchor, and the window is 30 minutes. The Group Policy service exclusion still fails open.
+
+### BH-DR-32 — recurrence rule hard-depends on prevalence enrichment
+
+- Severity: `medium`
+- Rule: `bloodhound_recurrent_collection_activity` (its proposal is rejected).
+- Gap or failure mode:
+  - The base rule requires `principal.process.file.labels["prevalence"] = "rare"`, so without that enrichment it is silent.
+  - The proposal does not address this. It instead correlates `DETECTION` events by a `detection_family` label, which no rule in this repository emits and which is not how composite detections are represented.
+- Resolution: `accepted_gap`. The prevalence filter is kept, because without it the 100-event, 5-target threshold over 4 hours overlaps heavily with management agents. Compensating rules: `bloodhound_ldap_directory_discovery_fanout`, `bloodhound_smb_rpc_host_sweep` and `bloodhound_ldap_deep_single_category_enumeration`, none of which needs prevalence.
+
+### Re-review of 2026-08-16 adoptions kept without logic change
+
+- `bloodhound_azure_resource_enumeration_fanout` drops the proposal's `subscriptions >= 2` requirement, which would have silenced single-subscription tenants, and uses `providers >= 6` over 30 minutes.
+- `bloodhound_cloud_collection_output` joins on user rather than process entity, because cloud audit carries no endpoint PID (BH-DR-17).
+- `bloodhound_sensitive_directory_attribute_reads` alerts per event, which addresses the targeted low-volume branch. It accepts higher benign volume from directory tools that read `nTSecurityDescriptor`, documented in the rule's false-positive notes.
+- `bloodhound_azure_rbac_enumeration` is unchanged and its proposal is rejected:
+  - The proposal's stated gap is a single high-value scope, yet it still requires five scopes and adds a three-relationship AND, which opens a new false-negative path.
+  - It relies on a placeholder-regex comparison and on labels that no parser populates.
+
+No unresolved blocker remains.
+
 ## Required follow-up
 
 - Compile every rule against the tenant YARA-L version and verify each UDM field/provider mapping.

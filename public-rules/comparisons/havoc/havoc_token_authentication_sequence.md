@@ -8,7 +8,7 @@
 - Procedures: HV-P12
 - Public candidates were consulted only after independent source analysis, rule generation and adversarial review.
 
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/privilege_escalation_via_token_theft.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/windows/privilege_escalation_via_token_theft.toml) - SHA-256 `c13444f44d5fc2d13910cd597a223c644ad09e4fca535a4709f59395673ef8bf`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/privilege_escalation_via_token_theft.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/windows/privilege_escalation_via_token_theft.toml) - SHA-256 `2f1c7ec1e9bb90f6864eb3e460a78dddbe64508e46fe57e4e87ffba002434dae`
 
 ## Procedure and detection-branch matrix
 
@@ -52,7 +52,8 @@
 
 - Candidate improvement: sensitive token-source process access
 - Independent verification: pinned Havoc report, internal review, telemetry contract and candidate hash/path above
-- Decision: `rejected`
+- Decision: `reject`
+- Label normalized (2026-11-21): the earlier token `rejected` is replaced by the contract's terminal value `reject`; the decision and its reasoning are unchanged.
 - Reason: Adversarial review of the proposal (2026-08-16) found two independent defects. First, it queries `metadata.product_event_type = "PROCESS_ACCESS"` / `"TOKEN_IMPERSONATION"`, but every canonical Havoc rule in this repository correctly uses `metadata.event_type`, and TOKEN_IMPERSONATION is not a verified UDM event_type mapping, so as written this predicate would not reliably match real telemetry. Second, the proposal reintroduces a generic PROCESS_ACCESS-plus-token-semantic correlation with no source-process sensitivity predicate (e.g. LSASS or another privileged source) -- exactly the class of overly generic token/authentication join that this repository's own adversarial review (`reviews/havoc/detection-review.md` HV-DR-01) already removed from the canonical rule for producing accidental token joins on ordinary logon activity.
 - Adversarial re-check: Re-ran the procedure-branch matrix against the proposal. It does not close the stated "sensitive token-source process access" branch and would reintroduce a finding this repository already fixed once; canonical logic is unchanged and no compensating rule is added.
 - Required regeneration: none. Canonical logic, telemetry, translations, and dependencies are unchanged because the proposal was rejected, not adopted or modified.
@@ -89,3 +90,8 @@ rule havoc_token_authentication_sequence_proposal {
 ```
 
 This proposal is actual detection logic for the scoped missing branch, not an automatic adoption. It must be compiled, mapped, benign-baselined and adversarially reviewed before canonical use. The only accepted comparison change in this pass is the independently implemented stable-destination recurrence rule documented above.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/windows/privilege_escalation_via_token_theft.toml` changed between 7e91c15 and 9d792a8 only in `updated_date` and classification tags; query logic is identical and the comparison conclusions are unaffected.

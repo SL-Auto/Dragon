@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped by procedure, observable effect and telemetry rather than name or syntax.
 
 Public candidate:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/_deprecated/privilege_escalation_krbrelayup_suspicious_logon.toml`](../../public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/_deprecated/privilege_escalation_krbrelayup_suspicious_logon.toml) - SHA-256 `3e78aa4fae6e9c216368f412c301512c30698baffaec39a9da33f6f3c47c35d2`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/_deprecated/privilege_escalation_krbrelayup_suspicious_logon.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/_deprecated/privilege_escalation_krbrelayup_suspicious_logon.toml) - SHA-256 `3e78aa4fae6e9c216368f412c301512c30698baffaec39a9da33f6f3c47c35d2`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,16 @@ No proof that the changed object participates in the later ticket identity or au
 
 ## Decision trail
 
-- Candidate improvement: independently add the strong branch below, retaining the existing rule until sanitized telemetry proves whether a split or replacement is appropriate.
-- Independent verification: required against pinned Impacket source analysis, provider documentation, local schema mappings, and authorized fixtures.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: public logic is comparative evidence, not authority; this proposal has not passed internal adversarial review.
-- Required regeneration: canonical review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, then this comparison.
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/impacket/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`; decided here with the evidence in hand.
+- Decision: `reject`.
+- Reason: the proposal is not adopted:
+  - The proposal keeps the base same-actor join, which cannot link a delegation-abuse chain: tickets are requested by the newly created machine account, not by the actor.
+  - It replaces the concrete 4768/4769 leg with a `STATUS_UPDATE` event carrying a `sensitive_effect` label that no provider emits, and adds strict ordering (REVIEW-014).
+  - The gap it names is real and is closed independently by new `impacket_new_machine_account_s4u`: 4741 followed within 1h by S4U 4769 requested by the same new account. The base rule is unchanged.
+- Canonical result: `detections/impacket/yaral/impacket_new_machine_account_s4u.yaral`, SHA-256 `4689f1638c6f24c86d779179ae0561a22a97be5337446d84aab4083aa96fde0d`.
+- Regeneration: new canonical rule on 2026-11-21; detection review, coverage, `telemetry/impacket.md`, `telemetry/MASTER.md` (new 4741 row and counts), native translations, dependency/manifest hashes and this re-comparison were regenerated in the same run.
 
 ## Unmatched scope
 
@@ -90,3 +95,58 @@ rule impacket_privilege_path_effects_strong_branch {
 ```
 
 This proposal strengthens a procedure-level branch without importing the public predicate. It remains vulnerable to missing source telemetry, semantic mapping errors, and activity outside the correlation period. If adopted, test benign administrative workloads and missing-data behavior, then update every downstream artifact required by the workflow.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- All public candidates were re-pinned to the refreshed snapshots; no referenced candidate file changed content.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Directory change followed by Kerberos use by the same actor | covered by base rule | `privilege_escalation_krbrelayup_suspicious_logon.toml` (deprecated): local Kerberos relay logon | 5136/4741 + 4768/4769 same user - weak | new-account S4U rule - strong | different_scope |
+| New machine account requesting S4U tickets (delegation abuse) | covered by `impacket_new_machine_account_s4u` | not covered | 4741 then S4U 4769 by the new account - strong | base rule - weak | ours_stronger |
+
+- Current canonical YARA-L `detections/impacket/yaral/impacket_new_machine_account_s4u.yaral` (`experimental` / `needs_validation`):
+
+```yaral
+rule impacket_new_machine_account_s4u {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a newly created computer account requesting S4U (protocol-transition or constrained-delegation) service tickets within one hour of its creation, proving that the object created in the directory participates in the later ticket path. This is the resource-based constrained delegation chain: account creation, delegation configuration, then S4U ticket requests as the new account."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "A just-created machine account performing S4U impersonation is uncommon in ordinary domain joins and directly yields service tickets for impersonated users."
+    procedure_ids = "IMP-07,IMP-11,IMP-22"
+    log_source_prerequisites = "Domain-controller Security 4741 (computer account created; new account in target.user.userid) and 4769 (requesting account in target.user.userid) with S4U context in the description, a structured delegation_flow field, or TransmittedServices, from every DC."
+    false_positives = "Provisioning or middleware that creates a computer account and immediately configures it for constrained delegation; approve those service accounts after validation."
+    references = "reports/impacket/source-analysis.md#imp-22; public-rules/comparisons/impacket/impacket_privilege_path_effects.md; reviews/impacket/detection-review.md#review-014"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized fixtures: an ordinary domain join (4741 then ordinary 4768/4769) must not match; a new account followed by S4U2Self/S4U2Proxy 4769 within one hour must match. Verify which S4U field the parser populates."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/impacket/detection-review.md"
+  events:
+    $c.metadata.product_event_type = "4741"
+    $c.target.user.userid = $account
+
+    $k.metadata.product_event_type = "4769"
+    $k.target.user.userid = $account
+    (
+      re.regex($k.security_result.description, `(?i)(S4U2Self|S4U2Proxy|protocol transition|transited services)`) or
+      re.regex($k.additional.fields["delegation_flow"].value.string_value, `(?i)^(S4U2Self|S4U2Proxy)$`) or
+      re.regex($k.additional.fields["TransmittedServices"].value.string_value, `[A-Za-z0-9]`)
+    )
+
+    $c.metadata.event_timestamp.seconds <= $k.metadata.event_timestamp.seconds
+  match:
+    $account over 1h
+  outcome:
+    $creators = array_distinct($c.principal.user.userid)
+    $services = array_distinct($k.target.resource.name)
+    $sources = array_distinct($k.principal.ip)
+  condition:
+    $c and $k
+}
+```
+
+- Re-comparison outcome: Rejected as written; the branch is covered by an independently designed rule, and the comparison conclusions above stand.

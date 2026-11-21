@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped by procedure, observable effect and telemetry rather than name or syntax.
 
 Public candidate:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/network/initial_access_rpc_remote_procedure_call_from_the_internet.toml`](../../public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/network/initial_access_rpc_remote_procedure_call_from_the_internet.toml) - SHA-256 `2731a4e62d4bb510a5d2c5a22561c6972ac1e7fc388514b38f4f39c9df221ac2`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/network/initial_access_rpc_remote_procedure_call_from_the_internet.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/network/initial_access_rpc_remote_procedure_call_from_the_internet.toml) - SHA-256 `94b480a85b0dbeca709ba453008e7e01e786390ed6275786d0eb1e9fa13f6265`
 
 ## Procedure and detection-branch matrix
 
@@ -83,3 +83,8 @@ rule impacket_remote_rpc_discovery_strong_branch {
 ```
 
 This proposal strengthens a procedure-level branch without importing the public predicate. It remains vulnerable to missing source telemetry, semantic mapping errors, and activity outside the correlation period. If adopted, test benign administrative workloads and missing-data behavior, then update every downstream artifact required by the workflow.
+
+## Snapshot refresh (2026-11-21)
+
+- Candidate links re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`. The decision trail above is unchanged.
+- `rules/network/initial_access_rpc_remote_procedure_call_from_the_internet.toml` changed between 7e91c15 and 9d792a8; re-read on 2026-11-21: Fortinet FortiGate was added as a data source; the internet-to-internal RPC predicate is unchanged in scope. The comparison conclusions and decision are unaffected.

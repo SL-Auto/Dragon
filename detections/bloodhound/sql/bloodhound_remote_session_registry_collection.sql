@@ -4,10 +4,10 @@
 -- rule_name: bloodhound_remote_session_registry_collection
 -- severity: high
 -- procedure_ids: BH-007,BH-008
--- description: Correlates SRVSVC session enumeration or remote registry reads with multi-host SMB/RPC activity.
--- log_source_prerequisites: NDR/EDR RPC interface or REGISTRY_READ telemetry plus source identity and target host.
+-- description: Correlates SRVSVC session enumeration or remote registry reads, bound to a stable source process entity, with multi-host SMB/RPC activity.
+-- log_source_prerequisites: NDR/EDR RPC interface or REGISTRY_READ telemetry plus source process entity, source identity and target host.
 -- false_positives: Endpoint inventory, helpdesk, EDR and authorized administration.
--- references: reports/bloodhound/source-analysis.md
+-- references: reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_remote_session_registry_collection.md, reviews/bloodhound/detection-review.md#bh-dr-29
 -- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 -- schema_profile: schemas/normalized-sql.yml
 -- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).

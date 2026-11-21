@@ -19,13 +19,13 @@ procedures:
   - { id: IMP-04, name: scheduled task execution, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_rapid_scheduled_task_create_and_run] }
   - { id: IMP-05, name: WMI and DCOM execution or query, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_wmi_activity, impacket_wmi_activity_operational_class_signal] }
   - { id: IMP-06, name: WMI persistence, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_wmi_subscription_change] }
-  - { id: IMP-07, name: account and group change, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_account_or_group_change] }
+  - { id: IMP-07, name: account and group change, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_account_or_group_change, impacket_new_machine_account_s4u] }
   - { id: IMP-08, name: account and system discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_rpc_discovery] }
   - { id: IMP-09, name: LDAP discovery, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_sensitive_ldap_search] }
   - { id: IMP-10, name: AD authorization change, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_ad_authorization_change] }
-  - { id: IMP-11, name: Kerberos ticket request, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_suspicious_kerberos_requests] }
+  - { id: IMP-11, name: Kerberos ticket request, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_suspicious_kerberos_requests, impacket_new_machine_account_s4u] }
   - { id: IMP-12, name: offline Kerberos artifacts, telemetry_status: assessed, detection_status: not_observable, detection_rules: [] }
-  - { id: IMP-13, name: credential and secret retrieval, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_sensitive_file_or_replication_access] }
+  - { id: IMP-13, name: credential and secret retrieval, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_sensitive_file_or_replication_access, impacket_directory_replication_rights_use] }
   - { id: IMP-14, name: registry access and change, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_registry_activity] }
   - { id: IMP-15, name: service authentication and query, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_unusual_service_authentication] }
   - { id: IMP-16, name: RPC discovery and specialized interfaces, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_remote_rpc_discovery] }
@@ -34,5 +34,6 @@ procedures:
   - { id: IMP-19, name: packet construction and capture, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_packet_capture_or_raw_socket] }
   - { id: IMP-20, name: local parsing and conversion, telemetry_status: assessed, detection_status: not_observable, detection_rules: [] }
   - { id: IMP-21, name: authentication relay, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_cross_source_ntlm_relay, impacket_ntlm_relay_with_privileged_effect] }
-  - { id: IMP-22, name: special exploit and privilege paths, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_privilege_path_effects] }
+  - { id: IMP-22, name: special exploit and privilege paths, telemetry_status: assessed, detection_status: detected, detection_rules: [impacket_privilege_path_effects, impacket_new_machine_account_s4u] }
 completion: { total_procedures: 22, detected: 19, not_observable: 2, blocked_source: 1, unassessed: 0, comprehensive_for_revision: true }
+note_2026-11-21: "Comparison backlog resolution (reviews/impacket/detection-review.md REVIEW-013, REVIEW-014): restored the IMP-13 directory-replication branch lost in the 2026-08-16 split as impacket_directory_replication_rights_use, and added impacket_new_machine_account_s4u for the IMP-07/IMP-11/IMP-22 delegation chain."

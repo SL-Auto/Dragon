@@ -5,10 +5,10 @@
 # severity: high
 # procedure_ids: PROC-005
 # description: Detects a service identity making S4U requests against an authoritatively unapproved delegation edge, or requesting S4U tickets across multiple distinct target services when edge-approval enrichment is unavailable.
-# log_source_prerequisites: Normalize 4769 with requesting account, client/source, target service, transited services, ticket options, and delegation context, plus an authoritative delegation-edge-approval enrichment keyed by service account and target service.
+# log_source_prerequisites: Normalize 4769 with requesting account, client/source, target service, transited services, ticket options, and delegation context, plus an authoritative delegation-edge-approval enrichment keyed by service account and target service. The single-event unapproved-edge branch additionally requires a delegation-inventory enrichment that sets delegation_inventory_evaluated = true; unset UDM booleans read as false, so without that marker the branch would fire on every S4U ticket.
 # false_positives: Approved constrained delegation, protocol transition, web front ends, and identity middleware; stale or incomplete delegation-edge enrichment.
-# references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_s4u_ticket_sequence.md
-# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend. This is now a two-branch OR: (a) two-or-more distinct target services in the window, or (b) any single S4U request against an edge explicitly marked unapproved; the second branch requires the delegation-edge enrichment join and must not be silently dropped. Both branches must identify S4U activity through EITHER a free-text security_result.description match OR a structured delegation_flow field match (whichever the parser actually populates); do not implement only one.
+# references: RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_s4u_ticket_sequence.md; reviews/rubeus/detection-review.md#review-011
+# assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
 # schema_profile: schemas/splunk-cim.yml
 index=<configured_index>
 | where in(coalesce('metadata.product_event_type','metadata.event_type'), "4769")

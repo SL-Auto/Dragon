@@ -10,7 +10,7 @@
 - Scope mapping rationale: candidates were mapped to the procedure's ordered behavior, observable security effect, and telemetry; names and syntax were not used as equivalence evidence.
 
 Public candidates:
-- [`public-rules/snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/_deprecated/defense_evasion_code_injection_conhost.toml`](../../snapshots/elastic-security/7e91c156324cdc64cda27f7fec7067b1148074ef/rules/_deprecated/defense_evasion_code_injection_conhost.toml) - SHA-256 `99f8fc3a036931f74f14500b0e145e8befdc3ffb65987ceeea79e0f115367d28`
+- [`public-rules/snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/_deprecated/defense_evasion_code_injection_conhost.toml`](../../snapshots/elastic-security/9d792a8f6731542935156db61eaba88bf337e819/rules/_deprecated/defense_evasion_code_injection_conhost.toml) - SHA-256 `99f8fc3a036931f74f14500b0e145e8befdc3ffb65987ceeea79e0f115367d28`
 
 ## Procedure and detection-branch matrix
 
@@ -48,11 +48,16 @@ The canonical rule has broader tool-independent intent, but same-target executab
 
 ## Decision trail
 
-- Candidate improvement: independently add the branch below, using public coverage only as evidence that the observable is useful.
-- Independent verification: required against the Cobalt Strike procedure report, provider semantics, local schema mappings, and sanitized authorized telemetry.
-- Decision: `deferred_pending_rule_improvement_run`
-- Reason: `The proposal is detection-engineering input, not accepted canonical logic.`
-- Required regeneration: `canonical adversarial review, coverage, telemetry and master counts, all five translations, dependencies/manifests/hashes, and this comparison.`
+- Candidate improvement: independently implement the branch named in the proposal below; no public predicate is copied.
+- Independent verification (2026-11-21): checked against the pinned source analysis, coverage ledger, telemetry file and `reviews/cobalt-strike-beacon/detection-review.md`.
+- Prior state: this trail read `deferred_pending_rule_improvement_run`, and canonical logic had not acted on the proposal; decided here with the evidence in hand.
+- Decision: `reject`.
+- Reason: the proposal is not adopted:
+  - The proposal replaces stable `process.entity_id` joins with reusable PIDs, which weakens the causal link it claims to add (DR-24).
+  - It hard-requires a `dangerous_memory_rights = true` enrichment, which fails closed when absent.
+  - The base rule already joins the opener to the remote-thread or executable-memory effect on the same source and target entities within 2 minutes.
+- Canonical result: no canonical logic changed; the proposed code is preserved unchanged under "Proposed YARA-L improvement".
+- Regeneration: none required; canonical logic is unchanged.
 
 ## Unmatched scope
 
@@ -93,3 +98,15 @@ rule cobalt_strike_cross_process_injection_compensating_signal {
 This proposal is deliberately not canonical. Thresholds, field availability, benign prevalence, and join stability require adversarial review. Remaining gaps include telemetry loss, cross-host clock skew, and variants that do not produce the proposed effect.
 
 If accepted or modified, update the canonical rule in the same run and regenerate every required downstream artifact before marking the comparison complete.
+
+## Re-comparison against revised canonical rule
+
+- Compared on 2026-11-21 against candidates re-pinned to elastic-security `9d792a8`, microsoft-sentinel `c3361d9`, splunk-security-content `2150948`, chronicle-community `dbc9beb`.
+- All public candidates were re-pinned to the refreshed snapshots; no referenced candidate file changed content.
+
+| Procedure branch / observable effect | Ours (current canonical) | Public | Primary signal and strength | Compensating signal | Coverage conclusion |
+| --- | --- | --- | --- | --- | --- |
+| Process open followed by remote thread or executable memory in the same target | covered (entity-joined) | `defense_evasion_code_injection_conhost.toml` (now under `_deprecated`): suspicious conhost child | open + effect on the same entities - strong | none | ours_stronger |
+| Injected host spawning an unusual child | not covered by this rule | covered by a deprecated rule only | child lineage - weak | lineage rules - moderate | different_scope |
+
+- Re-comparison outcome: canonical logic is unchanged; the public candidate is deprecated upstream.

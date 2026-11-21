@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_kerberoast_sequence
 canonical_path: detections/rubeus/yaral/rubeus_kerberoast_sequence.yaral
-canonical_sha256: 016b9c9d9aea1a993434bdd97b51e07ac1513637738d22225cbe3a77931ae4d2
+canonical_sha256: 15da93a4dd9a5b4e0f9a7b42566e5d77f0e73faa69e9baa9753c207cf7c16f0a
 description: "Correlates LDAP SPN discovery with service-ticket fan-out by the same host and user."
 severity: high
 procedure_ids: ["PROC-004"]
@@ -15,10 +15,10 @@ uses_multi_event_correlation: true
 uses_aggregation: true
 uses_absence_logic: false
 false_positives: "Service inventory, monitoring, identity governance, and authorized assessment."
-references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
+references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md, reviews/rubeus/detection-review.md#review-010"
 translations:
-  spl: { path: "detections/rubeus/spl/rubeus_kerberoast_sequence.spl", sha256: 3682f8629a169915eaf979a825898cf448e500c136a5dfdda6449f410e43bef8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/rubeus/kql/rubeus_kerberoast_sequence.kql", sha256: 8decd453422ea0d09b3188949d368f688dc5175565573c4049183057cffb2add, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/rubeus/sql/rubeus_kerberoast_sequence.sql", sha256: 28aeff65f6ada53aaa4ef5ab5fbfc11adfe7723d6cd62cd61229ac076938da5b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/rubeus/eql/rubeus_kerberoast_sequence.eql", sha256: a628b1ce9b6a96a3e37970af24de5b4c3e47bf1e012742cd462fad25e2c93afa, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/rubeus/sigma/rubeus_kerberoast_sequence.yml", sha256: ee8652019fb055d06958f19a1cb5f8f81a20667d1a16975404db51bec294f595, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/rubeus/spl/rubeus_kerberoast_sequence.spl", sha256: 45250b3b59e59e228ccc3fa66ceb7a1a586ffa33c9e0a4d3c4f97bf2fda91cd2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_kerberoast_sequence.kql", sha256: 4e09b286fdbefeda22d2f154fc07c0dc5f51f284dbc8088f6add134205bb51d0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_kerberoast_sequence.sql", sha256: 04373c08878f997246aa885b52c7f1874f8d3bceb1dac6f0a94f80c7e1f01bab, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_kerberoast_sequence.eql", sha256: fb77c8555046030cba91b3c28450234e3ec9a9fe71f50c2a11b81ff16d550363, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_kerberoast_sequence.yml", sha256: 727f5e7f965be1ebb6ef9cfaf5b7400233341f7674689fed89902a124355f3c5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
