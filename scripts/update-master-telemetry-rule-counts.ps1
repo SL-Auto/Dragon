@@ -39,6 +39,8 @@ $aliases = @{
     'Microsoft Sysmon|6' = @('DRIVER_LOAD')
     'Microsoft Sysmon|22' = @('NETWORK_DNS')
     'Microsoft Entra ID|Security info and passkey registration' = @('passkey|FIDO2')
+    'Kubernetes API (EKS, AKS, GKE)|Kubernetes audit list' = @('Kubernetes API audit')
+    'OCI Audit / Alibaba ActionTrail|Read API request' = @('OCI Audit')
     'Amazon EKS|Kubernetes audit (secrets, serviceaccounts/token)' = @('serviceaccounts/token')
     # Event classes: rules match these with a verb-prefix regex rather than one event name.
     'AWS CloudTrail|Read-only API calls' = @('(List|Describe|Get)')

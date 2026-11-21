@@ -1,0 +1,14 @@
+// source_yaral: detections/scoutsuite/yaral/scoutsuite_user_agent_in_cloud_audit.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: scoutsuite_user_agent_in_cloud_audit
+// severity: high
+// procedure_ids: SS-P01,SS-P02,SS-P03,SS-P05
+// description: Detects cloud API activity whose user agent contains ScoutSuite's self-identifying string (Scout Suite/<version> with the project URL), recorded by AWS CloudTrail, GCP Cloud Audit Logs (callerSuppliedUserAgent), OCI Audit or Alibaba ActionTrail.
+// log_source_prerequisites: Cloud audit events (AWS CloudTrail, GCP Cloud Audit Logs, OCI Audit, Alibaba ActionTrail) normalized with the request user agent in network.http.user_agent and the caller in principal.user.userid.
+// false_positives: Authorized security-posture assessments run with ScoutSuite.
+// references: reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (principal_id, user_agent, event_source, source_ip); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where user_agent.original regex~ "Scout ?Suite/[0-9]"

@@ -1,0 +1,37 @@
+title: "Detects cloud API activity whose user agent contains ScoutSuite's self-identifying string (Scout Suite/<version> with the project URL), recorded by AWS CloudTrail, GCP Cloud Audit Logs (callerSuppliedUserAgent), OCI Audit or Alibaba ActionTrail."
+name: scoutsuite_user_agent_in_cloud_audit_base
+status: experimental
+description: "Detects cloud API activity whose user agent contains ScoutSuite's self-identifying string (Scout Suite/<version> with the project URL), recorded by AWS CloudTrail, GCP Cloud Audit Logs (callerSuppliedUserAgent), OCI Audit or Alibaba ActionTrail."
+source_yaral: "detections/scoutsuite/yaral/scoutsuite_user_agent_in_cloud_audit.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (principal_id, user_agent, event_source, source_ip); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+procedure_ids: "SS-P01,SS-P02,SS-P03,SS-P05"
+log_source_prerequisites: "Cloud audit events (AWS CloudTrail, GCP Cloud Audit Logs, OCI Audit, Alibaba ActionTrail) normalized with the request user agent in network.http.user_agent and the caller in principal.user.userid."
+logsource:
+  category: cloud_audit
+detection:
+  sel:
+    user_agent|re: "(?i)Scout ?Suite/[0-9]"
+  condition: sel
+falsepositives:
+  - "Authorized security-posture assessments run with ScoutSuite."
+level: high
+---
+title: "Detects cloud API activity whose user agent contains ScoutSuite's self-identifying string (Scout Suite/<version> with the project URL), recorded by AWS CloudTrail, GCP Cloud Audit Logs (callerSuppliedUserAgent), OCI Audit or Alibaba ActionTrail."
+name: scoutsuite_user_agent_in_cloud_audit
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - scoutsuite_user_agent_in_cloud_audit_base
+  group-by:
+    - principal_id
+  timespan: 60m
+  condition:
+    gte: 1
+level: high

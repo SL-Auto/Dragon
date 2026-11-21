@@ -1,0 +1,18 @@
+schema_version: 1
+tool_id: scoutsuite
+analyzed_revision: 7909f2fc6186063e5c9e7ddef8c4d7d1072c8f3d
+inventory_method: every CLI provider and provider facade mapped to its API reads; victim-side audit effects and host launch analyzed
+inventory_complete: true
+inventory_evidence: [reports/scoutsuite/source-analysis.md]
+excluded_paths:
+  - { path: "ScoutSuite/output, ScoutSuite/core/rule*, providers/*/rules", reason: local report rendering and rule evaluation }
+  - { path: "tools docker tests", reason: development and packaging material }
+  - { path: ScoutSuite/output/data/includes.zip, reason: report asset archive deleted unopened under the archive policy }
+procedures:
+  - { id: SS-P01, name: AWS configuration audit, telemetry_status: assessed, detection_status: detected, detection_rules: [scoutsuite_user_agent_in_cloud_audit, scoutsuite_aws_userdata_and_credential_report_sweep, scoutsuite_aws_multi_service_read_fanout] }
+  - { id: SS-P02, name: Azure configuration audit, telemetry_status: assessed, detection_status: detected, detection_rules: [scoutsuite_azure_arm_read_fanout, scoutsuite_user_agent_in_cloud_audit] }
+  - { id: SS-P03, name: GCP configuration audit, telemetry_status: assessed, detection_status: detected, detection_rules: [scoutsuite_user_agent_in_cloud_audit, scoutsuite_gcp_multi_service_read_fanout] }
+  - { id: SS-P04, name: Kubernetes configuration audit, telemetry_status: assessed, detection_status: detected, detection_rules: [scoutsuite_kubernetes_cluster_wide_secret_and_resource_list] }
+  - { id: SS-P05, name: OCI Alibaba and DigitalOcean audits, telemetry_status: assessed, detection_status: detected, detection_rules: [scoutsuite_user_agent_in_cloud_audit, scoutsuite_cli_execution], notes: "DigitalOcean reads are not audited; covered only by launch on monitored hosts (SS-DR-01)" }
+  - { id: SS-P06, name: execution on a monitored host, telemetry_status: assessed, detection_status: detected, detection_rules: [scoutsuite_cli_execution] }
+completion: { total_procedures: 6, detected: 6, not_observable: 0, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

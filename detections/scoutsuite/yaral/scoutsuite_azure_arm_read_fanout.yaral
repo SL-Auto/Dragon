@@ -1,0 +1,27 @@
+rule scoutsuite_azure_arm_read_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one Azure caller reading resources from eight or more resource providers within 30 minutes, the breadth of a ScoutSuite Azure audit."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Posture audits read across providers; Defender for Cloud and CSPM overlap."
+    procedure_ids = "SS-P02"
+    log_source_prerequisites = "ARM read-plane telemetry normalized as AZURE_RESOURCE_READ with caller in principal.user.userid and resource provider in additional.fields['resource_provider']."
+    false_positives = "Defender for Cloud, CSPM and governance identities."
+    references = "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized read-plane fixtures across eight providers; confirm read-plane telemetry exists."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/scoutsuite/detection-review.md"
+  events:
+    $e.metadata.product_event_type = "AZURE_RESOURCE_READ"
+    $e.principal.user.userid = $caller
+    $e.additional.fields["resource_provider"] = $provider
+  match:
+    $caller over 30m
+  outcome:
+    $providers = count_distinct($provider)
+  condition:
+    $e and $providers >= 8
+}

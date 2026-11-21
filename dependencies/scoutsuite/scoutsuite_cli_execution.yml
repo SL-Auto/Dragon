@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: scoutsuite
+rule_name: scoutsuite_cli_execution
+canonical_path: detections/scoutsuite/yaral/scoutsuite_cli_execution.yaral
+canonical_sha256: c4537eefdda622f13bd6769b475bfbff087251a755c37a7d5f40caa1fc55b86b
+description: "Detects a process launched with ScoutSuite's command grammar on a monitored host: scout followed by a provider subcommand (aws, azure, gcp, aliyun, oci, do, kubernetes), or scout.py or the ScoutSuite module."
+severity: medium
+procedure_ids: ["SS-P06"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "PROCESS_LAUNCH telemetry with the full command line, image path and host."
+atomic_event_types: ["PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "target.process.command_line", "target.process.file.full_path"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Authorized cloud security assessments."
+references: "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+translations:
+  spl: { path: "detections/scoutsuite/spl/scoutsuite_cli_execution.spl", sha256: 0ccff73be910c85f714cea0df878dfdf2d997e11935048261f6f273ea925a119, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/scoutsuite/kql/scoutsuite_cli_execution.kql", sha256: 4d684483d80e13be5f9b6a43f72ca7ac883b8c70d84284cd953b1f449b9daf49, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/scoutsuite/sql/scoutsuite_cli_execution.sql", sha256: d04afbe5b354483d17d12cd0385ee4c3cc6590c09c087e0bdef0c0e657b3a295, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/scoutsuite/eql/scoutsuite_cli_execution.eql", sha256: c0c5e309be09ffe25afc30699da0252deaa9d557c26cdab507cdef9c92c21fdb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/scoutsuite/sigma/scoutsuite_cli_execution.yml", sha256: 040e80d48a1d519ea2df10b5a4a1e1032c70ade2e08292c327ee577f705ca0a7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

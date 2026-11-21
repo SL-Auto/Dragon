@@ -1,0 +1,39 @@
+title: "Detects one Azure caller reading resources from eight or more resource providers within 30 minutes, the breadth of a ScoutSuite Azure audit."
+name: scoutsuite_azure_arm_read_fanout_base
+status: experimental
+description: "Detects one Azure caller reading resources from eight or more resource providers within 30 minutes, the breadth of a ScoutSuite Azure audit."
+source_yaral: "detections/scoutsuite/yaral/scoutsuite_azure_arm_read_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (product_event_type, caller, resource_provider); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+procedure_ids: "SS-P02"
+log_source_prerequisites: "ARM read-plane telemetry normalized as AZURE_RESOURCE_READ with caller in principal.user.userid and resource provider in additional.fields['resource_provider']."
+logsource:
+  category: azure_activity
+  product: azure
+detection:
+  sel:
+    product_event_type: "AZURE_RESOURCE_READ"
+  condition: sel
+falsepositives:
+  - "Defender for Cloud, CSPM and governance identities."
+level: medium
+---
+title: "Detects one Azure caller reading resources from eight or more resource providers within 30 minutes, the breadth of a ScoutSuite Azure audit."
+name: scoutsuite_azure_arm_read_fanout
+status: experimental
+correlation:
+  type: value_count
+  rules:
+    - scoutsuite_azure_arm_read_fanout_base
+  group-by:
+    - caller
+  timespan: 30m
+  condition:
+    field: resource_provider
+    gte: 8
+level: medium

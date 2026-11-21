@@ -1,27 +1,42 @@
 schema_version: 1
 tool_id: scoutsuite
 name: "ScoutSuite"
-lifecycle_status: triaged
-analyzed_revision: "unknown"
+lifecycle_status: analyzed
+analyzed_revision: "7909f2fc6186063e5c9e7ddef8c4d7d1072c8f3d"
 context_entry_points:
   registry: registry/tools.yml
+  summary: summaries/scoutsuite.md
+  coverage: coverage/scoutsuite.yml
+  report: reports/scoutsuite/source-analysis.md
+  telemetry: telemetry/scoutsuite.md
 counts:
-  procedures: 0
-  canonical_rules: 0
-  spl_translations: 0
-  kql_translations: 0
-  sql_translations: 0
-  eql_translations: 0
-  sigma_translations: 0
+  procedures: 6
+  canonical_rules: 7
+  spl_translations: 7
+  kql_translations: 7
+  sql_translations: 7
+  eql_translations: 7
+  sigma_translations: 7
 completion_states:
-  source_analysis: incomplete
-  canonical_detection: not_started
-  telemetry_reconciliation: not_started
-  secondary_translation: not_started
-  rule_validation_labels: "not_applicable"
+  source_analysis: complete
+  canonical_detection: complete
+  telemetry_reconciliation: complete_for_experimental_rules
+  secondary_translation: draft_complete
+  rule_validation_labels: "7 needs_validation"
 artifact_hashes:
-  registry: 1d81b73176af57e72d2a6ae7af61bddf345397a860bfcd84fc2fdf80f1a6ecc3
+  registry: 1117b032a217bd91194661b6333a876baf878d02335203ea9000fb6154ac0c97
+  coverage: 531ef2dbc75c3e9786e64d6241e2fd0c84e1f66023d3ed123b23be118b543c81
+  report: 03de05eb242c1da83ed3d4c2038e610e5192428f864293abcf012d89a3cc843c
+  telemetry: 40eb12744c989f59541830a8cc67a66187e6a3d5edc5710dbef4a42d44b81129
+  detection_review: d10c6c5417d150cb87e415e603463bd51c8175fe40a9c2feb769e1b26615fa74
+  translation_review: 676f7c7d83a19d1dafc74d96896a6561b73a7added0e96d1d24fb0c3300500ef
 rules:
-  []
+  - { name: scoutsuite_aws_multi_service_read_fanout, severity: medium, procedures: "SS-P01", dependency: dependencies/scoutsuite/scoutsuite_aws_multi_service_read_fanout.yml, canonical_sha256: 7e20d53d6bfc6f5b109d14aeb9b4d3ab881861a987cb4372493bad6b5f61b1db }
+  - { name: scoutsuite_aws_userdata_and_credential_report_sweep, severity: high, procedures: "SS-P01", dependency: dependencies/scoutsuite/scoutsuite_aws_userdata_and_credential_report_sweep.yml, canonical_sha256: 07090a412dec8685a3ecfbd0ed95b38c7e31f768414a3a02c613e1de67e437be }
+  - { name: scoutsuite_azure_arm_read_fanout, severity: medium, procedures: "SS-P02", dependency: dependencies/scoutsuite/scoutsuite_azure_arm_read_fanout.yml, canonical_sha256: 672620e00ba2a4c77e2a9e7545794a08243d116ea40bc3a12b47f2b6719ccd5a }
+  - { name: scoutsuite_cli_execution, severity: medium, procedures: "SS-P06", dependency: dependencies/scoutsuite/scoutsuite_cli_execution.yml, canonical_sha256: c4537eefdda622f13bd6769b475bfbff087251a755c37a7d5f40caa1fc55b86b }
+  - { name: scoutsuite_gcp_multi_service_read_fanout, severity: medium, procedures: "SS-P03", dependency: dependencies/scoutsuite/scoutsuite_gcp_multi_service_read_fanout.yml, canonical_sha256: c0ff1144b5155a01f99c0a9767a2c80001d3050ca37356474710151e24e0d18a }
+  - { name: scoutsuite_kubernetes_cluster_wide_secret_and_resource_list, severity: high, procedures: "SS-P04", dependency: dependencies/scoutsuite/scoutsuite_kubernetes_cluster_wide_secret_and_resource_list.yml, canonical_sha256: f2d1aa3f67c5233cbd2465214a0d979f142d214d8e7da87e078aae6e64e21223 }
+  - { name: scoutsuite_user_agent_in_cloud_audit, severity: high, procedures: "SS-P01,SS-P02,SS-P03,SS-P05", dependency: dependencies/scoutsuite/scoutsuite_user_agent_in_cloud_audit.yml, canonical_sha256: d20270d416346104daf00b129293704c425838239f3cec3de47e6e00149c832a }
 unresolved:
   source_blockers: 0

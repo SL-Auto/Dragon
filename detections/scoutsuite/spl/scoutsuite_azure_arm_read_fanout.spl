@@ -1,0 +1,18 @@
+# source_yaral: detections/scoutsuite/yaral/scoutsuite_azure_arm_read_fanout.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: scoutsuite_azure_arm_read_fanout
+# severity: medium
+# procedure_ids: SS-P02
+# description: Detects one Azure caller reading resources from eight or more resource providers within 30 minutes, the breadth of a ScoutSuite Azure audit.
+# log_source_prerequisites: ARM read-plane telemetry normalized as AZURE_RESOURCE_READ with caller in principal.user.userid and resource provider in additional.fields['resource_provider'].
+# false_positives: Defender for Cloud, CSPM and governance identities.
+# references: reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (product_event_type, caller, resource_provider); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by caller and threshold. Hop window approximated by scheduling every 10 minutes over the trailing 30 minutes.
+| search index=<configured_index> earliest=-30m@m latest=now
+| where product_event_type=="AZURE_RESOURCE_READ"
+| stats dc(resource_provider) as matched_count  by caller
+| where matched_count >= 8
+| eval canonical_rule="scoutsuite_azure_arm_read_fanout"

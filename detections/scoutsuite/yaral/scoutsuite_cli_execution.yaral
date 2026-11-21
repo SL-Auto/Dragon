@@ -1,0 +1,28 @@
+rule scoutsuite_cli_execution {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a process launched with ScoutSuite's command grammar on a monitored host: scout followed by a provider subcommand (aws, azure, gcp, aliyun, oci, do, kubernetes), or scout.py or the ScoutSuite module."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Running the auditor from a workstation or server is visible at launch; authorized assessments also do this."
+    procedure_ids = "SS-P06"
+    log_source_prerequisites = "PROCESS_LAUNCH telemetry with the full command line, image path and host."
+    false_positives = "Authorized cloud security assessments."
+    references = "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized command lines for each provider and the module form."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/scoutsuite/detection-review.md"
+  events:
+    $p.metadata.event_type = "PROCESS_LAUNCH"
+    $p.principal.hostname = $host
+    re.regex($p.target.process.command_line, `(?i)((^|[\s\\/"])scout(\.exe|\.py)?"?\s+(aws|azure|gcp|aliyun|oci|do|kubernetes)(\s|$)|-m\s+ScoutSuite(\s|$))`)
+    $p.target.process.file.full_path = $image
+  match:
+    $host, $image over 1h
+  outcome:
+    $command_lines = array_distinct($p.target.process.command_line)
+  condition:
+    $p
+}

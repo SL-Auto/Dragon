@@ -1,0 +1,40 @@
+title: "Detects a process launched with ScoutSuite's command grammar on a monitored host: scout followed by a provider subcommand (aws, azure, gcp, aliyun, oci, do, kubernetes), or scout.py or the ScoutSuite module."
+name: scoutsuite_cli_execution_base
+status: experimental
+description: "Detects a process launched with ScoutSuite's command grammar on a monitored host: scout followed by a provider subcommand (aws, azure, gcp, aliyun, oci, do, kubernetes), or scout.py or the ScoutSuite module."
+source_yaral: "detections/scoutsuite/yaral/scoutsuite_cli_execution.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, process_path, command_line); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+procedure_ids: "SS-P06"
+log_source_prerequisites: "PROCESS_LAUNCH telemetry with the full command line, image path and host."
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  sel:
+    event_type: "PROCESS_LAUNCH"
+    command_line|re: "(?i)((^|[\\s\\\\/\\\"])scout(\\.exe|\\.py)?\\\"?\\s+(aws|azure|gcp|aliyun|oci|do|kubernetes)(\\s|$)|-m\\s+ScoutSuite(\\s|$))"
+  condition: sel
+falsepositives:
+  - "Authorized cloud security assessments."
+level: medium
+---
+title: "Detects a process launched with ScoutSuite's command grammar on a monitored host: scout followed by a provider subcommand (aws, azure, gcp, aliyun, oci, do, kubernetes), or scout.py or the ScoutSuite module."
+name: scoutsuite_cli_execution
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - scoutsuite_cli_execution_base
+  group-by:
+    - hostname
+    - process_path
+  timespan: 60m
+  condition:
+    gte: 1
+level: medium

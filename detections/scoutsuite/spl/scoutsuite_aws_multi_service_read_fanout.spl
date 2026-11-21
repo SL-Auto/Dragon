@@ -1,0 +1,18 @@
+# source_yaral: detections/scoutsuite/yaral/scoutsuite_aws_multi_service_read_fanout.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: scoutsuite_aws_multi_service_read_fanout
+# severity: medium
+# procedure_ids: SS-P01
+# description: Detects one non-console AWS principal issuing List, Describe or Get calls to twenty or more distinct services within 30 minutes, the breadth of a full ScoutSuite AWS audit.
+# log_source_prerequisites: AWS CloudTrail read events with eventSource in target.application and userAgent in network.http.user_agent.
+# false_positives: CSPM, inventory and governance roles.
+# references: reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (product_event_type, principal_arn, event_source, user_agent); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by principal_arn and threshold. Hop window approximated by scheduling every 10 minutes over the trailing 30 minutes.
+| search index=<configured_index> earliest=-30m@m latest=now
+| where match(product_event_type, "(?i)^(List|Describe|Get)[A-Z]") AND NOT match(coalesce(user_agent,""), "(?i)(console\\.amazonaws\\.com|signin\\.amazonaws\\.com|AWS Internal)")
+| stats dc(event_source) as matched_count  by principal_arn
+| where matched_count >= 20
+| eval canonical_rule="scoutsuite_aws_multi_service_read_fanout"

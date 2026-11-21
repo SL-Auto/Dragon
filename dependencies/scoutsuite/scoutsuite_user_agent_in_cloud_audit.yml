@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: scoutsuite
+rule_name: scoutsuite_user_agent_in_cloud_audit
+canonical_path: detections/scoutsuite/yaral/scoutsuite_user_agent_in_cloud_audit.yaral
+canonical_sha256: d20270d416346104daf00b129293704c425838239f3cec3de47e6e00149c832a
+description: "Detects cloud API activity whose user agent contains ScoutSuite's self-identifying string (Scout Suite/<version> with the project URL), recorded by AWS CloudTrail, GCP Cloud Audit Logs (callerSuppliedUserAgent), OCI Audit or Alibaba ActionTrail."
+severity: high
+procedure_ids: ["SS-P01", "SS-P02", "SS-P03", "SS-P05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Cloud audit events (AWS CloudTrail, GCP Cloud Audit Logs, OCI Audit, Alibaba ActionTrail) normalized with the request user agent in network.http.user_agent and the caller in principal.user.userid."
+atomic_event_types: []
+required_udm_fields: ["metadata.id", "network.http.user_agent", "principal.ip", "principal.user.userid", "target.application"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Authorized security-posture assessments run with ScoutSuite."
+references: "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+translations:
+  spl: { path: "detections/scoutsuite/spl/scoutsuite_user_agent_in_cloud_audit.spl", sha256: d23311488b12a10b72d267f16e6b01a4b83acb36618c06ba1374b4ce08d8bb9e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/scoutsuite/kql/scoutsuite_user_agent_in_cloud_audit.kql", sha256: 583ffc7ec162932c8f0540c89007af7d8106da879f3cbaf6b53d678e82032ad8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/scoutsuite/sql/scoutsuite_user_agent_in_cloud_audit.sql", sha256: 74a2809e853ae74a9f8fd4148c37e7ec02df034f1d76fe41886300d9f28dddc1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/scoutsuite/eql/scoutsuite_user_agent_in_cloud_audit.eql", sha256: 844d98b877b0f4248ae487c224ff397a62db203e610bbadba136ed1644c5e6c6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/scoutsuite/sigma/scoutsuite_user_agent_in_cloud_audit.yml", sha256: 671892b977bafd4426181c8eb220b576d6084934a01465c77868b25b9f81efde, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

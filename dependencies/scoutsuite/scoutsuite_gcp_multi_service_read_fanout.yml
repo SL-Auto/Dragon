@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: scoutsuite
+rule_name: scoutsuite_gcp_multi_service_read_fanout
+canonical_path: detections/scoutsuite/yaral/scoutsuite_gcp_multi_service_read_fanout.yaral
+canonical_sha256: c0ff1144b5155a01f99c0a9767a2c80001d3050ca37356474710151e24e0d18a
+description: "Detects one GCP principal issuing list, get, search or getIamPolicy calls to ten or more distinct GCP services within 30 minutes."
+severity: medium
+procedure_ids: ["SS-P03"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "GCP Cloud Audit Logs Data Access with methodName in metadata.product_event_type, serviceName in target.application and principalEmail in principal.user.email_addresses."
+atomic_event_types: ["Aggregated", "aggregatedList", "get", "getIamPolicy", "Search"]
+required_udm_fields: ["metadata.product_event_type", "principal.user.email_addresses", "target.application"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Security Command Center, CSPM and inventory service accounts."
+references: "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+translations:
+  spl: { path: "detections/scoutsuite/spl/scoutsuite_gcp_multi_service_read_fanout.spl", sha256: 1096e95ff81d8dae09e71664a549c003681a014b123e179efcfb718bf610b619, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/scoutsuite/kql/scoutsuite_gcp_multi_service_read_fanout.kql", sha256: b349c3e0bf72064159a037d6670623560391d737e3b3abc64edfcb920bb7d417, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/scoutsuite/sql/scoutsuite_gcp_multi_service_read_fanout.sql", sha256: 48e5aa55044812beb327879618a5f3a3e4849eb3ba7807623d2bb9d234d34940, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/scoutsuite/eql/scoutsuite_gcp_multi_service_read_fanout.eql", sha256: fb9c8c7f8c1031542e100642c3977eea8e266bfa6f9926d2905992457e1d1edd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/scoutsuite/sigma/scoutsuite_gcp_multi_service_read_fanout.yml", sha256: 7b6bcd9b76bcbee79a50d39b0e0aff252837af8ef0e62e98565aab27521ef9cc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

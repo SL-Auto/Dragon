@@ -1,0 +1,27 @@
+rule scoutsuite_gcp_multi_service_read_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one GCP principal issuing list, get, search or getIamPolicy calls to ten or more distinct GCP services within 30 minutes."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Full posture audits sweep many services; Security Command Center and CSPM overlap."
+    procedure_ids = "SS-P03"
+    log_source_prerequisites = "GCP Cloud Audit Logs Data Access with methodName in metadata.product_event_type, serviceName in target.application and principalEmail in principal.user.email_addresses."
+    false_positives = "Security Command Center, CSPM and inventory service accounts."
+    references = "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized audit entries across ten services."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/scoutsuite/detection-review.md"
+  events:
+    re.regex($e.metadata.product_event_type, `(?i)\.(List|Get|Search|Aggregated|GetIamPolicy)[A-Za-z]*$|\.(list|get|search|aggregatedList|getIamPolicy)$`)
+    $e.principal.user.email_addresses = $principal
+    $e.target.application = $service
+  match:
+    $principal over 30m
+  outcome:
+    $services = count_distinct($service)
+  condition:
+    $e and $services >= 10
+}

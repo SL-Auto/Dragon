@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: scoutsuite
+rule_name: scoutsuite_azure_arm_read_fanout
+canonical_path: detections/scoutsuite/yaral/scoutsuite_azure_arm_read_fanout.yaral
+canonical_sha256: 672620e00ba2a4c77e2a9e7545794a08243d116ea40bc3a12b47f2b6719ccd5a
+description: "Detects one Azure caller reading resources from eight or more resource providers within 30 minutes, the breadth of a ScoutSuite Azure audit."
+severity: medium
+procedure_ids: ["SS-P02"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "ARM read-plane telemetry normalized as AZURE_RESOURCE_READ with caller in principal.user.userid and resource provider in additional.fields['resource_provider']."
+atomic_event_types: ["AZURE_RESOURCE_READ"]
+required_udm_fields: ["additional.fields", "metadata.product_event_type", "principal.user.userid"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Defender for Cloud, CSPM and governance identities."
+references: "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+translations:
+  spl: { path: "detections/scoutsuite/spl/scoutsuite_azure_arm_read_fanout.spl", sha256: 7d47d03d6bc90bd97e64ddb2f90207ab25b6fdd949cb43cb27066c9deed23fdf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/scoutsuite/kql/scoutsuite_azure_arm_read_fanout.kql", sha256: b9cf8821a21381eae4498f59a7536f137b01cf63f83a63e6d49d2acec0e8bc60, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/scoutsuite/sql/scoutsuite_azure_arm_read_fanout.sql", sha256: ffbc6c437ac2328e0bde1ffcfa921a7acaddabad844add7ff3bfbce5001fd8fb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/scoutsuite/eql/scoutsuite_azure_arm_read_fanout.eql", sha256: 7d10e2e462a73f86e5e3f85744eb456a302a2887ba60465034e703c92fc96471, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/scoutsuite/sigma/scoutsuite_azure_arm_read_fanout.yml", sha256: 021490fff0dc5adcb2dee10780c7fdb277e3d7ec547a2f17c7cf0aa990fcbde3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

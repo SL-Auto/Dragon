@@ -174,11 +174,12 @@ tools:
     name: ScoutSuite
     aliases: []
     category: cloud
-    status: triaged
-    source_code: { availability: public, repository: https://github.com/nccgroup/ScoutSuite, analyzed_revision: unknown }
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/nccgroup/ScoutSuite, analyzed_revision: 7909f2fc6186063e5c9e7ddef8c4d7d1072c8f3d }
     first_seen: unknown
-    last_reviewed: 2026-08-15
-    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }]
+    last_reviewed: 2026-11-21
+    evidence: [{ path: RED_TEAM_TOOL_DETECTION_PRIORITIES.md }, { path: reports/scoutsuite/source-analysis.md }, { path: coverage/scoutsuite.yml }, { path: detections/scoutsuite/ }, { path: reviews/scoutsuite/detection-review.md }, { path: telemetry/scoutsuite.md }, { path: public-rules/comparisons/scoutsuite/ }]
+    notes: "Comprehensive for the pinned revision (latest upstream, 2024-05-10): all seven providers mapped; read-only with a self-identifying user agent. Report renderer excluded. Rules are experimental."
   - id: adaptixc2
     name: AdaptixC2
     aliases: []

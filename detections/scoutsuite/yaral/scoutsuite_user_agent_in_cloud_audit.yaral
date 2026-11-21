@@ -1,0 +1,28 @@
+rule scoutsuite_user_agent_in_cloud_audit {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects cloud API activity whose user agent contains ScoutSuite's self-identifying string (Scout Suite/<version> with the project URL), recorded by AWS CloudTrail, GCP Cloud Audit Logs (callerSuppliedUserAgent), OCI Audit or Alibaba ActionTrail."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "The string is set by the tool for every AWS, Azure and GCP client and identifies the tool directly; only a modified build removes it."
+    procedure_ids = "SS-P01,SS-P02,SS-P03,SS-P05"
+    log_source_prerequisites = "Cloud audit events (AWS CloudTrail, GCP Cloud Audit Logs, OCI Audit, Alibaba ActionTrail) normalized with the request user agent in network.http.user_agent and the caller in principal.user.userid."
+    false_positives = "Authorized security-posture assessments run with ScoutSuite."
+    references = "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized CloudTrail and Cloud Audit records carrying the string."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/scoutsuite/detection-review.md"
+  events:
+    re.regex($e.network.http.user_agent, `(?i)Scout ?Suite/[0-9]`)
+    $e.principal.user.userid = $principal
+  match:
+    $principal over 1h
+  outcome:
+    $events = count($e.metadata.id)
+    $services = array_distinct($e.target.application)
+    $ips = array_distinct($e.principal.ip)
+  condition:
+    $e
+}

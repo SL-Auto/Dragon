@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: scoutsuite
+rule_name: scoutsuite_aws_multi_service_read_fanout
+canonical_path: detections/scoutsuite/yaral/scoutsuite_aws_multi_service_read_fanout.yaral
+canonical_sha256: 7e20d53d6bfc6f5b109d14aeb9b4d3ab881861a987cb4372493bad6b5f61b1db
+description: "Detects one non-console AWS principal issuing List, Describe or Get calls to twenty or more distinct services within 30 minutes, the breadth of a full ScoutSuite AWS audit."
+severity: medium
+procedure_ids: ["SS-P01"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "AWS CloudTrail read events with eventSource in target.application and userAgent in network.http.user_agent."
+atomic_event_types: ["Describe", "List"]
+required_udm_fields: ["metadata.product_event_type", "network.http.user_agent", "principal.user.userid", "target.application"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "CSPM, inventory and governance roles."
+references: "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+translations:
+  spl: { path: "detections/scoutsuite/spl/scoutsuite_aws_multi_service_read_fanout.spl", sha256: c7f1fd85baf0211173ae777518a50f913cca7d4c2615ff0ea851ca9ac3c30532, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/scoutsuite/kql/scoutsuite_aws_multi_service_read_fanout.kql", sha256: 36511bba1cce8bcfa3e14064e3fba88b69c80575566e7cf33baa0146353f42a4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/scoutsuite/sql/scoutsuite_aws_multi_service_read_fanout.sql", sha256: 03d1b3fee691911ead50d3594b3d9c6d64f2f8dbfa84fe15cf87ac03fd4e4ff2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/scoutsuite/eql/scoutsuite_aws_multi_service_read_fanout.eql", sha256: 306c686a7900e106aac3c7d3b1ffa5427c845a2d3c7a87cd9ca9ea62aa3702b6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/scoutsuite/sigma/scoutsuite_aws_multi_service_read_fanout.yml", sha256: 04f2c31e78341b3f6ee571e78c1e03c1d4950d87c52cef7d7fbb49c17299f063, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

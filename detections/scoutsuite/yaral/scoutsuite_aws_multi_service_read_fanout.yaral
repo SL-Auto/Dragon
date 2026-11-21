@@ -1,0 +1,28 @@
+rule scoutsuite_aws_multi_service_read_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects one non-console AWS principal issuing List, Describe or Get calls to twenty or more distinct services within 30 minutes, the breadth of a full ScoutSuite AWS audit."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Posture audits touch nearly every service; this is tool-agnostic and overlaps CSPM platforms."
+    procedure_ids = "SS-P01"
+    log_source_prerequisites = "AWS CloudTrail read events with eventSource in target.application and userAgent in network.http.user_agent."
+    false_positives = "CSPM, inventory and governance roles."
+    references = "reports/scoutsuite/source-analysis.md#procedure-analysis; reviews/scoutsuite/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized read events across 20 services from one ARN."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/scoutsuite/detection-review.md"
+  events:
+    re.regex($e.metadata.product_event_type, `^(List|Describe|Get)[A-Z]`)
+    not re.regex($e.network.http.user_agent, `(?i)(console\.amazonaws\.com|signin\.amazonaws\.com|AWS Internal)`)
+    $e.principal.user.userid = $principal
+    $e.target.application = $service
+  match:
+    $principal over 30m
+  outcome:
+    $services = count_distinct($service)
+  condition:
+    $e and $services >= 20
+}
