@@ -1,7 +1,7 @@
 schema_version: 1
 tool_id: gophish
 name: "GoPhish"
-lifecycle_status: triaged
+lifecycle_status: deprecated
 analyzed_revision: "unknown"
 context_entry_points:
   registry: registry/tools.yml
@@ -20,7 +20,7 @@ completion_states:
   secondary_translation: not_started
   rule_validation_labels: "not_applicable"
 artifact_hashes:
-  registry: 9c75dda74d8d2e504e70b5b119d8961f733d1f55eb544e13ccd697f701c1ac32
+  registry: 101da3e70a23909d00810390cc2c4709ba5b7b2056bb60c19eeafd1b2e267762
 rules:
   []
 unresolved:

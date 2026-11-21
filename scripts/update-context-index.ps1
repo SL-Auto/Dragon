@@ -42,6 +42,8 @@ $workItems = [System.Collections.Generic.List[string]]::new()
 $workItems.Add('schema_version: 1')
 $workItems.Add('generated_from: [registry/tools.yml, manifests/*.yml, dependencies/**/*.yml]')
 $workItems.Add('items:')
+$backlog = [System.Collections.Generic.List[object]]::new()
+$parked = [System.Collections.Generic.List[object]]::new()
 $stale = $false
 
 foreach ($toolMatch in $toolBlocks) {
@@ -193,13 +195,57 @@ foreach ($toolMatch in $toolBlocks) {
         $manifest.Add("  - { name: $ruleName, severity: $severity, procedures: $(Yaml $procedures), dependency: dependencies/$toolId/$ruleName.yml, canonical_sha256: $canonicalHash }")
     }
     if ($rules.Count -eq 0) { $manifest.Add('  []') }
+    # Backlog view: one resumable item per tool that still has safe in-scope work, with the exact
+    # next phase derived from which authoritative artifacts exist. Deprecated tools are excluded;
+    # blocked tools are listed as parked so they stay visible without being selected.
+    $comparisonDirectory = Join-Path $repoRoot "public-rules/comparisons/$toolId"
+    $openComparisons = @()
+    if (Test-Path -LiteralPath $comparisonDirectory) {
+        $openComparisons = @(Get-ChildItem -LiteralPath $comparisonDirectory -Filter '*.md' -File | Where-Object Name -ne 'INDEX.md' | Where-Object {
+            $decisions = [regex]::Matches((Get-Content -Raw -LiteralPath $_.FullName), '(?m)^- Decision: `([a-z_]+)`')
+            $decisions.Count -eq 0 -or $decisions[$decisions.Count - 1].Groups[1].Value -notin @('accept', 'modify', 'reject')
+        } | ForEach-Object BaseName)
+    }
+    $phase = $null; $reason = $null
+    switch ($status) {
+        'discovered' { $phase = 'eligibility_gate'; $reason = 'confirm victim-host execution evidence before source acquisition' }
+        'triaged' { $phase = 'source_inventory'; $reason = 'acquire and pin public source, then inventory every module and procedure' }
+        { $_ -in @('analysis_in_progress', 'analyzed') } {
+            if (-not (Test-Path -LiteralPath $coveragePath)) { $phase = 'source_inventory'; $reason = 'no coverage ledger' }
+            elseif ($unassessedCount -ne '0') { $phase = 'procedure_analysis'; $reason = "coverage ledger has unassessed entries ($unassessedCount)" }
+            elseif ($rules.Count -eq 0) { $phase = 'canonical_yaral'; $reason = 'no canonical rules' }
+            elseif (-not (Test-Path -LiteralPath $reviewPath)) { $phase = 'adversarial_review'; $reason = 'no detection review' }
+            elseif (-not (Test-Path -LiteralPath $telemetryPath)) { $phase = 'telemetry_reconciliation'; $reason = 'no tool telemetry file' }
+            elseif (-not $allTranslationsPresent) { $phase = 'secondary_translation'; $reason = 'translation count differs from canonical rule count' }
+            elseif (-not (Test-Path -LiteralPath $comparisonDirectory)) { $phase = 'public_comparison'; $reason = 'no public-rule comparisons' }
+            elseif ($openComparisons.Count) { $phase = 'comparison_decision'; $reason = "non-terminal comparison decisions: $($openComparisons -join ', ')" }
+            elseif ($status -eq 'analysis_in_progress') { $phase = 'validation_and_state'; $reason = 'all artifacts present; validate and advance lifecycle' }
+        }
+    }
+    if ($phase) {
+        $rank = @{ 'analysis_in_progress' = 0; 'analyzed' = 1; 'triaged' = 2; 'discovered' = 3 }[$status]
+        $backlog.Add([pscustomobject]@{ Rank = $rank; Id = $toolId; Name = $name; Status = $status; Phase = $phase; Reason = $reason })
+    } elseif ($status -like 'blocked_*') {
+        $parked.Add([pscustomobject]@{ Id = $toolId; Name = $name; Status = $status })
+    }
+
     $blockerCount = if ($coverageText) { [regex]::Match($coverageText, 'blocked_source:\s*(\d+)').Groups[1].Value } else { '' }
     $manifest.Add('unresolved:')
     $manifest.Add("  source_blockers: $(if ($blockerCount) { $blockerCount } else { 0 })")
     Write-Generated (Join-Path $repoRoot "manifests/$toolId.yml") $manifest ([ref]$stale)
 }
 
+foreach ($item in ($backlog | Sort-Object Rank, Id)) {
+    $workItems.Add("  - tool_id: $($item.Id)")
+    $workItems.Add("    name: $(Yaml $item.Name)")
+    $workItems.Add("    lifecycle_status: $($item.Status)")
+    $workItems.Add("    next_phase: $($item.Phase)")
+    $workItems.Add("    reason: $(Yaml $item.Reason)")
+}
 if ($workItems[-1] -eq 'items:') { $workItems.Add('  []') }
+$workItems.Add('parked:')
+foreach ($item in ($parked | Sort-Object Id)) { $workItems.Add("  - { tool_id: $($item.Id), name: $(Yaml $item.Name), lifecycle_status: $($item.Status) }") }
+if ($workItems[-1] -eq 'parked:') { $workItems.Add('  []') }
 Write-Generated (Join-Path $repoRoot 'state/work-items.yml') $workItems ([ref]$stale)
 if ($Check) {
     if ($stale) { throw 'Context index is stale; run scripts/update-context-index.ps1' }

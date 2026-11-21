@@ -8,6 +8,11 @@ All notable agent capabilities and workflow changes are recorded here. The struc
 
 ### Fixed
 
+- `state/work-items.yml` is a real backlog view again. When the fabricated non-terminal states were removed, the generator was left emitting `items: []` unconditionally, so the resume file showed no work while the registry held eight actionable tools. `scripts/update-context-index.ps1` now emits:
+  - One item per tool that still has safe in-scope work, ordered by lifecycle state (`analysis_in_progress`, then `analyzed` with residual work, `triaged`, `discovered`).
+  - A `next_phase` derived from which authoritative artifacts exist. The phases are eligibility gate, source inventory, procedure analysis, canonical YARA-L, adversarial review, telemetry, translations, public comparison, comparison decision, and validation.
+  - A `parked` list of `blocked_*` tools. Deprecated tools are excluded.
+  - Any comparison whose last decision is not `accept`, `modify` or `reject` resurfaces as `comparison_decision` work.
 - `scripts/translate-yaral.ps1` strips `^` and `$` from slash-regex event-type alternations. Previously an anchored alternation such as `/^(4624|4697)$/` produced a wildcard (`"*"`) event list in all five secondary drafts. Anchoring done for correctness had therefore silently broken five rules' translations (BloodHound, Impacket and Sliver).
 - `scripts/update-context-index.ps1` hashes content with CRLF normalized to LF. Previously a checkout under `core.autocrlf` rewrote line endings, changed raw-byte hashes and made every generated manifest and dependency record look stale.
 
