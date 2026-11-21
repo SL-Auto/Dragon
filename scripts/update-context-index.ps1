@@ -6,7 +6,12 @@ $utf8 = New-Object Text.UTF8Encoding($false)
 
 function Hash-File([string]$path) {
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { return 'missing' }
-    return (Get-FileHash -Algorithm SHA256 -LiteralPath $path).Hash.ToLowerInvariant()
+    # Hash content with CRLF normalized to LF so the index does not go stale when Git
+    # (core.autocrlf) rewrites line endings on checkout. Latin-1 round-trips every byte.
+    $latin1 = [Text.Encoding]::GetEncoding(28591)
+    $bytes = $latin1.GetBytes(([IO.File]::ReadAllText($path, $latin1) -replace "`r`n", "`n"))
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try { return (-join ($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString('x2') })) } finally { $sha.Dispose() }
 }
 function Meta([string]$text, [string]$name) {
     $m = [regex]::Match($text, '(?m)^\s*' + [regex]::Escape($name) + '\s*=\s*"([^"]*)"')

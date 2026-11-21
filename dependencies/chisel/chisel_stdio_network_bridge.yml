@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: chisel
 rule_name: chisel_stdio_network_bridge
 canonical_path: detections/chisel/yaral/chisel_stdio_network_bridge.yaral
-canonical_sha256: b4f112443fcfdf6d26a4e78bb8c3df23f9694aeb31dd96592ee90577d289ea3b
+canonical_sha256: 96c4cea2b69a31c5c94a7c5d61dba6ba2fe270d2f75f1e96ddc073c05fcf97f0
 description: "Detects a process with redirected standard handles that also establishes sustained outbound connectivity"
 severity: medium
 procedure_ids: ["CH-P06"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Remote administration automation IDE terminals and container entrypoints"
 references: "reports/chisel/source-analysis.md"
 translations:
-  spl: { path: "detections/chisel/spl/chisel_stdio_network_bridge.spl", sha256: bd9dded9a651a4fe3a95ed1631b960e5f4519ec0a30d5e859f543748dcc64316, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/chisel/kql/chisel_stdio_network_bridge.kql", sha256: 135a42db855912d1a13bac6383c6ae152634d7153a79263f03c0037ab2ec2da5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/chisel/sql/chisel_stdio_network_bridge.sql", sha256: 0942f9059204fb7ed3035288a56ae59a275403d95d7e74ae1e11b8f0f91d2766, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/chisel/eql/chisel_stdio_network_bridge.eql", sha256: 3181e10297bef3c53a9edcc2466a7b30fe285fc290a3fc4372d721c9b0279bb3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/chisel/sigma/chisel_stdio_network_bridge.yml", sha256: fdb32315d82d35c8717353df2de136b78bb384bd38fefdfb59a0d5f2cbd25ff9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/chisel/spl/chisel_stdio_network_bridge.spl", sha256: 4b2f8591bbb6852d7e2d2bd2601acd9138b58444ff3d19b687e218bc5e5cd109, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/chisel/kql/chisel_stdio_network_bridge.kql", sha256: d93926d9a96cfaf83218d0a1f087ab6190415ec63c720b3e30aebe7450fece54, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/chisel/sql/chisel_stdio_network_bridge.sql", sha256: 5d34903c84ffde95af4ff9444afc6d0c805c305940bae7a1858092900972e90e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/chisel/eql/chisel_stdio_network_bridge.eql", sha256: c1c58a2a01033058caa7dcecaaadf8eb811506acc2dfe1ca5dc47daa418e75e5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/chisel/sigma/chisel_stdio_network_bridge.yml", sha256: 9854f2e89fa06d71810007275c74e71a47c2578451e389cee890c6bebaffa541, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

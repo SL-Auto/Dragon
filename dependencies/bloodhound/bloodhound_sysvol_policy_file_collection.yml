@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_sysvol_policy_file_collection
 canonical_path: detections/bloodhound/yaral/bloodhound_sysvol_policy_file_collection.yaral
-canonical_sha256: c41aa540af44af51c22a65a24317a79dc1da3e37fcb8b66aea494d35d32c75cd
+canonical_sha256: 4b1a06ce093bfb4fba7a2133da5d6bd8bb1e8b0a59ac297e9f7266890aa07e40
 description: "Detects one source process, excluding the Group Policy client service itself, reading multiple policy artifacts from SYSVOL."
 severity: medium
 procedure_ids: ["BH-011"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Group Policy processing, configuration management, backup and policy auditing not attributed to the GPSVC host process."
 references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_sysvol_policy_file_collection.md"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_sysvol_policy_file_collection.spl", sha256: 9b25dcaf5d036015a0cfe996ad7672939c32cf31d42ffd387c88edd0e6903ae2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_sysvol_policy_file_collection.kql", sha256: 8a09569b25397a444d86b0cb8860694eb6c402bafe43232fe84ac13b15ab59f2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_sysvol_policy_file_collection.sql", sha256: 2c1c5c14b7feae812ab2b5908c55516019f07c1ac8737cb12d735e2ae5097e23, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_sysvol_policy_file_collection.eql", sha256: bfefd1b3422393d62eb8b123678de131feb1ce0e55745cbb36bbf397cf9495f2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_sysvol_policy_file_collection.yml", sha256: 78f0ce8a8ef22f47992a6b225487b708ac852ba3d19fc551b907c69590c782b9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_sysvol_policy_file_collection.spl", sha256: d90148c0ccb2106f5b8302e52fa5d960fb99f7540e9da00cc8e0f2014844343a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_sysvol_policy_file_collection.kql", sha256: 29c8413613185a1f15f41992cec4d3d763dd714bca11a0cedfd1b7e547ac7dfe, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_sysvol_policy_file_collection.sql", sha256: ec70c8818f57bcc9ebe1ecf2791ed9305ab1012faac75e200831555a77a17a86, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_sysvol_policy_file_collection.eql", sha256: eb2877aeb871dc663e73fe667de75e19c50cd6ea2462be413eae4b818808c9e2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_sysvol_policy_file_collection.yml", sha256: f1980eeab0ecad69c9ea2a16fbf5c9aa188e5a14e5215b546c37b7699e8c3ce9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

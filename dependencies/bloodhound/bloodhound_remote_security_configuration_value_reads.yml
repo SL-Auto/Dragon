@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_remote_security_configuration_value_reads
 canonical_path: detections/bloodhound/yaral/bloodhound_remote_security_configuration_value_reads.yaral
-canonical_sha256: 510a95cb769fb67eb29497acf18ca81c6743faf49b72e8eb154413cdaa2ff8d8
+canonical_sha256: 2fb2ea96c8a30ec2288caccce4041e5473c246ffe025d219aed90513199147fb
 description: "Detects one account reading two or more collector-relevant security-configuration registry values (KDC certificate binding, Schannel certificate mapping, LSA/MSV1_0 NTLM restriction and compatibility values, or CA security/enrollment-agent/edit-flag values) on a single target, compensating for single-target reads below bloodhound_remote_security_configuration_reads's multi-host threshold."
 severity: high
 procedure_ids: ["BH-012"]

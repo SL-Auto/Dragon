@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_privileged_context_change_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_privileged_context_change_compensating_signal.yaral
-canonical_sha256: 4e90d6b451b096ac717a0fe97556b3411e33463da11095b2b44e0b08e731012a
+canonical_sha256: d9c5ebb7842735e5acd510982dd3f800f2a1fd7b06ad295d9dbd7415be5d35b3
 description: "Correlates SeDebugPrivilege enablement on a process with that same process subsequently opening a protected process (lsass.exe or winlogon.exe), closing the causal gap left by the base rule's standalone 4672/token-change signal."
 severity: high
 procedure_ids: ["CSB-011"]

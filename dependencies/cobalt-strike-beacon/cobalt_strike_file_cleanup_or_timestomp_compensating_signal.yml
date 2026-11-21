@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_file_cleanup_or_timestomp_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_file_cleanup_or_timestomp_compensating_signal.yaral
-canonical_sha256: 61cc3d7b10379489cda96b84599406042a239c4cf489f6e2f54af66047d38d55
+canonical_sha256: 8e25e7791b3dc938a5c9757be198b5c71d1082942b47738f28597c4f60e2ad1e
 description: "Correlates execution of a file with deletion of that same file path by an unsigned or rare process shortly afterward, covering self-deleting-artifact cleanup that the base rarity-only rule does not tie to prior execution."
 severity: medium
 procedure_ids: ["CSB-026", "CSB-034"]

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_privilege_path_effects
 canonical_path: detections/impacket/yaral/impacket_privilege_path_effects.yaral
-canonical_sha256: 608b408e1c73496bc9dfc5e2d5f25b57d5520b26c269eeadb921797cff3c4ac6
+canonical_sha256: 30e88c22257045adbed0daed5be6eff2be3d8a07c894a3eff0f9bc072531f281
 description: "Detects correlated directory privilege changes and anomalous Kerberos ticket use."
 severity: high
 procedure_ids: ["IMP-22"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Approved domain migrations and delegation changes."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_privilege_path_effects.spl", sha256: 31ddb9e038059f4257ad5c9ea29533ce0d93a3ceef22ba899d85ef90c9090ea3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_privilege_path_effects.kql", sha256: 9e4ad002a24fa059353dbb0a3952fbf572ed917fd72b6b8d51e834832ceed0c9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_privilege_path_effects.sql", sha256: 0847dc9b13a88e1da7ba9b62fd30b885f52ae65c03bc6cd4339ec23ebc557bee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_privilege_path_effects.eql", sha256: 5fd268eaf9dcff4e719c028eec8f798eab5029a6b447c7d94847bb82c8aad16d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_privilege_path_effects.yml", sha256: c1cb58c7ff2e8f832cd2f3c890357c701e886e7d5e627a81db56e607defb928e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_privilege_path_effects.spl", sha256: 14168321d09c543776fe29b3d5fbcac2cfb3c6735ef4c7f4b27b31cad693cb1f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_privilege_path_effects.kql", sha256: a97e5ca8af38f2a602f0a491f11ebf78b45e03bff677b80b0b2312b599dad292, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_privilege_path_effects.sql", sha256: 55b3a772997da5f1ecfe03821658d9cfea0daf7d3f431a33a87d161e7839fe5e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_privilege_path_effects.eql", sha256: 8736de21a030097792338890cbf26a0a2e4d93095977428c9dbf4dd760c56861, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_privilege_path_effects.yml", sha256: 71980dfe100cbde841bde62d6d4eece10b1321710cbe7d810e67fc77fc1b306d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

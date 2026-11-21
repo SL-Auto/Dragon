@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_directory_discovery
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_directory_discovery.yaral
-canonical_sha256: 2970e5c27a86de96f61aac81f90da936bf8f803435604abddeb50937b4f8a78f
+canonical_sha256: 4858fc4cbb4775ba9a59065a6eadd6dc4abcbab921ddc053c9d7f94d39f93517
 description: "Detects broad directory/RPC enumeration by one endpoint process across multiple object classes or operations."
 severity: medium
 procedure_ids: ["CSB-022"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Identity governance, endpoint inventory, directory health, administration and vulnerability assessment."
 references: "reports/cobalt-strike-beacon/source-analysis.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_directory_discovery.spl", sha256: f79fa097cc68427ceaca7bc83b4c9f1c4b317ad2360a932f433325401cb813c7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_directory_discovery.kql", sha256: 64022c8068a4602ffd6cc9ec8f24fd0fb3dbd0e388302a57492a43f7054fd892, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_directory_discovery.sql", sha256: 3d017ad1cecf5ad8134ece912b6e178ccba772422e4d1b6d35816f7799f2f454, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_directory_discovery.eql", sha256: 12c8e36062de0f86775fd200e02ac5bb646192f152fe24ca3dbf79d362732f1e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_directory_discovery.yml", sha256: 00708c1d6bdab591f92ea16bd602a4f8b0d52a24a55640b09ae24dc6152cf767, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_directory_discovery.spl", sha256: 9c3dbfe0395e3ddcae92c7eefaffbef3c744fe8758ed3114dac8193c9a8eb6f3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_directory_discovery.kql", sha256: a8516d353124955be4fecee949471431089b3ca98bac450fb9e6827b371c1fca, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_directory_discovery.sql", sha256: 1d1f46863cb9cfd6eaaf48de1fccd82230730f92170a8824df188a83b05465cb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_directory_discovery.eql", sha256: 0895bfb84dff33d43c7ae6994ab7794b8bdc7ca69d8c2d103886b7cb07a12de4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_directory_discovery.yml", sha256: f83564b1730169ea21542cb7b443e1114a1683174a7f969b55352123ece5b789, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

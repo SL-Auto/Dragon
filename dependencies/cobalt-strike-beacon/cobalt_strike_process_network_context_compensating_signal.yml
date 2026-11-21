@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_process_network_context_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_process_network_context_compensating_signal.yaral
-canonical_sha256: 3c8926bcc837a997e750e6ff84fd33e311049e6336a53bd720b1a9e7d13d72e4
+canonical_sha256: 0a0da7f5c54a7f93c54aca8f55ef5818b8ba1544fa571e84a04c33845014cfa4
 description: "Detects low-variance periodic outbound connections from a rare-prevalence process to a rare destination, adding the classic beacon-interval and destination-novelty dimensions that the base rarity-only fan-in rule does not measure."
 severity: high
 procedure_ids: ["CSB-001", "CSB-002", "CSB-005"]

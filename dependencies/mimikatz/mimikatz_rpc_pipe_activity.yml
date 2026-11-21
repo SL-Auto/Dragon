@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_rpc_pipe_activity
 canonical_path: detections/mimikatz/yaral/mimikatz_rpc_pipe_activity.yaral
-canonical_sha256: 072afb5588b98f2279b9366583af01c67e1fa065b3cb4ed5558e9b4266e6e785
+canonical_sha256: 6bb03378b9960d016c2932e76188871f41f151eb60634129776b1cbf280581ac
 description: "Surfaces named-pipe or RPC activity associated with authentication coercion or remote control context."
 severity: medium
 procedure_ids: ["P35", "P38"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Normal Windows RPC, print, EFS and management traffic."
 references: "reports/mimikatz/source-analysis.md"
 translations:
-  spl: { path: "detections/mimikatz/spl/mimikatz_rpc_pipe_activity.spl", sha256: da0f98eafb5538fa2675dc657e3d71da0a14306e67c0c832bbe8fb76fbf00d67, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/mimikatz/kql/mimikatz_rpc_pipe_activity.kql", sha256: 1b16216ef2647cb3e61fb75805010b686e6ef2f89a2314ef4d8f1278521f4fc7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/mimikatz/sql/mimikatz_rpc_pipe_activity.sql", sha256: f13a1006ea84bece9ff9c66e0ab741ee9d223acf5b9ea3ead17af18d696950df, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/mimikatz/eql/mimikatz_rpc_pipe_activity.eql", sha256: 8d62aac6bddeacb7bcea460715569391257fcc7d1df2f1267417cb71cdfbc71d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/mimikatz/sigma/mimikatz_rpc_pipe_activity.yml", sha256: 3c25fe2193f92ca8d885fa5afbc2dbce04dc82e34a9ffaa26db287893d35ed2c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/mimikatz/spl/mimikatz_rpc_pipe_activity.spl", sha256: 7af2533d95a6bec944a7027779fd0f50f0ce26e43d7b144cf55f969112ac10b4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_rpc_pipe_activity.kql", sha256: 37e036756694e9cdd3c6a6376a285f95d512784178bd56c3ce0dc4b7a805831c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_rpc_pipe_activity.sql", sha256: 6533bdf2a6227ba6858d519ab14fe8a8bf722ac51bd89c36ceaa4622c0c7be20, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_rpc_pipe_activity.eql", sha256: e9b02f222d4abf3df4108403ee5b35df23f15b46b557d37a9b2ee945c325b2d7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_rpc_pipe_activity.yml", sha256: de1cd038b5af1affcef05d8d2be89ee1efe7c4139a9e0fa79eebe186b0588822, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_suspicious_kerberos_requests
 canonical_path: detections/impacket/yaral/impacket_suspicious_kerberos_requests.yaral
-canonical_sha256: 7eb95c55cd773db7cb8d9b93006a852bccd1561b9c44cf8e1ff1737376b6fabb
+canonical_sha256: e648f6bc89ef1e8bb81f55d7036871ef70cc47b944fc12529e2540548e5f8475
 description: "Detects high-volume or uncommon Kerberos ticket-request patterns requiring investigation."
 severity: medium
 procedure_ids: ["IMP-11"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Service discovery, application startup and authentication troubleshooting."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_suspicious_kerberos_requests.spl", sha256: 0c21365a963704c8b4475b487a7a997e06e53ab022cffb13f2b40f9779253478, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_suspicious_kerberos_requests.kql", sha256: 261d1f5e9e1aeccbbdef498bf0fa621598b56c5ed6bc70bd36d9662a5972910e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_suspicious_kerberos_requests.sql", sha256: dc98ab96dba78c337daa35d7188ff12ff63daf7a5f38ed9d0c3e0760d8f097fa, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_suspicious_kerberos_requests.eql", sha256: af04bfbe3e7f3c3cbe43e25fccc3ae36734c078d5cf3e7669c82eb63cb9f4562, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_suspicious_kerberos_requests.yml", sha256: 93c4de5f414473c82d8e3a092765589a12ca480a9ff1e61a1e6983cf8b4083e2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_suspicious_kerberos_requests.spl", sha256: 0ae56535598e944b7aedfa88e3571aacb0bf3611a119471d9ab9b84eacba754c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_suspicious_kerberos_requests.kql", sha256: a4b808fbcaf2024de6e21ec9b512318fd532b6e310c8937e1a3b768c5b9421a1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_suspicious_kerberos_requests.sql", sha256: f1a26abbdfb6b1ab486756e965d58ce2473596083a7784a4a7909c7c86a75f86, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_suspicious_kerberos_requests.eql", sha256: 15a060bea24b9e1776ff5bbe81fdda7128d5ed5779e22fb6343a8e88335dcb40, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_suspicious_kerberos_requests.yml", sha256: 83ccb3adb2a58b30785c957dc2ddc6eb485c618f8233232773c099eaf9f264db, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

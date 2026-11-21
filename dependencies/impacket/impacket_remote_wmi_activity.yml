@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_remote_wmi_activity
 canonical_path: detections/impacket/yaral/impacket_remote_wmi_activity.yaral
-canonical_sha256: db22f6407666dabf6b1499636be53a5e64102c8907ce56f9fdc7d11fd2380f5f
+canonical_sha256: 9c57e5db39cedaec62a02e9cc44fd71610610c319619b54ce47a65ba1a5065d6
 description: "Detects a command interpreter created by the WMI provider; SMB output activity is optional enrichment rather than a required event."
 severity: high
 procedure_ids: ["IMP-05"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Endpoint management, inventory, remediation, and authorized WMI administration."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_remote_wmi_activity.spl", sha256: d5851ef2483a999e0d253cbadb00fbad93e67735ec695de0518d77f1249cb8b3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_remote_wmi_activity.kql", sha256: 9bdb4d52387d25d7a3990eabaab1427e27b6d9554d1bd34767aa8322746f05d6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_remote_wmi_activity.sql", sha256: b7542e38d2f8ff0fadd8d552cbe12c9c34a3c339dadc5fb5b6ff92d928960e05, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_remote_wmi_activity.eql", sha256: 635ac572a7f16fa4bb7c535717fe50bf580d65016c1afc4a0a341f71470d800f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_remote_wmi_activity.yml", sha256: 594ab41e10dda4768a2bcfbe0381a3526de62055daa183aec45db59c669a2921, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_remote_wmi_activity.spl", sha256: 9a71ef1818b1a768c0129ac6f08ad754c0f205d97b15c2478659f558171049d3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_remote_wmi_activity.kql", sha256: 0aa0a256d6777529f9ef61216e00ee1d8101786736431176c562fb1a35342bc4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_remote_wmi_activity.sql", sha256: b2358a36ea43db7024a979f734ab72a615a7c600a7d7fa53c38148bb02738c4a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_remote_wmi_activity.eql", sha256: 73c81da4021e5529b1326ef23bed07f4c9d54997ae45778f5df9ee14f7ad566c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_remote_wmi_activity.yml", sha256: 4bedcf31fd2ed9ac1c6ba64186740cd01bac76a6ae603218d787c867818cfeca, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

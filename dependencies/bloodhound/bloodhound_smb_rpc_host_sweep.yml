@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_smb_rpc_host_sweep
 canonical_path: detections/bloodhound/yaral/bloodhound_smb_rpc_host_sweep.yaral
-canonical_sha256: 408f52390b87b6bcb987dab8731903287612e810c32e9ea84fb4638491b984eb
+canonical_sha256: 217caff224b1079a7005a4c715c6438984e4f159e0d3c54395e9e5e7fd64f8fb
 description: "Detects one process attempting SMB or RPC connections to many internal hosts, excluding destinations outside the internal address range and sources labeled as an approved scanner."
 severity: high
 procedure_ids: ["BH-006"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Vulnerability scanners, deployment systems, backup discovery and approved inventory not present in the scanner-inventory label; a stale or incomplete inventory can still allow false positives."
 references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_smb_rpc_host_sweep.md"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_smb_rpc_host_sweep.spl", sha256: cccb21eb281aa638768c9ec10032aa64c051baff62b9725d5f700cbf53c212cd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_smb_rpc_host_sweep.kql", sha256: 5df17dd5fa21d1624f0e18c6ab20c8e2309f1126fa113e3fd4403777bb1daaa9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_smb_rpc_host_sweep.sql", sha256: ff038466c51e8ece0606f7f41a47a6b17cd027b96f8fbfb053c197bf5388dc1d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_smb_rpc_host_sweep.eql", sha256: b0b42d2767df692d3df137eb8a5247d0aa71beb2120a47ec86ad179294d96d20, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_smb_rpc_host_sweep.yml", sha256: 5d1cf154b05854e289fd909f5446002ac5c67593ff8931b7d3b52a31e5abca24, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_smb_rpc_host_sweep.spl", sha256: b47449583fdd72c1f07f531ae0504eb462f8ecafb46b5ae836b1274df2a3362c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_smb_rpc_host_sweep.kql", sha256: ae28454e2f574cfe622b865ace9b8131f84f43d14b64883c3ee6d2effdbf273c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_smb_rpc_host_sweep.sql", sha256: fd6620665945827d2319c3ac9fcae2a553db86ee160c9398e2ee9a1faea2d4cd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_smb_rpc_host_sweep.eql", sha256: e088f4294c89bb91fbd74831dab3f8126da06d15fcd27bb1a663ce926ee6e66c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_smb_rpc_host_sweep.yml", sha256: 89f4eef781f4579c2d35b519119c98b41ffc9323b532be21933858d1f199d0d1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_named_pipe_peer_activity_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_named_pipe_peer_activity_compensating_signal.yaral
-canonical_sha256: d80f4931f7b6e274d98366a911dfaa51a586a785a1fefceb523a189d252f0538
+canonical_sha256: 69710ac6f142ccd4c13844d8206f7ae5acf036bc923e0b92792b6a74e3c5ea46
 description: "Correlates a remote SMB connection to IPC$ with a subsequent rare local pipe connect on the same host, closing the ordered remote-peer branch that the standalone pipe-rarity base rule does not capture."
 severity: high
 procedure_ids: ["CSB-007"]

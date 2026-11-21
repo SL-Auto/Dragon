@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_directory_discovery_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_directory_discovery_compensating_signal.yaral
-canonical_sha256: 8724b7c5d9e11283629cc714dcd7de4b33cd1493621fa7de0c67250563830efe
+canonical_sha256: d78e7d5c9868ef049202b728e9076d37dbcc2323f46afd679e435f61ce80760f
 description: "Aggregates multi-class LDAP directory queries by user and host, independent of any single process, to surface discovery distributed across multiple short-lived processes in the same session."
 severity: medium
 procedure_ids: ["CSB-022"]

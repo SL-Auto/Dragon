@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_recurrent_process_egress
 canonical_path: detections/sliver/yaral/sliver_recurrent_process_egress.yaral
-canonical_sha256: 8ceeda0c19ed5b6fd4a4c0463fa38d65bff3ee64aae738aebed1c1333ce7d605
+canonical_sha256: c609eb85c4972b2c0d1d08e8cd2661b22bae34bb102234ac8b401e83053cc87e
 description: "One process entity repeatedly communicates outbound to the same destination, spread across multiple minutes"
 severity: medium
 procedure_ids: ["PROC-002", "PROC-003"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Agents, updaters, browsers, monitoring"
 references: "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_recurrent_process_egress.md"
 translations:
-  spl: { path: "detections/sliver/spl/sliver_recurrent_process_egress.spl", sha256: 8f7d95fed908fadd4c3a266a746691bc654057dc6e143b6ca79c7f8994192297, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/sliver/kql/sliver_recurrent_process_egress.kql", sha256: 0ef5e001a34584d126e5ae8a7c840d9465a837173fd4c910bbbef0e2977e4b3c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/sliver/sql/sliver_recurrent_process_egress.sql", sha256: 8b1533ed2b0e850096b05bba43f3129b13a729bd98319b841fca716f28298b8f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/sliver/eql/sliver_recurrent_process_egress.eql", sha256: 74af147321da1da79491d83bb3b0a26f8c65ba01d7804c7000a1b84089ff8f67, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/sliver/sigma/sliver_recurrent_process_egress.yml", sha256: ce6873c1573c91b7f2438915c7e94ff286e7307b7d909f3a730aab5d2f28914f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/sliver/spl/sliver_recurrent_process_egress.spl", sha256: 330e46fa55a2feceb39b5b1d23dceddc352389dc52f61da385269c3e7066eae0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_recurrent_process_egress.kql", sha256: af5b32d86d8d419db3b42e1f66c7751aede7f59c068d19077a11d1980c15bdb2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_recurrent_process_egress.sql", sha256: 9a7c761c9163218c53d205fdb38f88a126950e4f8b73b24aa227993520d526a9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_recurrent_process_egress.eql", sha256: cada246924ea2dcd2931a3dbcf8edfb5fccf17751ab10a9d1b0e2b9bde397f6d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_recurrent_process_egress.yml", sha256: b76aac3a16da68a454dc637f31577505c4077cee735dd0e3d6ad3620161ab8e6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

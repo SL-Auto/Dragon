@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_powershell_or_clr_in_unusual_host
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_powershell_or_clr_in_unusual_host.yaral
-canonical_sha256: 8c16ed7706ad7662b4a660939b5a57b4408b608a42df42337898f07da86291dd
+canonical_sha256: 920e4efbfbe826c2a6cd244d87a0177b3ac666115ec4c1de48974f876a9c369e
 description: "Detects PowerShell/CLR runtime initialization or script telemetry in a process not normally hosting that runtime."
 severity: high
 procedure_ids: ["CSB-015", "CSB-017"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Custom .NET hosts, management agents, IDEs, installers and legitimate PowerShell embedding."
 references: "reports/cobalt-strike-beacon/source-analysis.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_powershell_or_clr_in_unusual_host.spl", sha256: 7d34fccfe1d1d553d93e57eb8a290ff220ce6c817199083570b3905cd751834f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_powershell_or_clr_in_unusual_host.kql", sha256: f1b24e2cecb19bf3b2aca75d20ee90d9644ffbf12a64181f5e466dde48797ec4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_powershell_or_clr_in_unusual_host.sql", sha256: 42254b28b54ca9088e4a0046a04d359aec7aa9717a4bbf2808b18c9a0af11063, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_powershell_or_clr_in_unusual_host.eql", sha256: 119bde370efbddd4be6d797d58793815b1a2ab13c7ec521395189ede7b395124, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_powershell_or_clr_in_unusual_host.yml", sha256: aa00db59a3ac1d2656898e5ce2ad8d310949807c49b75563c0fe3989d93c397e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_powershell_or_clr_in_unusual_host.spl", sha256: 1b689f62d2e23bc754b70f3ff8dc243e5e411b60db0cee26482494642d147883, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_powershell_or_clr_in_unusual_host.kql", sha256: c48e87b08d5ae4b50dbf47eb620806e50d0529d61359a722b8d0bfae38a60a4d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_powershell_or_clr_in_unusual_host.sql", sha256: a647bb4f6cbf762d6308544bc467d4bf885396ccb0646c8191eb0e31dcaeca77, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_powershell_or_clr_in_unusual_host.eql", sha256: 2309a384a2b0004c88b525907234cc93073a57aa572104ac6c7804e993ab1577, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_powershell_or_clr_in_unusual_host.yml", sha256: 14cdc2e2a5d1644c4765d6e51104e449e86c868a1cc1b5b8c329b642f407cee9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

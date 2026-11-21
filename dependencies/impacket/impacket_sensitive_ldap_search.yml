@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_sensitive_ldap_search
 canonical_path: detections/impacket/yaral/impacket_sensitive_ldap_search.yaral
-canonical_sha256: 2e94fce776007f454f0fbda2796e3270755c57da76b10e40e518b3a29708f191
+canonical_sha256: 4050b15ee734a47deb371abb3dca5145bddca58d24c87fcfdbc99843434ca3d5
 description: "Detects LDAP searches for sensitive credential or delegation attributes."
 severity: medium
 procedure_ids: ["IMP-09"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Identity governance, AD health and security assessment."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_sensitive_ldap_search.spl", sha256: df5f53eedcd204b8e75161e5da7ef547b0437ac56a4f947060e0f2638adfebdb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_sensitive_ldap_search.kql", sha256: 3f11c90fe47b4fadf6925367f4c4babad424cb76aef9ed82a2e2ad10a8294f74, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_sensitive_ldap_search.sql", sha256: 03d75f9bac76236e6e6afb3bbe9be28242032b26a4ca61534afa9f8b270e3fee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_sensitive_ldap_search.eql", sha256: 6da33f55b2403590e4f9bb7110df7f04b28d7fbbc3e7309f4f00ea93abd560f3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_sensitive_ldap_search.yml", sha256: b820de236ef174bda96113099d6b8c37a86b0e999bb00b41426e6a35718c2278, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_sensitive_ldap_search.spl", sha256: 7d5358168bc129c3177da411ca29659c8b0435c8590c9d813a19aeb1ee9be4f1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_sensitive_ldap_search.kql", sha256: 8aa29f38c8b06fb8ca31dbf58aede064ee398de037f17bdc0e8bfa695a18a96f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_sensitive_ldap_search.sql", sha256: 3733ca33769a58daaf8dee38a6c5937d0d7ee27bfe6af1b0a77ccbdad9c5ee32, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_sensitive_ldap_search.eql", sha256: 31010e56b437b054300ad9be11604fc2834288a90e86094ee88e4feae6f07cda, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_sensitive_ldap_search.yml", sha256: b20a00a198fbdc52ca52c4995bd20420af5937e0e351f750467062ee47848188, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

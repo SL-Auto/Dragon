@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_listener_with_egress
 canonical_path: detections/sliver/yaral/sliver_listener_with_egress.yaral
-canonical_sha256: c9d97ddc6f775b766b84294e250406f4cd4ea62043a8e169f19f646d977f580e
+canonical_sha256: 77721773e47438c6acd203c92a8a22c03f24894699083944b3500d124102f551
 description: "One process both listens and makes outbound connections"
 severity: high
 procedure_ids: ["PROC-005", "PROC-021"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Proxies, VPN, developer and server software"
 references: "reports/sliver/source-analysis.md"
 translations:
-  spl: { path: "detections/sliver/spl/sliver_listener_with_egress.spl", sha256: 27859a98d8d18f92e6407f7a7eeb5757f0cea12049da4a18414e81142e7fbd52, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/sliver/kql/sliver_listener_with_egress.kql", sha256: e8b5405897fa7947a5a08616db799e609bc929d1854da7852dbac3a4dc450f04, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/sliver/sql/sliver_listener_with_egress.sql", sha256: 1435ffbf9063bcf1824992ee8339d485c3eb258132e91cd903b38b743c55fa4b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/sliver/eql/sliver_listener_with_egress.eql", sha256: 70e4854d226b6e85ffe840dbd47add9c4c6a7eea9b997372821669017004807f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/sliver/sigma/sliver_listener_with_egress.yml", sha256: 5a24b0f0033deefee76c6d1babb7f81b349ba6e12d88d2628889d4248ee2dbe2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/sliver/spl/sliver_listener_with_egress.spl", sha256: 0c6c8bb1a9bb44760c25cc1024200a79f4871eec1d9ea46c49da6f3a39c4f5a3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_listener_with_egress.kql", sha256: cf5e4d4270e18a77a1580b4ea898c0572423e109737821efb91dbbd7809597b1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_listener_with_egress.sql", sha256: f7b4027990ec365b2c3e83be86b1844d5efcd0319b2d3ed228534861cc2e3cf9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_listener_with_egress.eql", sha256: e0685182840d6f7ba7f59984fb2eae7b84e61472ab4d8968388a0f2c61e9390c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_listener_with_egress.yml", sha256: a74f38ac40434f8e1e9e911aad41639c96dee77d804d92d3b915e8c63e5c429d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

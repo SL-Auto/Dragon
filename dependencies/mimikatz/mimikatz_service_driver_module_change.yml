@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_service_driver_module_change
 canonical_path: detections/mimikatz/yaral/mimikatz_service_driver_module_change.yaral
-canonical_sha256: 31e3f1c51234bad06a08d0cda572f7a282eb4e0c1eeaf378c7779f63a851622e
+canonical_sha256: ce72ba590fb61851ce24039865f6d39941a6dcb8d2f60112fd0f5d9869427288
 description: "Detects service, driver, authentication extension or print-monitor installation events."
 severity: high
 procedure_ids: ["P06", "P36", "P44", "P45"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Approved software, driver, print-monitor and authentication-package deployment."
 references: "reports/mimikatz/source-analysis.md"
 translations:
-  spl: { path: "detections/mimikatz/spl/mimikatz_service_driver_module_change.spl", sha256: c1b5f805502e04d2e546d4a75d93b16eefa4c02a2f4802dd95312cef92676817, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/mimikatz/kql/mimikatz_service_driver_module_change.kql", sha256: 059e8a1708dc56845c180f6617e02cf28143a8e84d41eaf8ccbcb660b30726f5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/mimikatz/sql/mimikatz_service_driver_module_change.sql", sha256: b55dad1dd0853fcc070e37f90327490b24fda16f6d9db3a66c0e02cb12dc7502, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/mimikatz/eql/mimikatz_service_driver_module_change.eql", sha256: b1354f3f3e04ad3487a3f0a5b75b537b5df36bf38a2f388650ddf933f9980e16, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/mimikatz/sigma/mimikatz_service_driver_module_change.yml", sha256: 0bd67198f77dfb3ba67d07305b91da16ff8d218aa9f062d930fcb5d2ea6f4399, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/mimikatz/spl/mimikatz_service_driver_module_change.spl", sha256: 13a17234ae524563a927918819dbe0bca68d88a3165d2bfc063f4e42a3ac6157, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_service_driver_module_change.kql", sha256: 3326a4ad897c2f33b6701ffad9938c870bc2d5c4bbe270bdae3e80c3303c9438, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_service_driver_module_change.sql", sha256: dd60e55c2dff33c2b2520d8bc6e59909536c68a198c2b9638e65540a21d0586c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_service_driver_module_change.eql", sha256: adaea5caf7bb8689a53cf57a46530231b3bc47da91a44c2bd500d2c817bcb726, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_service_driver_module_change.yml", sha256: 7a288cc1f5415345d7269ca524e3a117bc446c4f2725123deec5a1cb681e45a1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

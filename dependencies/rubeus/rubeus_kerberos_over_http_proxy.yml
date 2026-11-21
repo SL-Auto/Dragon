@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_kerberos_over_http_proxy
 canonical_path: detections/rubeus/yaral/rubeus_kerberos_over_http_proxy.yaral
-canonical_sha256: f8d19c7ad5697408267e8b80b82e9d430db1535d52094fb3be6be89995ee1e77
+canonical_sha256: 4165d083c7a7e9ddfb70aaf3a10dbe2239f66f7e7ae404c5dd3fa74971021b04
 description: "Detects Kerberos messages transported over HTTP where either the initiating process or the destination is not on the approved KDC-proxy allowlist."
 severity: high
 procedure_ids: ["PROC-013"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Approved KDC proxy, remote-access, and identity clients where the allowlist enrichment is stale or incomplete."
 references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_kerberos_over_http_proxy.md"
 translations:
-  spl: { path: "detections/rubeus/spl/rubeus_kerberos_over_http_proxy.spl", sha256: 5332c8320beb8da54a91779d9b83554b07c8fb0c4bb18e397fa00db16b3b194a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/rubeus/kql/rubeus_kerberos_over_http_proxy.kql", sha256: 5e4e2b24fda7b6a92bf2622ed2ed056544d2105fed25bbd6f3abbbaed6ade8a9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/rubeus/sql/rubeus_kerberos_over_http_proxy.sql", sha256: a6d685982143946a9da4457cae1e240f3802c6e5805e1cf2d04b9dafb25740f4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/rubeus/eql/rubeus_kerberos_over_http_proxy.eql", sha256: 9c8d5c5907cac25f702008ca295dd90085988d71b1fbbe97bb6bdf4212acaaa0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/rubeus/sigma/rubeus_kerberos_over_http_proxy.yml", sha256: 33230064bededc9dfeda135bd5aa1d21e91160d7c43fe61331aecc76e8a32ab0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/rubeus/spl/rubeus_kerberos_over_http_proxy.spl", sha256: c1c308bfce51ca4d7a894fc60d127b26de4d6ba890d30de7be31a538f6e803e8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_kerberos_over_http_proxy.kql", sha256: 576b514feda78dd35b079cdbfacd36cfad301370937532fd9a6f729bb6f23c8e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_kerberos_over_http_proxy.sql", sha256: e4c21becb9a67915306f4818b934bce06f0103f8e6e2b16e3f900626ef0e0cf4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_kerberos_over_http_proxy.eql", sha256: a83e5a51f7d8f3c1894ad35ebcd1671f457a0931df42ce26ed91c48acf43f3db, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_kerberos_over_http_proxy.yml", sha256: 36944849bc98418412a0731cec9faddc34de611e86ef43f82405367b4e0aa84c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_remote_rpc_discovery
 canonical_path: detections/impacket/yaral/impacket_remote_rpc_discovery.yaral
-canonical_sha256: 9e27a968e78f6a707993f7a1017290859dc859481db3c339a867651bbce9cf72
+canonical_sha256: b6dbe755b1d6f9e81a2f5d1d1721afee348f9613ba76ab546d5aee7c22c2075b
 description: "Detects unusual remote RPC interface enumeration and discovery volume."
 severity: medium
 procedure_ids: ["IMP-08", "IMP-16"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Inventory, vulnerability scanning and management systems."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_remote_rpc_discovery.spl", sha256: b8e0633e4e1695aeea2777e073409586552f3460994175529e9478614274a5b9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_remote_rpc_discovery.kql", sha256: 51898464951fd864013b8b741ef1badffb10e4f56378bb7bddd2ebc2c1f70cee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_remote_rpc_discovery.sql", sha256: 7e05b9e695ee3aca0f145ffcf953ca3b3abf65acf19db3d66cf6fe671584fab0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_remote_rpc_discovery.eql", sha256: 199d639440fd69986b90315ed72ffb7951730fbfab3c084d0a5e3ef418eab6ad, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_remote_rpc_discovery.yml", sha256: 9024e13e0befc4c6d771bb2d4e9fab7eb653ee0ff904ac21dba58393de7949b2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_remote_rpc_discovery.spl", sha256: d1db633a260b5711fa7ca405272cbc1c523362cfa6538763f954271b6e7cb403, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_remote_rpc_discovery.kql", sha256: 4932fde8d61a04aff4b6eff44b063934d9bac18ae0377d971b7c4bab89b7b110, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_remote_rpc_discovery.sql", sha256: 940f68491959c58fc4fd20b60fa1688cece0ee3df49ca3458d0eeade448211a4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_remote_rpc_discovery.eql", sha256: 4a9bc8a8c1ecbc947d0e71fd72d0cdcd637896e175601f168ba5d184540b239e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_remote_rpc_discovery.yml", sha256: 0d2322a8f2e16f21f0b43c1b64723402bd5b36d9702b3dc3931da692f523298b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

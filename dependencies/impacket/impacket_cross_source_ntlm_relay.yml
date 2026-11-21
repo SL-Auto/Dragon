@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_cross_source_ntlm_relay
 canonical_path: detections/impacket/yaral/impacket_cross_source_ntlm_relay.yaral
-canonical_sha256: e73d159dda1a495d4775f00fa5b0909d16374e4b88a3f8334f3bcd9c811a14e9
+canonical_sha256: 6d00dc2d263ce4e510dc0831d14420a70868b09df319fe42355f0afe9580066a
 description: "Correlates NTLM authentication for one account across different sources and a target effect."
 severity: high
 procedure_ids: ["IMP-21"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "NAT, proxies, clustered services and multi-hop authentication."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_cross_source_ntlm_relay.spl", sha256: 42a7f858e50dcf0af7f57d873c0a6609edc9bb68aa15d65255ca156cfb795862, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_cross_source_ntlm_relay.kql", sha256: 6eca632f7bccd0d9c4b9f951b48aa76318296c1ae9f2319bdcbd959a750cae62, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_cross_source_ntlm_relay.sql", sha256: c2cbdec57fedf8cd7ba662bb9ec654e63d950b93c4a528eacc3e1dc55783b2a7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_cross_source_ntlm_relay.eql", sha256: 7f8bb889afb318c3df1c357cf83bf58f4a7112d73bee63482d5a25dabce6a0c8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_cross_source_ntlm_relay.yml", sha256: 80e3321faca56aaf3c3ccd588a6772f526cf59d2cb0da0498d1eee3a46a15857, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_cross_source_ntlm_relay.spl", sha256: 44ca8f8bb3bcc801e617689d662bf73ce31b4cddadf7c88cd44d42e89cfd5e8c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_cross_source_ntlm_relay.kql", sha256: 7a4f0f9758081254bea5c348c20104c8fe665af93f4071443e020880030110f1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_cross_source_ntlm_relay.sql", sha256: 3e6c58d6d34fa5a40f369409d1030383fc8d16bf1b2871c0c95eac1f94248458, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_cross_source_ntlm_relay.eql", sha256: 24985f595260fabdcc02fce217449b46078c70eb15f5348a59d6c78bdc5c887e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_cross_source_ntlm_relay.yml", sha256: 6d41eccbd3d3b2ca74069087a141caaaf6dc6d92598976d3813a944012429831, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

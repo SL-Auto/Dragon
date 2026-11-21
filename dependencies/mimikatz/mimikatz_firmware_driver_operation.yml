@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_firmware_driver_operation
 canonical_path: detections/mimikatz/yaral/mimikatz_firmware_driver_operation.yaral
-canonical_sha256: 476adf2b80e5f1cf28316a66d035fe3cb4ccc80aef72b127f8e40e2de3753a8e
+canonical_sha256: 2b4d48eac086f718eb23b625aea716bce51c8cd2c89f319e6276bf1b52fb70d7
 description: "Detects firmware-variable or kernel-driver activity reported by endpoint controls."
 severity: high
 procedure_ids: ["P39", "P43"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Firmware management, OEM tools and approved drivers."
 references: "reports/mimikatz/source-analysis.md"
 translations:
-  spl: { path: "detections/mimikatz/spl/mimikatz_firmware_driver_operation.spl", sha256: 8149073a6b0c5e77e3917f8ee4cac42c702ee29d9ed51f68fe9f409cf1dada8f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/mimikatz/kql/mimikatz_firmware_driver_operation.kql", sha256: aaa5c76f6b4f794b628ba3b7125bad23a74330449d71c0973ffda20f2b8f9c67, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/mimikatz/sql/mimikatz_firmware_driver_operation.sql", sha256: bcf648b835af2d8648c29671c4083de705d96e4f7a200062b3d2dd423db2b4e8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/mimikatz/eql/mimikatz_firmware_driver_operation.eql", sha256: 49159ad41d5b923de6e61a5672c8b4179fc43694787f7153d9143fc214f596c4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/mimikatz/sigma/mimikatz_firmware_driver_operation.yml", sha256: 58e3565070202de7f6f9a52019671b35a28800475e8341f46fcfb616421e0326, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/mimikatz/spl/mimikatz_firmware_driver_operation.spl", sha256: e6e0c39a878b2494e28b84a3aacd45fee72697ab010356b912cac253d95d68a4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_firmware_driver_operation.kql", sha256: ee75d60ad96d9ba7c8def5d4aa0517d5f77083a92456b2cfd034b8c0ef73e9e0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_firmware_driver_operation.sql", sha256: 1a038609708309aada37af30ba4f7c78f116e0650b590e9165808e32e2111c39, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_firmware_driver_operation.eql", sha256: e5e3a41e2a20be27033d04f420625aba1c6d488d77b269d7d42c925a67e48cf0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_firmware_driver_operation.yml", sha256: bc80ba8090e30fb651790da0dac9c93c23d9b6d21ebc1829a49bb1cdb1c6106f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

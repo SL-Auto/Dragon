@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_lsass_access_from_network_process
 canonical_path: detections/sliver/yaral/sliver_lsass_access_from_network_process.yaral
-canonical_sha256: dba2fc4d4af6c292e93cffe67078db97f64d7b1925a1dd2447d0f1fee1deb444
+canonical_sha256: 3e1bc3fb6884219da7d183c559c2a8cac783360559e038b08fccb91583297add
 description: "A network-active process obtains a memory-read-capable handle to a protected credential process such as lsass"
 severity: high
 procedure_ids: ["PROC-011", "PROC-012", "PROC-015"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "EDR/AV agents, debuggers, and credential-backup tools that legitimately open lsass with read access"
 references: "reports/sliver/source-analysis.md, public-rules/comparisons/sliver/sliver_process_access_from_network_process.md"
 translations:
-  spl: { path: "detections/sliver/spl/sliver_lsass_access_from_network_process.spl", sha256: b2930f06c295caf3391a333aac9e3f327c4632887c055d57f56aa60d7b735f1f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/sliver/kql/sliver_lsass_access_from_network_process.kql", sha256: 6c6829862db5c4b6c7d1331668781077597a2bf2c7e8e5bda177185cf2915a78, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/sliver/sql/sliver_lsass_access_from_network_process.sql", sha256: b11d0769c000f368af0e0a5bcdb911b108bd55b9698766bd92020252a0d51962, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/sliver/eql/sliver_lsass_access_from_network_process.eql", sha256: c0099ec3c82f3aae98275ae5a201691d700cefd70dbfd21ed48f70eaa5ce5837, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/sliver/sigma/sliver_lsass_access_from_network_process.yml", sha256: 28c96b8e37c6d86f0492e0dbe0f294a730e1463ee7bc2e21743cdff6b66dd2ef, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/sliver/spl/sliver_lsass_access_from_network_process.spl", sha256: 3da2a53e2b8c6b0180e01c6b9e7c51240609faec99bfbfcecd4994687d617752, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_lsass_access_from_network_process.kql", sha256: 2e12b33c6b374583ab08e513980c438f069a34a5fba7831269744def6cc98c23, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_lsass_access_from_network_process.sql", sha256: 2d54cebfcc2c6fa5506c4475b87e7b31ef5520e2dccf3cf453bbff22e76cb502, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_lsass_access_from_network_process.eql", sha256: 19e6a73b1deec925de80762cfda924ac013011aaaec68bb6a3d23860a2271adb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_lsass_access_from_network_process.yml", sha256: 6d8ec152f1091493540469c744ea24f242d941e72f9b902fcb3d8ac00be2bf55, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

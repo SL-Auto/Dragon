@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_collector_process_network_context
 canonical_path: detections/bloodhound/yaral/bloodhound_collector_process_network_context.yaral
-canonical_sha256: 0602cfba47cc32b953052fa28619990ebe492780907d14fa34fb9aab120b77cd
+canonical_sha256: 41b68e8a22f6baba8eb54e87f010ef0a83a130c44ab9267f6ac1bc5e7b962dd5
 description: "Detects a low-prevalence process establishing sustained directory or cloud management network context."
 severity: medium
 procedure_ids: ["BH-001"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Identity inventory, endpoint management, directory administration and cloud governance tooling."
 references: "reports/bloodhound/source-analysis.md"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_collector_process_network_context.spl", sha256: a0fb645e62fc6b2a07c658a229a27ffbbdf5e8e08765f9287682db7310d37329, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_collector_process_network_context.kql", sha256: 99414e97625dd966068d917a25aad6a3fa2ea18222032fb52b70bce9293248a3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_collector_process_network_context.sql", sha256: f65de66140888b09bc4825031ed74d7b8cf23e1ec3629186a9aeb0517f218093, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_collector_process_network_context.eql", sha256: f26f5a852ea2f7fca48a89ce56f5d0100020711f617d9d83a555f7766f51b369, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_collector_process_network_context.yml", sha256: 42af9d9107151a0b23e0379076bec52f42583b717e88436497ce367920905ba4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_collector_process_network_context.spl", sha256: 87fce15a8252b0ca029cc8c539054a6dcb97d3bd60b31797556b5502e6f311f2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_collector_process_network_context.kql", sha256: b27143824ceac0899fb4485c3b9b764eddaa404267430d1f6dc11e5734f74d10, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_collector_process_network_context.sql", sha256: 6263aa863e3916e026c1586fc6b57519ed5b2238e4e5a36560a4a3d8e71c7b08, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_collector_process_network_context.eql", sha256: 4a359538c13ceaa7a43c423c2e241273ddcbbfba555784ae18fe54f22c1f90af, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_collector_process_network_context.yml", sha256: bd79ba113ff993820f43199dd0ba60e24d722e3e7620701319b51c28b6f186a1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

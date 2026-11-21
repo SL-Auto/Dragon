@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_sensitive_file_activity_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_file_activity_compensating_signal.yaral
-canonical_sha256: 9f1e9c1545f0d539b625d3ebd0d789c272bcf09c0f8d02f4e7c87ad5c872d6ed
+canonical_sha256: fdd49fafda54c0927e4fd4ce3916ffdca76d1ebccde88d3a07c3181dae26b3c2
 description: "Aggregates sensitive-file reads by user and host across processes and correlates them with archive creation by the same user/host, covering multi-process collection where one process stages files and another compresses or transmits them."
 severity: high
 procedure_ids: ["CSB-024", "CSB-025"]

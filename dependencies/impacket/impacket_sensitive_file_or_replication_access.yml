@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_sensitive_file_or_replication_access
 canonical_path: detections/impacket/yaral/impacket_sensitive_file_or_replication_access.yaral
-canonical_sha256: 3f63a43e5e1a825f4a623bb36e8f4c2e692b5cef45382b64989155a94448ea94
+canonical_sha256: 2c6a2aed933b46530136ebdbe57f2c8d10e32a87000d041688e2f4ec74b48e2b
 description: "Detects sensitive remote credential-store file or registry reads (SAM/SECURITY hive access, NTDS.dit) via SMB or object events. Split from directory-replication-rights use on 2026-08-16 because the two signals are materially different security effects with different actors, prerequisites and false-positive profiles; see reviews/impacket/detection-review.md and public-rules/comparisons/impacket/impacket_sensitive_file_or_replication_access.md."
 severity: critical
 procedure_ids: ["IMP-13"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Backup, migration, domain administration and security scanning that legitimately reads hive-adjacent paths."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_sensitive_file_or_replication_access.spl", sha256: da2914c0db9e8e876f63e4e56a193822d86fd95a26223881364e5809cf3d926b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_sensitive_file_or_replication_access.kql", sha256: 571de26ba32a908873916dfcecd58ab8233fe2b6672d258535a01ebf6f53ef9b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_sensitive_file_or_replication_access.sql", sha256: a49e737da3022f3e3a8044160fdd779f7e5e94aa83d1c8d73febbb51e88d49ee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_sensitive_file_or_replication_access.eql", sha256: d7cb191568c0d6a6c902220de7227223834b6cf38e1cbd2f850d2cc9da41186a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_sensitive_file_or_replication_access.yml", sha256: b8151cc31fc3563be8338a8def548a80ff6214f4cad626c7d060b3cd744614ca, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_sensitive_file_or_replication_access.spl", sha256: f62a61c7f00c899d029cd765150512263103c997f1a124ad65b24b03d84a5d85, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_sensitive_file_or_replication_access.kql", sha256: 55c352d84b9e650f21634d07434fe6cda59943880a9b64982415c7c2d5d897d2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_sensitive_file_or_replication_access.sql", sha256: de1d59bc8bbecceb53325b2233151e08b44649e257ee731b0580f175fab0f758, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_sensitive_file_or_replication_access.eql", sha256: e6c113174508d38964057051a033870fb319b46effdc19ede107e19aa246fa77, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_sensitive_file_or_replication_access.yml", sha256: f99af0c15bfbad9d99fddbb92639b18dbbab9bdbda463fbf895987587cee6139, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

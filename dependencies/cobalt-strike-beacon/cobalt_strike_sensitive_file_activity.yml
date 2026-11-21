@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_sensitive_file_activity
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_file_activity.yaral
-canonical_sha256: d17d42cb9be0c6dd0c291f0d37282f8f7429d1e695661c8a1d63ce2036e38b94
+canonical_sha256: ec0bb1be3a9293708dfe9efbf4a9f6ea67b4c7cbd45bf5b297b173c5e2656334
 description: "Detects sensitive file read/write/rename activity followed by outbound network activity from the same process."
 severity: high
 procedure_ids: ["CSB-024", "CSB-025"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Backup, synchronization, DLP, indexing, document management and approved transfer tools."
 references: "reports/cobalt-strike-beacon/source-analysis.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_sensitive_file_activity.spl", sha256: 2a78cff4b0355c2e8301b104aac4c5b48f9d1c1652d6682e760634527fd597f5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_sensitive_file_activity.kql", sha256: 91b5022c8509d85f1bc39d620ba8fa322ef820272e8a469bcc92e0834c3ccc15, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_sensitive_file_activity.sql", sha256: fe72bd9707c926e165d230238604e82c5cf9ba3869089db7f42097ce87f1206c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_sensitive_file_activity.eql", sha256: a34e058445dc094620e674e13f2d56c38af958f09bd9b5baedade82054bf6bff, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_sensitive_file_activity.yml", sha256: 427bc97a49b9a3e0130af8bc62604bf98168e9519378077f859349c0544ca36a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_sensitive_file_activity.spl", sha256: 11c2fffb73f2818239d19ceb8014a401446979f780436caaa1cd168ebeb44e9f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_sensitive_file_activity.kql", sha256: a6ba046a1a29938a12b6c78efceb05d1496bcc8dbb3a3fd56e157ec1d415e7c8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_sensitive_file_activity.sql", sha256: 4df43d027e0179405cfe81a7c75791222fadd75d57b2a3187343c339e33e97ba, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_sensitive_file_activity.eql", sha256: 018aefefe0186531088abcfec53f3ed7d432fab798d342a92e89e2ee40da6bb0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_sensitive_file_activity.yml", sha256: b3bb895a775f50dea47bfcf6f1b0fa612e47874d991ede49d8063b59f371a6e5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

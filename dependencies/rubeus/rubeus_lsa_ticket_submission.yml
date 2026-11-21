@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_lsa_ticket_submission
 canonical_path: detections/rubeus/yaral/rubeus_lsa_ticket_submission.yaral
-canonical_sha256: 4c96e521594655227dcea0c02e64bb944173243fb10e10b169d546d67fcd9330
+canonical_sha256: 881eaa2936051d30c531bb805d759c7d5c316c1a65dffdcb4a61316528b84dfb
 description: "Detects a successful Kerberos ticket submission into an LSA logon session through LsaCallAuthenticationPackage, separated from lower-confidence cache-purge activity."
 severity: high
 procedure_ids: ["PROC-007"]

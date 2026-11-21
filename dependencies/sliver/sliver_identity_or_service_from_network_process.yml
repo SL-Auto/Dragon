@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: sliver
 rule_name: sliver_identity_or_service_from_network_process
 canonical_path: detections/sliver/yaral/sliver_identity_or_service_from_network_process.yaral
-canonical_sha256: f9d5d6618d160cefcac63d5691612b565047b039a69b4030b94e34a499577a04
+canonical_sha256: d88f68eee2325f74e87ec484269733a01db1781869e035d3d63f59063d689ce9
 description: "Explicit credentials privileged logon or service operation associated with a network process/account"
 severity: high
 procedure_ids: ["PROC-016", "PROC-017", "PROC-019"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Deployment, backup, authorized administration"
 references: "reports/sliver/source-analysis.md"
 translations:
-  spl: { path: "detections/sliver/spl/sliver_identity_or_service_from_network_process.spl", sha256: 9619365276225656d733db8f4940125e08f8ff2e00e71c177af97bf373230fde, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/sliver/kql/sliver_identity_or_service_from_network_process.kql", sha256: bd06b547f7a23a13cc686003036ac5c73094850081c2a8eaa34e3457f6e06c18, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/sliver/sql/sliver_identity_or_service_from_network_process.sql", sha256: 08331f48b9e9463f7ede65a45d8c8ac2d151b865a93630e7e1934deb01a3a7f1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/sliver/eql/sliver_identity_or_service_from_network_process.eql", sha256: 3aaa5f84cfe67fc47c2f98ff22fb1b5cd3558dad96d086eb947095f8de23bc84, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/sliver/sigma/sliver_identity_or_service_from_network_process.yml", sha256: 91c3c676e5ed612f9b522ef993695f48f0527f3f8c9e15d2581d4d5153c5d47d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/sliver/spl/sliver_identity_or_service_from_network_process.spl", sha256: 7975896d8ae24f4afaa0c250cb665ee9c8957ae6b5270b06c332e8e865a9d5f6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/sliver/kql/sliver_identity_or_service_from_network_process.kql", sha256: 4740b3e0e31dcb3c3b92b5e13769d517f6d8d5e3a1258a7c73dec845a7ef0e0c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/sliver/sql/sliver_identity_or_service_from_network_process.sql", sha256: 6fbef2adbad707741eabf84ee216128ea156d99434886efcb2fa3016b69b3dfc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/sliver/eql/sliver_identity_or_service_from_network_process.eql", sha256: d1dcea7a3eb4584dabba1b9840d78d09cbd70d0ef4331f2dcc9efe15db043bf7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/sliver/sigma/sliver_identity_or_service_from_network_process.yml", sha256: c4522bee8fc3314aeb1c5a8ee7e2e71c6b3083a69c4e03decd6a15bdb1b235d0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

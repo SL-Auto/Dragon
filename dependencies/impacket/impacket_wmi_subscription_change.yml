@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_wmi_subscription_change
 canonical_path: detections/impacket/yaral/impacket_wmi_subscription_change.yaral
-canonical_sha256: 1cca1229c70c754feec8bfa54ea68c667532ff355a5d6b2f4cbd028660c636fa
+canonical_sha256: ebddbf218242c611c5421404ea7d1b3658ec8a0ce78906139f5edd3b1e63d605
 description: "Detects WMI filter, consumer or binding creation."
 severity: high
 procedure_ids: ["IMP-06"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Approved monitoring and management products."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_wmi_subscription_change.spl", sha256: 569e26223f241dd6a06a77f29b929c91a8d7ba08f659daafa1099149221c6d66, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_wmi_subscription_change.kql", sha256: e521f19b655f072de47ae86d9deb69f5fc05848c38f10545dd06d99881e53d71, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_wmi_subscription_change.sql", sha256: 120fe20a2b913a1d064480e7fc4df89dc280029b57fca8d1c3ccef1747bbde53, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_wmi_subscription_change.eql", sha256: 6146ad329bcdb694b80ea90d126c0327089256028d808468f4b9c03167ac33b4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_wmi_subscription_change.yml", sha256: e1f415746aff2e204478c29e22f7d62f9de3bb063ced980651f4128dead651a0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_wmi_subscription_change.spl", sha256: 98f40101398bec9189f3446f07d70d673af46831cd36a96c6b5473eb0e39934c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_wmi_subscription_change.kql", sha256: 33eec58192376f707f2ae01b6ffd431b8b43b37b49245c6020a3714389f91c8e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_wmi_subscription_change.sql", sha256: 81fa6bdf016898d5595c013f9fe4a75eb1fa814c7d2c4777a681ba8f59fb04f0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_wmi_subscription_change.eql", sha256: f2d9a8c9c2a434f746fd25460ddf5bb6a7e28a4ef55ec6b7a1e4cedcfad40d96, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_wmi_subscription_change.yml", sha256: 7f800071d86c77b61f8d659db470e086d5355cfb96855cfa549fba2c7aa1c8b8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

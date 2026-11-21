@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_s4u_ticket_sequence
 canonical_path: detections/rubeus/yaral/rubeus_s4u_ticket_sequence.yaral
-canonical_sha256: e65967cab0a8ae0090d2c37d23e98f86bf2a04de1afb7be0db64927cfa5cfab9
+canonical_sha256: 96f21b9975d346dc078d9c5350f857190b8c91a49a9593b7cbf0582bb2e7279b
 description: "Detects a service identity making S4U requests against an authoritatively unapproved delegation edge, or requesting S4U tickets across multiple distinct target services when edge-approval enrichment is unavailable."
 severity: high
 procedure_ids: ["PROC-005"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Approved constrained delegation, protocol transition, web front ends, and identity middleware; stale or incomplete delegation-edge enrichment."
 references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md; public-rules/comparisons/rubeus/rubeus_s4u_ticket_sequence.md"
 translations:
-  spl: { path: "detections/rubeus/spl/rubeus_s4u_ticket_sequence.spl", sha256: 778d67a260dadfd8c0e2813c3575cfccf89de44ae66887e0603212614d35a4d8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/rubeus/kql/rubeus_s4u_ticket_sequence.kql", sha256: 548ff2c8490373c42ee08071ae71dd3e82f7ca8494958c4ceaa7867408c52c89, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/rubeus/sql/rubeus_s4u_ticket_sequence.sql", sha256: ca7bf179a63f5baba28eef668e588efc6cb2f7a9b2896ddcf72dfcb5f9c0e349, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/rubeus/eql/rubeus_s4u_ticket_sequence.eql", sha256: b61e3985353602ff13f18b6ae38d690405f2122247ec001005f71e5c8ec95ce7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/rubeus/sigma/rubeus_s4u_ticket_sequence.yml", sha256: af868a4c4e2b1fe38a83b36693b1ed1fe26e201bb084a225b6d4bc92f91ca715, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/rubeus/spl/rubeus_s4u_ticket_sequence.spl", sha256: 498a8c986a91a8f6c8635662d8a3b57cc92f543132edb63b146f32e8f8cfd521, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_s4u_ticket_sequence.kql", sha256: 2eaa688e5a3cff47f52f49b032a285e957760047e5bff8d24feec27111eb5733, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_s4u_ticket_sequence.sql", sha256: 45587976e4b16ff3a129f4735b7071f1d4e92ef9ad3dba9d7b3a1a62b79bef0e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_s4u_ticket_sequence.eql", sha256: b4f8320440eb5c9185f1b1ad994a8cf035aabd8304efed5740146517049b6256, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_s4u_ticket_sequence.yml", sha256: 6c93ac988cbd554345b7dffb4afdb3bc0c9bd03d4cf9aec0e8faffdc861cbed7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_recurrent_process_egress
 canonical_path: detections/havoc/yaral/havoc_recurrent_process_egress.yaral
-canonical_sha256: 2048dde0314e1e8017cb4deb5c38f8484eadb380563c8f618b616fc19fb1786b
+canonical_sha256: 3940ecdc051be03fa38cd9143e8eebfa35d3a34b896a13b93e4925606a809fc0
 description: "A process produces recurrent outbound network activity consistent with a long-lived task channel"
 severity: medium
 procedure_ids: ["HV-P01", "HV-P03"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Monitoring, update, VPN, messaging and management agents"
 references: "reports/havoc/source-analysis.md"
 translations:
-  spl: { path: "detections/havoc/spl/havoc_recurrent_process_egress.spl", sha256: 77b863a1e8dd10e87f09601ce2ba4898dff5859a89aec3c3f117387c9bd99e43, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/havoc/kql/havoc_recurrent_process_egress.kql", sha256: d6d26ddefb11de2f0f7d3fb3f702f732e96ead559445713a9ed9a7e73b07c8bd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/havoc/sql/havoc_recurrent_process_egress.sql", sha256: 5edfacde0ed47340861266f829bdc0da479575f7a731e764b2dca3081cc89706, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/havoc/eql/havoc_recurrent_process_egress.eql", sha256: 7e63f04cca768ff4af9534f2ac88a3b6130300f43fc6aa54a326f3fac5ede1b1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/havoc/sigma/havoc_recurrent_process_egress.yml", sha256: 6a185b15062fa9520e7d918c6f816fa5709a04df5a38ad44604bffc5bf024250, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/havoc/spl/havoc_recurrent_process_egress.spl", sha256: e6d9add4cab5a668c975c85ea8eeca06e68fde7564634ef8abbb2200c465dd6c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_recurrent_process_egress.kql", sha256: 73e31c69b7036a5c426929a00c9c46faa9cea1c94c484ec3445727b8b9b49d82, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_recurrent_process_egress.sql", sha256: ea653190cc8fbbad0e314a30e02b811aad0a083ecbca865f64bb6f66a5c477c4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_recurrent_process_egress.eql", sha256: bde729bf58ab6707872900b9a67dfe28e13f3341f08ac63b9bb8f8a0a2be0015, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_recurrent_process_egress.yml", sha256: 2ebd72f28f072df73885657c5e0df05f394a2fe965d1f772bb8f4eaaa46b55b7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

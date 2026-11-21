@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_remote_management_execution
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_management_execution.yaral
-canonical_sha256: d1ed45ff088141537f5201883e50607991c1aea1084b179632bd38d5258c5daf
+canonical_sha256: a88351da6639c3ec31419e05c28cab9fc847597c1a91de33532178aa30e80c6b
 description: "Detects WinRM, WMI or SSH remote-management session activity followed by a child process on the target."
 severity: medium
 procedure_ids: ["CSB-031", "CSB-032", "CSB-033"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Configuration management, helpdesk, orchestration, monitoring and approved remote administration."
 references: "reports/cobalt-strike-beacon/source-analysis.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_remote_management_execution.spl", sha256: 6c8b46ca4d8b36aa8e0f875fd34b54a1a6a9fe81455705b480ad573237981159, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_remote_management_execution.kql", sha256: 7830af37d779edc3573b9f5e1c780efa4bc0f4a200387c6f1c58a15541377eeb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_remote_management_execution.sql", sha256: 63c19848d88416c249e8f7c1f040ee404ec903efbab1cc1b2daf9cf6c8e3e291, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_remote_management_execution.eql", sha256: 0439815aad45ca67211e5e3962d76b0a7297c9890e0e2ed21dc28be771354ad9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_remote_management_execution.yml", sha256: d111828b0df9bdd1971404fa0b53d2e2c9132fbe937f31a5b2ec4f8c773eac1c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_remote_management_execution.spl", sha256: 027623c236e279487ac7dcd8cc2a03e6f31554724b73ead48951d6666988cfa8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_remote_management_execution.kql", sha256: 17f2f9edb67afaa5964baf1cd45a5e82539beaacaeff8383f24360b92da5042f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_remote_management_execution.sql", sha256: 17b82bd25076664f97591850f558fe969b785ad89d960ef8a53d2498611460d4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_remote_management_execution.eql", sha256: fca982b3c02a841dbb29970fc7061ac299b969e47c447cdf5781d32ad6d6a1b4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_remote_management_execution.yml", sha256: 2ecd4dbaf9be54449243789bdf96f4f82bfc274c783f4e45c52b52f5609de49b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

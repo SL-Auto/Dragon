@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_discovery_fanout
 canonical_path: detections/havoc/yaral/havoc_discovery_fanout.yaral
-canonical_sha256: 6c3573a4dd1fcb02a9983d71e376d52b157f38f4b75aeceeb5f1f439b98b7caf
+canonical_sha256: 599479a3cf1a171ace75e84b6eaf8e1b470b022586723a1bd5d1df55305b1d4b
 description: "One process performs rapid directory SMB or RPC discovery across multiple targets"
 severity: medium
 procedure_ids: ["HV-P04", "HV-P13"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Asset inventory, vulnerability scanners, identity governance and administrative scripts"
 references: "reports/havoc/source-analysis.md"
 translations:
-  spl: { path: "detections/havoc/spl/havoc_discovery_fanout.spl", sha256: 567c55ffc48d8af0d0600b8525fe0b08f94cc64c47fd0b479a1c104d03250301, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/havoc/kql/havoc_discovery_fanout.kql", sha256: d8aacae2607b6240930ff09a322d8848e4bb83af676f9ba8f5043272ac30827e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/havoc/sql/havoc_discovery_fanout.sql", sha256: af3c2829e0656658816b1b84be7a12898b280e61fb16869ef390005b850feeb1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/havoc/eql/havoc_discovery_fanout.eql", sha256: 980e8e5436919c840d34f2dae6da167a3cea482d75d3499d16751eeb830ac67d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/havoc/sigma/havoc_discovery_fanout.yml", sha256: 10c7c13abd99b1d6c8ff3d3fd4d7c45a1542442c85aa397c7f670d18351a1eb2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/havoc/spl/havoc_discovery_fanout.spl", sha256: bcd1038eed19931f149502940b4d9b511a687394a36c2577f76947e5413dcfdf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_discovery_fanout.kql", sha256: 15f9abf239472d0650b85374ec0e49eea2acb788c0204de55f80ec12d8396ce9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_discovery_fanout.sql", sha256: d1d222f7f697be9bef84abac1065a91aa1c9ea9dd021b6abf42cfb25e9cafef2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_discovery_fanout.eql", sha256: f9f32756735b3622ce7dafeb87cb6428c75bd32e1c251b3af0d9f08f3c92dbbc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_discovery_fanout.yml", sha256: 0dadd450ca2031553ec78017d74f66e81591cc562bb4d327908e39f19dd871d1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_dns_process_context
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_dns_process_context.yaral
-canonical_sha256: 017381889306e31438e4ea10b19163c2221c4e2173b680b6a0d8e75a820193ac
+canonical_sha256: 248edc98ba17a9d3261cda7996feea3ae4734df0160452790b89b389b56bbaf9
 description: "Detects sustained process-attributed DNS activity with long or high-entropy labels as a DNS C2 hypothesis."
 severity: medium
 procedure_ids: ["CSB-006"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "CDNs, endpoint security, telemetry agents, anti-abuse services and DNS-based service discovery."
 references: "reports/cobalt-strike-beacon/source-analysis.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_dns_process_context.spl", sha256: 4dddc505938a88c89c064e4b5eacbd20eb56b5c7046942acc49ba77b0ca170ea, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_dns_process_context.kql", sha256: 2d01168d8f83c73ea92e84c33b847a41a5a31f204454923f27dd35d8d1996833, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_dns_process_context.sql", sha256: 71405d8bd6f4956eb323643242166ccc2c9b8d557c8cf12d30d10e27f10d740f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_dns_process_context.eql", sha256: 1659cffe445b8ec5f678d728e7ca72f06250dddc92b1708a676e05f2dbbcb7c5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_dns_process_context.yml", sha256: f30eed813a4a47ef7b151f83a33d7fe8bc85cf391b954db16dfacde5e138cdfd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_dns_process_context.spl", sha256: 6d5164bded8bdd09957631eaa0b01f68ea5f4654bed747e82c779c72af7072ad, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_dns_process_context.kql", sha256: b9e00119d5e6172d951cc083d99a2df0df320f4eeb2eebf00a029df4487d689c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_dns_process_context.sql", sha256: fc8a7d050b2aaed3908c5faa5bd6f91f214d3c798d5b34f93094b81c9235f231, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_dns_process_context.eql", sha256: 44fa7ec6b2b53b165107b52b10409bd9006db49d20b4a1774bfd771cef98801a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_dns_process_context.yml", sha256: 2c0e832179e96723424fdc2b033b88053dc5f93495197a29440f515a0075a202, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

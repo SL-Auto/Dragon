@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_lsa_encoded_ticket_retrieval
 canonical_path: detections/rubeus/yaral/rubeus_lsa_encoded_ticket_retrieval.yaral
-canonical_sha256: 4ee967578b7bdd513ad75b4f56be10c8d8c9c8fa8f700140caee0e75b8a25baf
+canonical_sha256: ca2bbfca264197d7422bb618dc28a52333cb9652933d745a71903e4593be3e83
 description: "Detects a successful Kerberos encoded-ticket retrieval call through LsaCallAuthenticationPackage, separated from lower-confidence cache enumeration/query activity."
 severity: high
 procedure_ids: ["PROC-006"]

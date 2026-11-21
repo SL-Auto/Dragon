@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_kerberos_ticket_effect
 canonical_path: detections/havoc/yaral/havoc_kerberos_ticket_effect.yaral
-canonical_sha256: 8d54b9669b30236bf43079b3689ec1ecf55aad8324563eba649f2c9de4c1efb8
+canonical_sha256: 826d045ddb932ed01ff5697772c836db88dcaaeff8f6fd9a0f87d16bca63eeab
 description: "A process performs LSA Kerberos cache mutation followed by resource authentication"
 severity: high
 procedure_ids: ["HV-P17"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Authorized ticket administration, SSO troubleshooting and security tooling"
 references: "reports/havoc/source-analysis.md"
 translations:
-  spl: { path: "detections/havoc/spl/havoc_kerberos_ticket_effect.spl", sha256: 2a72ba940e04072bf5219966d23abaee15170b49dbc46b6bf4e6e2b67f3ec10b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/havoc/kql/havoc_kerberos_ticket_effect.kql", sha256: 6e69a9df7c83f12a6d5553af49eaf4f0714f64d4df2e7df019064b5da31df1d1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/havoc/sql/havoc_kerberos_ticket_effect.sql", sha256: a3e1addb9bf36631dfda8067744d596a819277f069e8d11fdbbc605bf2ee1625, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/havoc/eql/havoc_kerberos_ticket_effect.eql", sha256: 4c2d2843c17846216408d5dec7e51469d658092290d6a28bb280b575c354b400, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/havoc/sigma/havoc_kerberos_ticket_effect.yml", sha256: 7a2cd00dd92b0ecdac1f0a3844dcda92ccf4958cc858c60d33129c22a78d368c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/havoc/spl/havoc_kerberos_ticket_effect.spl", sha256: 15b599c1c90ccecfb5dc5196073229e050fcfa9c33a31720951470d26d49e7d4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_kerberos_ticket_effect.kql", sha256: c3fc1df98d8c95a261e96d37c82a7dd066927ae7061525313a600d88b8e8fce5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_kerberos_ticket_effect.sql", sha256: 591df407b3dac6cdd7dcad1e9206f38bfb5f6f2f508d0e41bb7c28b147a04bbb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_kerberos_ticket_effect.eql", sha256: 5f24f14cc296a88080abf94a9d684f0b5d18e61a3699af0c3abe273b1314ad9c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_kerberos_ticket_effect.yml", sha256: b68d3bbea059d508c4728de394203a021a3061c555ee97d86defcb4b12dced79, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

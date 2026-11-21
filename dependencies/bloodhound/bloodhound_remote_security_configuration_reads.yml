@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_remote_security_configuration_reads
 canonical_path: detections/bloodhound/yaral/bloodhound_remote_security_configuration_reads.yaral
-canonical_sha256: 2783c452478dcfab5a0cde19aed3d9e3278d1d34f253693d02a882126b7d1ef4
+canonical_sha256: 9c6173a622eee840ac1c22423688d51fc12a3d3ebaace3b01c7025b33df9e877
 description: "Detects remote reads of CA, Netlogon, LDAP or NTLM security configuration across hosts."
 severity: high
 procedure_ids: ["BH-012"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Security posture assessment, PKI administration and domain-controller compliance tools."
 references: "reports/bloodhound/source-analysis.md"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_remote_security_configuration_reads.spl", sha256: 5d9092e47ffb540d7cd30a81f68a0f6c525fee3a7a7a5521b80c9e6deb9b1349, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_remote_security_configuration_reads.kql", sha256: 00529a71072a3e2afb937240259dafa7788acc9a8b913b7d4c5b61cb1c18efd8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_remote_security_configuration_reads.sql", sha256: 6db673f0f6d3ae731f50d97c28d66dc970b069ca23474d1a5625d25607717ae8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_remote_security_configuration_reads.eql", sha256: 643aa8d7a8f38e5f61f085e6a285ff0a6c7bb21189171531f6938667845f3c3f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_remote_security_configuration_reads.yml", sha256: c6753126ba7579df523ae8f4d0ab3ca9fc74ac7944c54c80fa07007e7251be77, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_remote_security_configuration_reads.spl", sha256: ede1f5e142d2a4e6e191e0a7d648af647c6025c9de12d906a1eeeea66e1bbfbe, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_remote_security_configuration_reads.kql", sha256: 65cc8da8b8cfcf72c628094cdc037913cf1128250a1bda9cf46674ebf1055afa, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_remote_security_configuration_reads.sql", sha256: e19da5fc73b5cb38916751ccac785c67c32f8a77c026b147e3f8a84077280b0e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_remote_security_configuration_reads.eql", sha256: 580f214f4deb8341d1e37d331bd344b751808adc56e6b2dd943e092dbcdcfb14, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_remote_security_configuration_reads.yml", sha256: 28d620e08d6c2c8e5f9ec3089c8c9a0c8f6370615ac808743751b857914dd8d8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

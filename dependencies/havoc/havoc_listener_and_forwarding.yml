@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_listener_and_forwarding
 canonical_path: detections/havoc/yaral/havoc_listener_and_forwarding.yaral
-canonical_sha256: 5b350d9c8dfae8dc456062c9e47a52b5d37434cfc9a754f8603f842291afd7af
+canonical_sha256: 4473caf91fece20f52071a7ee5c408ee310c53a935be05f2c3f5f8377c604942
 description: "A process listens locally and also establishes outbound connections consistent with forwarding"
 severity: high
 procedure_ids: ["HV-P16"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Approved proxies, VPNs, developer tunnels and network services"
 references: "reports/havoc/source-analysis.md"
 translations:
-  spl: { path: "detections/havoc/spl/havoc_listener_and_forwarding.spl", sha256: 14462d05f00427931f53da4573ed9a1c9622f6691293d4d81ab0cf6dfa8d73be, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/havoc/kql/havoc_listener_and_forwarding.kql", sha256: 6ae017f8c62ef6a934ea6a92bc69f21b82e9e9f9c5aef6a397275c99b6f506d5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/havoc/sql/havoc_listener_and_forwarding.sql", sha256: f5a390cad3aa04ec6bc7c83a443b9cc04b6bc7820462d154009efcd189efa669, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/havoc/eql/havoc_listener_and_forwarding.eql", sha256: 45ea81592ec306e91963dd1c1db05d380751ea75ef4ade32b662ab94dea95966, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/havoc/sigma/havoc_listener_and_forwarding.yml", sha256: d7a0eb1f1fdb12820c4d327d601f7c24d1ab1ee1371b84ca08d30ba4ad769c1b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/havoc/spl/havoc_listener_and_forwarding.spl", sha256: be6e9d9b0f1304d3459b0c5adbf0e0830b96c163653e4550e54fe712dc794e4c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_listener_and_forwarding.kql", sha256: a30c82c707442f3e12bcbf6af73b62d6f1c7b4459dfcdc2bcaf43441d56c3fcd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_listener_and_forwarding.sql", sha256: 0f4496a1fd94495d1b4477d261fa8af1e548766cf2eedbbb6ca63c7a72e82741, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_listener_and_forwarding.eql", sha256: 65feedf1318ced2f127cac97af8aec79e933966baaee3d111b1b1afa4cc4157a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_listener_and_forwarding.yml", sha256: 905d7e028457d4da237e131ebe750a2df01fe60d256a25cc3d6be7c9ca380f31, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

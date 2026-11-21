@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_suspicious_service_control
 canonical_path: detections/impacket/yaral/impacket_suspicious_service_control.yaral
-canonical_sha256: bd713d1f5d98416dd97e62e20e2f83ae8d8e72b0cebee41a12cb34715a3d7018
+canonical_sha256: 7f1546153cf365ce44799f3e78b4820074f7fa6c21299939fd7bc53e84cc9bb9
 description: "Detects service creation or configuration following a remote logon."
 severity: high
 procedure_ids: ["IMP-03"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Software deployment and remote support."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_suspicious_service_control.spl", sha256: 7a031471d40aba31b0cdc2608be7a6f2f7757bffdc7acb02523f34b1513bceff, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_suspicious_service_control.kql", sha256: 4b711e003e4b671216add069bb9370dad06355e1e793d4ca1f3480edf50cd2ed, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_suspicious_service_control.sql", sha256: f234d5c215d1aee21aed508103eb720c9e5f23386cab2835ecda64e3c2578d2a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_suspicious_service_control.eql", sha256: 4fe389d282dae5ecfb778a4dd6d6b3ed507664928d0ecb65eb18f47942cea59e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_suspicious_service_control.yml", sha256: 87973df8de95d868b161354b8611d7eecb61e78c950ffc8c38a41f0e29151674, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_suspicious_service_control.spl", sha256: 6265155c84631325558287136ac7ff19db3ba2201b06e2b777569662594654fa, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_suspicious_service_control.kql", sha256: eba365a6aaa63bd964156370cb61aba2d410f803942ff01a7a78978a896aeef4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_suspicious_service_control.sql", sha256: fe29d340d1549ab55d86c61a5f6eae90b2de53b521352c93eec3ecda122b2ab9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_suspicious_service_control.eql", sha256: 2120f3d5ac55f9f44f2d541712816f11d2e8af3edebfae8bfdb55e277f2785b1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_suspicious_service_control.yml", sha256: b550b994739fa917b86d790e329c53a7b7949aadd77fe3278f2a00e194c9ee9d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

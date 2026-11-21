@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_samr_local_group_enumeration
 canonical_path: detections/bloodhound/yaral/bloodhound_samr_local_group_enumeration.yaral
-canonical_sha256: fcae52a32d341dce00ff97b0cca666050afb66a0e11cb4574a96ceb8b9152e55
+canonical_sha256: 23fe74320f471f57f09c0d8d7aca968e6e55ae7e1fdbf718c0fed04aa96defed
 description: "Detects SAMR or LSA policy read operations against multiple remote hosts."
 severity: high
 procedure_ids: ["BH-009", "BH-010"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Asset inventory, compliance scanners and endpoint-management systems."
 references: "reports/bloodhound/source-analysis.md"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_samr_local_group_enumeration.spl", sha256: b00f45c5dbb847562757855f1678e8053dd5c58f1cbde3114f519e8fb133ee84, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_samr_local_group_enumeration.kql", sha256: 2c52868cb3c9da58f6184fedb70755a2f06b7838c132cb4b64eded7b4ee2fa0c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_samr_local_group_enumeration.sql", sha256: 8a6b20c9cb01eeb3970c04dfcea5b5b943efd47efde90a3434957aa86a626e99, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_samr_local_group_enumeration.eql", sha256: 7f31549d55866dc8cc549a674e352bb607ca27426769caad863d9375fc34f0b4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_samr_local_group_enumeration.yml", sha256: d84fdcfc4606302e8c792c4219216b3f1cf7c2b94941f10720787c65cb359649, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_samr_local_group_enumeration.spl", sha256: 9db669d6a0ce00f69f22965ed2ea941ddeef08f25ec08a36b97a8b5baf2439dd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_samr_local_group_enumeration.kql", sha256: 48f2cf8806af16005b2ed962f42f2d411adcb110657bc01b89387f1e7f97e641, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_samr_local_group_enumeration.sql", sha256: 0d19f6895214ec598fd7e6b54c0ea046636b24a501763945cf59504ac6a285a7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_samr_local_group_enumeration.eql", sha256: d5f6e3cfd6838e5c30cc31fadb10db0330b3be9718f89f2687f4a9d4a920b91f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_samr_local_group_enumeration.yml", sha256: 27e0d07dfd0acbeed9379b9d00241f26e39f81bd13f0f39908aace72d50de073, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

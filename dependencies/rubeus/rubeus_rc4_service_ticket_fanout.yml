@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_rc4_service_ticket_fanout
 canonical_path: detections/rubeus/yaral/rubeus_rc4_service_ticket_fanout.yaral
-canonical_sha256: d3c84be9ce37220cb488f1a2c1c1acb6083442186c8a54b1f3a729a9d689d541
+canonical_sha256: bb2ab81cab71ec92ce7c341dbdd1cbb22c4f9d240b0d950792d0d26874842ad6
 description: "Detects a single requester obtaining RC4-encrypted service tickets for three or more distinct unapproved-legacy services within a 15-minute window, independent of LDAP SPN-discovery visibility."
 severity: high
 procedure_ids: ["PROC-002", "PROC-004"]

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_unusual_service_authentication
 canonical_path: detections/impacket/yaral/impacket_unusual_service_authentication.yaral
-canonical_sha256: c7d235aeb98a36a5e2f97ef73149f02cc33b7c72b86ff2b9e7bfad5eea505256
+canonical_sha256: 2f8c7d5eec2a2d1eb50c24dfbc7ac11c7034619ebe22c8cdbd3aacc9654fda2a
 description: "Detects failed or unusual authentication to SQL, MQTT, RDP or SMB services."
 severity: medium
 procedure_ids: ["IMP-15"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Monitoring, inventory and user configuration errors."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_unusual_service_authentication.spl", sha256: 10b49474bad377c4c327b40ac4051993680e017f74f69c1ee61ddeea63e287bc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_unusual_service_authentication.kql", sha256: 9ce816d5e7163fc367640063eb212fb728f6a1e7416d6f535e16858a13f94f11, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_unusual_service_authentication.sql", sha256: 211d0d904f5b0e782af7152ca55904051fe360b9c16d65bff1c6d42e589f637e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_unusual_service_authentication.eql", sha256: fd11fd3170c5e8dbdff39bab6f2b483d2e8fe6905bc0f5117f94ade220c5d7ec, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_unusual_service_authentication.yml", sha256: ea790e0f179a1dd365d31f47b9615e6179d00212eda0b2ed5cc1c2d57186218f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_unusual_service_authentication.spl", sha256: 3f122006f66ce113582bdfc40cbf262f894678adffc8373f788eb7b003b8ce97, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_unusual_service_authentication.kql", sha256: b70dedd170e4d70dbe6df9e22c8c1e2d4d718a5ec09b5d0ed3b3f77392e4c8bc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_unusual_service_authentication.sql", sha256: cf50b111b203867a1f648788608f03d950717dc4e25f77aef60962d22f2bd84c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_unusual_service_authentication.eql", sha256: 9eff79e539f1bf4b312c3ce3c8e67f4eab1673ac81a530d1631c22ddcba1ad7c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_unusual_service_authentication.yml", sha256: 4de645b2580c1f47b437f230b356435ec8d2916481b27b34b784ad3dabaf7fc3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

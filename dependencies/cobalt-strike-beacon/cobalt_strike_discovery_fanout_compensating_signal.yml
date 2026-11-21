@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_discovery_fanout_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_discovery_fanout_compensating_signal.yaral
-canonical_sha256: 21802ffed35a72cabcb273832f37a7663a5d0079a9ced3fc26d18754697a8295
+canonical_sha256: 9b75982cbc11aeadefe1a0905d40743c05c76a695ba10cfa2550628a5eb768e2
 description: "Aggregates attempted network connections by user and host over a wider window at a lower per-process threshold to surface slow or distributed port/network discovery that falls under the single-process fan-out rule's threshold."
 severity: medium
 procedure_ids: ["CSB-021"]

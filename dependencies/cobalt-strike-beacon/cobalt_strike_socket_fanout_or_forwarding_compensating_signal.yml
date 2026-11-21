@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_socket_fanout_or_forwarding_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_fanout_or_forwarding_compensating_signal.yaral
-canonical_sha256: 0c20a1438e4bb0b750868e630545a3c15c21307c02b53553d7d8f1d9586d4787
+canonical_sha256: 59415a3e5ef8d49dab81cfdf81da9fe3fb6e25a317c1188dec9f4c3b9f4b9631
 description: "Correlates an inbound connection to a process with that same process subsequently creating multiple distinct outbound connections, detecting the relay/forwarding topology that the base outbound-only fan-out rule cannot express."
 severity: high
 procedure_ids: ["CSB-009"]

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_sensitive_registry_read_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_sensitive_registry_read_compensating_signal.yaral
-canonical_sha256: b5f4c1148237af5eb6158cca199596ca6c862aee58ed302f0822656f69c7950b
+canonical_sha256: 73501e7a75595aa8e851ea12e0a8a317625a1fbad31a63af801ba6e14dd3bf89
 description: "Detects a single process reading several distinct sensitive-registry-family keys within a short window, surfacing multi-family enumeration bursts that the base single-event sensitivity check does not aggregate."
 severity: medium
 procedure_ids: ["CSB-023"]

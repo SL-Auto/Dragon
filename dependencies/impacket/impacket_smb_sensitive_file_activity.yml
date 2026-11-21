@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_smb_sensitive_file_activity
 canonical_path: detections/impacket/yaral/impacket_smb_sensitive_file_activity.yaral
-canonical_sha256: b794c64432c8706f2c454d4a5368b685dfa103278dc92cf6c9755c60570cf945
+canonical_sha256: 86ef1a695934e595ac2ea3dae8701df26bfd2c5308fcac266716457b35674fbe
 description: "Detects remote SMB access to credential-bearing or administrative paths."
 severity: high
 procedure_ids: ["IMP-01", "IMP-13"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Backup, migration, domain administration and security scanning."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_smb_sensitive_file_activity.spl", sha256: cdee7dada8c09e1eeb004d5ea74952a0844ad4c1c2e6d893f1d7b2e14b08216a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_smb_sensitive_file_activity.kql", sha256: f1aa43980d9677b9b6a39fbddea51109986233a3acf5fd16e79cf32f4d337af7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_smb_sensitive_file_activity.sql", sha256: ae4989137816abf272e6b334aced1eab2054ea7a845a7a24f20d87685553cdbe, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_smb_sensitive_file_activity.eql", sha256: 905119d9227dd2a9e1d8c0edbb864a1b8ff36b831d4f1a251e5974b68b6e3780, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_smb_sensitive_file_activity.yml", sha256: 626d7e956d9542a4fd3cf87b404afcb11e034e0396de600f73dc244a78236ea1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_smb_sensitive_file_activity.spl", sha256: efbeb9bf99c91bc17409eb378f8168f4365f145a24dc0b9a6515247a5f85965d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_smb_sensitive_file_activity.kql", sha256: ab90a3b5219d8cf8177460c6e8433c5ddae5746708e16b7421c6bb7f1ef48aef, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_smb_sensitive_file_activity.sql", sha256: 50bb2301867f90e079cd13e9609ace34301b23729235e17bcbd3ed29fc5d6f28, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_smb_sensitive_file_activity.eql", sha256: fadd8fcafc5249bcd0de98f0420af6e8a454d0701085cbff95311bc980164aa0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_smb_sensitive_file_activity.yml", sha256: f437672fab29eb2833edb54c30a1536909e5e80aef71cff712f17c99b022fc5a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

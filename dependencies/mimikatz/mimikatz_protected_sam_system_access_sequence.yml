@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_protected_sam_system_access_sequence
 canonical_path: detections/mimikatz/yaral/mimikatz_protected_sam_system_access_sequence.yaral
-canonical_sha256: 3ccb68efc488e04938d08d9ad8080e9eff10bd398c13dabba02fa16990a46850
+canonical_sha256: d4d6f914ea4840b15803abae0b4f1b0ddef6087d9e4bfcd1410261e11a7d09d2
 description: "Correlates one process accessing protected SYSTEM/LSA and SAM account data."
 severity: high
 procedure_ids: ["P12"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Backup, disaster recovery, endpoint protection, forensic acquisition, and authorized registry inventory."
 references: "reports/mimikatz/source-analysis.md"
 translations:
-  spl: { path: "detections/mimikatz/spl/mimikatz_protected_sam_system_access_sequence.spl", sha256: 67d0c27dfac45d6156e6f562b2406498d7ef74f3a97c5c044381b6be91da45b0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/mimikatz/kql/mimikatz_protected_sam_system_access_sequence.kql", sha256: 3a1a4bc4ba96469a4f01acf32df56051e1d7116b4f47a6afcbf823f00204ea82, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/mimikatz/sql/mimikatz_protected_sam_system_access_sequence.sql", sha256: 9b09161e3729fd243a3b509e236821c1a0c17b01f0b29e71775e77918564f297, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/mimikatz/eql/mimikatz_protected_sam_system_access_sequence.eql", sha256: eb7292b8d2d0ef360541895ec66a428d319474187ea0df63d0e50927c23d88e5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/mimikatz/sigma/mimikatz_protected_sam_system_access_sequence.yml", sha256: cbfda9509868158d02d126803fb5d6ba1615591c800f84c5895f00d1a2bc9262, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/mimikatz/spl/mimikatz_protected_sam_system_access_sequence.spl", sha256: fd9594fa62df69469ea01414a07afb34e10df4763b3b0025814c5573c4872cd5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_protected_sam_system_access_sequence.kql", sha256: 203bc6fddd79d8cc79b3683f77eb62e783d3eb055924dd10c398a764a0db47de, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_protected_sam_system_access_sequence.sql", sha256: bdae20c8cec8b2da1505c3ccb67258dadf9a758e282c136d8e3233b7083cdf6d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_protected_sam_system_access_sequence.eql", sha256: 6cda734aace0ec9bb340f06e2477292423b7429d1feacb6f3a70b30399107ffd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_protected_sam_system_access_sequence.yml", sha256: e251facbcb52a23a9cc0cde75e96294f0df2d6c004429e49076746e06f12c90c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

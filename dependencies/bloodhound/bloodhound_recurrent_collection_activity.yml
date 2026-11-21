@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_recurrent_collection_activity
 canonical_path: detections/bloodhound/yaral/bloodhound_recurrent_collection_activity.yaral
-canonical_sha256: 28583958bd0e50c5690962f2063335bc2b18f59c4c88ea530838f0403f35e8ab
+canonical_sha256: 2bbaf30528c1bf35b6f43ee4463b29864f79f0dc0071e1656ffaf75d4d41185e
 description: "Detects repeated directory or remote-host collection bursts from the same process entity."
 severity: medium
 procedure_ids: ["BH-014"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Scheduled identity inventory, monitoring and compliance collection."
 references: "reports/bloodhound/source-analysis.md"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_recurrent_collection_activity.spl", sha256: c8d0a6916ab013c6b3ae3667ed3a532d06a99a6a5e5791ade432ac086996a9e7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_recurrent_collection_activity.kql", sha256: d370c5160944ded65157b0b88fb3580c49537547f76ffed4ddca9ec294267f6d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_recurrent_collection_activity.sql", sha256: d6fb9808e98eb8b13174caae10678207cc2f52952e5d24421dc863d61edf1003, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_recurrent_collection_activity.eql", sha256: 79e9cf8241444a1c36b7d1f80a622e08ed9154e0c677a771f387e4dfd1a32012, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_recurrent_collection_activity.yml", sha256: 2d6d308a5c4c81c7dd74a011940a4be00618e6a7fdde7c33caeb3526d3af297a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_recurrent_collection_activity.spl", sha256: bc9482b3f1d897e3b92958d9a79dc4cf5f2b241b9635e5f08b1fb0aa3d98b826, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_recurrent_collection_activity.kql", sha256: b5b1f50fe34ea9ac816790efa449775feac820c68631ceca20c0fbaa51bbca19, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_recurrent_collection_activity.sql", sha256: c715873aef2a8e7ef95531170017e3c57756be0287d2a4ff2a9c7b963570c775, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_recurrent_collection_activity.eql", sha256: 97baf4febb2f0b34823433e5d220332abcec70f8a2126594027fc6f0c551da10, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_recurrent_collection_activity.yml", sha256: 0b02991ac8cc48f07ea8beb44f563e6355e7282bf20135cdc5cb656bf0137b96, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

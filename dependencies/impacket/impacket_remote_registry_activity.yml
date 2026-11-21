@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_remote_registry_activity
 canonical_path: detections/impacket/yaral/impacket_remote_registry_activity.yaral
-canonical_sha256: 862f1aff48f32d110fcac1054ab83eab540d1db8bbfc144d7af5816e678ce835
+canonical_sha256: ca3e7dc13d7c39d95cfc9d46f4229156ff6ee4c79ebcac8a1239520e6dfc9247
 description: "Detects remote registry service activation or sensitive key changes."
 severity: high
 procedure_ids: ["IMP-14"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Inventory, backup and remote support."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_remote_registry_activity.spl", sha256: c5ae256aa7373a12c2f0a003373845babbe2b1ff1c87d598b634f3a4b61ac240, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_remote_registry_activity.kql", sha256: 6d6c426c90a7fcf1512c6d653519b08c5dc1260a4997e00995ce85d24592ce9b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_remote_registry_activity.sql", sha256: 4b9bdde8d7e2dba8914a97a33269bba91cdb3aeb9d9bfc5d936f7754ac34772a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_remote_registry_activity.eql", sha256: 63538c26235299fe899985c09b3c8568b0731610f1090d2c0ca3e76030bee9af, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_remote_registry_activity.yml", sha256: a528568bcd9e79143e02a9b2f604dbc7e0aa1f3fe24dfb2c2d9c05da1bdd456b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_remote_registry_activity.spl", sha256: 236aeb53fbd3ff6eb1e863c1a7286d3c9d5f3d238ab21b5163a0b730b00d13b4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_remote_registry_activity.kql", sha256: bf61d24478a3b03bc5c29427f1401837b7bfc490634936f76fa54b7bf1ba4b02, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_remote_registry_activity.sql", sha256: 76ab4783845ec728d4c44cb230ae8b5912f631776e3d934d89c77c80d34a26ec, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_remote_registry_activity.eql", sha256: 2efb642a62a37cafe251f472e07ea783b7b6277cd9759b5a8a5863d7ce173ac8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_remote_registry_activity.yml", sha256: 7f42f09216e37d38fe49a6f0b0fb83b3e555696bf3429af4874818f57ee6548e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

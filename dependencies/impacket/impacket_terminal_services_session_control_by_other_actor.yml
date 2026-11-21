@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_terminal_services_session_control_by_other_actor
 canonical_path: detections/impacket/yaral/impacket_terminal_services_session_control_by_other_actor.yaral
-canonical_sha256: 92d0a4bd4849fe08c77dff4872faa57a3d3eaebe3b004d0121c23a790894a7f5
+canonical_sha256: aaf4f62b3e88bf1516a2475b25f727bd50fdfe7915cff20dca2db23883b99c43
 description: "Detects a Terminal Services session connect, disconnect, reconnect or logoff control action performed by a principal different from the session's own target user, consistent with remote session hijack or tscon-style session takeover."
 severity: high
 procedure_ids: ["IMP-18"]

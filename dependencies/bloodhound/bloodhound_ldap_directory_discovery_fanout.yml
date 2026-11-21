@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_ldap_directory_discovery_fanout
 canonical_path: detections/bloodhound/yaral/bloodhound_ldap_directory_discovery_fanout.yaral
-canonical_sha256: ae4a445e6c91072fc066a8991cd68b1b6ce9005bc4758ea12988c0848acb7350
+canonical_sha256: 1832fae8e6508a654846027dc347f20e273fb1aae0a21548bb6d8fbfc9aa618a
 description: "Detects broad process-attributed LDAP enumeration across multiple directory object categories."
 severity: high
 procedure_ids: ["BH-002", "BH-004"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Identity governance, directory inventory, migration and authorized security assessment."
 references: "reports/bloodhound/source-analysis.md"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_ldap_directory_discovery_fanout.spl", sha256: 9a9f431df304e68cd18733b422bbd4f294cdc1be728a1212aa4401e87cfe0c4a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_ldap_directory_discovery_fanout.kql", sha256: 3840c95904503661b335eb72dfc737ed8a108dd625ae85ec8ea18bc7dd27d123, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_ldap_directory_discovery_fanout.sql", sha256: ad7e6bf31638e4cf3f5a100e79626f1b9f1a3b908f937898feaf03f1326193fe, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_ldap_directory_discovery_fanout.eql", sha256: 8b9c68f3463dd4c66e8f2f65b5dfd1efc89183e909cde6be03333ccf62ca83a1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_ldap_directory_discovery_fanout.yml", sha256: 31b3f0651f1e41ea2f126df10c22b6a07a15bcfb38f791e2e479cec00800fcc6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_ldap_directory_discovery_fanout.spl", sha256: 717fb838d40b441ae8a46729e6011d5f94f8991dbfb247664e45e163bcc44de0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_ldap_directory_discovery_fanout.kql", sha256: 208ad90431c01afdd67ced11aac9c9c934337ba259539cb4459d860823f9ada3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_ldap_directory_discovery_fanout.sql", sha256: aa809d9d60e56a7642560c24510e1f76c6a4bb37d6c6c428bc9eb6f0af123765, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_ldap_directory_discovery_fanout.eql", sha256: 127b24e1f3d7e6111fea2d12b1824b69f03735e3fd819fbe786f839d62539d4b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_ldap_directory_discovery_fanout.yml", sha256: 27a7c780dede65bd342dfc629ccbc7418ca52e4943be8af1ea0544627a949a75, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

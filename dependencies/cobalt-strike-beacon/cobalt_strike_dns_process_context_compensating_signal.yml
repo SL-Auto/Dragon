@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_dns_process_context_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_dns_process_context_compensating_signal.yaral
-canonical_sha256: ed53f55d149827c21fdb860c810989367b1eaa9a45eb440e7adfe2a83719fd82
+canonical_sha256: 986b1f04a16f54d2c7f7498dfba90d0483371758e2ccca41081f3a6ac6ff94ea
 description: "Detects repeated process-attributed TXT/NULL-type DNS queries to domains flagged as rare by baseline enrichment, covering low-volume record-type-specific tunneling exchanges that the length/entropy-based base rule does not filter by record type."
 severity: medium
 procedure_ids: ["CSB-006"]

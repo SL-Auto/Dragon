@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_packet_capture_or_raw_socket
 canonical_path: detections/impacket/yaral/impacket_packet_capture_or_raw_socket.yaral
-canonical_sha256: a8aa2aa24451fae5d46eb7495fce2b70ef623bfae8e4e7c78d224fee22f57eed
+canonical_sha256: d939fed81097b3c9bbf47f589c1198e88b71c940a6c619a4aa80aea2f5b0e3e4
 description: "Detects unexpected packet capture driver or raw socket use."
 severity: medium
 procedure_ids: ["IMP-19"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Network troubleshooting, monitoring and security sensors."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_packet_capture_or_raw_socket.spl", sha256: 76ed8e81238121378cfe55b0eb84497accaa0abcf6a1a0bef19513d3fc2a8b6e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_packet_capture_or_raw_socket.kql", sha256: 69242ec8eb633ed57b2b03bbd918cf806f065820ea77de38792a1e1caaf8a6e8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_packet_capture_or_raw_socket.sql", sha256: efbc3a8cd23f52b40b5bec9429b91eee12001541e5547bb05ac421326ded6c3a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_packet_capture_or_raw_socket.eql", sha256: 857c3351ad63e26e6a00bb9dc6018a79c8ba929d18f9d23051a1fbfe1e8cda9a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_packet_capture_or_raw_socket.yml", sha256: 69ba7498ce631667d93dc7a061074175e69e82f61f03801a86695d785496d7c8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_packet_capture_or_raw_socket.spl", sha256: 4d1909b089ce01f63d07b96325857f6a135f8c213cc20ebaad693313504415da, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_packet_capture_or_raw_socket.kql", sha256: 292b9dfdf35363c755b9e05e16d8ddf97876c9e4e4b506243de92c76ddd29bc3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_packet_capture_or_raw_socket.sql", sha256: 7e807068f8a1a2e2ea28c37e25d75295c3f69b904fe96d158b3697aba0f5071c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_packet_capture_or_raw_socket.eql", sha256: a153c6566eeade11e147d42d3a2b82caa739e95e87016d3681723bd05c7e6335, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_packet_capture_or_raw_socket.yml", sha256: 142c655ed8b29a72bd2e8ed09c77589590d36c93c09cc6791e602e058ed19c26, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

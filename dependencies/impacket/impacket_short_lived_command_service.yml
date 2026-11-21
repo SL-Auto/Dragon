@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_short_lived_command_service
 canonical_path: detections/impacket/yaral/impacket_short_lived_command_service.yaral
-canonical_sha256: fe1519c87bdb6d84c7904034b20ab1bfb1ecde464ffb86412ede9f45d6f57be6
+canonical_sha256: 3751dffeb242cdcb0b44ecf6b45ad416a589e23f1cf5c5ff3aae127b83d4b70c
 description: "Detects service installation paths that invoke a command shell with output redirection."
 severity: high
 procedure_ids: ["IMP-03"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Scripted break-glass administration and management products that wrap commands in temporary services."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_short_lived_command_service.spl", sha256: 9e92848be72554fc2318b132a588d47f5a7dd52610ac1d2ef246edac7f4f6ade, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_short_lived_command_service.kql", sha256: 80a978bb2877001c4db94edfd1c66453ab04f5c93d9da4805ab2768045a098d4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_short_lived_command_service.sql", sha256: fb2f785d8567e0b0a1af5fdbd62a66ad9f6d57501fe85a50ad5635cc86049ac4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_short_lived_command_service.eql", sha256: ddde14343a430e65fc947668dc50013c39e24e995a76e436c5503f45629bca08, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_short_lived_command_service.yml", sha256: 8b487a58981dcddcfa5070ae932fe54ee205a8105f39526795330fa5269f04c2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_short_lived_command_service.spl", sha256: 06a3808d44f67530c7069e06e49120a519a320a1e6f01ca4c340134bea644ccc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_short_lived_command_service.kql", sha256: 73e0955a982e5e123dbcc7fa91e46eb23570d2b3c5ed99f43b94216fa2fa6df7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_short_lived_command_service.sql", sha256: ddf376dc087f8342a4f9fd1d13069b6305588b7fb5067495816648cb69fb60dc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_short_lived_command_service.eql", sha256: 9ded5fc077d5aad6b0a4381782cc77661500dca565e7c8b10ac29c1b5c3ff79a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_short_lived_command_service.yml", sha256: 10a9a776895195dd5024a13e3314d17347acdde267dbaa47c4c36888c2ef1e0e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_certificate_key_operation
 canonical_path: detections/mimikatz/yaral/mimikatz_certificate_key_operation.yaral
-canonical_sha256: 829922260b60bfd26bfb02a74a801a808a4592ae056730d62eb6ddb1fa742ab5
+canonical_sha256: 64f823ae73143b204d48f14c9f3530e6f419df149598fad403fac9dcae5c98a6
 description: "Surfaces certificate enrollment, private-key export or Hello key operations."
 severity: medium
 procedure_ids: ["P21", "P24"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Normal enrollment, renewal, signing and device provisioning."
 references: "reports/mimikatz/source-analysis.md"
 translations:
-  spl: { path: "detections/mimikatz/spl/mimikatz_certificate_key_operation.spl", sha256: d7b3ea23a73f42a6d2a877f054aca7bf2674837ca6259d9124b4350bed259bf8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/mimikatz/kql/mimikatz_certificate_key_operation.kql", sha256: ffb4322a11bde3647d0bc4a1d4e31083501c24eeb88cbcfae3ac391214e6ef76, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/mimikatz/sql/mimikatz_certificate_key_operation.sql", sha256: 7a305c977aca49771e560b5168121b9ace4845cc75ae306788518b0c535ca9a6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/mimikatz/eql/mimikatz_certificate_key_operation.eql", sha256: 527e9b56d86306f6151f8ed74a405bea9ed4a85460eece51efbb5fe3b8b0932b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/mimikatz/sigma/mimikatz_certificate_key_operation.yml", sha256: 3d2cee353ffc5e50581f14e91eb19942c53c43203eb944046a0f2da7c895a2b4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/mimikatz/spl/mimikatz_certificate_key_operation.spl", sha256: 0cacfeecc2ff5de8ce7d0f3f6ffb8864cedd1ba7ef3977058ff98856aa25af40, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_certificate_key_operation.kql", sha256: 632fcff5adae88dcaf1efe828f0b670d0859a4fc64665236fb7df4837c1d0ae8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_certificate_key_operation.sql", sha256: bc22ba04a09b7168b4f23c8859da344cca8bd385487cb51f7aad9cfca88552d4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_certificate_key_operation.eql", sha256: ee4ed48e9ce12c305edb56c96e0f6bb99eb70ca853f9ae44c5f53c789b4bf05c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_certificate_key_operation.yml", sha256: d52b0cafb598fc57f7f335f76fa5ad87bbcb9b841890587323ac8eb53d2ac7f4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

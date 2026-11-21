@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_cross_process_injection
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_cross_process_injection.yaral
-canonical_sha256: 1d5d7e0b568a7014d9cb31b5279289ece1f916a10258daec734d44d8a3a4b96d
+canonical_sha256: a14f3ede14f300563d35bc917c1de04b32f38a150ccd1fc1a4a8c3a9e745aaf6
 description: "Detects cross-process access followed by remote thread or executable-memory activity in the same target process."
 severity: high
 procedure_ids: ["CSB-018", "CSB-019"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "EDR, debuggers, accessibility tools, application instrumentation and authorized diagnostics."
 references: "reports/cobalt-strike-beacon/source-analysis.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_cross_process_injection.spl", sha256: a018ca7464cbae2eb43778f5b82c33589d1195a8b419f9bdc39202c658905ac2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_cross_process_injection.kql", sha256: f2fb38807e4e55d3963d8a315df5684ecb3d151b34f5e43cd06f073197643359, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_cross_process_injection.sql", sha256: 77d6961a9ec65040ef2b9d052189350e9f60f91b4b9c3e05604ab729a2d8ed3b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_cross_process_injection.eql", sha256: 9f35db22575843f5c5b47f94c36e383498d1b803bd1e8dfca4553bf7d0ddb2ce, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_cross_process_injection.yml", sha256: 2801229b9953d3f4a835787bc3a87125818d0a95041c5679c375baa3cb1cce43, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_cross_process_injection.spl", sha256: 22f78f6f88b9a6ddba6622686b8a0961dcc77bb36c636d67e14480a17c0efbfb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_cross_process_injection.kql", sha256: 660cabfa8d81970cb0300f537e7dfbfb6eb0d3b336baaf375d3dd30dc30e889d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_cross_process_injection.sql", sha256: 4e7e96e4b28f09af6d6f586a1d459d9d8f8990bdcb3e2506bcd23515f9fc550b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_cross_process_injection.eql", sha256: 407cce7aa786ee082ed4aedacd3f6c66a797c64dbaab4d4c96aaa3a3f03bf06f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_cross_process_injection.yml", sha256: 2300a6e6be41cf09d7429a7c600e6a51c76b978b152ca3eb98ad5c43d84ec305, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

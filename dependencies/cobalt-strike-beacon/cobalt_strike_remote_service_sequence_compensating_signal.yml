@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_remote_service_sequence_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_remote_service_sequence_compensating_signal.yaral
-canonical_sha256: 4d2fd342e2da40eeb332b0c8a7a2b947355e78e3b29a7315bc8fbdac6987846d
+canonical_sha256: 7734832c640d1af57678b07076f38299eb531238b31838187d321c2e9643ec84
 description: "Correlates a file staged to a remote target with a subsequent System 7045 service install on that target whose service image file name equals the staged file name, tightening the base rule's looser source/account/host proximity join; file-name matching tolerates UNC versus local path forms."
 severity: high
 procedure_ids: ["CSB-030"]

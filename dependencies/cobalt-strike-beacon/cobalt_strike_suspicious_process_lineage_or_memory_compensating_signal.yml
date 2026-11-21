@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_suspicious_process_lineage_or_memory_compensating_signal.yaral
-canonical_sha256: 6a0acf338f0601f8a1f8a5628b5fc209d2338e8f8832b2ebcea1c5b4ee25e04a
+canonical_sha256: 8dee5f0e3c80ad31d03eda81731b0d4365b6cfba9bc3a437602f8d481d67b5b7
 description: "Correlates a private executable-memory region without a backing file with a subsequent thread start whose start address falls in that private region, on the same process, providing execution evidence that the base rule's standalone memory-allocation signal cannot express."
 severity: high
 procedure_ids: ["CSB-004", "CSB-014", "CSB-016"]

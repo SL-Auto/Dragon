@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_asrep_roast_sequence
 canonical_path: detections/rubeus/yaral/rubeus_asrep_roast_sequence.yaral
-canonical_sha256: c083b11b86d7df5571ad9071069c797b9fb9cd7d8733c37e0c314fadd928f338
+canonical_sha256: 80801563f9c0e6530dc5aee0c4d98713fe688e7ce22593d3b19b8a7eac587f93
 description: "Detects one source requesting no-preauthentication AS responses for multiple accounts."
 severity: high
 procedure_ids: ["PROC-003"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Authorized account configuration audits and identity assessment."
 references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
 translations:
-  spl: { path: "detections/rubeus/spl/rubeus_asrep_roast_sequence.spl", sha256: 9765f8064ea65fc7bbca88f3e0b1385e9beb7bfd5c370cdfdbbe9890b54e3a80, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/rubeus/kql/rubeus_asrep_roast_sequence.kql", sha256: ff738d7a84e4fca9bcf245c414f0615138f39d1589a40b52f9301c75a915e681, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/rubeus/sql/rubeus_asrep_roast_sequence.sql", sha256: b27d28f7f3d9671c20edb3a89241d262d986f4ce50fbde78753acb87fda8da13, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/rubeus/eql/rubeus_asrep_roast_sequence.eql", sha256: 2b69decc3e3c058aedbd09f229ecf18c5aeffe8a0e4ff1f4955c8d793ccba4e8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/rubeus/sigma/rubeus_asrep_roast_sequence.yml", sha256: 6cc9f0d0ce689a0005ba8ee56121ce6e127721e2d68ee6c27fd884d9fd0d44d6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/rubeus/spl/rubeus_asrep_roast_sequence.spl", sha256: d350344d2bd2c8733d41b10bbd33ba24b9e0ec27ee94942120b893e7023bfbcc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_asrep_roast_sequence.kql", sha256: a6e1d0d49b7f65a51da78701764812009d31c48420ef84b5bc239259f345b200, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_asrep_roast_sequence.sql", sha256: 2eb03f4b8adbd4a9a2d05200e1483d372d7710f21be166d28212c45db212d919, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_asrep_roast_sequence.eql", sha256: 55bb3f5e02a6eaed88a5925f4462bece95b6781c993bfbfdac4457c0ffa22af5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_asrep_roast_sequence.yml", sha256: d12c46c6d82443d79a6009dd6966f0e688a4fb238693b75b02786ffc9292956a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: chisel
 rule_name: chisel_recurrent_encrypted_process_egress
 canonical_path: detections/chisel/yaral/chisel_recurrent_encrypted_process_egress.yaral
-canonical_sha256: 20efdb9b2dbe6a6657d0b280315f335a9138cd7bded894df1fe7f5bdd659636f
+canonical_sha256: 1abcc69f313196efbd69096ebe0e2bafaf92ef7a330207e212ee044af1802dea
 description: "Detects recurrent encrypted egress by one process to a stable destination consistent with maintained tunnelling"
 severity: medium
 procedure_ids: ["CH-P01", "CH-P10"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Approved VPNs proxies remote support agents and application reconnect loops"
 references: "reports/chisel/source-analysis.md"
 translations:
-  spl: { path: "detections/chisel/spl/chisel_recurrent_encrypted_process_egress.spl", sha256: 9aa203235fa9cc1c54dfc7bb27e363f0e707f9218ce1a73819b043bdd9f4aa1e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/chisel/kql/chisel_recurrent_encrypted_process_egress.kql", sha256: 31029b3a541b338cb22d37338c29752787896c1ae821cb6ede9fa0e3ee3ac8f6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/chisel/sql/chisel_recurrent_encrypted_process_egress.sql", sha256: 0d9db6e52c419961858ac802ff21886b5c5b2c03b50afceeb057566e23d1ea44, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/chisel/eql/chisel_recurrent_encrypted_process_egress.eql", sha256: eb6c2f1a73c754926dc4d799acd0c3081cb3a388644f1d01577d3228b1123ed6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/chisel/sigma/chisel_recurrent_encrypted_process_egress.yml", sha256: 391c9520a7e42a2f2cbc86ec274c8d52863eae13de4683f4fe591ea5ea85b2a2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/chisel/spl/chisel_recurrent_encrypted_process_egress.spl", sha256: 6394a7451af9c35f46f4299773dad681ddaa9a8f76f813dc47b11e9cbfc0f117, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/chisel/kql/chisel_recurrent_encrypted_process_egress.kql", sha256: fd649bbfe77cd503284007bf6cb2fb9d3c56528ffb4a4a70b32277c99bc888c6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/chisel/sql/chisel_recurrent_encrypted_process_egress.sql", sha256: e475930ec8e11b9579a5c551cbc3b2961313978dd268e985051e06d7e33911bc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/chisel/eql/chisel_recurrent_encrypted_process_egress.eql", sha256: 6e09c32da9480a7ca14c268ca5067f19ba7621e464552ae658254b303d3dac4e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/chisel/sigma/chisel_recurrent_encrypted_process_egress.yml", sha256: 29216014e9f202495a00080989366c066d02dd30a3124c066e6521ce86318a60, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

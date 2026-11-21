@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: bloodhound
 rule_name: bloodhound_collection_archive_creation
 canonical_path: detections/bloodhound/yaral/bloodhound_collection_archive_creation.yaral
-canonical_sha256: dc6e25a0a562f74c40cbcd314b25b3b6f5466482c70b1b5f70c5a351fded3bd9
+canonical_sha256: d29593a20243efca16660f1f51b29ae786a84c1a6e99ff66911d188008d32827
 description: "Correlates multiple JSON or CSV file creations with archive creation by one process."
 severity: medium
 procedure_ids: ["BH-015"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Backup, export, packaging, browser download and administrative reporting software."
 references: "reports/bloodhound/source-analysis.md, public-rules/comparisons/bloodhound/bloodhound_collection_archive_creation.md"
 translations:
-  spl: { path: "detections/bloodhound/spl/bloodhound_collection_archive_creation.spl", sha256: 3144e8c9a981300e65f90a771d140bddd3ba2929cb24f29f7179e03cf2e4a6e6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/bloodhound/kql/bloodhound_collection_archive_creation.kql", sha256: 68c07c9a1b6089f62d7d30c7b4476e003fd1136aa4d9c378b8709083ef9196b5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/bloodhound/sql/bloodhound_collection_archive_creation.sql", sha256: 1849127fb8d550f7c7fca7c0a34769c857758f9a86ebfed62d27cb974c9ce9f3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/bloodhound/eql/bloodhound_collection_archive_creation.eql", sha256: 5c207e9efa824bddb61670ef35bce283b3abf0260c57da96da91a0305f6c6a76, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/bloodhound/sigma/bloodhound_collection_archive_creation.yml", sha256: 4f9544c646df37675dd38bf350a11ad9c1af5433715d9b487fa06370d3c9cab6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/bloodhound/spl/bloodhound_collection_archive_creation.spl", sha256: e4cbfe2a7ff49cfb040e462099ac19b2b4c3e4ee2c1484bf70cc51567c581c9d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/bloodhound/kql/bloodhound_collection_archive_creation.kql", sha256: 3ef5f8e88318db9f9d66b81b9af240ca02ac17a2163f4e60d393400e37a414c6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/bloodhound/sql/bloodhound_collection_archive_creation.sql", sha256: 3e1a480559b30a48c2c858dace50109b250f924d197ebe0ac345fe00546d03c9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/bloodhound/eql/bloodhound_collection_archive_creation.eql", sha256: 992f466c2d2636fdc607217333264b689d4d0de2435e7d90bf80dc68bf20aee9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/bloodhound/sigma/bloodhound_collection_archive_creation.yml", sha256: 959f3545e73412b023d7002d4dda5ef6e0b21f236f3ea04b28cde2d1de60467e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

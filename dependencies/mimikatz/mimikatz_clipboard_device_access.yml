@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_clipboard_device_access
 canonical_path: detections/mimikatz/yaral/mimikatz_clipboard_device_access.yaral
-canonical_sha256: de5ad4f6567bf56eda7162fd81685734e04cf7585481b96bf78c5f77f9e11f3a
+canonical_sha256: 90f428b2c0a99beb688fc5d3afb7c69208018a88c27bc44a655a907613e8fd8d
 description: "Surfaces vendor-reported clipboard or smartcard HID RF device access."
 severity: low
 procedure_ids: ["P34", "P42"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Normal clipboard, smartcard, HID and reader software."
 references: "reports/mimikatz/source-analysis.md"
 translations:
-  spl: { path: "detections/mimikatz/spl/mimikatz_clipboard_device_access.spl", sha256: dad8a2babf7fcd243bd011d22a08d72d760b8aaadf172bd0cfce84671e1a7e1f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/mimikatz/kql/mimikatz_clipboard_device_access.kql", sha256: b4a6ec72bd7bbdaa5b24e9a859ebd973f6ff09925fb0d3cc960005bd0df954f3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/mimikatz/sql/mimikatz_clipboard_device_access.sql", sha256: 4755a79a922d99a9cf9375a3067431a22fba32fbd201289a556374a724dc90e3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/mimikatz/eql/mimikatz_clipboard_device_access.eql", sha256: ea900d8c78f195007985975cbac080f2305a42cfc941529d112d40a5bf0961a4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/mimikatz/sigma/mimikatz_clipboard_device_access.yml", sha256: a59cd32f848f712566a3535edba6151885537a6c9559bd4d2720e75e1074dbbf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/mimikatz/spl/mimikatz_clipboard_device_access.spl", sha256: 7e07e7065fe49fe6057439db65d2bd1d9e8f9e8fcfb05efcaaebbf58bd01ec52, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_clipboard_device_access.kql", sha256: 56de5f781191e94d20e7cb1f02274fb33c3bc8850a34cb1758686074b9b9d95b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_clipboard_device_access.sql", sha256: 610ae28649b10a156f0ee7a524f8cb8073bd92416990f05b39ea36a66d0cce78, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_clipboard_device_access.eql", sha256: 3e52eeff801b9dc7a45b0fcd6d197d4b464ecbe97ad2aecc9a4361f24c351ae1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_clipboard_device_access.yml", sha256: 667c73bfb4a0a968ddc854b9d266f2af12ce7e0f5c76b221ae7352ea04c9d4ed, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

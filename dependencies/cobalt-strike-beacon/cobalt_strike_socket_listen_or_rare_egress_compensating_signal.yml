@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_socket_listen_or_rare_egress_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_listen_or_rare_egress_compensating_signal.yaral
-canonical_sha256: 8988223919bc15421679b450577a8223dc61859240972c1d20b9cfdbe05b2680
+canonical_sha256: fd4f0f6550e57261dfc66edc7a424bc5f646b3ae91d651b1bfa68b77ab4a710c
 description: "Correlates a rare-process socket listen with an accepted inbound connection on the same port and process, closing the gap between merely listening and actually receiving a connection that the base standalone-listen rule leaves open."
 severity: high
 procedure_ids: ["CSB-008"]

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_socket_fanout_or_forwarding
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_socket_fanout_or_forwarding.yaral
-canonical_sha256: f4306d22e89f8d278c2297348e33e03596efe44541a4a67b0fbc2e9e1b3c2660
+canonical_sha256: d9e574be1a559074193b2e3b478774c5abcbcfbfe55254d7dce3ab72711a9409
 description: "Detects a single uncommon process connecting to many distinct destinations as a SOCKS/forwarding/pivot hypothesis."
 severity: medium
 procedure_ids: ["CSB-009"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Browsers, scanners, proxies, EDR, backup, software distribution and orchestration agents."
 references: "reports/cobalt-strike-beacon/source-analysis.md"
 translations:
-  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_socket_fanout_or_forwarding.spl", sha256: cab5fd4e8e0161d83dba6842d8ace974473f5fb141d4ad6063e17442f1e5963e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_socket_fanout_or_forwarding.kql", sha256: d30a43048cef0d8615a3031cff85ce76ad27ba4890f50524ddf813ce3b3321eb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_socket_fanout_or_forwarding.sql", sha256: 6bdfd2e3a6ac925fbb6124169b84b350e0d3f49cce26eb7d6a5d2dd4ccd47a8e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_socket_fanout_or_forwarding.eql", sha256: e26851aad8e982fb33eca9fd5353b85b7b8c6fd2cf1eae10bea04de51f4c4292, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_socket_fanout_or_forwarding.yml", sha256: b9867a67638d57326f17b407160c7a00756137ca746275081f14669462c42efb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/cobalt-strike-beacon/spl/cobalt_strike_socket_fanout_or_forwarding.spl", sha256: d2874d3ff08d406eeffae06475661de0d6d2c1dd58bafedd0ca25c46f67b9d3f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/cobalt-strike-beacon/kql/cobalt_strike_socket_fanout_or_forwarding.kql", sha256: e5a20677be41374b7e5df170dedb9b66020c1a4fc330073ac308fd906d9be6c9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/cobalt-strike-beacon/sql/cobalt_strike_socket_fanout_or_forwarding.sql", sha256: 6f03787f8592ecef446f0d1573961c0a5247d8c474eeaf58a64e3bfdaada81d5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/cobalt-strike-beacon/eql/cobalt_strike_socket_fanout_or_forwarding.eql", sha256: 566b86967d20377f228495bc5caa7d346407e80cea2039182ce0abaaeae87b63, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/cobalt-strike-beacon/sigma/cobalt_strike_socket_fanout_or_forwarding.yml", sha256: caad32350effcf1d06b123a3c85e01a37228a333c47679fda4ae703bf7804965, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

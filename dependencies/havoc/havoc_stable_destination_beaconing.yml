@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_stable_destination_beaconing
 canonical_path: detections/havoc/yaral/havoc_stable_destination_beaconing.yaral
-canonical_sha256: 8cbfa1b6f19e05abc7c639af9bd2b4a6b0c0c602df7e646454003dfe923c33e0
+canonical_sha256: 58a6ab176f8832e2d1bcb6399831881709e35d4f92ffc9cc896f3a9d5b27d22b
 description: "A process repeatedly connects to the same destination across multiple active minutes"
 severity: high
 procedure_ids: ["HV-P01", "HV-P03"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Monitoring, update, VPN, messaging and management agents with stable services"
 references: "reports/havoc/source-analysis.md; public-rules/comparisons/havoc/havoc_recurrent_process_egress.md"
 translations:
-  spl: { path: "detections/havoc/spl/havoc_stable_destination_beaconing.spl", sha256: c574a2be48f4ebd7fbeb7b768b3bf7506f62454319a734400ea4af8050f0e5c6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/havoc/kql/havoc_stable_destination_beaconing.kql", sha256: 46bce16a6312e5555c8791550a8f0d8250b1854198dec8c71fe4889fd6ca8e52, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/havoc/sql/havoc_stable_destination_beaconing.sql", sha256: d927ed0667552e36676909f9415d2c175de9a7704c45eeeaeb4818c23cfe9a26, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/havoc/eql/havoc_stable_destination_beaconing.eql", sha256: 5c3a86744af11b8d6f825bfcc04819ca03dceecf923b93eef796fb75001f684b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/havoc/sigma/havoc_stable_destination_beaconing.yml", sha256: 2c6351d61d5f45b36e7f7b885276cd8db938abf541a4ffa2936f93f2dcc1857d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/havoc/spl/havoc_stable_destination_beaconing.spl", sha256: 9d6db659a43f775560b7aab907a52a570946654d4059bb7ec1a09067b8863e5d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_stable_destination_beaconing.kql", sha256: a1e5d6bdbfc3679e3c50bb38bd26a850038949da5283ac20d26f89fd52e8a11d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_stable_destination_beaconing.sql", sha256: 5116545f06198bb70acd0014d9ee043d2c304cba92856cc033035d9cec49b954, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_stable_destination_beaconing.eql", sha256: ae690f7d72893a54fb9ac7e62aeeff333ed77b9d8f2e86fe7e0efe3556a54f7d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_stable_destination_beaconing.yml", sha256: 695f0248ed29542e1e08686dfa65906387cbfddc3cda7efbde59a7badc6214c1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

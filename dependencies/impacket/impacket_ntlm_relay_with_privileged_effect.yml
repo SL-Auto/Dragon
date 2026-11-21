@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_ntlm_relay_with_privileged_effect
 canonical_path: detections/impacket/yaral/impacket_ntlm_relay_with_privileged_effect.yaral
-canonical_sha256: 26c3992b137c51bad1d44cd77871d2b535bd5e22b642029d668574b8669fa21e
+canonical_sha256: 7e380149430debcbc76766265771de27b0abb69ca5aa68bda8a1499667e5603e
 description: "Correlates NTLM authentication (4624/4776) with a privileged target-side effect (service install, account/group change, or AD authorization change) by the same account on the same host, requiring the target-side effect that the base cross-source relay rule does not."
 severity: critical
 procedure_ids: ["IMP-21"]

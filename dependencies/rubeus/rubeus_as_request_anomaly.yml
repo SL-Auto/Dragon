@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: rubeus
 rule_name: rubeus_as_request_anomaly
 canonical_path: detections/rubeus/yaral/rubeus_as_request_anomaly.yaral
-canonical_sha256: f0dd81bd806fe2289cdb753eb284a797732e2f5ec01dac4b32dbac999b5d2491
+canonical_sha256: 4d434e91e524c1ffdc07fc3fb1b1c4739068e5811f27c2393c76efbda746139d
 description: "Detects one source making AS requests for multiple principals or atypical preauthentication patterns."
 severity: high
 procedure_ids: ["PROC-001"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Identity monitoring, password audits, migration, and authorized assessment."
 references: "RUBEUS_SOURCE_DETECTION_DEEP_DIVE.md"
 translations:
-  spl: { path: "detections/rubeus/spl/rubeus_as_request_anomaly.spl", sha256: 89e3ea355dd1ceb8fce3b5939c3ed69ae125ba144a3827fc45235dfdd89a03b7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/rubeus/kql/rubeus_as_request_anomaly.kql", sha256: 3dce91066eb1cac252a9fd14a95db2cf430ec29ece400ee0418c20e1ba9aed87, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/rubeus/sql/rubeus_as_request_anomaly.sql", sha256: 408be64964c018936a7cb49ab410c63018ee3184f7041b8f2794994f4d20794b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/rubeus/eql/rubeus_as_request_anomaly.eql", sha256: 8007b5252aea6ad4ce726a09d0d79ff6a0d450b96f5ace898cf7afdc91b1e0b2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/rubeus/sigma/rubeus_as_request_anomaly.yml", sha256: 00324c764d2ba5a97ddb5225938f6802ecc4c89c7dfb3ce6f2996d6e322d4522, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/rubeus/spl/rubeus_as_request_anomaly.spl", sha256: 3ba573d388483f22082188ccc35f09c1899291bcad1708e355d5b45521896a76, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/rubeus/kql/rubeus_as_request_anomaly.kql", sha256: 0fa9b020daf5f094068ead93f89b246096dfb9d239bf4a2074286d5cedfeaf53, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/rubeus/sql/rubeus_as_request_anomaly.sql", sha256: 3afec3f2204901d6cfa60c3b415e468083ff041e3db71bf84aeac13c182ecb52, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/rubeus/eql/rubeus_as_request_anomaly.eql", sha256: fe50146502a8887b2eb0a2c051ae5531a2fb1050e36e8263d05d564831b6fa42, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/rubeus/sigma/rubeus_as_request_anomaly.yml", sha256: 79b4c3e4517358542360a958a86d3ab239851995a10cfebff87a1324aa13f681, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

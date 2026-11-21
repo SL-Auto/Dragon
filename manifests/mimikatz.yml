@@ -24,31 +24,31 @@ completion_states:
   secondary_translation: draft_complete
   rule_validation_labels: "19 needs_validation"
 artifact_hashes:
-  registry: 745ab0da2112877731d732ec359b8f894ca2572c615b3c5e19b46c2ac286e883
-  coverage: c07f3a9ac969c4aa14ebdf3a09fa57abbd34c2107fbb97dbf269527841f25c7a
-  report: 764ada6fa3d84d32437cb8aaae2bbcbde2a98f9a0ac1f9ff0c65b50e680c92fa
-  telemetry: 10c32df562816a484a4e9ddaec02b095acb04709b439b2b536c5ab2efbcf86a9
-  detection_review: fd7954706b0154f028cbd33cd8f3806ae81bb96721fb84d6f33c8c7e14e18e3f
-  translation_review: 27a76556a8fde8d6b55dcd215ca515630f1bc09e50eb97685bbe4f62cf7415c8
+  registry: 9c75dda74d8d2e504e70b5b119d8961f733d1f55eb544e13ccd697f701c1ac32
+  coverage: e0a42a8c8899e2b48f5248c146bb957eaeaa8bc8914802e3573196a255e74140
+  report: 20a5bb1808b093ce3e81a82f0bb0b2a52bbf3db518a1c7e950cf67b1410f2abc
+  telemetry: d09a6f61abc9a0890cfabde28e6a00bc14ac498443696a80d9a2f9043b473ce4
+  detection_review: 963e155e8971f6a5045fe79865f4d17c7110c090e612a64d839c939472d850c7
+  translation_review: 85b0f5db3b591d6e0101172ac18f04b9c495177f7574c38391a2f334ccc738c6
 rules:
-  - { name: mimikatz_account_secret_change, severity: medium, procedures: "P16", dependency: dependencies/mimikatz/mimikatz_account_secret_change.yml, canonical_sha256: 8557a02516ca4f324a882130003ff0f94076086d155674cbe8625618f585a235 }
-  - { name: mimikatz_certificate_key_operation, severity: medium, procedures: "P21,P24", dependency: dependencies/mimikatz/mimikatz_certificate_key_operation.yml, canonical_sha256: 829922260b60bfd26bfb02a74a801a808a4592ae056730d62eb6ddb1fa742ab5 }
-  - { name: mimikatz_clipboard_device_access, severity: low, procedures: "P34,P42", dependency: dependencies/mimikatz/mimikatz_clipboard_device_access.yml, canonical_sha256: de5ad4f6567bf56eda7162fd81685734e04cf7585481b96bf78c5f77f9e11f3a }
-  - { name: mimikatz_cross_process_tamper, severity: high, procedures: "P22,P27,P28,P32,P40", dependency: dependencies/mimikatz/mimikatz_cross_process_tamper.yml, canonical_sha256: 05feb95b5c55fdb307c796c89284857bffec1108dd7f1663f1de08d472b36ff5 }
-  - { name: mimikatz_directory_mutation, severity: high, procedures: "P15,P29", dependency: dependencies/mimikatz/mimikatz_directory_mutation.yml, canonical_sha256: a757f81d55b727f8e6e3cb9a3cca0cd1741532890b4baf53a9f774635cee9c9d }
-  - { name: mimikatz_directory_network_discovery, severity: low, procedures: "P30", dependency: dependencies/mimikatz/mimikatz_directory_network_discovery.yml, canonical_sha256: 911e94333d5e9f1dff6e621bf54bdc140e147d469d3693721fc08d2c57186ad8 }
-  - { name: mimikatz_directory_replication_right_access, severity: high, procedures: "P14", dependency: dependencies/mimikatz/mimikatz_directory_replication_right_access.yml, canonical_sha256: 6297573cc3d1cb2a4c4fc2315dd0e3b3340441439ad135f716c3505c8fe31a9b }
-  - { name: mimikatz_event_log_impairment, severity: high, procedures: "P26", dependency: dependencies/mimikatz/mimikatz_event_log_impairment.yml, canonical_sha256: b592c31c8ed2a036c2bab3fa3564fb1c6f92280cddc23ef08c85e23290640264 }
-  - { name: mimikatz_firmware_driver_operation, severity: high, procedures: "P39,P43", dependency: dependencies/mimikatz/mimikatz_firmware_driver_operation.yml, canonical_sha256: 476adf2b80e5f1cf28316a66d035fe3cb4ccc80aef72b127f8e40e2de3753a8e }
-  - { name: mimikatz_kerberos_activity, severity: low, procedures: "P10", dependency: dependencies/mimikatz/mimikatz_kerberos_activity.yml, canonical_sha256: 712a17e3db3e1ad97e9fcd05bc34b8b4dadcc40cd12186e1399aa0ec4e0900a3 }
-  - { name: mimikatz_lsass_memory_access, severity: high, procedures: "P07,P09,P13", dependency: dependencies/mimikatz/mimikatz_lsass_memory_access.yml, canonical_sha256: 8a784cedc1b519e4d425ececbcfaae0d5dde1a446fbec808f5ae386c7b0d6b30 }
-  - { name: mimikatz_module_load_into_lsass_or_spooler, severity: high, procedures: "P06,P36,P44,P45", dependency: dependencies/mimikatz/mimikatz_module_load_into_lsass_or_spooler.yml, canonical_sha256: 3b27dd3e2fe4e0eae91835fa89941eb3a4c82688dc633498954532368eb5af1d }
-  - { name: mimikatz_process_file_context, severity: low, procedures: "P01,P31,P33", dependency: dependencies/mimikatz/mimikatz_process_file_context.yml, canonical_sha256: b6dc0442c739f122f77b04452694e15f9dda9d2ef98967bae0c8937a3e516e28 }
-  - { name: mimikatz_protected_sam_system_access_sequence, severity: high, procedures: "P12", dependency: dependencies/mimikatz/mimikatz_protected_sam_system_access_sequence.yml, canonical_sha256: 3ccb68efc488e04938d08d9ad8080e9eff10bd398c13dabba02fa16990a46850 }
-  - { name: mimikatz_rpc_pipe_activity, severity: medium, procedures: "P35,P38", dependency: dependencies/mimikatz/mimikatz_rpc_pipe_activity.yml, canonical_sha256: 072afb5588b98f2279b9366583af01c67e1fa065b3cb4ed5558e9b4266e6e785 }
-  - { name: mimikatz_sensitive_store_access, severity: medium, procedures: "P18,P19,P20,P23,P25,P37,P41,P46", dependency: dependencies/mimikatz/mimikatz_sensitive_store_access.yml, canonical_sha256: 42178bad29b53d23cdabb1efdc6876757736e118f66f3dc868218dcfbc8679b7 }
-  - { name: mimikatz_sensitive_store_multi_family_access, severity: high, procedures: "P18,P19,P20,P23,P25,P37,P41,P46", dependency: dependencies/mimikatz/mimikatz_sensitive_store_multi_family_access.yml, canonical_sha256: 69425346059ca4891843ef1772ff67d42b29f4e9622d341bdf43e55dda72edba }
-  - { name: mimikatz_service_driver_module_change, severity: high, procedures: "P06,P36,P44,P45", dependency: dependencies/mimikatz/mimikatz_service_driver_module_change.yml, canonical_sha256: 31e3f1c51234bad06a08d0cda572f7a282eb4e0c1eeaf378c7779f63a851622e }
-  - { name: mimikatz_token_process_control, severity: medium, procedures: "P02,P03,P04,P05", dependency: dependencies/mimikatz/mimikatz_token_process_control.yml, canonical_sha256: 5b00a49a1a649d33d06aea737017ba9a4a1b8e6cccd807fe3a02caf5abb780d6 }
+  - { name: mimikatz_account_secret_change, severity: medium, procedures: "P16", dependency: dependencies/mimikatz/mimikatz_account_secret_change.yml, canonical_sha256: 66d0f40e547f3f9e2415dab8bd67adac1528b43f9044d9d108d9b10e37db07c3 }
+  - { name: mimikatz_certificate_key_operation, severity: medium, procedures: "P21,P24", dependency: dependencies/mimikatz/mimikatz_certificate_key_operation.yml, canonical_sha256: 64f823ae73143b204d48f14c9f3530e6f419df149598fad403fac9dcae5c98a6 }
+  - { name: mimikatz_clipboard_device_access, severity: low, procedures: "P34,P42", dependency: dependencies/mimikatz/mimikatz_clipboard_device_access.yml, canonical_sha256: 90f428b2c0a99beb688fc5d3afb7c69208018a88c27bc44a655a907613e8fd8d }
+  - { name: mimikatz_cross_process_tamper, severity: high, procedures: "P22,P27,P28,P32,P40", dependency: dependencies/mimikatz/mimikatz_cross_process_tamper.yml, canonical_sha256: a38a789e828bbee2cb81b49f7d770f42310125a86fa30f5217b320f2af5ec6e6 }
+  - { name: mimikatz_directory_mutation, severity: high, procedures: "P15,P29", dependency: dependencies/mimikatz/mimikatz_directory_mutation.yml, canonical_sha256: 1e8ef5724c3c4aef7943ccda999a965a78b32c614efc0e99b80db63a6e1ded33 }
+  - { name: mimikatz_directory_network_discovery, severity: low, procedures: "P30", dependency: dependencies/mimikatz/mimikatz_directory_network_discovery.yml, canonical_sha256: 3508e662457a5bd1194b63aa5506393a5f84f30cb4f7595956ab669828f4dce7 }
+  - { name: mimikatz_directory_replication_right_access, severity: high, procedures: "P14", dependency: dependencies/mimikatz/mimikatz_directory_replication_right_access.yml, canonical_sha256: 48426cdb816f0bc8a41c5185ef7a13778977fe5c811cdb69695b6b399475934e }
+  - { name: mimikatz_event_log_impairment, severity: high, procedures: "P26", dependency: dependencies/mimikatz/mimikatz_event_log_impairment.yml, canonical_sha256: b8b872e7353cf5f75c0c80aea0db8b904202b6030ed126f3eba26029188a2a6f }
+  - { name: mimikatz_firmware_driver_operation, severity: high, procedures: "P39,P43", dependency: dependencies/mimikatz/mimikatz_firmware_driver_operation.yml, canonical_sha256: 2b4d48eac086f718eb23b625aea716bce51c8cd2c89f319e6276bf1b52fb70d7 }
+  - { name: mimikatz_kerberos_activity, severity: low, procedures: "P10", dependency: dependencies/mimikatz/mimikatz_kerberos_activity.yml, canonical_sha256: 5dff37a4aaae23268f0933645c816692994c3368a872a5e4be9c7d2540df41db }
+  - { name: mimikatz_lsass_memory_access, severity: high, procedures: "P07,P09,P13", dependency: dependencies/mimikatz/mimikatz_lsass_memory_access.yml, canonical_sha256: 17540bc7231d2699bc6e55b65575428886667b0966a58fa57a3e48c3cdddbd9a }
+  - { name: mimikatz_module_load_into_lsass_or_spooler, severity: high, procedures: "P06,P36,P44,P45", dependency: dependencies/mimikatz/mimikatz_module_load_into_lsass_or_spooler.yml, canonical_sha256: 92c8c794ad8d9815c6ab0323bdb0371005e6bc89071cabe85b46ea0e2045f4bc }
+  - { name: mimikatz_process_file_context, severity: low, procedures: "P01,P31,P33", dependency: dependencies/mimikatz/mimikatz_process_file_context.yml, canonical_sha256: d5f6a552854c45dd35f954e592a3089a05bc9847b59ee2b002984c525c9620ab }
+  - { name: mimikatz_protected_sam_system_access_sequence, severity: high, procedures: "P12", dependency: dependencies/mimikatz/mimikatz_protected_sam_system_access_sequence.yml, canonical_sha256: d4d6f914ea4840b15803abae0b4f1b0ddef6087d9e4bfcd1410261e11a7d09d2 }
+  - { name: mimikatz_rpc_pipe_activity, severity: medium, procedures: "P35,P38", dependency: dependencies/mimikatz/mimikatz_rpc_pipe_activity.yml, canonical_sha256: 6bb03378b9960d016c2932e76188871f41f151eb60634129776b1cbf280581ac }
+  - { name: mimikatz_sensitive_store_access, severity: medium, procedures: "P18,P19,P20,P23,P25,P37,P41,P46", dependency: dependencies/mimikatz/mimikatz_sensitive_store_access.yml, canonical_sha256: f4710227535755d648847d96bc42e510f28af20c39a4918653a82ae2b33695db }
+  - { name: mimikatz_sensitive_store_multi_family_access, severity: high, procedures: "P18,P19,P20,P23,P25,P37,P41,P46", dependency: dependencies/mimikatz/mimikatz_sensitive_store_multi_family_access.yml, canonical_sha256: c95d984e8ba1b873442375b4d9f00de8a16a2a45360e356a7fa541abdd7b37a8 }
+  - { name: mimikatz_service_driver_module_change, severity: high, procedures: "P06,P36,P44,P45", dependency: dependencies/mimikatz/mimikatz_service_driver_module_change.yml, canonical_sha256: ce72ba590fb61851ce24039865f6d39941a6dcb8d2f60112fd0f5d9869427288 }
+  - { name: mimikatz_token_process_control, severity: medium, procedures: "P02,P03,P04,P05", dependency: dependencies/mimikatz/mimikatz_token_process_control.yml, canonical_sha256: e9728e2f4dbf4549ffdbb5eeb103f151038f72cd1c2e1386f352725420f6e099 }
 unresolved:
   source_blockers: 0

@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_user_data_collection_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_user_data_collection_compensating_signal.yaral
-canonical_sha256: 78676c2198e4944fbd3315aee5d8655dc08843a2b569613ede13577f0fcfca74
+canonical_sha256: dead6c2dfb7af42bf62c1f2d070136dac6c94d63cd1cc0e668f609daec101152
 description: "Correlates a user-data collection effect (screen, clipboard, input, or browser-secret) with an outbound network connection from the same process shortly afterward, distinguishing collection-then-egress from a single benign access that the base standalone-effect rule cannot separate."
 severity: high
 procedure_ids: ["CSB-027"]

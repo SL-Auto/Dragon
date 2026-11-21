@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: impacket
 rule_name: impacket_remote_account_or_group_change
 canonical_path: detections/impacket/yaral/impacket_remote_account_or_group_change.yaral
-canonical_sha256: 02cff3f9aa8195a9317319d10fa293662392aaab705ffe68fb43eb075814008e
+canonical_sha256: 805d6708eb0f6ac631bfb9a9dc0543b5947e4a9ee138ff9f85a6fbae03b26a70
 description: "Detects account, computer and group membership changes associated with a network-originating logon."
 severity: high
 procedure_ids: ["IMP-07"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Identity lifecycle and delegated administration."
 references: "reports/impacket/source-analysis.md"
 translations:
-  spl: { path: "detections/impacket/spl/impacket_remote_account_or_group_change.spl", sha256: a91a826b9e87a7e0ddd006e4fec3de48d7f20d7d42b2a0ff8d214266f2f7846d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/impacket/kql/impacket_remote_account_or_group_change.kql", sha256: df07c7f6a4f5321837c4d443f6fe66d285da631abbd33e9b4673d1bfa092ee20, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/impacket/sql/impacket_remote_account_or_group_change.sql", sha256: 2061a89260d916552301240deee5178777889249a310c010e1bca87855a543bd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/impacket/eql/impacket_remote_account_or_group_change.eql", sha256: 9d3c8859337c4bbb0b69c1c8287d888daecfc62844858f0be52d331d0603d98f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/impacket/sigma/impacket_remote_account_or_group_change.yml", sha256: 53f770290ca81399ca8e5bb9b9016fdd1600452ac8574780fb8c4e9379763bcc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/impacket/spl/impacket_remote_account_or_group_change.spl", sha256: 76706e685caca14226be95269af56e6dac86418de416a63a80a99c10809e6aeb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/impacket/kql/impacket_remote_account_or_group_change.kql", sha256: 07ee44370656c0266473394cc3d619b1fe9922fb0c84be3c6190ff3c11cc715e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/impacket/sql/impacket_remote_account_or_group_change.sql", sha256: d3869358e175e6ad99c3a1b26b7bd771dd0f21101a26cb7e487190368ee332d4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/impacket/eql/impacket_remote_account_or_group_change.eql", sha256: d1bbcab87ef7f32919359c701b976c5597dfdfc6c7b91df40ce3ee2ac4a164fa, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/impacket/sigma/impacket_remote_account_or_group_change.yml", sha256: e18a810e20c2b943b6f093a9bb7b5613fbb6c4146b09226ae3232392e189ed5a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

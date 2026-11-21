@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: cobalt-strike-beacon
 rule_name: cobalt_strike_service_or_integrity_transition_compensating_signal
 canonical_path: detections/cobalt-strike-beacon/yaral/cobalt_strike_service_or_integrity_transition_compensating_signal.yaral
-canonical_sha256: ac432f5971b73b3b8629fb8f80027a15a6a8019dcb5cbd5b91a83eecc79d465b
+canonical_sha256: 78aefc5dc5f445aca3eb0fb719b91a2c3b54c1a52231fd2e88d447e831d1a058
 description: "Detects a process launch reaching SYSTEM integrity whose parent process is unsigned or rare and is not an approved elevation broker, providing the causal parent/child relationship that the base rule's standalone 4697/7045/integrity-transition signal does not require."
 severity: high
 procedure_ids: ["CSB-020"]

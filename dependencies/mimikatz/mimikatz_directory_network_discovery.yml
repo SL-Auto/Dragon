@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_directory_network_discovery
 canonical_path: detections/mimikatz/yaral/mimikatz_directory_network_discovery.yaral
-canonical_sha256: 911e94333d5e9f1dff6e621bf54bdc140e147d469d3693721fc08d2c57186ad8
+canonical_sha256: 3508e662457a5bd1194b63aa5506393a5f84f30cb4f7595956ab669828f4dce7
 description: "Surfaces high-volume LDAP or RPC discovery reported by network or endpoint sensors."
 severity: low
 procedure_ids: ["P30"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Inventory, identity, monitoring and administration tools."
 references: "reports/mimikatz/source-analysis.md"
 translations:
-  spl: { path: "detections/mimikatz/spl/mimikatz_directory_network_discovery.spl", sha256: 84eb2a610ce5880247dfb44c1b3206f2442d8a2f2d54d169f697e15d983b2238, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/mimikatz/kql/mimikatz_directory_network_discovery.kql", sha256: fdf6904a302ab4e05304281c45e5263eea52c844c188c6d95ef4e13e71dda557, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/mimikatz/sql/mimikatz_directory_network_discovery.sql", sha256: e29497858dbc43e21c8b4d56f1c20f372d28cb716d40fffbeeb820c4c4126610, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/mimikatz/eql/mimikatz_directory_network_discovery.eql", sha256: 47758cc3118a748d3b4dbc9f74f9a5f7cae8ac987e8df8a0623194c221b3033b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/mimikatz/sigma/mimikatz_directory_network_discovery.yml", sha256: 1f5739665ad3731a9a76fb1222fb241fc784742448785380c50a70878de9027d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/mimikatz/spl/mimikatz_directory_network_discovery.spl", sha256: 774d7466ea8a0f1b5a9a1a039bf0acaee351033503be7dac8ecd25e0b3965d06, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_directory_network_discovery.kql", sha256: 8d895fd2445e072f81be1fa5f5bad330227b77645d446d6c9dd8ff46928d015e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_directory_network_discovery.sql", sha256: 0f303783e523f269f805888ad62c18a0d47a3b99704cf4bd72d6ef5b4698e6b2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_directory_network_discovery.eql", sha256: 876e78d2d08c39bc357af2234f6f6be2cb24b8415dc241255796760d0c1c6b23, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_directory_network_discovery.yml", sha256: 7e5d5f52f91df16817cd541acd2cc0da3618bfd5073d7f6c950b877f617f041a, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

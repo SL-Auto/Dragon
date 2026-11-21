@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: chisel
 rule_name: chisel_proxy_destination_fanout
 canonical_path: detections/chisel/yaral/chisel_proxy_destination_fanout.yaral
-canonical_sha256: 976e0625147149cf8b04c75cfe6e2af38c82f671fad5e32690cc55174ccc3a86
+canonical_sha256: 90d6b84ac1a5892ef54fc864fad915163065f870306c2ae14da5d1edf28bfe30
 description: "Detects one uncommon process connecting to many destinations after listener activity consistent with a dynamic proxy"
 severity: high
 procedure_ids: ["CH-P05", "CH-P07"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Browsers update agents security scanners service meshes and approved proxies"
 references: "reports/chisel/source-analysis.md"
 translations:
-  spl: { path: "detections/chisel/spl/chisel_proxy_destination_fanout.spl", sha256: ad40179e9f8c9279ef77a05b777e4774879366f71ecb0d936335c42842d0b432, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/chisel/kql/chisel_proxy_destination_fanout.kql", sha256: f2ae5fdf47bb1ba9015656c2fd0c13ac2bb150ef2bcd6a99faa23f5af752fb47, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/chisel/sql/chisel_proxy_destination_fanout.sql", sha256: 1da906a787f4145185e2df81e8f51824620817b73501f9b609c6b8479865d4db, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/chisel/eql/chisel_proxy_destination_fanout.eql", sha256: a7d7cc9f6cdccd568edf77b232033177a77a05100c24fecf55cfa4625a48f96e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/chisel/sigma/chisel_proxy_destination_fanout.yml", sha256: 267708b79b067f18d229d31cc332ebee2db8f088c7995cb00cf80066f3191bda, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/chisel/spl/chisel_proxy_destination_fanout.spl", sha256: 3d96999b54266442c4bf9a1613d92d24943392f5352aa3a9a39e6d2e73895bdf, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/chisel/kql/chisel_proxy_destination_fanout.kql", sha256: 7d1fcaa9c9db4f477dbe64f808dad8b9262b90ce36e5810128b806ed4ee7e4f8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/chisel/sql/chisel_proxy_destination_fanout.sql", sha256: 4a278406341b0d50517dadc9f86fd4c5c834ff1e127960e1e9ed090e06eb3f64, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/chisel/eql/chisel_proxy_destination_fanout.eql", sha256: e77af6a63a3e1753aa053ff95b287c92f9cbcbaed09a2d0ab2d07d6160c4f0d5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/chisel/sigma/chisel_proxy_destination_fanout.yml", sha256: addd25ba3f18dea03329fefbecca134f23402a9f60951d610a5e6ea5f38572fd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

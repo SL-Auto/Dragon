@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: havoc
 rule_name: havoc_token_authentication_sequence
 canonical_path: detections/havoc/yaral/havoc_token_authentication_sequence.yaral
-canonical_sha256: 070e236a3aacbe0f47c42ef4f6f600001e340d15fd6d7220c2c647daac97335c
+canonical_sha256: fd1f4115a1db451e52e8dbb0ff638e335ed82c1c054bc03a1fd1e9302e3b260a
 description: "Explicit-credential or token-manipulation activity is followed by execution under the same account"
 severity: high
 procedure_ids: ["HV-P12"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "RunAs, service accounts, deployment and approved administrative automation"
 references: "reports/havoc/source-analysis.md"
 translations:
-  spl: { path: "detections/havoc/spl/havoc_token_authentication_sequence.spl", sha256: c448da4b50821efc0951b55f23a30c1261103351edea2a89de3dad67033a27ae, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/havoc/kql/havoc_token_authentication_sequence.kql", sha256: 82fad506dd451a41fcc9ca354e65ec1399506cb314ef2cffb60cda7e7cf276a6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/havoc/sql/havoc_token_authentication_sequence.sql", sha256: 9f5084d9ce2bd9e352e6e2bd1c25040ac03317a9222871ea76b4c9f05596b244, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/havoc/eql/havoc_token_authentication_sequence.eql", sha256: 0bf1ad91319c66e88c515205347ea04b795a51e3ae4cde057aaa73c335111309, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/havoc/sigma/havoc_token_authentication_sequence.yml", sha256: d08006919394725de32fa20c6c0cd183db3207dc00816f78f32fb6f3b64518dc, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/havoc/spl/havoc_token_authentication_sequence.spl", sha256: 50ed4c152a4e9d979ea36a9b0906d07d2020a593ea5496894475aa0398c462bd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/havoc/kql/havoc_token_authentication_sequence.kql", sha256: faafd60ccf1f57968b335942993c03a19b127756994b3d033e85a308d016c067, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/havoc/sql/havoc_token_authentication_sequence.sql", sha256: 6b2de2c5022410b11983d964eb43d8cfaee2fb120366f0ada654152d0f560d07, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/havoc/eql/havoc_token_authentication_sequence.eql", sha256: 766d421e4f13616a3165c6732cca1cc0b85486f8021b421dc9818be82ab36f68, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/havoc/sigma/havoc_token_authentication_sequence.yml", sha256: fe29687445528f6faa36fdc3da8574754bf8b48b51bc279f44af3a33b8e8894d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

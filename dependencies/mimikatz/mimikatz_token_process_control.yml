@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_token_process_control
 canonical_path: detections/mimikatz/yaral/mimikatz_token_process_control.yaral
-canonical_sha256: 5b00a49a1a649d33d06aea737017ba9a4a1b8e6cccd807fe3a02caf5abb780d6
+canonical_sha256: e9728e2f4dbf4549ffdbb5eeb103f151038f72cd1c2e1386f352725420f6e099
 description: "Detects endpoint-reported token manipulation, parent override or sensitive process control."
 severity: medium
 procedure_ids: ["P02", "P03", "P04", "P05"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Security, support, accessibility and process-broker software."
 references: "reports/mimikatz/source-analysis.md"
 translations:
-  spl: { path: "detections/mimikatz/spl/mimikatz_token_process_control.spl", sha256: 3552218d00a1de71228d7d4d579a91e980776b33ceafc31b079108911c15b0ee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/mimikatz/kql/mimikatz_token_process_control.kql", sha256: d87a95dcce50782a582bd7430a045c35e65ba00791cdf9fceba6c4f0bc059eae, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/mimikatz/sql/mimikatz_token_process_control.sql", sha256: 4ae91abb1c7a3eeeb927474189a935d49656c427ef13becbf3d1d5fca621e157, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/mimikatz/eql/mimikatz_token_process_control.eql", sha256: e04f14bf88d16a12caf3123be192717a17f6244c7a1a03bd3c4ddca9698fc2cd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/mimikatz/sigma/mimikatz_token_process_control.yml", sha256: a8be49f47d61556f36d4190a76b78aaa02a498bd87c64e19d432af3e31405c8d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/mimikatz/spl/mimikatz_token_process_control.spl", sha256: 1748ec0edd6b38074d10cca0d19abdba59e81d0a487c40be9a7f897ea891eff2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_token_process_control.kql", sha256: f03dc3fc600ae31fcb51ffd614d4e839e859f018b1a17d0be5476a85bcd91d67, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_token_process_control.sql", sha256: 46035316e2376b581fde2387bf849894ff7d030e891905660976e6d0038686f5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_token_process_control.eql", sha256: a1e27808471f6f4c50f0521f1242e21e6892c9fe7aad3717d8bf7db81b24ee40, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_token_process_control.yml", sha256: 4e1747064a35906e1a005840120acd82af333061f1e9b99d4b341f2064542e78, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

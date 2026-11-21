@@ -2,7 +2,7 @@ schema_version: 1
 tool_id: mimikatz
 rule_name: mimikatz_directory_replication_right_access
 canonical_path: detections/mimikatz/yaral/mimikatz_directory_replication_right_access.yaral
-canonical_sha256: 6297573cc3d1cb2a4c4fc2315dd0e3b3340441439ad135f716c3505c8fe31a9b
+canonical_sha256: 48426cdb816f0bc8a41c5185ef7a13778977fe5c811cdb69695b6b399475934e
 description: "Detects directory replication extended-right access for contextual triage; approved DC and sync context must be applied as narrow downstream enrichment."
 severity: high
 procedure_ids: ["P14"]
@@ -17,8 +17,8 @@ uses_absence_logic: false
 false_positives: "Approved identity synchronization, migration, backup, recovery, and directory-health products."
 references: "reports/mimikatz/source-analysis.md; https://learn.microsoft.com/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4662"
 translations:
-  spl: { path: "detections/mimikatz/spl/mimikatz_directory_replication_right_access.spl", sha256: da257231066c4ab4bed7d0f75e66cea879cbc4884f35474e37d217ff1a6883a9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  kql: { path: "detections/mimikatz/kql/mimikatz_directory_replication_right_access.kql", sha256: de12bab4f1a65f98be2f0771dce083978467a696ba38e53e60eef3f735091bd8, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sql: { path: "detections/mimikatz/sql/mimikatz_directory_replication_right_access.sql", sha256: d5a88189b87f12cfaf6fc3c545e878a7ce166a6dabb9e62119e621368784015d, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  eql: { path: "detections/mimikatz/eql/mimikatz_directory_replication_right_access.eql", sha256: af90439c2f5b70c8d9f79069c2dfdee236383b25f74c1f8c5b55963f87f112a2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
-  sigma: { path: "detections/mimikatz/sigma/mimikatz_directory_replication_right_access.yml", sha256: a724c6cad18b6ad90e12e2067f9fc43ff12e76eaa3c6401f8a84993fd9522fba, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  spl: { path: "detections/mimikatz/spl/mimikatz_directory_replication_right_access.spl", sha256: 0a1a5146bcefca60ec4995671f0065d9c6eccfc7cf3243fc5b20a41852b20d84, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/mimikatz/kql/mimikatz_directory_replication_right_access.kql", sha256: be28f9a58fa85112a8601bb8f2d7002169d4245fb7de11165d75c750e8fdbc41, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/mimikatz/sql/mimikatz_directory_replication_right_access.sql", sha256: 8108730fda7e45f89b114eb8de49f67df015e864376b7f6b14bf9a9775eeb481, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/mimikatz/eql/mimikatz_directory_replication_right_access.eql", sha256: c35f386cf8b11653894618e6e444821a5266dc9d8f14e1342ce4b690fb4c8ac2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/mimikatz/sigma/mimikatz_directory_replication_right_access.yml", sha256: d880c11bf2e2353c243fecb4678e8a250bd5f928aa883ac063d4662b89ddd7ee, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
