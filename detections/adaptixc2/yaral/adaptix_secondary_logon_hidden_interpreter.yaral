@@ -1,0 +1,29 @@
+rule adaptix_secondary_logon_hidden_interpreter {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects a command interpreter whose parent is the Secondary Logon service (svchost with seclogon) and whose creating process is not consent or runas, the effect of executing a command with a stolen token through CreateProcessWithTokenW."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Token-based process creation through seclogon is used by implants after impersonation; legitimate runas also uses it, so creator context matters."
+    procedure_ids = "AX-P05"
+    log_source_prerequisites = "PROCESS_LAUNCH (Sysmon Event ID 1) with parent command line and image; Security 4688 with creator process where available."
+    false_positives = "Administrators using runas or Run as different user; software installers elevating with alternate credentials."
+    references = "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized seclogon-parented interpreter launches with and without runas context."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/adaptixc2/detection-review.md"
+  events:
+    $c.metadata.event_type = "PROCESS_LAUNCH"
+    $c.principal.hostname = $host
+    re.regex($c.principal.process.command_line, `(?i)svchost\.exe.*seclogon`)
+    re.regex($c.target.process.file.full_path, `(?i)\\(cmd|powershell|pwsh|rundll32|regsvr32|mshta)\.exe$`)
+  match:
+    $host over 30m
+  outcome:
+    $command_lines = array_distinct($c.target.process.command_line)
+    $users = array_distinct($c.target.user.userid)
+  condition:
+    $c
+}

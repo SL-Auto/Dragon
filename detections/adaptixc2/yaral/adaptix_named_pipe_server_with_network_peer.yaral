@@ -1,0 +1,34 @@
+rule adaptix_named_pipe_server_with_network_peer {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects an unverified, non-system process creating a named pipe that is then connected to over the network (SMB pipe access from a remote host, or a pipe connection by another host within 30 minutes), the SMB peer-to-peer transport."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Unsigned processes serving named pipes to remote peers are uncommon; this is how SMB pivots chain agents."
+    procedure_ids = "AX-P03"
+    log_source_prerequisites = "Sysmon Event ID 17 (pipe created, NAMED_PIPE_CREATION) and 18 (pipe connected) with pipe name and image, and Windows Security 5145 (IPC$ named-pipe access) with relative target name and source address."
+    false_positives = "Line-of-business services and security agents exposing named pipes to remote management."
+    references = "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized Sysmon Event ID 17 by an unsigned process and a matching 5145 from a remote source."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/adaptixc2/detection-review.md"
+  events:
+    $p.metadata.product_event_type = "17"
+    $p.principal.hostname = $host
+    not re.regex($p.principal.process.file.full_path, `(?i)\\windows\\(system32|syswow64)\\`)
+    $p.target.resource.name = $pipe
+
+    $s.metadata.product_event_type = "5145"
+    re.regex($s.target.resource.attribute.labels["share_name"], `(?i)IPC\$`)
+    $s.target.hostname = $host
+    $s.target.resource.name = $pipe
+  match:
+    $host, $pipe over 30m
+  outcome:
+    $remote_sources = array_distinct($s.principal.ip)
+    $images = array_distinct($p.principal.process.file.full_path)
+  condition:
+    $p and $s
+}

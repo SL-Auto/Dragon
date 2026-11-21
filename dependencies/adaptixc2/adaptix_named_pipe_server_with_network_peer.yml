@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: adaptixc2
+rule_name: adaptix_named_pipe_server_with_network_peer
+canonical_path: detections/adaptixc2/yaral/adaptix_named_pipe_server_with_network_peer.yaral
+canonical_sha256: e170f9b7e8864fc6091b0ce7cc86fa632143dcb2e559bc66d5bac591d72778fb
+description: "Detects an unverified, non-system process creating a named pipe that is then connected to over the network (SMB pipe access from a remote host, or a pipe connection by another host within 30 minutes), the SMB peer-to-peer transport."
+severity: high
+procedure_ids: ["AX-P03"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Sysmon Event ID 17 (pipe created, NAMED_PIPE_CREATION) and 18 (pipe connected) with pipe name and image, and Windows Security 5145 (IPC$ named-pipe access) with relative target name and source address."
+atomic_event_types: ["17", "5145"]
+required_udm_fields: ["metadata.product_event_type", "principal.hostname", "principal.ip", "principal.process.file.full_path", "target.hostname", "target.resource.attribute.labels", "target.resource.name"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Line-of-business services and security agents exposing named pipes to remote management."
+references: "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+translations:
+  spl: { path: "detections/adaptixc2/spl/adaptix_named_pipe_server_with_network_peer.spl", sha256: 98fcd8ab4e19db839d2b949211435cba2b781db3ac95747d062c6b7319fe6b05, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/adaptixc2/kql/adaptix_named_pipe_server_with_network_peer.kql", sha256: b3291d7c2aca84742bb3e6df964af72b2762ce0a01a22ad572196c0e79dbb909, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/adaptixc2/sql/adaptix_named_pipe_server_with_network_peer.sql", sha256: c5a006ec158973022bf842d529857e8d84f6fc64e80cf3505ef81380a7f6080b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/adaptixc2/eql/adaptix_named_pipe_server_with_network_peer.eql", sha256: 4fcf8bb4c8e5f4ab49d07a49e6afc4ab2d37b59addd82d23786bccc78bb34c99, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/adaptixc2/sigma/adaptix_named_pipe_server_with_network_peer.yml", sha256: a98b79655516c4ec789c8e1e83bf55f8937f488961030041dc0b14503a5f8a44, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

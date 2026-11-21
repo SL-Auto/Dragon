@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: adaptixc2
+rule_name: adaptix_tunnel_internal_fanout
+canonical_path: detections/adaptixc2/yaral/adaptix_tunnel_internal_fanout.yaral
+canonical_sha256: c0c9f5724af33a181724ea2a60aac24a33ba61928aef412bc68faef9111299c3
+description: "Detects an unverified process that holds external egress while connecting to ten or more distinct internal hosts or ports within 15 minutes, the effect of agent SOCKS or port-forward tunnels."
+severity: high
+procedure_ids: ["AX-P09"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id", "target.ip", "target.port"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Unsigned management agents and scanners with internet egress."
+references: "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+translations:
+  spl: { path: "detections/adaptixc2/spl/adaptix_tunnel_internal_fanout.spl", sha256: d69932c0d3456b6e66bd9708654d3c1baaa681f52fe57c284204b610e6a180de, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/adaptixc2/kql/adaptix_tunnel_internal_fanout.kql", sha256: eaf3dfa21741ecc6d1191215dd747d7d8c94b626e0bc649be5f57caca9b2ca3c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/adaptixc2/sql/adaptix_tunnel_internal_fanout.sql", sha256: b4100b03008cf26681d1c437977b7376409046cd69ea8b70638b5f59028a389e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/adaptixc2/eql/adaptix_tunnel_internal_fanout.eql", sha256: d043c559f4d21f301a2d9c2b1ce1d94441146f3a68feb9b44f5b54670dfcba60, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/adaptixc2/sigma/adaptix_tunnel_internal_fanout.yml", sha256: a81be8aa1a7f2d7da952471e2538ade64668619aae4f9d9c095d496676f9a42f, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,22 @@
+-- source_yaral: detections/adaptixc2/yaral/adaptix_secondary_logon_hidden_interpreter.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: high
+-- rule_name: adaptix_secondary_logon_hidden_interpreter
+-- severity: medium
+-- procedure_ids: AX-P05
+-- description: Detects a command interpreter whose parent is the Secondary Logon service (svchost with seclogon) and whose creating process is not consent or runas, the effect of executing a command with a stolen token through CreateProcessWithTokenW.
+-- log_source_prerequisites: PROCESS_LAUNCH (Sysmon Event ID 1) with parent command line and image; Security 4688 with creator process where available.
+-- false_positives: Administrators using runas or Run as different user; software installers elevating with alternate credentials.
+-- references: reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md
+-- schema_profile: schemas/normalized-sql.yml
+-- field_mapping: normalized columns (event_type, hostname, parent_command_line, process_path, command_line, user_id); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+-- assumptions_and_gaps: Native filter, grouping by hostname and threshold. Hop window approximated by scheduling every 10 minutes over the trailing 30 minutes. Regex and interval syntax are dialect-specific.
+-- Schema assumption: normalized_events with columns event_time, event_type, hostname, parent_command_line, process_path, command_line, user_id.
+SELECT hostname, COUNT(*) AS matched_count, 'adaptix_secondary_logon_hidden_interpreter' AS canonical_rule
+FROM normalized_events
+WHERE event_time >= CURRENT_TIMESTAMP - INTERVAL '30' MINUTE
+  AND event_type = 'PROCESS_LAUNCH'
+  AND REGEXP_LIKE(parent_command_line, 'svchost\.exe.*seclogon', 'i')
+  AND REGEXP_LIKE(process_path, '\\(cmd|powershell|pwsh|rundll32|regsvr32|mshta)\.exe$', 'i')
+GROUP BY hostname
+HAVING COUNT(*) >= 1;

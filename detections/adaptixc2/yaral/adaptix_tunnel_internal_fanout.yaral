@@ -1,0 +1,44 @@
+rule adaptix_tunnel_internal_fanout {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects an unverified process that holds external egress while connecting to ten or more distinct internal hosts or ports within 15 minutes, the effect of agent SOCKS or port-forward tunnels."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "HIGH"
+    severity_rationale = "Relaying operator traffic makes the agent process fan out internally while keeping its C2 channel."
+    procedure_ids = "AX-P09"
+    log_source_prerequisites = "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status."
+    false_positives = "Unsigned management agents and scanners with internet egress."
+    references = "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized flows of one process with external egress plus ten internal destinations."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/adaptixc2/detection-review.md"
+  events:
+    $up.metadata.event_type = "NETWORK_CONNECTION"
+    $up.network.direction = "OUTBOUND"
+    $up.principal.hostname = $host
+    $up.principal.process.product_specific_process_id = $pid
+    not net.ip_in_range_cidr($up.target.ip, "10.0.0.0/8")
+    not net.ip_in_range_cidr($up.target.ip, "172.16.0.0/12")
+    not net.ip_in_range_cidr($up.target.ip, "192.168.0.0/16")
+    not net.ip_in_range_cidr($up.target.ip, "127.0.0.0/8")
+    $up.principal.process.file.signature_info.verification_status != "VERIFIED"
+
+    $in.metadata.event_type = "NETWORK_CONNECTION"
+    $in.network.direction = "OUTBOUND"
+    $in.principal.hostname = $host
+    $in.principal.process.product_specific_process_id = $pid
+    (
+      net.ip_in_range_cidr($in.target.ip, "10.0.0.0/8") or
+      net.ip_in_range_cidr($in.target.ip, "172.16.0.0/12") or
+      net.ip_in_range_cidr($in.target.ip, "192.168.0.0/16")
+    )
+  match:
+    $host, $pid over 15m
+  outcome:
+    $internal_hosts = count_distinct($in.target.ip)
+    $internal_ports = count_distinct($in.target.port)
+  condition:
+    $up and $in and ($internal_hosts >= 10 or $internal_ports >= 10)
+}

@@ -1,0 +1,39 @@
+rule adaptix_tcp_bind_listener_with_internal_peer {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects an unverified process that opens a listening TCP socket and accepts a connection from an internal host within 30 minutes, the TCP bind transport used for chaining agents."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Unsigned processes accepting internal peers can be pivot links; development servers overlap."
+    procedure_ids = "AX-P03,AX-P09"
+    log_source_prerequisites = "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status. LISTEN and INBOUND events must be logged."
+    false_positives = "Developer tools, peer-to-peer and collaboration software."
+    references = "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized LISTEN and INBOUND events for one unsigned process."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/adaptixc2/detection-review.md"
+  events:
+    $l.metadata.event_type = "NETWORK_CONNECTION"
+    $l.network.direction = "LISTEN"
+    $l.principal.hostname = $host
+    $l.principal.process.product_specific_process_id = $pid
+    $l.principal.process.file.signature_info.verification_status != "VERIFIED"
+
+    $a.metadata.event_type = "NETWORK_CONNECTION"
+    $a.network.direction = "INBOUND"
+    $a.principal.hostname = $host
+    $a.principal.process.product_specific_process_id = $pid
+    (
+      net.ip_in_range_cidr($a.principal.ip, "10.0.0.0/8") or
+      net.ip_in_range_cidr($a.principal.ip, "172.16.0.0/12") or
+      net.ip_in_range_cidr($a.principal.ip, "192.168.0.0/16")
+    )
+  match:
+    $host, $pid over 30m
+  outcome:
+    $peers = array_distinct($a.principal.ip)
+  condition:
+    $l and $a
+}

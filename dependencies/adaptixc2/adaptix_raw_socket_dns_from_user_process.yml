@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: adaptixc2
+rule_name: adaptix_raw_socket_dns_from_user_process
+canonical_path: detections/adaptixc2/yaral/adaptix_raw_socket_dns_from_user_process.yaral
+canonical_sha256: 5f4556e97298db4eacf64e2dfcc35cae6f43d858bae0a9cce0166474c1017a2c
+description: "Detects a user-mode process other than the Windows DNS Client sending recurrent UDP/53 traffic directly to a resolver (six or more connections across four or more minutes within 30 minutes). This is the raw-socket DNS transport, which bypasses the DNS Client service and Sysmon DNS query logging."
+severity: high
+procedure_ids: ["AX-P02"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status. UDP must be logged."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "metadata.id", "network.ip_protocol", "principal.hostname", "principal.process.file.full_path", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id", "target.ip", "target.port"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Security agents, VPN clients and browsers with built-in DNS-over-UDP resolvers; approve by signer."
+references: "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+translations:
+  spl: { path: "detections/adaptixc2/spl/adaptix_raw_socket_dns_from_user_process.spl", sha256: 3dedebf354beb19ab1cc05c09af4b9ed696b0b537aa5bb1d31bdb7dab80e3aed, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/adaptixc2/kql/adaptix_raw_socket_dns_from_user_process.kql", sha256: 6b3e8d081890e232dca7bee34d020ba5eb59028f1eca7a4797574801e302f8cd, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/adaptixc2/sql/adaptix_raw_socket_dns_from_user_process.sql", sha256: 0098caaf5b1fd57c97601ba677464746099eed07efd76eba4974f53fc04e6e21, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/adaptixc2/eql/adaptix_raw_socket_dns_from_user_process.eql", sha256: 7f2705dd6666fddf1a3430b1cc4ab2b9cad178be4b4094f3125c281829f6a0a6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/adaptixc2/sigma/adaptix_raw_socket_dns_from_user_process.yml", sha256: c471be2b5d4e11371f58760ad7f58ab323a5be4256593414a41d857a60d4bfd4, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

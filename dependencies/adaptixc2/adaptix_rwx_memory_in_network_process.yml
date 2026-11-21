@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: adaptixc2
+rule_name: adaptix_rwx_memory_in_network_process
+canonical_path: detections/adaptixc2/yaral/adaptix_rwx_memory_in_network_process.yaral
+canonical_sha256: 5bb9d7067ea6ddb52f09d7bcdce2eeae8584e8bd8a817d9cab47af39fcd5599f
+description: "Detects an EDR-reported private read-write-execute memory allocation in an unverified process that has made outbound connections within 10 minutes, the effect of in-memory BOF and COFF loading."
+severity: medium
+procedure_ids: ["AX-P06"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR memory-protection telemetry normalized as product event type MEMORY_PROTECTION or VIRTUAL_ALLOC with protection in additional.fields['protection'], plus process-attributed NETWORK_CONNECTION; vendor-specific."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["additional.fields", "metadata.event_type", "metadata.id", "metadata.product_event_type", "network.direction", "principal.hostname", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "JIT-compiling runtimes and packed legitimate software."
+references: "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+translations:
+  spl: { path: "detections/adaptixc2/spl/adaptix_rwx_memory_in_network_process.spl", sha256: dbdafafadbb156c23652e8c70f988f5a02aaaba8a9f34cd2c148045057323dec, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/adaptixc2/kql/adaptix_rwx_memory_in_network_process.kql", sha256: 3d08891ac2a1eb9b29007b8496dd5f1c56d9345b4f83debdd76ba49339bdc6c3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/adaptixc2/sql/adaptix_rwx_memory_in_network_process.sql", sha256: eb74e785b21619502bd383ff1d7d1b58c5f756e2408ddfb9b1c2b63b9999e623, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/adaptixc2/eql/adaptix_rwx_memory_in_network_process.eql", sha256: 0720126c08f7db60aea648ad6647827d313c0202635d05babfdd5fbb110f7f25, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/adaptixc2/sigma/adaptix_rwx_memory_in_network_process.yml", sha256: c185aa2a1814d6d50a88418bd2e1e3ab2b6d54e402c42a4f00d9c1ff17f0a9a0, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

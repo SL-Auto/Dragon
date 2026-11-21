@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: adaptixc2
+rule_name: adaptix_tcp_bind_listener_with_internal_peer
+canonical_path: detections/adaptixc2/yaral/adaptix_tcp_bind_listener_with_internal_peer.yaral
+canonical_sha256: bf90ff432b25a4a19f63c9726b83a36ba8c9f8921646add5da79129790009cb9
+description: "Detects an unverified process that opens a listening TCP socket and accepts a connection from an internal host within 30 minutes, the TCP bind transport used for chaining agents."
+severity: medium
+procedure_ids: ["AX-P03", "AX-P09"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status. LISTEN and INBOUND events must be logged."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.ip", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Developer tools, peer-to-peer and collaboration software."
+references: "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+translations:
+  spl: { path: "detections/adaptixc2/spl/adaptix_tcp_bind_listener_with_internal_peer.spl", sha256: f173286de2588b1e0f92fad729d24b662fe214d75c79f64e0eeb7b929b01a537, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/adaptixc2/kql/adaptix_tcp_bind_listener_with_internal_peer.kql", sha256: bbaf73f0dd44b06544c54bee6e70ba5cb7af79e61bbee8cd7c5a40bc2a5a3ef3, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/adaptixc2/sql/adaptix_tcp_bind_listener_with_internal_peer.sql", sha256: 071922e551882a5eacfacea12c85fc1337026ac67d5b38198bc2a4aced751b0b, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/adaptixc2/eql/adaptix_tcp_bind_listener_with_internal_peer.eql", sha256: 2cbf6f494ae273a63a90d59e8159da775c57d19dec78e17f893cc2ad44698dd7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/adaptixc2/sigma/adaptix_tcp_bind_listener_with_internal_peer.yml", sha256: ef4dd2bd483698fc67176b248f63b3892859bf154539bc2230427cab15dd45d5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

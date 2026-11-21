@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: adaptixc2
+analyzed_revision: e99535c9ef4642190f7ea125c2983d1611f1a3f3
+inventory_method: victim-side beacon (C/C++) and gopher (Go) agents mapped command by command, including transports, pivots, tunnels and in-memory execution
+inventory_complete: true
+inventory_evidence: [reports/adaptixc2/source-analysis.md]
+excluded_paths:
+  - { path: "AdaptixServer core, beacon_listener_*, gopher_listener_tcp", reason: team server and listeners on operator infrastructure; read only to interpret transports }
+  - { path: AdaptixClient, reason: operator client }
+  - { path: "Dockerfile docker-compose.yml pre_install_linux_all.sh Makefile", reason: operator build and deployment }
+  - { path: "beacon_agent/src_beacon/files/stub.x64.bin and stub.x86.bin", reason: compiled shellcode stubs deleted unopened under the sample-safety policy }
+procedures:
+  - { id: AX-P01, name: HTTP(S) transport, telemetry_status: assessed, detection_status: detected, detection_rules: [adaptix_recurrent_process_egress] }
+  - { id: AX-P02, name: raw-socket DNS transport, telemetry_status: assessed, detection_status: detected, detection_rules: [adaptix_raw_socket_dns_from_user_process] }
+  - { id: AX-P03, name: SMB and TCP peer-to-peer transports and pivots, telemetry_status: assessed, detection_status: detected, detection_rules: [adaptix_named_pipe_server_with_network_peer, adaptix_tcp_bind_listener_with_internal_peer] }
+  - { id: AX-P04, name: Gopher TCP transport, telemetry_status: assessed, detection_status: detected, detection_rules: [adaptix_recurrent_process_egress] }
+  - { id: AX-P05, name: command and process execution, telemetry_status: assessed, detection_status: detected, detection_rules: [adaptix_network_process_spawns_child, adaptix_secondary_logon_hidden_interpreter] }
+  - { id: AX-P06, name: in-memory BOF execution, telemetry_status: assessed, detection_status: detected, detection_rules: [adaptix_rwx_memory_in_network_process] }
+  - { id: AX-P07, name: file operations and transfer, telemetry_status: assessed, detection_status: detected, detection_rules: [adaptix_network_process_archive_staging] }
+  - { id: AX-P08, name: process and host discovery, telemetry_status: not_observable, detection_status: not_observable, detection_rules: [], compensating_signal: "API-only; use transport and child-process rules" }
+  - { id: AX-P09, name: tunnels and SOCKS, telemetry_status: assessed, detection_status: detected, detection_rules: [adaptix_tunnel_internal_fanout, adaptix_tcp_bind_listener_with_internal_peer] }
+  - { id: AX-P10, name: screenshot, telemetry_status: assessed, detection_status: detected, detection_rules: [adaptix_screen_capture_then_egress] }
+  - { id: AX-P11, name: agent lifecycle and runtime, telemetry_status: not_observable, detection_status: not_observable, detection_rules: [], compensating_signal: "sleep and hashing leave no discrete event; transport recurrence rules" }
+completion: { total_procedures: 11, detected: 9, not_observable: 2, blocked_source: 0, unassessed: 0, comprehensive_for_revision: true }

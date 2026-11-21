@@ -1,0 +1,32 @@
+rule adaptix_recurrent_process_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects an unverified process making five or more outbound connections to the same destination across four or more distinct minutes within 1 hour, the polling of an HTTP(S) or TCP agent transport."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Agent polling recurs to one destination; legitimate software also polls, so signer filtering and destination context are needed."
+    procedure_ids = "AX-P01,AX-P04"
+    log_source_prerequisites = "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status."
+    false_positives = "Unsigned updaters, telemetry agents and custom line-of-business software."
+    references = "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized recurrent connections from one process to one destination; baseline unsigned software."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/adaptixc2/detection-review.md"
+  events:
+    $e.metadata.event_type = "NETWORK_CONNECTION"
+    $e.network.direction = "OUTBOUND"
+    $e.principal.hostname = $host
+    $e.principal.process.product_specific_process_id = $pid
+    $e.target.ip = $destination
+    $e.principal.process.file.signature_info.verification_status != "VERIFIED"
+  match:
+    $host, $pid, $destination over 1h
+  outcome:
+    $connections = count($e.metadata.id)
+    $active_minutes = count_distinct(timestamp.get_minute($e.metadata.event_timestamp.seconds))
+    $process = array_distinct($e.principal.process.file.full_path)
+  condition:
+    $e and $connections >= 5 and $active_minutes >= 4
+}

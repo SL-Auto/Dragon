@@ -1,0 +1,18 @@
+# source_yaral: detections/adaptixc2/yaral/adaptix_secondary_logon_hidden_interpreter.yaral
+# translation_status: experimental_needs_backend_mapping_and_validation
+# fidelity: high
+# rule_name: adaptix_secondary_logon_hidden_interpreter
+# severity: medium
+# procedure_ids: AX-P05
+# description: Detects a command interpreter whose parent is the Secondary Logon service (svchost with seclogon) and whose creating process is not consent or runas, the effect of executing a command with a stolen token through CreateProcessWithTokenW.
+# log_source_prerequisites: PROCESS_LAUNCH (Sysmon Event ID 1) with parent command line and image; Security 4688 with creator process where available.
+# false_positives: Administrators using runas or Run as different user; software installers elevating with alternate credentials.
+# references: reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md
+# schema_profile: schemas/splunk-cim.yml
+# field_mapping: normalized columns (event_type, hostname, parent_command_line, process_path, command_line, user_id); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+# assumptions_and_gaps: Native filter, grouping by hostname and threshold. Hop window approximated by scheduling every 10 minutes over the trailing 30 minutes.
+| search index=<configured_index> earliest=-30m@m latest=now
+| where event_type=="PROCESS_LAUNCH" AND match(parent_command_line, "(?i)svchost\\.exe.*seclogon") AND match(process_path, "(?i)\\\\(cmd|powershell|pwsh|rundll32|regsvr32|mshta)\\.exe$")
+| stats count as matched_count values(command_line) as command_line_values values(user_id) as user_id_values by hostname
+| where matched_count >= 1
+| eval canonical_rule="adaptix_secondary_logon_hidden_interpreter"

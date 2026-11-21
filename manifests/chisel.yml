@@ -24,7 +24,7 @@ completion_states:
   secondary_translation: draft_complete
   rule_validation_labels: "5 needs_validation"
 artifact_hashes:
-  registry: 1117b032a217bd91194661b6333a876baf878d02335203ea9000fb6154ac0c97
+  registry: a1f91f0e0546349340ba18d2eec9848b64e48b6e42d02ad3f1ee36dc1ad4b13c
   coverage: e5084e5634d917b4bbaff66514f8267d2ea00099816d395df2a26453338804e8
   report: 95d5a1deb31c5b67bdfc56a6f0b2e638b7ee76c63b2e8bf05b0c67729a20a16a
   telemetry: ca96572ae2948558365fbb526ae2a1fbc2d403361da3ff0dce7d875fa22b213b

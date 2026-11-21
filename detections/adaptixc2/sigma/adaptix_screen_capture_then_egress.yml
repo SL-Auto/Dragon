@@ -1,0 +1,22 @@
+title: "Detects an EDR screen-capture event in an unverified process that also makes outbound connections within 10 minutes, the Gopher screenshot command."
+name: adaptix_screen_capture_then_egress
+status: experimental
+description: "Detects an EDR screen-capture event in an unverified process that also makes outbound connections within 10 minutes, the Gopher screenshot command."
+source_yaral: "detections/adaptixc2/yaral/adaptix_screen_capture_then_egress.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+procedure_ids: "AX-P10"
+log_source_prerequisites: "EDR screen-capture telemetry (vendor event normalized as SCREEN_CAPTURE) plus process-attributed NETWORK_CONNECTION."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "SCREEN_CAPTURE"]
+  condition: selection_event_type
+falsepositives:
+  - "Screen-sharing, recording and remote-support tools."
+level: medium

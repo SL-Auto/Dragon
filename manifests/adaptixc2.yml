@@ -1,27 +1,45 @@
 schema_version: 1
 tool_id: adaptixc2
 name: "AdaptixC2"
-lifecycle_status: discovered
-analyzed_revision: "unknown"
+lifecycle_status: analyzed
+analyzed_revision: "e99535c9ef4642190f7ea125c2983d1611f1a3f3"
 context_entry_points:
   registry: registry/tools.yml
+  summary: summaries/adaptixc2.md
+  coverage: coverage/adaptixc2.yml
+  report: reports/adaptixc2/source-analysis.md
+  telemetry: telemetry/adaptixc2.md
 counts:
-  procedures: 0
-  canonical_rules: 0
-  spl_translations: 0
-  kql_translations: 0
-  sql_translations: 0
-  eql_translations: 0
-  sigma_translations: 0
+  procedures: 11
+  canonical_rules: 10
+  spl_translations: 10
+  kql_translations: 10
+  sql_translations: 10
+  eql_translations: 10
+  sigma_translations: 10
 completion_states:
-  source_analysis: incomplete
-  canonical_detection: not_started
-  telemetry_reconciliation: not_started
-  secondary_translation: not_started
-  rule_validation_labels: "not_applicable"
+  source_analysis: complete
+  canonical_detection: complete
+  telemetry_reconciliation: complete_for_experimental_rules
+  secondary_translation: draft_complete
+  rule_validation_labels: "10 needs_validation"
 artifact_hashes:
-  registry: 1117b032a217bd91194661b6333a876baf878d02335203ea9000fb6154ac0c97
+  registry: a1f91f0e0546349340ba18d2eec9848b64e48b6e42d02ad3f1ee36dc1ad4b13c
+  coverage: 2a820341aff70d3c62f31540cc71d1216dd9cbb9baabaea68d4e51bb59c3058b
+  report: fb7bb2b6c111af9e8d0acf050c88deab285c82f930a4fff1fc24f6bb40d4314c
+  telemetry: a1627f8bb348a4a1fff4d03565c00a1c5c0c9488d1ab3f990cf507616d5087ad
+  detection_review: 4e3b3a4c9152ce78c205a32e97ea38310dd5272ec9013806e596c9710d88759c
+  translation_review: 140059a876e332a2bf23fb8eb050407d190889fbd725d1704750ec9b2bd023f6
 rules:
-  []
+  - { name: adaptix_named_pipe_server_with_network_peer, severity: high, procedures: "AX-P03", dependency: dependencies/adaptixc2/adaptix_named_pipe_server_with_network_peer.yml, canonical_sha256: e170f9b7e8864fc6091b0ce7cc86fa632143dcb2e559bc66d5bac591d72778fb }
+  - { name: adaptix_network_process_archive_staging, severity: medium, procedures: "AX-P07", dependency: dependencies/adaptixc2/adaptix_network_process_archive_staging.yml, canonical_sha256: 63816d5c787bc11a602079bad5fc57801f4569108ec93f6a32190491f8539cc7 }
+  - { name: adaptix_network_process_spawns_child, severity: medium, procedures: "AX-P05", dependency: dependencies/adaptixc2/adaptix_network_process_spawns_child.yml, canonical_sha256: dfd792943e07483789fe09b2827c52a14b6c24e9c8c697decedd1f347c782b31 }
+  - { name: adaptix_raw_socket_dns_from_user_process, severity: high, procedures: "AX-P02", dependency: dependencies/adaptixc2/adaptix_raw_socket_dns_from_user_process.yml, canonical_sha256: 5f4556e97298db4eacf64e2dfcc35cae6f43d858bae0a9cce0166474c1017a2c }
+  - { name: adaptix_recurrent_process_egress, severity: medium, procedures: "AX-P01,AX-P04", dependency: dependencies/adaptixc2/adaptix_recurrent_process_egress.yml, canonical_sha256: 0ac17d90adb6bbed60c8fc120a75bbd9164938f19938f80c54f7be65b23672f8 }
+  - { name: adaptix_rwx_memory_in_network_process, severity: medium, procedures: "AX-P06", dependency: dependencies/adaptixc2/adaptix_rwx_memory_in_network_process.yml, canonical_sha256: 5bb9d7067ea6ddb52f09d7bcdce2eeae8584e8bd8a817d9cab47af39fcd5599f }
+  - { name: adaptix_screen_capture_then_egress, severity: medium, procedures: "AX-P10", dependency: dependencies/adaptixc2/adaptix_screen_capture_then_egress.yml, canonical_sha256: 3021bfc236edda171f69af4c29aa910d44b0ea30aa88350fa213f9ed16b1b344 }
+  - { name: adaptix_secondary_logon_hidden_interpreter, severity: medium, procedures: "AX-P05", dependency: dependencies/adaptixc2/adaptix_secondary_logon_hidden_interpreter.yml, canonical_sha256: 05359a38ede1d35dde87b0b451cbe016f7fd30032d7c1fd086defe4fb56d96fa }
+  - { name: adaptix_tcp_bind_listener_with_internal_peer, severity: medium, procedures: "AX-P03,AX-P09", dependency: dependencies/adaptixc2/adaptix_tcp_bind_listener_with_internal_peer.yml, canonical_sha256: bf90ff432b25a4a19f63c9726b83a36ba8c9f8921646add5da79129790009cb9 }
+  - { name: adaptix_tunnel_internal_fanout, severity: high, procedures: "AX-P09", dependency: dependencies/adaptixc2/adaptix_tunnel_internal_fanout.yml, canonical_sha256: c0c9f5724af33a181724ea2a60aac24a33ba61928aef412bc68faef9111299c3 }
 unresolved:
   source_blockers: 0

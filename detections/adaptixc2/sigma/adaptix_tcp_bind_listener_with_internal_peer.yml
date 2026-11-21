@@ -1,0 +1,22 @@
+title: "Detects an unverified process that opens a listening TCP socket and accepts a connection from an internal host within 30 minutes, the TCP bind transport used for chaining agents."
+name: adaptix_tcp_bind_listener_with_internal_peer
+status: experimental
+description: "Detects an unverified process that opens a listening TCP socket and accepts a connection from an internal host within 30 minutes, the TCP bind transport used for chaining agents."
+source_yaral: "detections/adaptixc2/yaral/adaptix_tcp_bind_listener_with_internal_peer.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+procedure_ids: "AX-P03,AX-P09"
+log_source_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status. LISTEN and INBOUND events must be logged."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Developer tools, peer-to-peer and collaboration software."
+level: medium

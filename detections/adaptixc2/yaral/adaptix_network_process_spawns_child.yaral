@@ -1,0 +1,36 @@
+rule adaptix_network_process_spawns_child {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects an unverified process that has made outbound connections within the previous 15 minutes spawning a command interpreter or system utility, the effect of agent run, execute and shell commands."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Agents execute operator commands as children of the implant process; unsigned network processes spawning interpreters are uncommon."
+    procedure_ids = "AX-P05"
+    log_source_prerequisites = "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status. PROCESS_LAUNCH with parent process ID and image."
+    false_positives = "Unsigned installers and developer tools that run shell commands after downloading."
+    references = "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized egress followed by an interpreter child from the same process."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/adaptixc2/detection-review.md"
+  events:
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+    $n.principal.process.file.signature_info.verification_status != "VERIFIED"
+
+    $c.metadata.event_type = "PROCESS_LAUNCH"
+    $c.principal.hostname = $host
+    $c.principal.process.product_specific_process_id = $pid
+    re.regex($c.target.process.file.full_path, `(?i)(\\(cmd|powershell|pwsh|whoami|net|net1|nltest|tasklist|ipconfig|systeminfo)\.exe|/(ba|z|da)?sh|/(id|whoami|uname|ps)$)`)
+
+    $n.metadata.event_timestamp.seconds <= $c.metadata.event_timestamp.seconds
+  match:
+    $host, $pid over 15m
+  outcome:
+    $children = array_distinct($c.target.process.command_line)
+  condition:
+    $n and $c
+}

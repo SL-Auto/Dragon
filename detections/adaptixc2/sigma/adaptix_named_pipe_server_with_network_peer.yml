@@ -1,0 +1,22 @@
+title: "Detects an unverified, non-system process creating a named pipe that is then connected to over the network (SMB pipe access from a remote host, or a pipe connection by another host within 30 minutes), the SMB peer-to-peer transport."
+name: adaptix_named_pipe_server_with_network_peer
+status: experimental
+description: "Detects an unverified, non-system process creating a named pipe that is then connected to over the network (SMB pipe access from a remote host, or a pipe connection by another host within 30 minutes), the SMB peer-to-peer transport."
+source_yaral: "detections/adaptixc2/yaral/adaptix_named_pipe_server_with_network_peer.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+procedure_ids: "AX-P03"
+log_source_prerequisites: "Sysmon Event ID 17 (pipe created, NAMED_PIPE_CREATION) and 18 (pipe connected) with pipe name and image, and Windows Security 5145 (IPC$ named-pipe access) with relative target name and source address."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["17", "5145"]
+  condition: selection_event_type
+falsepositives:
+  - "Line-of-business services and security agents exposing named pipes to remote management."
+level: high

@@ -1,0 +1,22 @@
+title: "Detects an unverified process that has made outbound connections within the previous 15 minutes spawning a command interpreter or system utility, the effect of agent run, execute and shell commands."
+name: adaptix_network_process_spawns_child
+status: experimental
+description: "Detects an unverified process that has made outbound connections within the previous 15 minutes spawning a command interpreter or system utility, the effect of agent run, execute and shell commands."
+source_yaral: "detections/adaptixc2/yaral/adaptix_network_process_spawns_child.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+procedure_ids: "AX-P05"
+log_source_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status. PROCESS_LAUNCH with parent process ID and image."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION", "PROCESS_LAUNCH"]
+  condition: selection_event_type
+falsepositives:
+  - "Unsigned installers and developer tools that run shell commands after downloading."
+level: medium

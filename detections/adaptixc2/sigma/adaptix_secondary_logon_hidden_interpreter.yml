@@ -1,0 +1,40 @@
+title: "Detects a command interpreter whose parent is the Secondary Logon service (svchost with seclogon) and whose creating process is not consent or runas, the effect of executing a command with a stolen token through CreateProcessWithTokenW."
+name: adaptix_secondary_logon_hidden_interpreter_base
+status: experimental
+description: "Detects a command interpreter whose parent is the Secondary Logon service (svchost with seclogon) and whose creating process is not consent or runas, the effect of executing a command with a stolen token through CreateProcessWithTokenW."
+source_yaral: "detections/adaptixc2/yaral/adaptix_secondary_logon_hidden_interpreter.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: high
+schema_profile: schemas/sigma.yml
+field_mapping: "normalized columns (event_type, hostname, parent_command_line, process_path, command_line, user_id); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name"
+assumptions_and_gaps: "Base rule plus Sigma correlation for the threshold. "
+references:
+  - "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+procedure_ids: "AX-P05"
+log_source_prerequisites: "PROCESS_LAUNCH (Sysmon Event ID 1) with parent command line and image; Security 4688 with creator process where available."
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  sel:
+    event_type: "PROCESS_LAUNCH"
+    parent_command_line|re: "(?i)svchost\\.exe.*seclogon"
+    process_path|re: "(?i)\\\\(cmd|powershell|pwsh|rundll32|regsvr32|mshta)\\.exe$"
+  condition: sel
+falsepositives:
+  - "Administrators using runas or Run as different user; software installers elevating with alternate credentials."
+level: medium
+---
+title: "Detects a command interpreter whose parent is the Secondary Logon service (svchost with seclogon) and whose creating process is not consent or runas, the effect of executing a command with a stolen token through CreateProcessWithTokenW."
+name: adaptix_secondary_logon_hidden_interpreter
+status: experimental
+correlation:
+  type: event_count
+  rules:
+    - adaptix_secondary_logon_hidden_interpreter_base
+  group-by:
+    - hostname
+  timespan: 30m
+  condition:
+    gte: 1
+level: medium

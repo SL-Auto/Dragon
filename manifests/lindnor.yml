@@ -20,7 +20,7 @@ completion_states:
   secondary_translation: not_started
   rule_validation_labels: "not_applicable"
 artifact_hashes:
-  registry: 1117b032a217bd91194661b6333a876baf878d02335203ea9000fb6154ac0c97
+  registry: a1f91f0e0546349340ba18d2eec9848b64e48b6e42d02ad3f1ee36dc1ad4b13c
 rules:
   []
 unresolved:

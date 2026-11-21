@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: adaptixc2
+rule_name: adaptix_network_process_spawns_child
+canonical_path: detections/adaptixc2/yaral/adaptix_network_process_spawns_child.yaral
+canonical_sha256: dfd792943e07483789fe09b2827c52a14b6c24e9c8c697decedd1f347c782b31
+description: "Detects an unverified process that has made outbound connections within the previous 15 minutes spawning a command interpreter or system utility, the effect of agent run, execute and shell commands."
+severity: medium
+procedure_ids: ["AX-P05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status. PROCESS_LAUNCH with parent process ID and image."
+atomic_event_types: ["NETWORK_CONNECTION", "PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "network.direction", "principal.hostname", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id", "target.process.command_line", "target.process.file.full_path"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Unsigned installers and developer tools that run shell commands after downloading."
+references: "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+translations:
+  spl: { path: "detections/adaptixc2/spl/adaptix_network_process_spawns_child.spl", sha256: 84832837583baaae19d1a21810110a604ef132b5292be96192e8a3c9178fb284, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/adaptixc2/kql/adaptix_network_process_spawns_child.kql", sha256: 7e44d1aecc9be33e3c2599fa1d6ef61c71ce33fdb298bc2b4b7291d0af1772fa, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/adaptixc2/sql/adaptix_network_process_spawns_child.sql", sha256: cc2301e0d3dd0d17a775b1db49519069a566e8c3c50fd516ba772aa68e7082aa, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/adaptixc2/eql/adaptix_network_process_spawns_child.eql", sha256: 434a29d31fdca5b735c92145d92d14af9724574d7fec8631f7d7d9af039fdb07, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/adaptixc2/sigma/adaptix_network_process_spawns_child.yml", sha256: bf0162a015ef106233915d48a8411e9566135201fb3732d258ce9eac1746437c, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

@@ -1,0 +1,33 @@
+rule adaptix_screen_capture_then_egress {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects an EDR screen-capture event in an unverified process that also makes outbound connections within 10 minutes, the Gopher screenshot command."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "Screen capture by an unsigned network process is collection; screen-sharing software overlaps."
+    procedure_ids = "AX-P10"
+    log_source_prerequisites = "EDR screen-capture telemetry (vendor event normalized as SCREEN_CAPTURE) plus process-attributed NETWORK_CONNECTION."
+    false_positives = "Screen-sharing, recording and remote-support tools."
+    references = "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized SCREEN_CAPTURE and egress events for one process; confirm the vendor event exists."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/adaptixc2/detection-review.md"
+  events:
+    $s.metadata.product_event_type = "SCREEN_CAPTURE"
+    $s.principal.hostname = $host
+    $s.principal.process.product_specific_process_id = $pid
+    $s.principal.process.file.signature_info.verification_status != "VERIFIED"
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match:
+    $host, $pid over 10m
+  outcome:
+    $captures = count($s.metadata.id)
+  condition:
+    $s and $n
+}

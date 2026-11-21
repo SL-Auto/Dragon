@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: adaptixc2
+rule_name: adaptix_network_process_archive_staging
+canonical_path: detections/adaptixc2/yaral/adaptix_network_process_archive_staging.yaral
+canonical_sha256: 63816d5c787bc11a602079bad5fc57801f4569108ec93f6a32190491f8539cc7
+description: "Detects an unverified process with outbound connections creating a .zip archive within 15 minutes, the Gopher zip-then-download staging pattern."
+severity: medium
+procedure_ids: ["AX-P07"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status. FILE_CREATION (Sysmon Event ID 11) with path and creating process."
+atomic_event_types: ["FILE_CREATION", "NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_type", "network.direction", "principal.hostname", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id", "target.file.full_path"]
+correlation_window: "15m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Unsigned archivers, backup tools and updaters."
+references: "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+translations:
+  spl: { path: "detections/adaptixc2/spl/adaptix_network_process_archive_staging.spl", sha256: 07cbe987cd36b2a27c2b0dd0b7e31a84f89908797d8b7b319991588acdebff66, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/adaptixc2/kql/adaptix_network_process_archive_staging.kql", sha256: ec1addf30b86860161fe84ce7baabe51912e932118a34340295a6a82af9618b7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/adaptixc2/sql/adaptix_network_process_archive_staging.sql", sha256: 47f947890a964238c0fa16605ebcafc636c930d3750a3b7b2e4b8ce64950c91e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/adaptixc2/eql/adaptix_network_process_archive_staging.eql", sha256: 3407415dd8de7cae8f870f21ed89ce3e143e53d332b0d2a5b9824e49dc76e3b6, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/adaptixc2/sigma/adaptix_network_process_archive_staging.yml", sha256: 8e949a39027aaee7a9059f8e24c64b620341ac84075d7b08cd81a42466f64fdb, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

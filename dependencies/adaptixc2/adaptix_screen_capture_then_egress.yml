@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: adaptixc2
+rule_name: adaptix_screen_capture_then_egress
+canonical_path: detections/adaptixc2/yaral/adaptix_screen_capture_then_egress.yaral
+canonical_sha256: 3021bfc236edda171f69af4c29aa910d44b0ea30aa88350fa213f9ed16b1b344
+description: "Detects an EDR screen-capture event in an unverified process that also makes outbound connections within 10 minutes, the Gopher screenshot command."
+severity: medium
+procedure_ids: ["AX-P10"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "EDR screen-capture telemetry (vendor event normalized as SCREEN_CAPTURE) plus process-attributed NETWORK_CONNECTION."
+atomic_event_types: ["NETWORK_CONNECTION", "SCREEN_CAPTURE"]
+required_udm_fields: ["metadata.event_type", "metadata.id", "metadata.product_event_type", "network.direction", "principal.hostname", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id"]
+correlation_window: "10m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Screen-sharing, recording and remote-support tools."
+references: "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+translations:
+  spl: { path: "detections/adaptixc2/spl/adaptix_screen_capture_then_egress.spl", sha256: b945b56c17f77ae08a19517e38434948a0b5444003a3cf335a07b586e00e84b5, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/adaptixc2/kql/adaptix_screen_capture_then_egress.kql", sha256: 2f5173f8385081aa70e081acbff1d81e1a353607461d1d5d16ffb3a4591912f7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/adaptixc2/sql/adaptix_screen_capture_then_egress.sql", sha256: 8cf75a5600bb7cd1ee0124cee8e7b8794c1406d10947d90be5dd3d37596c3ff9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/adaptixc2/eql/adaptix_screen_capture_then_egress.eql", sha256: 32c04314e79e9de24342beef3578805458334120012d1d1582f85bc565a909ce, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/adaptixc2/sigma/adaptix_screen_capture_then_egress.yml", sha256: 14097ac74b3b41aaf3cad6b0dcb1fa5fa76f8a0b7c072c776fe6d3ca6ca73264, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }

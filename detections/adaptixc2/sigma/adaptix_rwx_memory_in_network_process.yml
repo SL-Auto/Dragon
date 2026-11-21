@@ -1,0 +1,22 @@
+title: "Detects an EDR-reported private read-write-execute memory allocation in an unverified process that has made outbound connections within 10 minutes, the effect of in-memory BOF and COFF loading."
+name: adaptix_rwx_memory_in_network_process
+status: experimental
+description: "Detects an EDR-reported private read-write-execute memory allocation in an unverified process that has made outbound connections within 10 minutes, the effect of in-memory BOF and COFF loading."
+source_yaral: "detections/adaptixc2/yaral/adaptix_rwx_memory_in_network_process.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+procedure_ids: "AX-P06"
+log_source_prerequisites: "EDR memory-protection telemetry normalized as product event type MEMORY_PROTECTION or VIRTUAL_ALLOC with protection in additional.fields['protection'], plus process-attributed NETWORK_CONNECTION; vendor-specific."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["MEMORY_PROTECTION", "NETWORK_CONNECTION", "VIRTUAL_ALLOC"]
+  condition: selection_event_type
+falsepositives:
+  - "JIT-compiling runtimes and packed legitimate software."
+level: medium

@@ -184,11 +184,12 @@ tools:
     name: AdaptixC2
     aliases: []
     category: command-and-control
-    status: discovered
-    source_code: { availability: public, repository: https://github.com/Adaptix-Framework/AdaptixC2, analyzed_revision: unknown }
+    status: analyzed
+    source_code: { availability: public, repository: https://github.com/Adaptix-Framework/AdaptixC2, analyzed_revision: e99535c9ef4642190f7ea125c2983d1611f1a3f3 }
     first_seen: unknown
-    last_reviewed: 2026-08-15
-    evidence: [{ path: EMERGING_ATTACKER_TOOLING_2026-08-15.md }]
+    last_reviewed: 2026-11-21
+    evidence: [{ path: EMERGING_ATTACKER_TOOLING_2026-08-15.md }, { path: reports/adaptixc2/source-analysis.md }, { path: coverage/adaptixc2.yml }, { path: detections/adaptixc2/ }, { path: reviews/adaptixc2/detection-review.md }, { path: telemetry/adaptixc2.md }, { path: public-rules/comparisons/adaptixc2/ }]
+    notes: "Comprehensive for the pinned victim-side agents (beacon and gopher). Server, listeners and client are excluded as operator infrastructure; compiled shellcode stubs were deleted unopened. Operator-supplied BOF payloads are outside this source. Rules are experimental."
   - id: metasploit-framework
     name: Metasploit Framework
     aliases: [Metasploit]

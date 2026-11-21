@@ -1,0 +1,16 @@
+// source_yaral: detections/adaptixc2/yaral/adaptix_recurrent_process_egress.yaral
+// translation_status: experimental_needs_backend_mapping_and_validation
+// fidelity: partial
+// rule_name: adaptix_recurrent_process_egress
+// severity: medium
+// procedure_ids: AX-P01,AX-P04
+// description: Detects an unverified process making five or more outbound connections to the same destination across four or more distinct minutes within 1 hour, the polling of an HTTP(S) or TCP agent transport.
+// log_source_prerequisites: Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status.
+// false_positives: Unsigned updaters, telemetry agents and custom line-of-business software.
+// references: reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md
+// schema_profile: schemas/elastic-ecs.yml
+// field_mapping: normalized columns (event_type, direction, hostname, process_id, process_path, target_ip, target_port, ip_protocol, process_signed); EQL uses ECS equivalents; enrichment columns map from UDM additional.fields / labels of the same name
+// assumptions_and_gaps: EQL selects matching events but cannot aggregate; implement the grouping threshold in ES|QL or a threshold rule.
+any where event.action == "NETWORK_CONNECTION"
+  and network.direction == "OUTBOUND"
+  and (process.code_signature.trusted == null or process.code_signature.trusted == false)

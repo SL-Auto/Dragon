@@ -1,0 +1,22 @@
+title: "Detects an unverified process that holds external egress while connecting to ten or more distinct internal hosts or ports within 15 minutes, the effect of agent SOCKS or port-forward tunnels."
+name: adaptix_tunnel_internal_fanout
+status: experimental
+description: "Detects an unverified process that holds external egress while connecting to ten or more distinct internal hosts or ports within 15 minutes, the effect of agent SOCKS or port-forward tunnels."
+source_yaral: "detections/adaptixc2/yaral/adaptix_tunnel_internal_fanout.yaral"
+translation_status: experimental_needs_backend_mapping_and_validation
+fidelity: partial
+schema_profile: schemas/sigma.yml
+assumptions_and_gaps: "Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend."
+references:
+  - "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+procedure_ids: "AX-P09"
+log_source_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status."
+logsource:
+  category: generic
+detection:
+  selection_event_type:
+    event.code: ["NETWORK_CONNECTION"]
+  condition: selection_event_type
+falsepositives:
+  - "Unsigned management agents and scanners with internet egress."
+level: high

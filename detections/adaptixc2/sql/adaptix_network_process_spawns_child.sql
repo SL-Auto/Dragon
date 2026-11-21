@@ -1,0 +1,19 @@
+-- source_yaral: detections/adaptixc2/yaral/adaptix_network_process_spawns_child.yaral
+-- translation_status: experimental_needs_backend_mapping_and_validation
+-- fidelity: partial
+-- rule_name: adaptix_network_process_spawns_child
+-- severity: medium
+-- procedure_ids: AX-P05
+-- description: Detects an unverified process that has made outbound connections within the previous 15 minutes spawning a command interpreter or system utility, the effect of agent run, execute and shell commands.
+-- log_source_prerequisites: Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status. PROCESS_LAUNCH with parent process ID and image.
+-- false_positives: Unsigned installers and developer tools that run shell commands after downloading.
+-- references: reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md
+-- assumptions_and_gaps: Candidate retrieval is translated; canonical entity joins, ordering, windows, and cardinality must be implemented and tested in the target backend.
+-- schema_profile: schemas/normalized-sql.yml
+-- Schema assumption: normalized_events(event_time, product_event_type, event_type, hostname, user_id, raw_event).
+SELECT hostname, user_id, COUNT(*) AS event_count,
+       'adaptix_network_process_spawns_child' AS canonical_rule
+FROM normalized_events
+WHERE product_event_type IN ('NETWORK_CONNECTION', 'PROCESS_LAUNCH') OR event_type IN ('NETWORK_CONNECTION', 'PROCESS_LAUNCH')
+GROUP BY hostname, user_id
+HAVING COUNT(*) > 0;

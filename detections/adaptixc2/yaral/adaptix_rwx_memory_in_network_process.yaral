@@ -1,0 +1,34 @@
+rule adaptix_rwx_memory_in_network_process {
+  meta:
+    author = "Detection Research Agent"
+    description = "Detects an EDR-reported private read-write-execute memory allocation in an unverified process that has made outbound connections within 10 minutes, the effect of in-memory BOF and COFF loading."
+    date = "2026-11-21"
+    status = "experimental"
+    severity = "MEDIUM"
+    severity_rationale = "RWX private allocations are a classic loader effect; JIT runtimes (browsers, .NET, Java) also allocate RWX, so signer filtering is required."
+    procedure_ids = "AX-P06"
+    log_source_prerequisites = "EDR memory-protection telemetry normalized as product event type MEMORY_PROTECTION or VIRTUAL_ALLOC with protection in additional.fields['protection'], plus process-attributed NETWORK_CONNECTION; vendor-specific."
+    false_positives = "JIT-compiling runtimes and packed legitimate software."
+    references = "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+    validation_status = "needs_validation"
+    validation_method = "Replay sanitized EDR RWX events for an unsigned network process; confirm the vendor event mapping."
+    review_status = "reviewed_with_gaps"
+    review_reference = "reviews/adaptixc2/detection-review.md"
+  events:
+    $m.metadata.product_event_type = /^(MEMORY_PROTECTION|VIRTUAL_ALLOC)$/
+    re.regex($m.additional.fields["protection"], `(?i)(PAGE_EXECUTE_READWRITE|RWX)`)
+    $m.principal.hostname = $host
+    $m.principal.process.product_specific_process_id = $pid
+    $m.principal.process.file.signature_info.verification_status != "VERIFIED"
+
+    $n.metadata.event_type = "NETWORK_CONNECTION"
+    $n.network.direction = "OUTBOUND"
+    $n.principal.hostname = $host
+    $n.principal.process.product_specific_process_id = $pid
+  match:
+    $host, $pid over 10m
+  outcome:
+    $allocations = count($m.metadata.id)
+  condition:
+    $m and $n
+}

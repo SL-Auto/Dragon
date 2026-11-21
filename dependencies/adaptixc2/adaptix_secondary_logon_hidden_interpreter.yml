@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: adaptixc2
+rule_name: adaptix_secondary_logon_hidden_interpreter
+canonical_path: detections/adaptixc2/yaral/adaptix_secondary_logon_hidden_interpreter.yaral
+canonical_sha256: 05359a38ede1d35dde87b0b451cbe016f7fd30032d7c1fd086defe4fb56d96fa
+description: "Detects a command interpreter whose parent is the Secondary Logon service (svchost with seclogon) and whose creating process is not consent or runas, the effect of executing a command with a stolen token through CreateProcessWithTokenW."
+severity: medium
+procedure_ids: ["AX-P05"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "PROCESS_LAUNCH (Sysmon Event ID 1) with parent command line and image; Security 4688 with creator process where available."
+atomic_event_types: ["PROCESS_LAUNCH"]
+required_udm_fields: ["metadata.event_type", "principal.hostname", "principal.process.command_line", "target.process.command_line", "target.process.file.full_path", "target.user.userid"]
+correlation_window: "30m"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Administrators using runas or Run as different user; software installers elevating with alternate credentials."
+references: "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+translations:
+  spl: { path: "detections/adaptixc2/spl/adaptix_secondary_logon_hidden_interpreter.spl", sha256: 2d79f1f7130ce8a160e8792749155841792c08ac1e75fe59bd55b6de43de1146, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  kql: { path: "detections/adaptixc2/kql/adaptix_secondary_logon_hidden_interpreter.kql", sha256: eadaa7ab4bc5bf74356c967700571a2814957a2be6e70e8af73fbe696ed6c2f9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  sql: { path: "detections/adaptixc2/sql/adaptix_secondary_logon_hidden_interpreter.sql", sha256: 51ab6278ad6a0466f1ac9d43c98f417dea6006f3a81c737730310f2fb57a93f2, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }
+  eql: { path: "detections/adaptixc2/eql/adaptix_secondary_logon_hidden_interpreter.eql", sha256: a656cfe033d1fb4694771bfd78dce54db1a9d0d25caaab7286d1cdc97ea085a1, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/adaptixc2/sigma/adaptix_secondary_logon_hidden_interpreter.yml", sha256: e375ff82a16c8fd61de7763c1797155991d38acfbad5b5a14fc1ba841b9c4bb7, status: "experimental_needs_backend_mapping_and_validation", fidelity: "high" }

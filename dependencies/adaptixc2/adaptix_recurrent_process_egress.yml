@@ -1,0 +1,24 @@
+schema_version: 1
+tool_id: adaptixc2
+rule_name: adaptix_recurrent_process_egress
+canonical_path: detections/adaptixc2/yaral/adaptix_recurrent_process_egress.yaral
+canonical_sha256: 0ac17d90adb6bbed60c8fc120a75bbd9164938f19938f80c54f7be65b23672f8
+description: "Detects an unverified process making five or more outbound connections to the same destination across four or more distinct minutes within 1 hour, the polling of an HTTP(S) or TCP agent transport."
+severity: medium
+procedure_ids: ["AX-P01", "AX-P04"]
+validation_status: "needs_validation"
+telemetry_prerequisites: "Process-attributed NETWORK_CONNECTION telemetry (Sysmon Event ID 3 or EDR) with direction, protocol, destination IP and port, host and stable process ID; optional signature verification status."
+atomic_event_types: ["NETWORK_CONNECTION"]
+required_udm_fields: ["metadata.event_timestamp.seconds", "metadata.event_type", "metadata.id", "network.direction", "principal.hostname", "principal.process.file.full_path", "principal.process.file.signature_info.verification_status", "principal.process.product_specific_process_id", "target.ip"]
+correlation_window: "1h"
+uses_multi_event_correlation: true
+uses_aggregation: true
+uses_absence_logic: false
+false_positives: "Unsigned updaters, telemetry agents and custom line-of-business software."
+references: "reports/adaptixc2/source-analysis.md#procedure-analysis; reviews/adaptixc2/detection-review.md"
+translations:
+  spl: { path: "detections/adaptixc2/spl/adaptix_recurrent_process_egress.spl", sha256: e5a5922ba5ce2e9751b212ba1277ba94e1913b8d3b17075a7ad41c40d565d557, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  kql: { path: "detections/adaptixc2/kql/adaptix_recurrent_process_egress.kql", sha256: 1b50bdc6682a38ec42afe67390a7d24948709715b99342d05b6ca20d0fc10a49, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sql: { path: "detections/adaptixc2/sql/adaptix_recurrent_process_egress.sql", sha256: a8bd9b5096f68f9d9b19da5749e0d91b0fec48639d218713e74056650d2eb4df, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  eql: { path: "detections/adaptixc2/eql/adaptix_recurrent_process_egress.eql", sha256: a83897e1840cbdd82d893ed75143d9d015257cc7207859e9aca5e6ba2ba1cad9, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
+  sigma: { path: "detections/adaptixc2/sigma/adaptix_recurrent_process_egress.yml", sha256: 3babfce9a16f22d15c18041ffd3ff2ec8fe673592316cb883c9c7b364e2bb95e, status: "experimental_needs_backend_mapping_and_validation", fidelity: "partial" }
